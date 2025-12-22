@@ -43,13 +43,22 @@
             margin-bottom: 20px;
         }
 
-        .logo {
-            width: 100px;
-            height: 100px;
-            object-fit: contain;
-            filter: drop-shadow(0 8px 24px rgba(59, 130, 246, 0.5));
-            transition: all 0.3s ease;
-        }
+.logo-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+    background: transparent !important;
+}
+
+.logo {
+    width: 100px;
+    height: 100px;
+    object-fit: contain;
+    background: transparent !important;
+    filter: drop-shadow(0 8px 24px rgba(59, 130, 246, 0.5));
+    transition: all 0.3s ease;
+}
 
         .logo:active {
             transform: scale(0.95);
@@ -728,5 +737,6 @@
     </script>
 </body>
 </html>
+
 
 

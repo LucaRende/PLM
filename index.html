@@ -620,93 +620,111 @@
             }
 
             async function loadData() {
-                const wrapper = document.getElementById('contentWrapper');
-                wrapper.innerHTML = '<div class="loading-state">Caricamento...</div>';
-
-                try {
-                    const { data, error } = await sb.from('Attivita').select('*').order('ID_Attivita', { ascending: false });
-
-                    if (error) throw error;
-
-                    if (data && data.length > 0) {
-                        const { preventiviPerc, ordiniPerc } = calculateDelayPercentages(data);
-                        setCircularProgress('progressPreventivi', 'percentPreventivi', preventiviPerc);
-                        setCircularProgress('progressOrdini', 'percentOrdini', ordiniPerc);
-                    }
-
-                    if (!data || !data.length) {
-                        wrapper.innerHTML = '<div class="empty-state"><div class="empty-icon">📭</div>Nessuna attività</div>';
-                        return;
-                    }
-
-                    wrapper.innerHTML = data.map(a => {
-                        const ritardo = isInRitardo(a._dataConsegna);
-                        const ritardoClass = ritardo ? 'ritardo' : 'in-tempo';
+            const wrapper = document.getElementById('contentWrapper');
+            wrapper.innerHTML = '<div class="loading-state">Caricamento...</div>';
+        
+            try {
+                const { data, error } = await sb.from('Attivita').select('*');
+        
+                if (error) throw error;
+        
+                if (data && data.length > 0) {
+                    const { preventiviPerc, ordiniPerc } = calculateDelayPercentages(data);
+                    setCircularProgress('progressPreventivi', 'percentPreventivi', preventiviPerc);
+                    setCircularProgress('progressOrdini', 'percentOrdini', ordiniPerc);
+                    
+                    // ORDINA: Prima i ritardi, poi per data di consegna
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
+                    
+                    data.sort((a, b) => {
+                        const dataA = a._dataConsegna ? new Date(a._dataConsegna) : new Date('9999-12-31');
+                        const dataB = b._dataConsegna ? new Date(b._dataConsegna) : new Date('9999-12-31');
                         
-                        return `
-                        <div class="activity-card" data-id="${a.ID_Attivita}">
-                            <div class="activity-card-header ${ritardoClass}" onclick="toggleAct(${a.ID_Attivita})">
-                                <div class="activity-info">
-                                    <div class="activity-title">
-                                        #${a.ID_Attivita} · ${a.clienteApplicato || 'Cliente non specificato'}
+                        const ritardoA = dataA < today;
+                        const ritardoB = dataB < today;
+                        
+                        // Prima i ritardi, poi ordina per data
+                        if (ritardoA && !ritardoB) return -1;
+                        if (!ritardoA && ritardoB) return 1;
+                        
+                        return dataA - dataB;
+                    });
+                }
+        
+                if (!data || !data.length) {
+                    wrapper.innerHTML = '<div class="empty-state"><div class="empty-icon">📭</div>Nessuna attività</div>';
+                    return;
+                }
+        
+                wrapper.innerHTML = data.map(a => {
+                    const ritardo = isInRitardo(a._dataConsegna);
+                    const ritardoClass = ritardo ? 'ritardo' : 'in-tempo';
+                    
+                    return `
+                    <div class="activity-card" data-id="${a.ID_Attivita}">
+                        <div class="activity-card-header ${ritardoClass}" onclick="toggleAct(${a.ID_Attivita})">
+                            <div class="activity-info">
+                                <div class="activity-title">
+                                    #${a.ID_Attivita} · ${a.clienteApplicato || 'Cliente non specificato'}
+                                </div>
+                                <div class="activity-meta">
+                                    <div class="meta-item">
+                                        <span class="meta-label">📅</span>
+                                        <span>${a.dataCreazioneFormattata || fmtDate(a._dataCreazione)}</span>
                                     </div>
-                                    <div class="activity-meta">
-                                        <div class="meta-item">
-                                            <span class="meta-label">📅</span>
-                                            <span>${a.dataCreazioneFormattata || fmtDate(a._dataCreazione)}</span>
-                                        </div>
-                                        <div class="meta-item">
-                                            <span class="meta-label">🎯</span>
-                                            <span>${a.dataConsegnaFormattata || fmtDate(a._dataConsegna)}</span>
-                                        </div>
-                                        <div class="meta-item">
-                                            <span class="meta-label">📦</span>
-                                            <span>${a.tipologiaFormattata || 'Non specificato'}</span>
-                                        </div>
+                                    <div class="meta-item">
+                                        <span class="meta-label">🎯</span>
+                                        <span>${a.dataConsegnaFormattata || fmtDate(a._dataConsegna)}</span>
                                     </div>
-                                    <div class="activity-footer">
-                                        <span class="status-badge ${getStatus(a.stato)}">${a.stato || 'Aperto'}</span>
-                                        <span class="activity-arrow">▼</span>
+                                    <div class="meta-item">
+                                        <span class="meta-label">📦</span>
+                                        <span>${a.tipologiaFormattata || 'Non specificato'}</span>
                                     </div>
                                 </div>
+                                <div class="activity-footer">
+                                    <span class="status-badge ${getStatus(a.stato)}">${a.stato || 'Aperto'}</span>
+                                    <span class="activity-arrow">▼</span>
+                                </div>
                             </div>
-                            <div class="activity-details">
-                                <div class="details-wrapper">
-                                    <div class="details-grid">
-                                        <div class="detail-box">
-                                            <div class="detail-label">Cliente</div>
-                                            <div class="detail-value">${a.clienteApplicato || 'Non specificato'}</div>
-                                        </div>
-                                        <div class="detail-box">
-                                            <div class="detail-label">Tipologia</div>
-                                            <div class="detail-value">${a.tipologiaFormattata || 'Non specificato'}</div>
-                                        </div>
-                                        <div class="detail-box">
-                                            <div class="detail-label">Data Creazione</div>
-                                            <div class="detail-value">${a.dataCreazioneFormattata || fmtDate(a._dataCreazione)}</div>
-                                        </div>
-                                        <div class="detail-box">
-                                            <div class="detail-label">Data Consegna</div>
-                                            <div class="detail-value">${a.dataConsegnaFormattata || fmtDate(a._dataConsegna)}</div>
-                                        </div>
-                                        <div class="detail-box">
-                                            <div class="detail-label">Trasferimento</div>
-                                            <div class="detail-value">${a.trasferimento || 'Non specificato'}</div>
-                                        </div>
-                                        <div class="detail-box">
-                                            <div class="detail-label">Stato</div>
-                                            <div class="detail-value">${a.stato || 'Aperto'}</div>
-                                        </div>
+                        </div>
+                        <div class="activity-details">
+                            <div class="details-wrapper">
+                                <div class="details-grid">
+                                    <div class="detail-box">
+                                        <div class="detail-label">Cliente</div>
+                                        <div class="detail-value">${a.clienteApplicato || 'Non specificato'}</div>
+                                    </div>
+                                    <div class="detail-box">
+                                        <div class="detail-label">Tipologia</div>
+                                        <div class="detail-value">${a.tipologiaFormattata || 'Non specificato'}</div>
+                                    </div>
+                                    <div class="detail-box">
+                                        <div class="detail-label">Data Creazione</div>
+                                        <div class="detail-value">${a.dataCreazioneFormattata || fmtDate(a._dataCreazione)}</div>
+                                    </div>
+                                    <div class="detail-box">
+                                        <div class="detail-label">Data Consegna</div>
+                                        <div class="detail-value">${a.dataConsegnaFormattata || fmtDate(a._dataConsegna)}</div>
+                                    </div>
+                                    <div class="detail-box">
+                                        <div class="detail-label">Trasferimento</div>
+                                        <div class="detail-value">${a.trasferimento || 'Non specificato'}</div>
+                                    </div>
+                                    <div class="detail-box">
+                                        <div class="detail-label">Stato</div>
+                                        <div class="detail-value">${a.stato || 'Aperto'}</div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    `}).join('');
-
-                } catch (e) {
-                    wrapper.innerHTML = `<div class="empty-state"><div class="empty-icon">⚠️</div>Errore: ${e.message}</div>`;
-                }
+                    </div>
+                `}).join('');
+        
+            } catch (e) {
+                wrapper.innerHTML = `<div class="empty-state"><div class="empty-icon">⚠️</div>Errore: ${e.message}</div>`;
             }
+        }
 
             // Carica i dati subito per mostrare le progress bar
             loadData();
@@ -716,4 +734,5 @@
     </script>
 </body>
 </html>
+
 

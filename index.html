@@ -48,7 +48,6 @@
             font-weight: 300;
         }
 
-        /* Dashboard */
         .dashboard {
             background: rgba(30, 30, 46, 0.95);
             border: 1px solid rgba(102, 126, 234, 0.3);
@@ -101,7 +100,6 @@
             display: block;
         }
 
-        /* Activity Card */
         .activity-card {
             background: rgba(40, 40, 60, 0.8);
             border: 1px solid rgba(102, 126, 234, 0.2);
@@ -231,33 +229,11 @@
             font-weight: 500;
         }
 
-        .loading-state {
+        .loading-state, .empty-state {
             text-align: center;
             padding: 60px 20px;
             color: #667eea;
             font-size: 1.3em;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 80px 20px;
-        }
-
-        .empty-icon {
-            font-size: 5em;
-            margin-bottom: 20px;
-            opacity: 0.3;
-        }
-
-        .empty-state h3 {
-            color: #b0b0b0;
-            font-size: 1.5em;
-            margin-bottom: 10px;
-        }
-
-        .empty-state p {
-            color: #808080;
-            font-size: 1.1em;
         }
     </style>
 </head>
@@ -269,7 +245,7 @@
         </div>
 
         <div class="dashboard">
-            <div class="dashboard-header" onclick="toggleDashboard()">
+            <div class="dashboard-header" id="dashHeader">
                 <div class="dashboard-title">
                     <span class="dashboard-icon">📋</span>
                     <h2>Attività CRM</h2>
@@ -278,7 +254,7 @@
             </div>
             <div class="dashboard-content" id="dashContent">
                 <div id="activitiesList">
-                    <div class="loading-state">Caricamento attività...</div>
+                    <div class="loading-state">Caricamento...</div>
                 </div>
             </div>
         </div>
@@ -286,165 +262,108 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        const SUPABASE_URL = 'https://uoykvjxerdrthnmnfmgc.supabase.co';
-        const SUPABASE_KEY = 'sb_publishable_iGVhzkLqAktDZmpccXl7OA_PZ2nUYSY';
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        (function() {
+            const sb = window.supabase.createClient(
+                'https://uoykvjxerdrthnmnfmgc.supabase.co',
+                'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVveWt2anhvcmRydGhubW5mbWdjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzQ4ODA4NTgsImV4cCI6MjA1MDQ1Njg1OH0.HNXrLZnZf6vRWnz4b8gqQFEeFMXoJjqCHsAJb_xZbJQ'
+            );
 
-        let loaded = false;
+            let loaded = false;
 
-        function toggleDashboard() {
-            console.log('DASHBOARD CLICKED!!!');
-            const content = document.getElementById('dashContent');
-            const arrow = document.getElementById('dashArrow');
-            
-            if (content.classList.contains('show')) {
-                content.classList.remove('show');
-                arrow.style.transform = 'rotate(0deg)';
-            } else {
-                content.classList.add('show');
-                arrow.style.transform = 'rotate(180deg)';
+            window.toggleDash = function() {
+                const content = document.getElementById('dashContent');
+                const arrow = document.getElementById('dashArrow');
                 
-                if (!loaded) {
-                    loaded = true;
-                    loadActivities();
+                if (content.classList.contains('show')) {
+                    content.classList.remove('show');
+                    arrow.style.transform = 'rotate(0deg)';
+                } else {
+                    content.classList.add('show');
+                    arrow.style.transform = 'rotate(180deg)';
+                    if (!loaded) {
+                        loaded = true;
+                        loadData();
+                    }
+                }
+            };
+
+            window.toggleAct = function(id) {
+                const details = document.getElementById('det-' + id);
+                const arrow = document.getElementById('arr-' + id);
+                
+                if (details.classList.contains('show')) {
+                    details.classList.remove('show');
+                    arrow.style.transform = 'rotate(0deg)';
+                } else {
+                    details.classList.add('show');
+                    arrow.style.transform = 'rotate(180deg)';
+                }
+            };
+
+            function getStatus(s) {
+                if (!s) return 'status-aperto';
+                const l = s.toLowerCase();
+                if (l.includes('completato') || l.includes('chiuso')) return 'status-completato';
+                if (l.includes('corso')) return 'status-in-corso';
+                if (l.includes('annullato')) return 'status-annullato';
+                return 'status-aperto';
+            }
+
+            function fmtDate(d) {
+                if (!d) return 'N/D';
+                return new Date(d).toLocaleDateString('it-IT');
+            }
+
+            async function loadData() {
+                const list = document.getElementById('activitiesList');
+                list.innerHTML = '<div class="loading-state">Caricamento...</div>';
+
+                try {
+                    const { data, error } = await sb.from('Attivita').select('*').order('ID_Attivita', { ascending: false });
+
+                    if (error) throw error;
+                    if (!data || !data.length) {
+                        list.innerHTML = '<div class="empty-state">Nessuna attività</div>';
+                        return;
+                    }
+
+                    list.innerHTML = data.map(a => `
+                        <div class="activity-card">
+                            <div class="activity-card-header" onclick="toggleAct(${a.ID_Attivita})">
+                                <div class="activity-info">
+                                    <div class="activity-title">Attività #${a.ID_Attivita} - ${a.clienteApplicato || 'N/D'}</div>
+                                    <div class="activity-meta">
+                                        <div class="meta-item"><span class="meta-label">📅 Creazione:</span> ${a.dataCreazioneFormattata || fmtDate(a._dataCreazione)}</div>
+                                        <div class="meta-item"><span class="meta-label">🎯 Consegna:</span> ${a.dataConsegnaFormattata || fmtDate(a._dataConsegna)}</div>
+                                        <div class="meta-item"><span class="meta-label">📦 Tipo:</span> ${a.tipologiaFormattata || 'N/D'}</div>
+                                    </div>
+                                </div>
+                                <div class="activity-right">
+                                    <span class="status-badge ${getStatus(a.stato)}">${a.stato || 'Aperto'}</span>
+                                    <span class="activity-arrow" id="arr-${a.ID_Attivita}">▼</span>
+                                </div>
+                            </div>
+                            <div class="activity-details" id="det-${a.ID_Attivita}">
+                                <div class="details-grid">
+                                    <div class="detail-box"><div class="detail-label">ID</div><div class="detail-value">#${a.ID_Attivita}</div></div>
+                                    <div class="detail-box"><div class="detail-label">Cliente</div><div class="detail-value">${a.clienteApplicato || 'N/D'}</div></div>
+                                    <div class="detail-box"><div class="detail-label">Creazione</div><div class="detail-value">${a.dataCreazioneFormattata || fmtDate(a._dataCreazione)}</div></div>
+                                    <div class="detail-box"><div class="detail-label">Consegna</div><div class="detail-value">${a.dataConsegnaFormattata || fmtDate(a._dataConsegna)}</div></div>
+                                    <div class="detail-box"><div class="detail-label">Tipologia</div><div class="detail-value">${a.tipologiaFormattata || 'N/D'}</div></div>
+                                    <div class="detail-box"><div class="detail-label">Trasferimento</div><div class="detail-value">${a.trasferimento || 'N/D'}</div></div>
+                                    <div class="detail-box"><div class="detail-label">Stato</div><div class="detail-value">${a.stato || 'N/D'}</div></div>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('');
+
+                } catch (e) {
+                    list.innerHTML = `<div class="empty-state">Errore: ${e.message}</div>`;
                 }
             }
-        }
 
-        function toggleActivity(id) {
-            console.log('ACTIVITY CLICKED:', id);
-            const details = document.getElementById('details-' + id);
-            const arrow = document.getElementById('arrow-' + id);
-            
-            if (details.classList.contains('show')) {
-                details.classList.remove('show');
-                arrow.style.transform = 'rotate(0deg)';
-            } else {
-                details.classList.add('show');
-                arrow.style.transform = 'rotate(180deg)';
-            }
-        }
-
-        function getStatusClass(stato) {
-            if (!stato) return 'status-aperto';
-            const lower = stato.toLowerCase();
-            if (lower.includes('completato') || lower.includes('chiuso')) return 'status-completato';
-            if (lower.includes('corso') || lower.includes('lavorazione')) return 'status-in-corso';
-            if (lower.includes('annullato') || lower.includes('cancellato')) return 'status-annullato';
-            return 'status-aperto';
-        }
-
-        function formatDate(dateString) {
-            if (!dateString) return 'Non specificata';
-            const date = new Date(dateString);
-            return date.toLocaleDateString('it-IT', { 
-                day: '2-digit', 
-                month: '2-digit', 
-                year: 'numeric' 
-            });
-        }
-
-        async function loadActivities() {
-            const list = document.getElementById('activitiesList');
-            list.innerHTML = '<div class="loading-state">Caricamento attività...</div>';
-
-            try {
-                const { data, error } = await supabase
-                    .from('Attivita')
-                    .select('*')
-                    .order('ID_Attivita', { ascending: false });
-
-                console.log('DATA:', data);
-                console.log('ERROR:', error);
-
-                if (error) throw error;
-
-                if (!data || data.length === 0) {
-                    list.innerHTML = `
-                        <div class="empty-state">
-                            <div class="empty-icon">📭</div>
-                            <h3>Nessuna attività</h3>
-                            <p>Non ci sono attività da visualizzare</p>
-                        </div>
-                    `;
-                    return;
-                }
-
-                list.innerHTML = data.map(a => `
-                    <div class="activity-card">
-                        <div class="activity-card-header" onclick="toggleActivity(${a.ID_Attivita})">
-                            <div class="activity-info">
-                                <div class="activity-title">
-                                    Attività #${a.ID_Attivita} - ${a.clienteApplicato || 'Cliente non specificato'}
-                                </div>
-                                <div class="activity-meta">
-                                    <div class="meta-item">
-                                        <span class="meta-label">📅 Creazione:</span>
-                                        <span>${a.dataCreazioneFormattata || formatDate(a._dataCreazione)}</span>
-                                    </div>
-                                    <div class="meta-item">
-                                        <span class="meta-label">🎯 Consegna:</span>
-                                        <span>${a.dataConsegnaFormattata || formatDate(a._dataConsegna)}</span>
-                                    </div>
-                                    <div class="meta-item">
-                                        <span class="meta-label">📦 Tipo:</span>
-                                        <span>${a.tipologiaFormattata || 'Non specificato'}</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="activity-right">
-                                <span class="status-badge ${getStatusClass(a.stato)}">
-                                    ${a.stato || 'Aperto'}
-                                </span>
-                                <span class="activity-arrow" id="arrow-${a.ID_Attivita}">▼</span>
-                            </div>
-                        </div>
-                        <div class="activity-details" id="details-${a.ID_Attivita}">
-                            <div class="details-grid">
-                                <div class="detail-box">
-                                    <div class="detail-label">ID Attività</div>
-                                    <div class="detail-value">#${a.ID_Attivita}</div>
-                                </div>
-                                <div class="detail-box">
-                                    <div class="detail-label">Cliente</div>
-                                    <div class="detail-value">${a.clienteApplicato || 'Non specificato'}</div>
-                                </div>
-                                <div class="detail-box">
-                                    <div class="detail-label">Data Creazione</div>
-                                    <div class="detail-value">${a.dataCreazioneFormattata || formatDate(a._dataCreazione)}</div>
-                                </div>
-                                <div class="detail-box">
-                                    <div class="detail-label">Data Consegna</div>
-                                    <div class="detail-value">${a.dataConsegnaFormattata || formatDate(a._dataConsegna)}</div>
-                                </div>
-                                <div class="detail-box">
-                                    <div class="detail-label">Tipologia</div>
-                                    <div class="detail-value">${a.tipologiaFormattata || 'Non specificato'}</div>
-                                </div>
-                                <div class="detail-box">
-                                    <div class="detail-label">Trasferimento</div>
-                                    <div class="detail-value">${a.trasferimento || 'Non specificato'}</div>
-                                </div>
-                                <div class="detail-box">
-                                    <div class="detail-label">Stato</div>
-                                    <div class="detail-value">${a.stato || 'Aperto'}</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                `).join('');
-
-            } catch (error) {
-                console.error('ERRORE:', error);
-                list.innerHTML = `
-                    <div class="empty-state">
-                        <div class="empty-icon">⚠️</div>
-                        <h3>Errore</h3>
-                        <p>${error.message}</p>
-                    </div>
-                `;
-            }
-        }
+            document.getElementById('dashHeader').onclick = window.toggleDash;
+        })();
     </script>
 </body>
 </html>

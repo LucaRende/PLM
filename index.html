@@ -1937,8 +1937,8 @@
             .progress-container {
                 display: flex;
                 justify-content: center;
-                gap: 80px;
-                padding: 30px;
+                gap: 100px;
+                padding: 40px;
             }
 
             /* Better activity cards grid */
@@ -2004,16 +2004,21 @@
 
             /* Progress circles larger */
             .progress-circle {
-                width: 160px;
-                height: 160px;
+                width: 180px;
+                height: 180px;
             }
 
             .progress-value {
-                font-size: 2.2em;
+                font-size: 2.5em;
             }
 
             .progress-label {
-                font-size: 0.95em;
+                font-size: 1em;
+                margin-top: 8px;
+            }
+
+            .progress-sublabel {
+                font-size: 0.8em;
             }
 
             /* Person sections in expanded gantt */
@@ -2051,6 +2056,19 @@
 
             .gantt-hour-slot {
                 min-width: 80px;
+            }
+
+            .progress-circle {
+                width: 200px;
+                height: 200px;
+            }
+
+            .progress-value {
+                font-size: 2.8em;
+            }
+
+            .progress-label {
+                font-size: 1.1em;
             }
         }
     </style>
@@ -2244,7 +2262,7 @@
                 <div class="stats-summary" id="statsSummary">
                     <div class="stat-item">
                         <div class="stat-value" id="totalPersons">-</div>
-                        <div class="stat-label">Occupati</div>
+                        <div class="stat-label">Persone</div>
                     </div>
                     <div class="stat-item">
                         <div class="stat-value" id="totalTasks">-</div>
@@ -2252,7 +2270,7 @@
                     </div>
                     <div class="stat-item">
                         <div class="stat-value" id="avgOccupation">-</div>
-                        <div class="stat-label">Operatori</div>
+                        <div class="stat-label">Occupaz.</div>
                     </div>
                 </div>
                 
@@ -2559,8 +2577,8 @@
 
         // ===== UFFICIO TECNICO GANTT DASHBOARD =====
         (function() {
-            const SUPABASE_URL = 'https://uoykvjxerdrthnmnfmgc.supabase.co';
-            const SUPABASE_KEY = 'sb_publishable_iGVhzkLqAktDZmpccXl7OA_PZ2nUYSY';
+            const SUPABASE_URL = 'https://nfgsxpkrotvgbxmidukg.supabase.co';
+            const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5mZ3N4cGtyb3R2Z2J4bWlkdWtnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzI2MjE0NTUsImV4cCI6MjA0ODE5NzQ1NX0.fEhQRiR6MpdOyT2oqXz9cMc0lBe3xj4vEfLSV8wI7gs';
             const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
             let allTasks = [];
@@ -3111,5 +3129,3 @@
     </script>
 </body>
 </html>
-
-

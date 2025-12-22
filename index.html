@@ -650,8 +650,12 @@
         }
 
         .gantt-person-header {
-            width: 140px;
+            width: 180px;
             flex-shrink: 0;
+            position: sticky;
+            left: 0;
+            background: rgba(10, 14, 26, 0.95);
+            z-index: 5;
         }
 
         .gantt-timeline-header {
@@ -686,9 +690,9 @@
         }
 
         .gantt-person-cell {
-            width: 140px;
+            width: 180px;
             flex-shrink: 0;
-            font-size: 0.8em;
+            font-size: 0.85em;
             font-weight: 600;
             color: rgba(255, 255, 255, 0.9);
             padding: 10px 12px;
@@ -697,18 +701,22 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            background: rgba(255, 255, 255, 0.02);
+            background: rgba(10, 14, 26, 0.95);
+            position: sticky;
+            left: 0;
+            z-index: 2;
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         @media (max-width: 430px) {
             .gantt-person-cell {
-                width: 110px;
+                width: 140px;
                 font-size: 0.75em;
                 padding: 10px 8px;
             }
             
             .gantt-person-header {
-                width: 110px;
+                width: 140px;
             }
             
             .gantt-hour-header {
@@ -1698,35 +1706,24 @@
                 const endHour = 18;
                 const totalHours = endHour - startHour;
                 
-                // Parse time format: "08:00:00" or "08:00"
+                // Parse time format: "11.00.00" or "11:00:00" (dots or colons)
                 const parseTime = (timeStr) => {
-                    if (!timeStr) {
-                        console.warn('parseTime: time string is empty');
-                        return 0;
-                    }
+                    if (!timeStr) return 0;
                     
                     const str = String(timeStr).trim();
-                    console.log('parseTime input:', str);
-                    
-                    const parts = str.split(':').map(Number);
+                    // Split by dots OR colons
+                    const parts = str.split(/[.:]/).map(Number);
                     const hours = parts[0] || 0;
                     const minutes = parts[1] || 0;
                     
-                    const result = hours + (minutes / 60);
-                    console.log('parseTime result:', hours, 'h +', minutes, 'm =', result);
-                    
-                    return result;
+                    return hours + (minutes / 60);
                 };
                 
                 const startDecimal = parseTime(oraInizio);
                 const endDecimal = parseTime(oraFine);
                 
-                console.log('Position calc:', startDecimal, 'to', endDecimal);
-                
                 const left = ((startDecimal - startHour) / totalHours) * 100;
                 const width = ((endDecimal - startDecimal) / totalHours) * 100;
-                
-                console.log('Result: left=' + left + '% width=' + width + '%');
                 
                 return { left: Math.max(0, left), width: Math.max(0, width) };
             }
@@ -1740,7 +1737,9 @@
 
             function formatTime(time) {
                 if (!time) return 'N/D';
-                return time.substring(0, 5);
+                // Convert dots to colons for display: 11.00.00 → 11:00
+                const cleaned = String(time).replace(/\./g, ':');
+                return cleaned.substring(0, 5); // HH:MM
             }
 
             function renderGantt(data) {
@@ -1820,12 +1819,7 @@
 
                     // Create task bars for THIS person's tasks - NO OVERLAP
                     const taskBars = tasks.map(task => {
-                        console.log('Rendering task bar:', task.Persona, task.OraInizio, task.OraFine); // Debug
-                        
                         const { left, width } = calculateTaskPosition(task.OraInizio, task.OraFine);
-                        
-                        console.log('Position calculated:', { left, width }); // Debug
-                        
                         const urgent = isUrgent(task.DataConsegna);
                         
                         return `
@@ -1834,8 +1828,6 @@
                                  title="${task.Descrizione} (${formatTime(task.OraInizio)} - ${formatTime(task.OraFine)})"></div>
                         `;
                     }).join('');
-
-                    console.log('Task bars HTML for', person, ':', taskBars); // Debug
                     // Add current time line if within working hours
                     const currentTimeLine = currentTimePercent !== null 
                         ? `<div class="current-time-line" style="left: ${currentTimePercent}%;"></div>` 
@@ -1974,8 +1966,6 @@
 
                     if (error) throw error;
 
-                    console.log('Dati ricevuti:', data); // Debug
-
                     // Transform the data into individual tasks with REAL times
                     const tasks = [];
                     
@@ -2055,8 +2045,6 @@
                         });
                     }
 
-                    console.log('Tasks trovati:', tasks); // Debug
-
                     allTasks = tasks;
                     
                     const dateLabel = today.toLocaleDateString('it-IT', { 
@@ -2094,4 +2082,3 @@
     </script>
 </body>
 </html>
-

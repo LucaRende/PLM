@@ -1670,8 +1670,8 @@
 
         // ===== UFFICIO TECNICO GANTT DASHBOARD =====
         (function() {
-            const SUPABASE_URL = 'https://uoykvjxerdrthnmnfmgc.supabase.co';
-            const SUPABASE_KEY = 'sb_publishable_iGVhzkLqAktDZmpccXl7OA_PZ2nUYSY';
+            const SUPABASE_URL = 'https://nfgsxpkrotvgbxmidukg.supabase.co';
+            const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5mZ3N4cGtyb3R2Z2J4bWlkdWtnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzI2MjE0NTUsImV4cCI6MjA0ODE5NzQ1NX0.fEhQRiR6MpdOyT2oqXz9cMc0lBe3xj4vEfLSV8wI7gs';
             const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
             let allTasks = [];
@@ -1700,18 +1700,33 @@
                 
                 // Parse time format: "08:00:00" or "08:00"
                 const parseTime = (timeStr) => {
-                    if (!timeStr) return 0;
-                    const parts = timeStr.split(':').map(Number);
+                    if (!timeStr) {
+                        console.warn('parseTime: time string is empty');
+                        return 0;
+                    }
+                    
+                    const str = String(timeStr).trim();
+                    console.log('parseTime input:', str);
+                    
+                    const parts = str.split(':').map(Number);
                     const hours = parts[0] || 0;
                     const minutes = parts[1] || 0;
-                    return hours + (minutes / 60);
+                    
+                    const result = hours + (minutes / 60);
+                    console.log('parseTime result:', hours, 'h +', minutes, 'm =', result);
+                    
+                    return result;
                 };
                 
                 const startDecimal = parseTime(oraInizio);
                 const endDecimal = parseTime(oraFine);
                 
+                console.log('Position calc:', startDecimal, 'to', endDecimal);
+                
                 const left = ((startDecimal - startHour) / totalHours) * 100;
                 const width = ((endDecimal - startDecimal) / totalHours) * 100;
+                
+                console.log('Result: left=' + left + '% width=' + width + '%');
                 
                 return { left: Math.max(0, left), width: Math.max(0, width) };
             }
@@ -1805,7 +1820,12 @@
 
                     // Create task bars for THIS person's tasks - NO OVERLAP
                     const taskBars = tasks.map(task => {
+                        console.log('Rendering task bar:', task.Persona, task.OraInizio, task.OraFine); // Debug
+                        
                         const { left, width } = calculateTaskPosition(task.OraInizio, task.OraFine);
+                        
+                        console.log('Position calculated:', { left, width }); // Debug
+                        
                         const urgent = isUrgent(task.DataConsegna);
                         
                         return `
@@ -1815,6 +1835,7 @@
                         `;
                     }).join('');
 
+                    console.log('Task bars HTML for', person, ':', taskBars); // Debug
                     // Add current time line if within working hours
                     const currentTimeLine = currentTimePercent !== null 
                         ? `<div class="current-time-line" style="left: ${currentTimePercent}%;"></div>` 

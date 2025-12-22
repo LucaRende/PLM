@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRM - Gestione Attività</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+            padding: 20px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        /* Cruscotto Style */
+        .dashboard-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            overflow: hidden;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .dashboard-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+        }
+
+        .dashboard-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 25px 30px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            user-select: none;
+        }
+
+        .dashboard-header h2 {
+            color: white;
+            font-size: 1.8em;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .dashboard-header .icon {
+            font-size: 1.5em;
+        }
+
+        .dashboard-header .arrow {
+            color: white;
+            font-size: 1.5em;
+            transition: transform 0.3s ease;
+        }
+
+        .dashboard-header.active .arrow {
+            transform: rotate(180deg);
+        }
+
+        .dashboard-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease;
+            background: #f8f9fa;
+        }
+
+        .dashboard-content.active {
+            max-height: 3000px;
+        }
+
+        .activities-list {
+            padding: 20px;
+        }
+
+        /* Attività Card */
+        .activity-item {
+            background: white;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .activity-item:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .activity-header {
+            padding: 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 5px solid #667eea;
+        }
+
+        .activity-header:hover {
+            background: #f8f9fa;
+        }
+
+        .activity-main-info {
+            flex: 1;
+        }
+
+        .activity-title {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .activity-meta {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .meta-item .label {
+            font-weight: 600;
+        }
+
+        .activity-status {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-aperto {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .status-in-corso {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+
+        .status-completato {
+            background: #e8f5e9;
+            color: #388e3c;
+        }
+
+        .status-annullato {
+            background: #ffebee;
+            color: #d32f2f;
+        }
+
+        .activity-arrow {
+            color: #667eea;
+            font-size: 1.2em;
+            transition: transform 0.3s ease;
+            margin-left: 15px;
+        }
+
+        .activity-item.active .activity-arrow {
+            transform: rotate(180deg);
+        }
+
+        .activity-details {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease;
+            background: #f8f9fa;
+        }
+
+        .activity-item.active .activity-details {
+            max-height: 800px;
+        }
+
+        .details-content {
+            padding: 25px;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .detail-field {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .detail-label {
+            font-size: 0.85em;
+            color: #666;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .detail-value {
+            font-size: 1.1em;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .empty-state .icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+            opacity: 0.3;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #667eea;
+            font-size: 1.2em;
+        }
+
+        /* Animazioni */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .activity-item {
+            animation: fadeIn 0.5s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 Sistema CRM</h1>
+            <p>Gestione Attività e Clienti</p>
+        </div>
+
+        <div class="dashboard-card">
+            <div class="dashboard-header" id="dashboardHeader">
+                <h2>
+                    <span class="icon">📋</span>
+                    Attività CRM
+                </h2>
+                <span class="arrow">▼</span>
+            </div>
+            <div class="dashboard-content" id="dashboardContent">
+                <div class="activities-list" id="activitiesList">
+                    <div class="loading">Caricamento attività...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        // Configurazione Supabase
+        const SUPABASE_URL = 'YOUR_SUPABASE_URL';
+        const SUPABASE_KEY = 'YOUR_SUPABASE_ANON_KEY';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        // Toggle Dashboard
+        const dashboardHeader = document.getElementById('dashboardHeader');
+        const dashboardContent = document.getElementById('dashboardContent');
+
+        dashboardHeader.addEventListener('click', () => {
+            dashboardHeader.classList.toggle('active');
+            dashboardContent.classList.toggle('active');
+            
+            // Carica le attività solo quando apri il cruscotto
+            if (dashboardContent.classList.contains('active') && 
+                document.getElementById('activitiesList').children.length === 1) {
+                loadActivities();
+            }
+        });
+
+        // Funzione per determinare la classe dello stato
+        function getStatusClass(stato) {
+            if (!stato) return 'status-aperto';
+            const statoLower = stato.toLowerCase();
+            if (statoLower.includes('completato') || statoLower.includes('chiuso')) {
+                return 'status-completato';
+            } else if (statoLower.includes('corso') || statoLower.includes('lavorazione')) {
+                return 'status-in-corso';
+            } else if (statoLower.includes('annullato') || statoLower.includes('cancellato')) {
+                return 'status-annullato';
+            }
+            return 'status-aperto';
+        }
+
+        // Funzione per formattare la data
+        function formatDate(dateString) {
+            if (!dateString) return 'Non specificata';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('it-IT', { 
+                day: '2-digit', 
+                month: '2-digit', 
+                year: 'numeric' 
+            });
+        }
+
+        // Carica le attività da Supabase
+        async function loadActivities() {
+            const activitiesList = document.getElementById('activitiesList');
+            activitiesList.innerHTML = '<div class="loading">Caricamento attività...</div>';
+
+            try {
+                const { data, error } = await supabase
+                    .from('Attivita')
+                    .select('*')
+                    .order('ID_Attivita', { ascending: false });
+
+                if (error) throw error;
+
+                if (!data || data.length === 0) {
+                    activitiesList.innerHTML = `
+                        <div class="empty-state">
+                            <div class="icon">📭</div>
+                            <h3>Nessuna attività presente</h3>
+                            <p>Non ci sono attività da visualizzare</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                // Genera l'HTML per ogni attività
+                activitiesList.innerHTML = data.map(activity => `
+                    <div class="activity-item" data-id="${activity.ID_Attivita}">
+                        <div class="activity-header">
+                            <div class="activity-main-info">
+                                <div class="activity-title">
+                                    Attività #${activity.ID_Attivita} - ${activity.clienteApplicato || 'Cliente non specificato'}
+                                </div>
+                                <div class="activity-meta">
+                                    <div class="meta-item">
+                                        <span class="label">📅 Creazione:</span>
+                                        <span>${activity.dataCreazioneFormattata || formatDate(activity._dataCreazione)}</span>
+                                    </div>
+                                    <div class="meta-item">
+                                        <span class="label">🎯 Consegna:</span>
+                                        <span>${activity.dataConsegnaFormattata || formatDate(activity._dataConsegna)}</span>
+                                    </div>
+                                    <div class="meta-item">
+                                        <span class="label">📦 Tipo:</span>
+                                        <span>${activity.tipologiaFormattata || 'Non specificato'}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="display: flex; align-items: center;">
+                                <div class="activity-status ${getStatusClass(activity.stato)}">
+                                    ${activity.stato || 'Aperto'}
+                                </div>
+                                <span class="activity-arrow">▼</span>
+                            </div>
+                        </div>
+                        <div class="activity-details">
+                            <div class="details-content">
+                                <div class="details-grid">
+                                    <div class="detail-field">
+                                        <div class="detail-label">ID Attività</div>
+                                        <div class="detail-value">#${activity.ID_Attivita}</div>
+                                    </div>
+                                    <div class="detail-field">
+                                        <div class="detail-label">Cliente</div>
+                                        <div class="detail-value">${activity.clienteApplicato || 'Non specificato'}</div>
+                                    </div>
+                                    <div class="detail-field">
+                                        <div class="detail-label">Data Creazione</div>
+                                        <div class="detail-value">${activity.dataCreazioneFormattata || formatDate(activity._dataCreazione)}</div>
+                                    </div>
+                                    <div class="detail-field">
+                                        <div class="detail-label">Data Consegna</div>
+                                        <div class="detail-value">${activity.dataConsegnaFormattata || formatDate(activity._dataConsegna)}</div>
+                                    </div>
+                                    <div class="detail-field">
+                                        <div class="detail-label">Tipologia</div>
+                                        <div class="detail-value">${activity.tipologiaFormattata || 'Non specificato'}</div>
+                                    </div>
+                                    <div class="detail-field">
+                                        <div class="detail-label">Trasferimento</div>
+                                        <div class="detail-value">${activity.trasferimento || 'Non specificato'}</div>
+                                    </div>
+                                    <div class="detail-field">
+                                        <div class="detail-label">Stato</div>
+                                        <div class="detail-value">${activity.stato || 'Aperto'}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+
+                // Aggiungi event listener per espandere le singole attività
+                document.querySelectorAll('.activity-header').forEach(header => {
+                    header.addEventListener('click', function() {
+                        const activityItem = this.closest('.activity-item');
+                        activityItem.classList.toggle('active');
+                    });
+                });
+
+            } catch (error) {
+                console.error('Errore nel caricamento delle attività:', error);
+                activitiesList.innerHTML = `
+                    <div class="empty-state">
+                        <div class="icon">⚠️</div>
+                        <h3>Errore nel caricamento</h3>
+                        <p>${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>

@@ -106,14 +106,12 @@
         }
 
         .dashboard-content {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.5s ease;
+            display: none;
             background: rgba(20, 20, 30, 0.5);
         }
 
         .dashboard-content.active {
-            max-height: 5000px;
+            display: block;
         }
 
         .activities-list {
@@ -230,14 +228,12 @@
         }
 
         .activity-details {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.4s ease;
+            display: none;
             background: rgba(25, 25, 40, 0.6);
         }
 
         .activity-item.active .activity-details {
-            max-height: 1000px;
+            display: block;
         }
 
         .details-content {
@@ -323,19 +319,6 @@
         .activity-item {
             animation: fadeIn 0.5s ease;
         }
-
-        @keyframes glow {
-            0%, 100% {
-                box-shadow: 0 0 5px rgba(102, 126, 234, 0.5);
-            }
-            50% {
-                box-shadow: 0 0 20px rgba(102, 126, 234, 0.8);
-            }
-        }
-
-        .dashboard-card:hover {
-            animation: glow 2s infinite;
-        }
     </style>
 </head>
 <body>
@@ -346,7 +329,7 @@
         </div>
 
         <div class="dashboard-card">
-            <div class="dashboard-header" id="dashboardHeader">
+            <div class="dashboard-header" onclick="toggleDashboard()">
                 <h2>
                     <span class="icon">📋</span>
                     Attività CRM
@@ -363,30 +346,25 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        // Configurazione Supabase - CREDENZIALI CORRETTE
         const SUPABASE_URL = 'https://uoykvjxerdrthnmnfmgc.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVveWt2anhvcmRydGhubW5mbWdjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzQ4ODA4NTgsImV4cCI6MjA1MDQ1Njg1OH0.HNXrLZnZf6vRWnz4b8gqQFEeFMXoJjqCHsAJb_xZbJQ';
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        // Toggle Dashboard
-        const dashboardHeader = document.getElementById('dashboardHeader');
-        const dashboardContent = document.getElementById('dashboardContent');
         let activitiesLoaded = false;
 
-        dashboardHeader.addEventListener('click', () => {
-            console.log('Dashboard header clicked!'); // DEBUG
-            dashboardHeader.classList.toggle('active');
-            dashboardContent.classList.toggle('active');
+        function toggleDashboard() {
+            const header = document.querySelector('.dashboard-header');
+            const content = document.getElementById('dashboardContent');
             
-            // Carica le attività solo la prima volta che apri il cruscotto
-            if (dashboardContent.classList.contains('active') && !activitiesLoaded) {
-                console.log('Loading activities...'); // DEBUG
+            header.classList.toggle('active');
+            content.classList.toggle('active');
+            
+            if (content.classList.contains('active') && !activitiesLoaded) {
                 activitiesLoaded = true;
                 loadActivities();
             }
-        });
+        }
 
-        // Funzione per determinare la classe dello stato
         function getStatusClass(stato) {
             if (!stato) return 'status-aperto';
             const statoLower = stato.toLowerCase();
@@ -400,7 +378,6 @@
             return 'status-aperto';
         }
 
-        // Funzione per formattare la data
         function formatDate(dateString) {
             if (!dateString) return 'Non specificata';
             const date = new Date(dateString);
@@ -411,20 +388,20 @@
             });
         }
 
-        // Carica le attività da Supabase
+        function toggleActivity(element) {
+            const activityItem = element.closest('.activity-item');
+            activityItem.classList.toggle('active');
+        }
+
         async function loadActivities() {
             const activitiesList = document.getElementById('activitiesList');
             activitiesList.innerHTML = '<div class="loading">Caricamento attività...</div>';
 
             try {
-                console.log('Fetching data from Supabase...'); // DEBUG
                 const { data, error } = await supabase
                     .from('Attivita')
                     .select('*')
                     .order('ID_Attivita', { ascending: false });
-
-                console.log('Data received:', data); // DEBUG
-                console.log('Error:', error); // DEBUG
 
                 if (error) throw error;
 
@@ -439,9 +416,8 @@
                     return;
                 }
 
-                // Genera l'HTML per ogni attività
                 activitiesList.innerHTML = data.map(activity => `
-                    <div class="activity-item" data-id="${activity.ID_Attivita}">
+                    <div class="activity-item">
                         <div class="activity-header" onclick="toggleActivity(this)">
                             <div class="activity-main-info">
                                 <div class="activity-title">
@@ -506,10 +482,8 @@
                     </div>
                 `).join('');
 
-                console.log('Activities rendered!'); // DEBUG
-
             } catch (error) {
-                console.error('Errore nel caricamento delle attività:', error);
+                console.error('Errore:', error);
                 activitiesList.innerHTML = `
                     <div class="empty-state">
                         <div class="icon">⚠️</div>
@@ -518,13 +492,6 @@
                     </div>
                 `;
             }
-        }
-
-        // Funzione per espandere/contrarre singola attività
-        function toggleActivity(headerElement) {
-            console.log('Activity clicked!'); // DEBUG
-            const activityItem = headerElement.closest('.activity-item');
-            activityItem.classList.toggle('active');
         }
     </script>
 </body>

@@ -679,40 +679,50 @@
 
         .gantt-summary-row {
             display: flex;
-            align-items: stretch;
+            flex-direction: column;
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            min-height: 40px;
             position: relative;
+            background: rgba(255, 255, 255, 0.02);
+            margin-bottom: 8px;
+            border-radius: 8px;
+            overflow: hidden;
         }
 
         .gantt-summary-row:hover {
-            background: rgba(255, 255, 255, 0.02);
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .gantt-row-header {
+            display: flex;
+            align-items: center;
+            padding: 8px 12px;
+            background: rgba(10, 14, 26, 0.6);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
         }
 
         .gantt-person-cell {
-            width: 180px;
-            flex-shrink: 0;
             font-size: 0.85em;
             font-weight: 600;
             color: rgba(255, 255, 255, 0.9);
-            padding: 10px 12px;
-            display: flex;
-            align-items: center;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            background: rgba(10, 14, 26, 0.95);
-            position: sticky;
-            left: 0;
-            z-index: 2;
-            border-right: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .gantt-row-timeline {
+            display: flex;
+            position: relative;
+            min-height: 40px;
+        }
+
+        .gantt-timeline-wrapper {
+            display: flex;
+            flex: 1;
         }
 
         @media (max-width: 430px) {
             .gantt-person-cell {
-                width: 140px;
                 font-size: 0.75em;
-                padding: 10px 8px;
             }
             
             .gantt-person-header {
@@ -1835,11 +1845,15 @@
 
                     return `
                         <div class="gantt-summary-row">
-                            <div class="gantt-person-cell">${person}</div>
-                            <div class="gantt-timeline-row">
-                                ${slots}
-                                ${taskBars}
-                                ${currentTimeLine}
+                            <div class="gantt-row-header">
+                                <div class="gantt-person-cell">${person}</div>
+                            </div>
+                            <div class="gantt-row-timeline">
+                                <div class="gantt-timeline-wrapper">
+                                    ${slots}
+                                    ${taskBars}
+                                    ${currentTimeLine}
+                                </div>
                             </div>
                         </div>
                     `;
@@ -1936,10 +1950,14 @@
 
                     return `
                         <div class="gantt-summary-row">
-                            <div class="gantt-person-cell">${person}</div>
-                            <div class="gantt-timeline-row">
-                                ${slots}
-                                ${currentTimeLine}
+                            <div class="gantt-row-header">
+                                <div class="gantt-person-cell">${person}</div>
+                            </div>
+                            <div class="gantt-row-timeline">
+                                <div class="gantt-timeline-wrapper">
+                                    ${slots}
+                                    ${currentTimeLine}
+                                </div>
                             </div>
                         </div>
                     `;

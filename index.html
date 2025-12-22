@@ -18,7 +18,7 @@
 
         body {
             font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a0000 100%);
             min-height: 100vh;
             padding: 15px;
             color: #e0e0e0;
@@ -39,12 +39,13 @@
         .main-title {
             font-size: 2em;
             font-weight: 700;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #ff0000 0%, #cc0000 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
             margin-bottom: 8px;
             letter-spacing: 1px;
+            text-shadow: 0 0 20px rgba(255, 0, 0, 0.3);
         }
 
         .subtitle {
@@ -53,26 +54,32 @@
             font-weight: 300;
         }
 
-        /* Dashboard */
+        /* Dashboard - Ingrandito */
         .dashboard {
-            background: rgba(30, 30, 46, 0.95);
-            border: 1px solid rgba(102, 126, 234, 0.3);
+            background: rgba(20, 0, 0, 0.95);
+            border: 2px solid rgba(255, 0, 0, 0.3);
             border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 10px 40px rgba(255, 0, 0, 0.3);
             overflow: hidden;
             margin-bottom: 20px;
         }
 
         .dashboard-header {
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.3) 0%, rgba(118, 75, 162, 0.3) 100%);
-            padding: 20px 18px;
+            background: linear-gradient(135deg, rgba(255, 0, 0, 0.3) 0%, rgba(139, 0, 0, 0.3) 100%);
+            padding: 25px 18px;
             cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            border-bottom: 2px solid rgba(255, 0, 0, 0.3);
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        .dashboard-top {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid rgba(102, 126, 234, 0.2);
-            -webkit-user-select: none;
-            user-select: none;
         }
 
         .dashboard-title {
@@ -83,24 +90,104 @@
 
         .dashboard-title h2 {
             color: white;
-            font-size: 1.3em;
+            font-size: 1.4em;
             font-weight: 600;
             margin: 0;
+            text-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
         }
 
         .dashboard-icon {
-            font-size: 1.5em;
+            font-size: 1.7em;
+            filter: drop-shadow(0 0 10px rgba(255, 0, 0, 0.8));
         }
 
         .toggle-arrow {
             font-size: 1.5em;
-            color: #667eea;
+            color: #ff0000;
             transition: transform 0.3s ease;
+            filter: drop-shadow(0 0 10px rgba(255, 0, 0, 0.8));
+        }
+
+        /* Progress Bars Container */
+        .progress-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            padding: 20px 10px;
+        }
+
+        .progress-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .progress-label {
+            font-size: 0.85em;
+            color: #ffffff;
+            font-weight: 600;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Circular Progress Bar */
+        .circular-progress {
+            position: relative;
+            width: 120px;
+            height: 120px;
+        }
+
+        .circular-progress svg {
+            transform: rotate(-90deg);
+        }
+
+        .progress-bg {
+            fill: none;
+            stroke: rgba(255, 255, 255, 0.1);
+            stroke-width: 10;
+        }
+
+        .progress-bar {
+            fill: none;
+            stroke-width: 10;
+            stroke-linecap: round;
+            transition: stroke-dashoffset 1s ease;
+        }
+
+        .progress-bar.preventivi {
+            stroke: url(#gradient-preventivi);
+        }
+
+        .progress-bar.ordini {
+            stroke: url(#gradient-ordini);
+        }
+
+        .progress-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+
+        .progress-percentage {
+            font-size: 1.8em;
+            font-weight: 700;
+            color: #ff0000;
+            text-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+        }
+
+        .progress-subtitle {
+            font-size: 0.7em;
+            color: rgba(255, 255, 255, 0.6);
+            margin-top: -5px;
         }
 
         .dashboard-content {
             display: none;
-            background: rgba(20, 20, 35, 0.5);
+            background: rgba(10, 0, 0, 0.7);
             padding: 15px;
         }
 
@@ -108,19 +195,20 @@
             display: block;
         }
 
-        /* Activity Card - Ottimizzato Mobile */
+        /* Activity Card */
         .activity-card {
-            background: rgba(40, 40, 60, 0.8);
-            border: 1px solid rgba(102, 126, 234, 0.2);
+            background: rgba(30, 0, 0, 0.8);
+            border: 1px solid rgba(255, 0, 0, 0.2);
             border-radius: 15px;
             margin-bottom: 15px;
             overflow: hidden;
+            box-shadow: 0 5px 15px rgba(255, 0, 0, 0.2);
         }
 
         .activity-card-header {
             padding: 18px 15px;
             cursor: pointer;
-            border-left: 4px solid #667eea;
+            border-left: 4px solid #ff0000;
         }
 
         .activity-info {
@@ -153,7 +241,7 @@
 
         .meta-label {
             font-weight: 600;
-            color: #667eea;
+            color: #ff0000;
             white-space: nowrap;
         }
 
@@ -163,7 +251,7 @@
             align-items: center;
             margin-top: 15px;
             padding-top: 12px;
-            border-top: 1px solid rgba(102, 126, 234, 0.15);
+            border-top: 1px solid rgba(255, 0, 0, 0.2);
         }
 
         .status-badge {
@@ -176,40 +264,40 @@
         }
 
         .status-aperto {
-            background: rgba(33, 150, 243, 0.2);
-            color: #64b5f6;
-            border: 1px solid rgba(33, 150, 243, 0.4);
+            background: rgba(255, 69, 0, 0.2);
+            color: #ff6347;
+            border: 1px solid rgba(255, 69, 0, 0.4);
         }
 
         .status-in-corso {
-            background: rgba(255, 152, 0, 0.2);
-            color: #ffb74d;
-            border: 1px solid rgba(255, 152, 0, 0.4);
+            background: rgba(255, 140, 0, 0.2);
+            color: #ffa500;
+            border: 1px solid rgba(255, 140, 0, 0.4);
         }
 
         .status-completato {
-            background: rgba(76, 175, 80, 0.2);
-            color: #81c784;
-            border: 1px solid rgba(76, 175, 80, 0.4);
+            background: rgba(0, 255, 0, 0.2);
+            color: #32cd32;
+            border: 1px solid rgba(0, 255, 0, 0.4);
         }
 
         .status-annullato {
-            background: rgba(244, 67, 54, 0.2);
-            color: #e57373;
-            border: 1px solid rgba(244, 67, 54, 0.4);
+            background: rgba(139, 0, 0, 0.3);
+            color: #dc143c;
+            border: 1px solid rgba(139, 0, 0, 0.5);
         }
 
         .activity-arrow {
             font-size: 1.3em;
-            color: #667eea;
+            color: #ff0000;
             transition: transform 0.3s ease;
         }
 
         .activity-details {
             display: none;
-            background: rgba(25, 25, 40, 0.6);
+            background: rgba(15, 0, 0, 0.8);
             padding: 18px 15px;
-            border-top: 1px solid rgba(102, 126, 234, 0.2);
+            border-top: 1px solid rgba(255, 0, 0, 0.2);
         }
 
         .activity-details.show {
@@ -223,16 +311,16 @@
         }
 
         .detail-box {
-            background: rgba(50, 50, 70, 0.6);
+            background: rgba(40, 0, 0, 0.6);
             padding: 15px;
             border-radius: 10px;
-            border: 1px solid rgba(102, 126, 234, 0.2);
+            border: 1px solid rgba(255, 0, 0, 0.2);
         }
 
         .detail-label {
             font-size: 0.75em;
             font-weight: 600;
-            color: #667eea;
+            color: #ff0000;
             text-transform: uppercase;
             margin-bottom: 6px;
             letter-spacing: 0.5px;
@@ -248,7 +336,7 @@
         .loading-state, .empty-state {
             text-align: center;
             padding: 40px 20px;
-            color: #667eea;
+            color: #ff0000;
             font-size: 1.1em;
         }
 
@@ -258,7 +346,7 @@
             opacity: 0.3;
         }
 
-        /* Animazioni smooth per mobile */
+        /* Animazioni */
         .activity-card {
             transition: transform 0.2s ease;
         }
@@ -267,56 +355,34 @@
             transform: scale(0.98);
         }
 
-        /* Ottimizzazioni per schermi piccoli */
+        /* Responsive */
         @media (max-width: 375px) {
-            body {
-                padding: 10px;
+            .progress-container {
+                gap: 15px;
             }
 
-            .main-title {
-                font-size: 1.8em;
+            .circular-progress {
+                width: 100px;
+                height: 100px;
             }
 
-            .dashboard-title h2 {
-                font-size: 1.1em;
-            }
-
-            .activity-title {
-                font-size: 0.95em;
-            }
-
-            .meta-item {
-                font-size: 0.8em;
+            .progress-percentage {
+                font-size: 1.5em;
             }
         }
 
-        /* Ottimizzazioni per iPhone Pro Max */
         @media (min-width: 430px) {
             .details-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
-        }
 
-        /* Landscape mode */
-        @media (orientation: landscape) and (max-height: 500px) {
-            .title-section {
-                margin-bottom: 15px;
-            }
-
-            .main-title {
-                font-size: 1.5em;
-            }
-
-            .subtitle {
-                font-size: 0.8em;
-            }
-
-            .dashboard-header {
-                padding: 15px 18px;
+            .circular-progress {
+                width: 140px;
+                height: 140px;
             }
         }
 
-        /* Safe area per iPhone con notch */
+        /* Safe area iPhone */
         @supports (padding: max(0px)) {
             body {
                 padding-left: max(15px, env(safe-area-inset-left));
@@ -329,18 +395,66 @@
 <body>
     <div class="main-container">
         <div class="title-section">
-            <h1 class="main-title">PRO SYSTEM</h1>
+            <h1 class="main-title">🎯 CRM Sistema</h1>
             <p class="subtitle">Gestione Attività e Clienti</p>
         </div>
 
         <div class="dashboard">
             <div class="dashboard-header" id="dashHeader">
-                <div class="dashboard-title">
-                    <span class="dashboard-icon">📋</span>
-                    <h2>Attività CRM</h2>
+                <div class="dashboard-top">
+                    <div class="dashboard-title">
+                        <span class="dashboard-icon">📋</span>
+                        <h2>Attività CRM</h2>
+                    </div>
+                    <span class="toggle-arrow" id="dashArrow">▼</span>
                 </div>
-                <span class="toggle-arrow" id="dashArrow">▼</span>
+                
+                <!-- Progress Bars -->
+                <div class="progress-container">
+                    <div class="progress-item">
+                        <div class="progress-label">Ritardi Preventivi</div>
+                        <div class="circular-progress">
+                            <svg width="120" height="120" viewBox="0 0 120 120">
+                                <defs>
+                                    <linearGradient id="gradient-preventivi" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" style="stop-color:#ff0000;stop-opacity:1" />
+                                        <stop offset="100%" style="stop-color:#8b0000;stop-opacity:1" />
+                                    </linearGradient>
+                                </defs>
+                                <circle class="progress-bg" cx="60" cy="60" r="52"></circle>
+                                <circle class="progress-bar preventivi" id="progressPreventivi" cx="60" cy="60" r="52"
+                                    stroke-dasharray="326.73" stroke-dashoffset="326.73"></circle>
+                            </svg>
+                            <div class="progress-text">
+                                <div class="progress-percentage" id="percentPreventivi">0%</div>
+                                <div class="progress-subtitle">ritardo</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="progress-item">
+                        <div class="progress-label">Ritardi Ordini</div>
+                        <div class="circular-progress">
+                            <svg width="120" height="120" viewBox="0 0 120 120">
+                                <defs>
+                                    <linearGradient id="gradient-ordini" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" style="stop-color:#dc143c;stop-opacity:1" />
+                                        <stop offset="100%" style="stop-color:#8b0000;stop-opacity:1" />
+                                    </linearGradient>
+                                </defs>
+                                <circle class="progress-bg" cx="60" cy="60" r="52"></circle>
+                                <circle class="progress-bar ordini" id="progressOrdini" cx="60" cy="60" r="52"
+                                    stroke-dasharray="326.73" stroke-dashoffset="326.73"></circle>
+                            </svg>
+                            <div class="progress-text">
+                                <div class="progress-percentage" id="percentOrdini">0%</div>
+                                <div class="progress-subtitle">ritardo</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
+
             <div class="dashboard-content" id="dashContent">
                 <div id="activitiesList">
                     <div class="loading-state">Caricamento...</div>
@@ -354,7 +468,7 @@
         (function() {
             const sb = window.supabase.createClient(
                 'https://uoykvjxerdrthnmnfmgc.supabase.co',
-                'sb_publishable_iGVhzkLqAktDZmpccXl7OA_PZ2nUYSY'
+                'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVveWt2anhvcmRydGhubW5mbWdjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzQ4ODA4NTgsImV4cCI6MjA1MDQ1Njg1OH0.HNXrLZnZf6vRWnz4b8gqQFEeFMXoJjqCHsAJb_xZbJQ'
             );
 
             let loaded = false;
@@ -389,6 +503,54 @@
                 }
             };
 
+            function setCircularProgress(elementId, percentId, percentage) {
+                const circle = document.getElementById(elementId);
+                const percentText = document.getElementById(percentId);
+                const circumference = 326.73;
+                const offset = circumference - (percentage / 100) * circumference;
+                
+                setTimeout(() => {
+                    circle.style.strokeDashoffset = offset;
+                    percentText.textContent = Math.round(percentage) + '%';
+                }, 100);
+            }
+
+            function calculateDelayPercentages(data) {
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+
+                let preventiviTotal = 0;
+                let preventiviRitardo = 0;
+                let ordiniTotal = 0;
+                let ordiniRitardo = 0;
+
+                data.forEach(a => {
+                    const consegna = a._dataConsegna ? new Date(a._dataConsegna) : null;
+                    if (!consegna) return;
+
+                    const tipo = (a.tipologiaFormattata || '').toLowerCase();
+                    const stato = (a.stato || '').toLowerCase();
+                    
+                    // Escludi completati
+                    if (stato.includes('completato') || stato.includes('chiuso')) return;
+
+                    const isRitardo = consegna < today;
+
+                    if (tipo.includes('preventivo')) {
+                        preventiviTotal++;
+                        if (isRitardo) preventiviRitardo++;
+                    } else if (tipo.includes('ordine') || tipo.includes('ordini')) {
+                        ordiniTotal++;
+                        if (isRitardo) ordiniRitardo++;
+                    }
+                });
+
+                const preventiviPerc = preventiviTotal > 0 ? (preventiviRitardo / preventiviTotal) * 100 : 0;
+                const ordiniPerc = ordiniTotal > 0 ? (ordiniRitardo / ordiniTotal) * 100 : 0;
+
+                return { preventiviPerc, ordiniPerc };
+            }
+
             function getStatus(s) {
                 if (!s) return 'status-aperto';
                 const l = s.toLowerCase();
@@ -415,6 +577,14 @@
                     const { data, error } = await sb.from('Attivita').select('*').order('ID_Attivita', { ascending: false });
 
                     if (error) throw error;
+
+                    // Calcola percentuali ritardo
+                    if (data && data.length > 0) {
+                        const { preventiviPerc, ordiniPerc } = calculateDelayPercentages(data);
+                        setCircularProgress('progressPreventivi', 'percentPreventivi', preventiviPerc);
+                        setCircularProgress('progressOrdini', 'percentOrdini', ordiniPerc);
+                    }
+
                     if (!data || !data.length) {
                         list.innerHTML = '<div class="empty-state"><div class="empty-icon">📭</div>Nessuna attività</div>';
                         return;
@@ -487,6 +657,9 @@
                     list.innerHTML = `<div class="empty-state"><div class="empty-icon">⚠️</div>Errore: ${e.message}</div>`;
                 }
             }
+
+            // Carica i dati all'avvio per mostrare le progress bar
+            loadData();
 
             document.getElementById('dashHeader').onclick = window.toggleDash;
         })();

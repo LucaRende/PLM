@@ -1348,16 +1348,18 @@
             align-items: center;
             justify-content: center;
             gap: 30px;
-            opacity: 1;
-            transition: opacity 0.5s ease;
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
+            opacity: 1;
+            visibility: visible;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
         }
 
         .loading-container.hidden {
             opacity: 0;
+            visibility: hidden;
             pointer-events: none;
         }
 
@@ -1408,32 +1410,36 @@
 
         /* Login form */
         .login-form-container {
-            display: none;
+            display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             gap: 30px;
-            animation: slide-up 0.6s cubic-bezier(0.4, 0, 0.2, 1);
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
             width: 90%;
             max-width: 450px;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.5s;
         }
 
         .login-form-container.active {
-            display: flex;
+            opacity: 1;
+            visibility: visible;
+            animation: slide-up 0.6s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         @keyframes slide-up {
             from {
                 opacity: 0;
-                transform: translateY(30px);
+                transform: translate(-50%, -40%);
             }
             to {
                 opacity: 1;
-                transform: translateY(0);
+                transform: translate(-50%, -50%);
             }
         }
 
@@ -2553,8 +2559,8 @@
 
         // ===== UFFICIO TECNICO GANTT DASHBOARD =====
         (function() {
-            const SUPABASE_URL = 'https://uoykvjxerdrthnmnfmgc.supabase.co';
-            const SUPABASE_KEY = 'sb_publishable_iGVhzkLqAktDZmpccXl7OA_PZ2nUYSY';
+            const SUPABASE_URL = 'https://nfgsxpkrotvgbxmidukg.supabase.co';
+            const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5mZ3N4cGtyb3R2Z2J4bWlkdWtnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzI2MjE0NTUsImV4cCI6MjA0ODE5NzQ1NX0.fEhQRiR6MpdOyT2oqXz9cMc0lBe3xj4vEfLSV8wI7gs';
             const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
             let allTasks = [];

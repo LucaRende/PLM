@@ -445,13 +445,25 @@
 <body>
     <div class="main-container">
         <div class="title-section">
-            <div class="logo-container">
-                <!-- Prova tutti i possibili percorsi del logo -->
-                <img src="https://raw.githubusercontent.com/LucaRende/PLM/master/Logo%20tondo.png" 
-                     alt="Logo CRM" 
-                     class="logo"
-                     onerror="this.onerror=null; this.src='https://raw.githubusercontent.com/LucaRende/PLM/main/Logo%20tondo.png';">
-            </div>
+         <div class="logo-container">
+    <!-- DEBUG: Prova TUTTI i possibili percorsi -->
+    <img src="Logo tondo.png" alt="Logo 1" class="logo" 
+         onerror="console.error('Tentativo 1 fallito: Logo tondo.png'); 
+                  this.src='logo tondo.png'; 
+                  this.onerror=function(){
+                      console.error('Tentativo 2 fallito: logo tondo.png');
+                      this.src='Logo Tondo.png';
+                      this.onerror=function(){
+                          console.error('Tentativo 3 fallito: Logo Tondo.png');
+                          this.src='logo-tondo.png';
+                          this.onerror=function(){
+                              console.error('Tentativo 4 fallito: logo-tondo.png');
+                              this.src='https://via.placeholder.com/100/667eea/ffffff?text=LOGO';
+                              console.error('LOGO NON TROVATO - Usando placeholder');
+                          }
+                      }
+                  }">
+</div>
             <p class="subtitle">Gestione Attività e Clienti</p>
         </div>
 
@@ -716,4 +728,5 @@
     </script>
 </body>
 </html>
+
 

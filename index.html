@@ -1455,17 +1455,22 @@
         }
 
         .login-icon {
-            width: 80px;
-            height: 80px;
+            width: 100px;
+            height: 100px;
             margin: 0 auto 20px;
-            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            background: transparent;
             border-radius: 20px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 2.5em;
-            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.4);
-            animation: rotate-icon 20s linear infinite;
+            overflow: hidden;
+        }
+
+        .login-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            animation: pulse-logo 2s infinite;
         }
 
         @keyframes rotate-icon {
@@ -1599,12 +1604,53 @@
 
         @media (max-width: 768px) {
             .login-card {
-                min-width: 90%;
-                padding: 40px 30px;
+                min-width: 85%;
+                max-width: 400px;
+                padding: 35px 25px;
             }
 
             .login-title {
-                font-size: 1.5em;
+                font-size: 1.4em;
+            }
+
+            .login-icon {
+                width: 80px;
+                height: 80px;
+                margin-bottom: 15px;
+            }
+
+            .login-input {
+                padding: 14px 18px;
+                font-size: 16px; /* Prevents iOS zoom on focus */
+            }
+
+            .login-button {
+                padding: 14px;
+                font-size: 1em;
+            }
+
+            /* Adjust particles for mobile */
+            .particle {
+                display: none;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .login-card {
+                min-width: 90%;
+                padding: 30px 20px;
+            }
+
+            .login-header {
+                margin-bottom: 25px;
+            }
+
+            .login-title {
+                font-size: 1.3em;
+            }
+
+            .login-subtitle {
+                font-size: 0.85em;
             }
         }
 
@@ -1831,41 +1877,48 @@
         /* PC Optimization - Desktop & Tablet */
         @media (min-width: 1024px) {
             .main-container {
-                max-width: 1400px;
+                max-width: 1600px;
                 padding: 30px 40px;
+                margin: 0 auto;
             }
 
-            /* Two column layout for dashboards */
+            /* Full width dashboards on PC - NO grid columns */
             .dashboards-grid {
-                display: grid;
-                grid-template-columns: 1fr 1fr;
-                gap: 30px;
-                align-items: start;
+                display: block;
             }
 
             .dashboard {
-                margin-bottom: 0;
+                margin-bottom: 30px;
+                width: 100%;
             }
 
-            /* Gantt takes full width on desktop */
             .gantt-dashboard-wrapper {
-                grid-column: 1 / -1;
+                width: 100%;
             }
 
             /* Larger dashboard cards */
             .dashboard-header {
-                padding: 24px;
+                padding: 30px;
             }
 
             .dashboard-title h2 {
-                font-size: 1.4em;
+                font-size: 1.5em;
+            }
+
+            /* Progress circles side by side on desktop */
+            .progress-container {
+                display: flex;
+                justify-content: center;
+                gap: 80px;
+                padding: 30px;
             }
 
             /* Better activity cards grid */
             .activities-list {
                 display: grid;
-                grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-                gap: 16px;
+                grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+                gap: 20px;
+                padding: 20px;
             }
 
             /* Gantt optimizations */
@@ -1874,21 +1927,21 @@
             }
 
             .gantt-hour-header {
-                min-width: 60px;
-                font-size: 0.8em;
-                padding: 10px 6px;
+                min-width: 70px;
+                font-size: 0.85em;
+                padding: 12px 8px;
             }
 
             .gantt-hour-slot {
-                min-width: 60px;
+                min-width: 70px;
             }
 
             .gantt-row-header {
-                padding: 10px 16px;
+                padding: 12px 20px;
             }
 
             .gantt-person-cell {
-                font-size: 0.95em;
+                font-size: 1em;
             }
 
             .gantt-row-timeline {
@@ -1898,62 +1951,78 @@
             /* Stats grid */
             .stats-summary {
                 grid-template-columns: repeat(3, 1fr);
-                gap: 16px;
+                gap: 20px;
+                max-width: 900px;
+                margin: 0 auto;
             }
 
             .stat-item {
-                padding: 16px;
+                padding: 20px;
             }
 
             .stat-value {
-                font-size: 2em;
+                font-size: 2.2em;
             }
 
             /* Footer wider on desktop */
             .modern-footer {
                 padding: 50px 40px 40px;
+                margin-top: 80px;
             }
 
             .footer-content {
-                gap: 40px;
+                gap: 50px;
             }
 
             /* Progress circles larger */
             .progress-circle {
-                width: 140px;
-                height: 140px;
+                width: 160px;
+                height: 160px;
             }
 
             .progress-value {
-                font-size: 2em;
+                font-size: 2.2em;
+            }
+
+            .progress-label {
+                font-size: 0.95em;
             }
 
             /* Person sections in expanded gantt */
             .person-section {
-                padding: 20px;
+                padding: 24px;
             }
 
             .task-card {
-                padding: 16px;
+                padding: 18px;
+            }
+
+            /* Activity cards better spacing */
+            .activity-card {
+                padding: 20px;
+            }
+
+            .activity-card-header {
+                padding: 18px 20px;
             }
         }
 
         /* Ultra-wide screens */
         @media (min-width: 1600px) {
             .main-container {
-                max-width: 1600px;
+                max-width: 1800px;
             }
 
             .activities-list {
-                grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+                grid-template-columns: repeat(auto-fill, minmax(450px, 1fr));
             }
 
             .gantt-hour-header {
-                min-width: 70px;
+                min-width: 80px;
             }
 
             .gantt-hour-slot {
-                min-width: 70px;
+                min-width: 80px;
             }
         }
     </style>
@@ -1982,7 +2051,9 @@
         <div class="login-form-container" id="loginFormContainer">
             <div class="login-card">
                 <div class="login-header">
-                    <div class="login-icon">🔐</div>
+                    <div class="login-icon">
+                        <img src="logo-tondo.png" alt="Logo">
+                    </div>
                     <h1 class="login-title">Dashboard PLM</h1>
                     <p class="login-subtitle">Accedi al sistema</p>
                 </div>
@@ -2905,10 +2976,6 @@
                     <div class="footer-stat">
                         <div class="footer-stat-value" id="footerTasks">--</div>
                         <div class="footer-stat-label">Lavori Oggi</div>
-                    </div>
-                    <div class="footer-stat">
-                        <div class="footer-stat-value">99.9%</div>
-                        <div class="footer-stat-label">Uptime</div>
                     </div>
                 </div>
             </div>

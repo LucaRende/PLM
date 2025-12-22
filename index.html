@@ -531,12 +531,131 @@
             word-wrap: break-word;
         }
 
+        /* Person Section in Detail View */
+        .person-section {
+            margin-bottom: 24px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 16px;
+            padding: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .person-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .person-section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .person-section-header h3 {
+            font-size: 1.1em;
+            font-weight: 700;
+            color: white;
+            margin: 0;
+        }
+
+        .task-count {
+            font-size: 0.75em;
+            color: rgba(255, 255, 255, 0.5);
+            font-weight: 600;
+            padding: 4px 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+        }
+
+        /* Gantt Summary (collapsed view) */
+        .gantt-summary {
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .gantt-timeline-mini {
+            display: flex;
+            gap: 1px;
+            margin-bottom: 12px;
+            padding-left: 100px;
+        }
+
+        .gantt-hour-mini {
+            flex: 1;
+            min-width: 40px;
+            text-align: center;
+            font-size: 0.65em;
+            color: rgba(255, 255, 255, 0.4);
+            font-weight: 600;
+            padding: 4px 0;
+        }
+
+        .gantt-summary-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            padding: 6px;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 10px;
+        }
+
+        .gantt-person-mini {
+            width: 90px;
+            font-size: 0.75em;
+            font-weight: 600;
+            color: white;
+            padding-right: 10px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .gantt-bars-mini {
+            flex: 1;
+            display: flex;
+            gap: 1px;
+            position: relative;
+            height: 24px;
+        }
+
+        .gantt-slot-mini {
+            flex: 1;
+            min-width: 40px;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 4px;
+            position: relative;
+        }
+
+        .gantt-task-mini {
+            position: absolute;
+            height: 100%;
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.4);
+        }
+
+        .gantt-task-mini.urgente {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            box-shadow: 0 2px 8px rgba(239, 68, 68, 0.4);
+        }
+
         /* Gantt Chart Styles */
         .gantt-container {
             padding: 20px;
             overflow-x: auto;
             overflow-y: hidden;
-            max-height: 800px;
+            max-height: 1500px;
+            transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .gantt-container.collapsed {
+            max-height: 0;
+            padding: 0;
         }
 
         .gantt-timeline {
@@ -1030,11 +1149,16 @@
                         <div class="stat-label">Occupaz.</div>
                     </div>
                 </div>
+                
+                <!-- Gantt Summary (visible when collapsed) -->
+                <div class="gantt-summary" id="ganttSummary">
+                    <div class="gantt-timeline-mini" id="ganttTimelineMini"></div>
+                    <div id="ganttSummaryRows"></div>
+                </div>
             </div>
 
-            <div class="gantt-container" id="ganttContainer">
-                <div class="gantt-timeline" id="ganttTimeline"></div>
-                <div id="ganttRows"></div>
+            <div class="gantt-container collapsed" id="ganttContainer">
+                <div id="ganttDetailsRows"></div>
             </div>
         </div>
     </div>
@@ -1329,54 +1453,21 @@
             const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
             let allTasks = [];
-            let expandedPerson = null;
 
             function toggleGanttDashboard() {
                 const header = document.getElementById('ganttHeader');
                 const container = document.getElementById('ganttContainer');
                 
                 header.classList.toggle('active');
-                
-                // Toggle visibility of task details for all persons
-                const allDetails = document.querySelectorAll('.person-details');
-                allDetails.forEach(detail => {
-                    if (header.classList.contains('active')) {
-                        // Dashboard is expanded - allow clicking on persons
-                        detail.parentElement.style.pointerEvents = 'auto';
-                    } else {
-                        // Dashboard is collapsed - hide all details and disable clicking
-                        detail.classList.remove('expanded');
-                        detail.parentElement.style.pointerEvents = 'none';
-                    }
-                });
-                
-                if (!header.classList.contains('active')) {
-                    expandedPerson = null;
-                }
-            }
-
-            function togglePerson(personName, element) {
-                const detailsDiv = element.querySelector('.person-details');
-                
-                if (expandedPerson === personName) {
-                    detailsDiv.classList.remove('expanded');
-                    expandedPerson = null;
-                } else {
-                    document.querySelectorAll('.person-details.expanded').forEach(d => {
-                        d.classList.remove('expanded');
-                    });
-                    
-                    detailsDiv.classList.add('expanded');
-                    expandedPerson = personName;
-                }
+                container.classList.toggle('collapsed');
             }
 
             function generateTimeline() {
-                const timeline = document.getElementById('ganttTimeline');
-                const hours = ['8:00', '9:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00'];
+                const timelineMini = document.getElementById('ganttTimelineMini');
+                const hours = ['8:00', '9:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00'];
                 
-                timeline.innerHTML = hours.map(h => 
-                    `<div class="gantt-hour">${h}</div>`
+                timelineMini.innerHTML = hours.map(h => 
+                    `<div class="gantt-hour-mini">${h}</div>`
                 ).join('');
             }
 
@@ -1410,15 +1501,17 @@
             }
 
             function renderGantt(data) {
-                const ganttRows = document.getElementById('ganttRows');
+                const ganttSummaryRows = document.getElementById('ganttSummaryRows');
+                const ganttDetailsRows = document.getElementById('ganttDetailsRows');
                 
                 if (!data || data.length === 0) {
-                    ganttRows.innerHTML = `
+                    ganttSummaryRows.innerHTML = `
                         <div class="empty-state">
                             <div class="empty-icon">📋</div>
-                            <div class="empty-text">Nessun lavoro programmato per oggi</div>
+                            <div class="empty-text">Nessun lavoro programmato</div>
                         </div>
                     `;
+                    ganttDetailsRows.innerHTML = ganttSummaryRows.innerHTML;
                     return;
                 }
 
@@ -1439,7 +1532,8 @@
 
                 const sortedPersons = Object.keys(byPerson).sort();
 
-                ganttRows.innerHTML = sortedPersons.map(person => {
+                // Render Summary View (collapsed state)
+                ganttSummaryRows.innerHTML = sortedPersons.map(person => {
                     const tasks = byPerson[person];
                     
                     const taskBars = tasks.map(task => {
@@ -1447,14 +1541,26 @@
                         const urgent = isUrgent(task.DataConsegna);
                         
                         return `
-                            <div class="gantt-task ${urgent ? 'urgente' : ''}" 
-                                 style="left: ${left}%; width: ${width}%;"
-                                 title="${task.Descrizione || 'Lavoro'} (${formatTime(task.OraInizio)} - ${formatTime(task.OraFine)})">
-                                #${task.ID || '?'}
-                            </div>
+                            <div class="gantt-task-mini ${urgent ? 'urgente' : ''}" 
+                                 style="left: ${left}%; width: ${width}%;"></div>
                         `;
                     }).join('');
 
+                    return `
+                        <div class="gantt-summary-row">
+                            <div class="gantt-person-mini">${person}</div>
+                            <div class="gantt-bars-mini">
+                                ${[...Array(10)].map(() => '<div class="gantt-slot-mini"></div>').join('')}
+                                ${taskBars}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+                // Render Detail View (expanded state)
+                ganttDetailsRows.innerHTML = sortedPersons.map(person => {
+                    const tasks = byPerson[person];
+                    
                     const taskList = tasks.map(task => {
                         const urgent = isUrgent(task.DataConsegna);
                         return `
@@ -1477,16 +1583,13 @@
                     }).join('');
 
                     return `
-                        <div class="gantt-row" onclick="togglePerson('${person}', this)" style="pointer-events: none;">
-                            <div class="gantt-person">${person}</div>
-                            <div class="gantt-bars">
-                                ${[...Array(11)].map(() => '<div class="gantt-slot"></div>').join('')}
-                                ${taskBars}
+                        <div class="person-section">
+                            <div class="person-section-header">
+                                <h3>${person}</h3>
+                                <span class="task-count">${tasks.length} lavori</span>
                             </div>
-                            <div class="person-details">
-                                <div class="task-list">
-                                    ${taskList}
-                                </div>
+                            <div class="task-list">
+                                ${taskList}
                             </div>
                         </div>
                     `;
@@ -1536,7 +1639,6 @@
                 }
             }
 
-            window.togglePerson = togglePerson;
             document.getElementById('ganttHeader').onclick = toggleGanttDashboard;
             generateTimeline();
             loadGanttData();

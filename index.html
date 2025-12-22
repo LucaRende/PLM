@@ -1221,7 +1221,7 @@
             <div class="dashboard-header gantt" id="ganttHeader">
                 <div class="dashboard-top">
                     <div class="dashboard-title">
-                        <span class="dashboard-icon">🧑‍💻</span>
+                        <span class="dashboard-icon">👷</span>
                         <h2>Ufficio Tecnico</h2>
                     </div>
                     <span class="toggle-arrow">▼</span>
@@ -1787,7 +1787,7 @@
             }
 
             async function loadGanttData() {
-                const container = document.getElementById('ganttRows');
+                const container = document.getElementById('ganttSummaryRows');
                 container.innerHTML = `
                     <div class="loading-state">
                         <div class="loading-spinner"></div>
@@ -1799,16 +1799,107 @@
                     const today = new Date();
                     const todayStr = today.toISOString().split('T')[0];
 
+                    // Get all records from UfficioTecnico
                     const { data, error } = await sb
                         .from('UfficioTecnico')
-                        .select('*')
-                        .eq('Data', todayStr)
-                        .order('Persona', { ascending: true })
-                        .order('OraInizio', { ascending: true });
+                        .select('*');
 
                     if (error) throw error;
 
-                    allTasks = data || [];
+                    // Transform the data into individual tasks
+                    const tasks = [];
+                    
+                    if (data && data.length > 0) {
+                        data.forEach(record => {
+                            // Disegno 2D
+                            if (record.Disegno_2D_Assegnato && record.Operatore_Disegno_2D_Assegnato) {
+                                const startDate = record.Data_Disegno_2D_Assegnato_InizioPrevista;
+                                const endDate = record.Data_Disegno_2D_Assegnato_FinePrevista;
+                                
+                                if (startDate === todayStr || endDate === todayStr || 
+                                    (startDate && endDate && startDate <= todayStr && endDate >= todayStr)) {
+                                    tasks.push({
+                                        ID: record.id,
+                                        Persona: record.Operatore_Disegno_2D_Assegnato,
+                                        Descrizione: `Disegno 2D - ${record.codiceProgetto || 'Progetto'}`,
+                                        OraInizio: '08:00:00',
+                                        OraFine: calculateEndTime('08:00:00', record.Tempo_Disegno_2D_Prevista),
+                                        DataConsegna: record.Data_Disegno_2D_Assegnato_FinePrevista,
+                                        Stato: record.Disegno_2D_Fatto ? 'Completato' : 'In corso',
+                                        Data: todayStr
+                                    });
+                                }
+                            }
+
+                            // Disegno 3D
+                            if (record.Disegno_3D_Assegnato && record.Operatore_Disegno_3D_Assegnato) {
+                                const startDate = record.Data_Disegno_3D_Assegnato_InizioPrevista;
+                                const endDate = record.Data_Disegno_3D_Assegnato_FinePrevista;
+                                
+                                if (startDate === todayStr || endDate === todayStr || 
+                                    (startDate && endDate && startDate <= todayStr && endDate >= todayStr)) {
+                                    tasks.push({
+                                        ID: record.id,
+                                        Persona: record.Operatore_Disegno_3D_Assegnato,
+                                        Descrizione: `Disegno 3D - ${record.codiceProgetto || 'Progetto'}`,
+                                        OraInizio: '08:00:00',
+                                        OraFine: calculateEndTime('08:00:00', record.Tempo_Disegno_3D_Prevista),
+                                        DataConsegna: record.Data_Disegno_3D_Assegnato_FinePrevista,
+                                        Stato: record.Disegno_3D_Fatto ? 'Completato' : 'In corso',
+                                        Data: todayStr
+                                    });
+                                }
+                            }
+
+                            // Distinta
+                            if (record.Distinta_Assegnato && record.Operatore_Distinta_Assegnato) {
+                                const startDate = record.Data_Distinta_Assegnato_InizioPrevista;
+                                const endDate = record.Data_Distinta_Assegnato_FinePrevista;
+                                
+                                if (startDate === todayStr || endDate === todayStr || 
+                                    (startDate && endDate && startDate <= todayStr && endDate >= todayStr)) {
+                                    tasks.push({
+                                        ID: record.id,
+                                        Persona: record.Operatore_Distinta_Assegnato,
+                                        Descrizione: `Distinta - ${record.codiceProgetto || 'Progetto'}`,
+                                        OraInizio: '08:00:00',
+                                        OraFine: calculateEndTime('08:00:00', record.Tempo_Distinta_Prevista),
+                                        DataConsegna: record.Data_Distinta_Assegnato_FinePrevista,
+                                        Stato: record.Distinta_Fatto ? 'Completato' : 'In corso',
+                                        Data: todayStr
+                                    });
+                                }
+                            }
+
+                            // Stampare 2D
+                            if (record.Stampare_2D_Assegnato && record.Operatore_Stampare_2D_Assegnato) {
+                                const startDate = record.Data_Stampare_2D_Assegnato_InizioPrevista;
+                                const endDate = record.Data_Stampare_2D_Assegnato_FinePrevista;
+                                
+                                if (startDate === todayStr || endDate === todayStr || 
+                                    (startDate && endDate && startDate <= todayStr && endDate >= todayStr)) {
+                                    // Parse tempo (might be string like "2.5" hours)
+                                    let tempo = 2; // default 2 hours
+                                    if (record.Tempo_Stampare_2Da_Prevista) {
+                                        tempo = parseFloat(record.Tempo_Stampare_2Da_Prevista) || 2;
+                                    }
+                                    
+                                    tasks.push({
+                                        ID: record.id,
+                                        Persona: record.Operatore_Stampare_2D_Assegnato,
+                                        Descrizione: `Stampare 2D - ${record.codiceProgetto || 'Progetto'}`,
+                                        OraInizio: '08:00:00',
+                                        OraFine: calculateEndTime('08:00:00', tempo),
+                                        DataConsegna: record.Data_Stampare_2D_Assegnato_FinePrevista,
+                                        Stato: record.Stampare_2D_Fatto ? 'Completato' : 'In corso',
+                                        Data: todayStr
+                                    });
+                                }
+                            }
+                        });
+                    }
+
+                    allTasks = tasks;
                     
                     const dateLabel = today.toLocaleDateString('it-IT', { 
                         weekday: 'long', 
@@ -1827,6 +1918,23 @@
                         </div>
                     `;
                 }
+            }
+
+            function calculateEndTime(startTime, hoursToAdd) {
+                if (!hoursToAdd) return '10:00:00'; // default 2 hours
+                
+                const [hours, minutes] = startTime.split(':').map(Number);
+                const totalMinutes = (hours * 60) + minutes + (hoursToAdd * 60);
+                
+                const endHours = Math.floor(totalMinutes / 60);
+                const endMinutes = Math.floor(totalMinutes % 60);
+                
+                // Cap at 18:00
+                if (endHours >= 18) {
+                    return '18:00:00';
+                }
+                
+                return `${String(endHours).padStart(2, '0')}:${String(endMinutes).padStart(2, '0')}:00`;
             }
 
             document.getElementById('ganttHeader').onclick = toggleGanttDashboard;

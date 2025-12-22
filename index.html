@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>PLM 2</title>
+    <title>Dashboard PLM</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
@@ -1235,6 +1235,226 @@
         html {
             scroll-behavior: smooth;
         }
+
+        /* Modern Footer Styles */
+        .modern-footer {
+            margin-top: 60px;
+            padding: 40px 20px 30px;
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 41, 59, 0.95) 100%);
+            backdrop-filter: blur(20px);
+            border-radius: 24px 24px 0 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .modern-footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                rgba(59, 130, 246, 0.5) 20%, 
+                rgba(139, 92, 246, 0.5) 50%, 
+                rgba(59, 130, 246, 0.5) 80%, 
+                transparent 100%
+            );
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .footer-section {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .footer-title {
+            font-size: 0.9em;
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.9);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .footer-title::before {
+            content: '';
+            width: 3px;
+            height: 16px;
+            background: linear-gradient(180deg, #3b82f6 0%, #8b5cf6 100%);
+            border-radius: 2px;
+        }
+
+        .footer-links {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .footer-link {
+            color: rgba(255, 255, 255, 0.6);
+            text-decoration: none;
+            font-size: 0.85em;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 4px 0;
+        }
+
+        .footer-link:hover {
+            color: rgba(59, 130, 246, 1);
+            transform: translateX(4px);
+        }
+
+        .footer-link::before {
+            content: '→';
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .footer-link:hover::before {
+            opacity: 1;
+        }
+
+        .footer-stats {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .footer-stat {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .footer-stat-value {
+            font-size: 1.4em;
+            font-weight: 700;
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .footer-stat-label {
+            font-size: 0.7em;
+            color: rgba(255, 255, 255, 0.5);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .footer-bottom {
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .footer-credits {
+            font-size: 0.8em;
+            color: rgba(255, 255, 255, 0.4);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .footer-credits .heart {
+            color: #ef4444;
+            animation: heartbeat 1.5s infinite;
+        }
+
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            25% { transform: scale(1.1); }
+            50% { transform: scale(1); }
+        }
+
+        .footer-social {
+            display: flex;
+            gap: 12px;
+        }
+
+        .social-link {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255, 255, 255, 0.6);
+            text-decoration: none;
+            font-size: 1.1em;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .social-link:hover {
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            border-color: transparent;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
+        }
+
+        .footer-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 8px;
+            font-size: 0.75em;
+            color: rgba(59, 130, 246, 1);
+            font-weight: 600;
+        }
+
+        .footer-badge::before {
+            content: '⚡';
+            animation: pulse 2s infinite;
+        }
+
+        @media (max-width: 768px) {
+            .footer-content {
+                grid-template-columns: 1fr;
+                gap: 25px;
+            }
+            
+            .footer-bottom {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .modern-footer {
+                padding: 30px 15px 20px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -1243,7 +1463,6 @@
             <div class="logo-container">
                 <img src="logo-tondo.png" alt="Logo CRM" class="logo">
             </div>
-            <p class="subtitle">PLM 2</p>
         </div>
 
         <!-- Dashboard Attività -->
@@ -2095,6 +2314,84 @@
             setInterval(loadGanttData, 5 * 60 * 1000);
         })();
     </script>
+
+    <!-- Modern Footer -->
+    <footer class="modern-footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3 class="footer-title">Dashboard</h3>
+                <div class="footer-links">
+                    <a href="#" class="footer-link">Attività CRM</a>
+                    <a href="#" class="footer-link">Ufficio Tecnico</a>
+                    <a href="#" class="footer-link">Reportistica</a>
+                    <a href="#" class="footer-link">Impostazioni</a>
+                </div>
+            </div>
+
+            <div class="footer-section">
+                <h3 class="footer-title">Risorse</h3>
+                <div class="footer-links">
+                    <a href="#" class="footer-link">Documentazione</a>
+                    <a href="#" class="footer-link">Guide & Tutorial</a>
+                    <a href="#" class="footer-link">API Reference</a>
+                    <a href="#" class="footer-link">Supporto</a>
+                </div>
+            </div>
+
+            <div class="footer-section">
+                <h3 class="footer-title">Statistiche Live</h3>
+                <div class="footer-stats">
+                    <div class="footer-stat">
+                        <div class="footer-stat-value" id="footerActivities">--</div>
+                        <div class="footer-stat-label">Attività Attive</div>
+                    </div>
+                    <div class="footer-stat">
+                        <div class="footer-stat-value" id="footerTasks">--</div>
+                        <div class="footer-stat-label">Lavori Oggi</div>
+                    </div>
+                    <div class="footer-stat">
+                        <div class="footer-stat-value">99.9%</div>
+                        <div class="footer-stat-label">Uptime</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-section">
+                <h3 class="footer-title">Sistema</h3>
+                <div class="footer-badge">Sistema Operativo</div>
+                <p style="font-size: 0.8em; color: rgba(255, 255, 255, 0.5); margin-top: 8px;">
+                    Versione 2.0.0<br>
+                    Ultimo aggiornamento: Dicembre 2025
+                </p>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <div class="footer-credits">
+                Made with <span class="heart">❤</span> by your team
+            </div>
+            <div class="footer-social">
+                <a href="#" class="social-link" title="GitHub">🔗</a>
+                <a href="#" class="social-link" title="Documentation">📚</a>
+                <a href="#" class="social-link" title="Support">💬</a>
+                <a href="#" class="social-link" title="Settings">⚙️</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Update footer stats dynamically
+        function updateFooterStats() {
+            const activitiesCount = document.querySelectorAll('.activity-card').length;
+            const tasksCount = document.getElementById('totalTasks')?.textContent || '0';
+            
+            document.getElementById('footerActivities').textContent = activitiesCount;
+            document.getElementById('footerTasks').textContent = tasksCount;
+        }
+        
+        // Update stats when page loads and when data changes
+        setTimeout(updateFooterStats, 1000);
+        setInterval(updateFooterStats, 10000);
+    </script>
 </body>
 </html>
-

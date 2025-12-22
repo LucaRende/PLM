@@ -1455,6 +1455,135 @@
                 padding: 30px 15px 20px;
             }
         }
+
+        /* PC Optimization - Desktop & Tablet */
+        @media (min-width: 1024px) {
+            .main-container {
+                max-width: 1400px;
+                padding: 30px 40px;
+            }
+
+            /* Two column layout for dashboards */
+            .dashboards-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 30px;
+                align-items: start;
+            }
+
+            .dashboard {
+                margin-bottom: 0;
+            }
+
+            /* Gantt takes full width on desktop */
+            .gantt-dashboard-wrapper {
+                grid-column: 1 / -1;
+            }
+
+            /* Larger dashboard cards */
+            .dashboard-header {
+                padding: 24px;
+            }
+
+            .dashboard-title h2 {
+                font-size: 1.4em;
+            }
+
+            /* Better activity cards grid */
+            .activities-list {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+                gap: 16px;
+            }
+
+            /* Gantt optimizations */
+            .gantt-summary {
+                margin-top: 24px;
+            }
+
+            .gantt-hour-header {
+                min-width: 60px;
+                font-size: 0.8em;
+                padding: 10px 6px;
+            }
+
+            .gantt-hour-slot {
+                min-width: 60px;
+            }
+
+            .gantt-row-header {
+                padding: 10px 16px;
+            }
+
+            .gantt-person-cell {
+                font-size: 0.95em;
+            }
+
+            .gantt-row-timeline {
+                min-height: 50px;
+            }
+
+            /* Stats grid */
+            .stats-summary {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 16px;
+            }
+
+            .stat-item {
+                padding: 16px;
+            }
+
+            .stat-value {
+                font-size: 2em;
+            }
+
+            /* Footer wider on desktop */
+            .modern-footer {
+                padding: 50px 40px 40px;
+            }
+
+            .footer-content {
+                gap: 40px;
+            }
+
+            /* Progress circles larger */
+            .progress-circle {
+                width: 140px;
+                height: 140px;
+            }
+
+            .progress-value {
+                font-size: 2em;
+            }
+
+            /* Person sections in expanded gantt */
+            .person-section {
+                padding: 20px;
+            }
+
+            .task-card {
+                padding: 16px;
+            }
+        }
+
+        /* Ultra-wide screens */
+        @media (min-width: 1600px) {
+            .main-container {
+                max-width: 1600px;
+            }
+
+            .activities-list {
+                grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            }
+
+            .gantt-hour-header {
+                min-width: 70px;
+            }
+
+            .gantt-hour-slot {
+                min-width: 70px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -1465,8 +1594,9 @@
             </div>
         </div>
 
-        <!-- Dashboard Attività -->
-        <div class="dashboard">
+        <div class="dashboards-grid">
+            <!-- Dashboard Attività -->
+            <div class="dashboard">
             <div class="dashboard-header" id="dashHeader">
                 <div class="dashboard-top">
                     <div class="dashboard-title">
@@ -1574,8 +1704,10 @@
                 </div>
             </div>
         </div>
+        </div>
 
-        <!-- Dashboard Ufficio Tecnico con Gantt -->
+        <!-- Dashboard Ufficio Tecnico con Gantt (Full Width) -->
+        <div class="gantt-dashboard-wrapper">
         <div class="dashboard">
             <div class="dashboard-header gantt" id="ganttHeader">
                 <div class="dashboard-top">
@@ -1904,8 +2036,8 @@
 
         // ===== UFFICIO TECNICO GANTT DASHBOARD =====
         (function() {
-            const SUPABASE_URL = 'https://uoykvjxerdrthnmnfmgc.supabase.co';
-            const SUPABASE_KEY = 'sb_publishable_iGVhzkLqAktDZmpccXl7OA_PZ2nUYSY';
+            const SUPABASE_URL = 'https://nfgsxpkrotvgbxmidukg.supabase.co';
+            const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5mZ3N4cGtyb3R2Z2J4bWlkdWtnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzI2MjE0NTUsImV4cCI6MjA0ODE5NzQ1NX0.fEhQRiR6MpdOyT2oqXz9cMc0lBe3xj4vEfLSV8wI7gs';
             const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
             let allTasks = [];
@@ -2314,6 +2446,7 @@
             setInterval(loadGanttData, 5 * 60 * 1000);
         })();
     </script>
+    </div>
 
     <!-- Modern Footer -->
     <footer class="modern-footer">
@@ -2358,7 +2491,7 @@
 
             <div class="footer-section">
                 <h3 class="footer-title">Sistema</h3>
-                <div class="footer-badge">Sistema Operativo</div>
+                <div class="footer-badge">Pro System</div>
                 <p style="font-size: 0.8em; color: rgba(255, 255, 255, 0.5); margin-top: 8px;">
                     Versione 2.0.0<br>
                     Ultimo aggiornamento: Dicembre 2025
@@ -2368,10 +2501,9 @@
 
         <div class="footer-bottom">
             <div class="footer-credits">
-                Made with <span class="heart">❤</span> by your team
+                © 2025 Dashboard PLM - Tutti i diritti riservati
             </div>
             <div class="footer-social">
-                <a href="#" class="social-link" title="GitHub">🔗</a>
                 <a href="#" class="social-link" title="Documentation">📚</a>
                 <a href="#" class="social-link" title="Support">💬</a>
                 <a href="#" class="social-link" title="Settings">⚙️</a>

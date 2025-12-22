@@ -569,6 +569,69 @@
             border-radius: 8px;
         }
 
+        @media (max-width: 430px) {
+            .person-section {
+                padding: 12px;
+                margin-bottom: 16px;
+                border-radius: 12px;
+            }
+            
+            .person-section-header h3 {
+                font-size: 1em;
+            }
+            
+            .task-count {
+                font-size: 0.7em;
+                padding: 3px 8px;
+            }
+            
+            .task-card {
+                padding: 12px;
+                margin-bottom: 8px;
+            }
+            
+            .task-id {
+                font-size: 0.7em;
+                padding: 3px 8px;
+            }
+            
+            .task-time {
+                font-size: 0.7em;
+                padding: 3px 8px;
+            }
+            
+            .task-description {
+                font-size: 0.85em;
+            }
+            
+            .task-badge {
+                font-size: 0.65em;
+                padding: 3px 8px;
+            }
+        }
+
+        @media (max-width: 375px) {
+            .person-section {
+                padding: 10px;
+                margin-bottom: 12px;
+            }
+            
+            .person-section-header {
+                margin-bottom: 12px;
+                padding-bottom: 10px;
+            }
+            
+            .person-section-header h3 {
+                font-size: 0.95em;
+            }
+            
+            .task-card {
+                padding: 10px;
+                margin-bottom: 8px;
+                border-radius: 10px;
+            }
+        }
+
         /* Gantt Summary (collapsed view) */
         .gantt-summary {
             margin-top: 20px;
@@ -635,6 +698,67 @@
             overflow: hidden;
             text-overflow: ellipsis;
             background: rgba(255, 255, 255, 0.02);
+        }
+
+        @media (max-width: 430px) {
+            .gantt-person-cell {
+                width: 110px;
+                font-size: 0.75em;
+                padding: 10px 8px;
+            }
+            
+            .gantt-person-header {
+                width: 110px;
+            }
+            
+            .gantt-hour-header {
+                min-width: 40px;
+                font-size: 0.65em;
+                padding: 6px 2px;
+            }
+            
+            .gantt-hour-slot {
+                min-width: 40px;
+            }
+        }
+
+        @media (max-width: 375px) {
+            .gantt-person-cell {
+                width: 90px;
+                font-size: 0.7em;
+                padding: 8px 6px;
+            }
+            
+            .gantt-person-header {
+                width: 90px;
+            }
+            
+            .gantt-hour-header {
+                min-width: 35px;
+                font-size: 0.6em;
+                padding: 6px 2px;
+            }
+            
+            .gantt-hour-slot {
+                min-width: 35px;
+            }
+            
+            .stats-summary {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 8px;
+            }
+            
+            .stat-item {
+                padding: 8px;
+            }
+            
+            .stat-value {
+                font-size: 1.3em;
+            }
+            
+            .stat-label {
+                font-size: 0.65em;
+            }
         }
 
         .gantt-timeline-row {
@@ -1622,18 +1746,27 @@
                     return;
                 }
 
-                // Group tasks by person
+                // Group tasks by person - CORRECTLY
                 const byPerson = {};
                 operators.forEach(op => {
                     byPerson[op] = [];
                 });
                 
+                // Add each task to its assigned operator
                 data.forEach(task => {
-                    const person = task.Persona || 'Non Assegnato';
-                    if (byPerson[person]) {
+                    const person = task.Persona;
+                    console.log('Task:', task.Descrizione, 'assigned to:', person); // Debug
+                    
+                    // Check if this operator exists in our list
+                    if (person && byPerson[person] !== undefined) {
                         byPerson[person].push(task);
+                    } else {
+                        console.warn('Operator not found in list:', person); // Debug
                     }
                 });
+
+                // Debug: show what each operator has
+                console.log('Tasks by person:', byPerson);
 
                 // Update stats
                 const operatorsWithTasks = operators.filter(op => byPerson[op].length > 0).length;
@@ -1656,22 +1789,25 @@
 
                 // Render Summary View (collapsed state)
                 ganttSummaryRows.innerHTML = operators.map(person => {
-                    const tasks = byPerson[person];
+                    const tasks = byPerson[person] || [];
                     
                     // Create 10 hour slots (8-17)
                     const slots = Array(10).fill(null).map((_, i) => 
                         `<div class="gantt-hour-slot"></div>`
                     ).join('');
 
-                    // Create task bars
-                    const taskBars = tasks.map(task => {
+                    // Create task bars for THIS person's tasks
+                    const taskBars = tasks.map((task, idx) => {
                         const { left, width } = calculateTaskPosition(task.OraInizio, task.OraFine);
                         const urgent = isUrgent(task.DataConsegna);
                         
+                        // Stagger vertically if tasks overlap
+                        const topOffset = (idx * 8) % 16; // Alternate between 0 and 8px
+                        
                         return `
                             <div class="gantt-task-bar ${urgent ? 'urgente' : ''}" 
-                                 style="left: ${left}%; width: ${width}%;"
-                                 title="${task.Descrizione || 'Lavoro'} (${formatTime(task.OraInizio)} - ${formatTime(task.OraFine)})"></div>
+                                 style="left: ${left}%; width: ${width}%; top: calc(50% - 14px + ${topOffset}px);"
+                                 title="${task.Descrizione} (${formatTime(task.OraInizio)} - ${formatTime(task.OraFine)})"></div>
                         `;
                     }).join('');
 
@@ -1694,7 +1830,7 @@
 
                 // Render Detail View (expanded state)
                 ganttDetailsRows.innerHTML = operators.map(person => {
-                    const tasks = byPerson[person];
+                    const tasks = byPerson[person] || [];
                     
                     if (tasks.length === 0) {
                         return `
@@ -1737,7 +1873,7 @@
                         <div class="person-section">
                             <div class="person-section-header">
                                 <h3>${person}</h3>
-                                <span class="task-count">${tasks.length} lavori</span>
+                                <span class="task-count">${tasks.length} ${tasks.length === 1 ? 'lavoro' : 'lavori'}</span>
                             </div>
                             <div class="task-list">
                                 ${taskList}

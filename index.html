@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>PLM 2</title>
+    <title>CRM - Gestione Attività</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 
@@ -127,7 +127,7 @@
             transform: rotate(180deg);
         }
 
-        /* Progress Bars Container - Ottimizzato iPhone */
+        /* Progress Bars Container */
         .progress-container {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -150,7 +150,6 @@
             letter-spacing: 0.3px;
         }
 
-        /* Circular Progress - Ridisegnato */
         .circular-progress {
             position: relative;
             width: 110px;
@@ -222,7 +221,143 @@
             padding: 16px;
         }
 
-        /* Activity Card - Ridisegnata */
+        /* Filtri Box */
+        .filters-box {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            margin-bottom: 16px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .filters-header {
+            padding: 16px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 3px solid #8b5cf6;
+        }
+
+        .filters-header:active {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .filters-title {
+            font-size: 1em;
+            font-weight: 600;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .filters-arrow {
+            font-size: 1.2em;
+            color: rgba(255, 255, 255, 0.4);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .filters-box.active .filters-arrow {
+            transform: rotate(180deg);
+        }
+
+        .filters-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .filters-box.active .filters-content {
+            max-height: 800px;
+        }
+
+        .filters-wrapper {
+            padding: 16px;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .filter-group {
+            margin-bottom: 16px;
+        }
+
+        .filter-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .filter-label {
+            font-size: 0.75em;
+            color: rgba(255, 255, 255, 0.6);
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            letter-spacing: 0.5px;
+        }
+
+        .filter-select {
+            width: 100%;
+            padding: 10px 12px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            color: white;
+            font-size: 0.9em;
+            font-family: 'Poppins', sans-serif;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: #3b82f6;
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .filter-select option {
+            background: #1a2332;
+            color: white;
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 16px;
+        }
+
+        .filter-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 10px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.85em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .filter-btn-apply {
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            color: white;
+        }
+
+        .filter-btn-apply:active {
+            transform: scale(0.96);
+        }
+
+        .filter-btn-reset {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .filter-btn-reset:active {
+            transform: scale(0.96);
+        }
+
+        /* Activity Card */
         .activity-card {
             background: rgba(255, 255, 255, 0.05);
             backdrop-filter: blur(10px);
@@ -244,12 +379,17 @@
             transition: all 0.2s ease;
         }
 
-        .activity-card-header.ritardo {
+        /* Colori dinamici border */
+        .activity-card-header.scaduto {
             border-left-color: #ef4444;
         }
 
-        .activity-card-header.in-tempo {
-            border-left-color: #3b82f6;
+        .activity-card-header.oggi {
+            border-left-color: #eab308;
+        }
+
+        .activity-card-header.futuro {
+            border-left-color: #22c55e;
         }
 
         .activity-info {
@@ -429,7 +569,6 @@
             }
         }
 
-        /* Safe area iPhone */
         @supports (padding: max(0px)) {
             body {
                 padding-left: max(15px, env(safe-area-inset-left));
@@ -438,7 +577,6 @@
             }
         }
 
-        /* Smooth scroll */
         html {
             scroll-behavior: smooth;
         }
@@ -448,9 +586,9 @@
     <div class="main-container">
         <div class="title-section">
             <div class="logo-container">
-                <img src="logo-tondo.png" alt="Logo CRM" class="logo">
+                <img src="logo.png" alt="Logo CRM" class="logo">
             </div>
-            <p class="subtitle">PLM 2</p>
+            <p class="subtitle">Gestione Attività e Clienti</p>
         </div>
 
         <div class="dashboard">
@@ -463,7 +601,6 @@
                     <span class="toggle-arrow" id="dashArrow">▼</span>
                 </div>
                 
-                <!-- Progress Bars con ROSSO per Preventivi -->
                 <div class="progress-container">
                     <div class="progress-item">
                         <div class="progress-label">Ritardi Preventivi</div>
@@ -511,7 +648,56 @@
 
             <div class="dashboard-content" id="dashContent">
                 <div class="content-wrapper" id="contentWrapper">
-                    <div class="loading-state">Caricamento...</div>
+                    <!-- Filtri Box -->
+                    <div class="filters-box" id="filtersBox">
+                        <div class="filters-header" onclick="toggleFilters()">
+                            <div class="filters-title">
+                                <span>🔍</span>
+                                <span>Filtri</span>
+                            </div>
+                            <span class="filters-arrow">▼</span>
+                        </div>
+                        <div class="filters-content">
+                            <div class="filters-wrapper">
+                                <div class="filter-group">
+                                    <div class="filter-label">Cliente</div>
+                                    <select class="filter-select" id="filterCliente">
+                                        <option value="">Tutti i clienti</option>
+                                    </select>
+                                </div>
+                                <div class="filter-group">
+                                    <div class="filter-label">Tipologia</div>
+                                    <select class="filter-select" id="filterTipologia">
+                                        <option value="">Tutte le tipologie</option>
+                                    </select>
+                                </div>
+                                <div class="filter-group">
+                                    <div class="filter-label">Stato</div>
+                                    <select class="filter-select" id="filterStato">
+                                        <option value="">Tutti gli stati</option>
+                                    </select>
+                                </div>
+                                <div class="filter-group">
+                                    <div class="filter-label">Scadenza</div>
+                                    <select class="filter-select" id="filterScadenza">
+                                        <option value="">Tutte</option>
+                                        <option value="scaduto">Scadute</option>
+                                        <option value="oggi">Scadono oggi</option>
+                                        <option value="futuro">Future</option>
+                                    </select>
+                                </div>
+                                <div class="filter-buttons">
+                                    <button class="filter-btn filter-btn-apply" onclick="applyFilters()">Applica</button>
+                                    <button class="filter-btn filter-btn-reset" onclick="resetFilters()">Reset</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Lista Attività -->
+                    <div id="activitiesList">
+                        <div class="loading-state">Caricamento...</div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -526,6 +712,8 @@
             );
 
             let loaded = false;
+            let allActivities = [];
+            let filteredActivities = [];
 
             window.toggleDash = function() {
                 const header = document.getElementById('dashHeader');
@@ -541,10 +729,75 @@
                 }
             };
 
+            window.toggleFilters = function() {
+                const filtersBox = document.getElementById('filtersBox');
+                filtersBox.classList.toggle('active');
+            };
+
             window.toggleAct = function(id) {
                 const card = document.querySelector(`[data-id="${id}"]`);
                 card.classList.toggle('active');
             };
+
+            window.applyFilters = function() {
+                const cliente = document.getElementById('filterCliente').value;
+                const tipologia = document.getElementById('filterTipologia').value;
+                const stato = document.getElementById('filterStato').value;
+                const scadenza = document.getElementById('filterScadenza').value;
+
+                filteredActivities = allActivities.filter(a => {
+                    if (cliente && a.clienteApplicato !== cliente) return false;
+                    if (tipologia && a.tipologiaFormattata !== tipologia) return false;
+                    if (stato && a.stato !== stato) return false;
+                    if (scadenza) {
+                        const urgenza = getUrgencyStatus(a._dataConsegna);
+                        if (scadenza !== urgenza) return false;
+                    }
+                    return true;
+                });
+
+                renderActivities(filteredActivities);
+            };
+
+            window.resetFilters = function() {
+                document.getElementById('filterCliente').value = '';
+                document.getElementById('filterTipologia').value = '';
+                document.getElementById('filterStato').value = '';
+                document.getElementById('filterScadenza').value = '';
+                filteredActivities = allActivities;
+                renderActivities(filteredActivities);
+            };
+
+            function populateFilters(data) {
+                const clienti = [...new Set(data.map(a => a.clienteApplicato).filter(Boolean))].sort();
+                const tipologie = [...new Set(data.map(a => a.tipologiaFormattata).filter(Boolean))].sort();
+                const stati = [...new Set(data.map(a => a.stato).filter(Boolean))].sort();
+
+                const filterCliente = document.getElementById('filterCliente');
+                const filterTipologia = document.getElementById('filterTipologia');
+                const filterStato = document.getElementById('filterStato');
+
+                clienti.forEach(c => {
+                    const option = document.createElement('option');
+                    option.value = c;
+                    option.textContent = c;
+                    filterCliente.appendChild(option);
+                });
+
+                tipologie.forEach(t => {
+                    const option = document.createElement('option');
+                    option.value = t;
+                    option.textContent = t;
+                    filterTipologia.appendChild(option);
+                });
+
+                stati.forEach(s => {
+                    const option = document.createElement('option');
+                    option.value = s;
+                    option.textContent = s;
+                    filterStato.appendChild(option);
+                });
+            }
 
             function setCircularProgress(elementId, percentId, percentage) {
                 const circle = document.getElementById(elementId);
@@ -593,12 +846,18 @@
                 return { preventiviPerc, ordiniPerc };
             }
 
-            function isInRitardo(dataConsegna) {
-                if (!dataConsegna) return false;
+            function getUrgencyStatus(dataConsegna) {
+                if (!dataConsegna) return 'futuro';
+                
                 const today = new Date();
                 today.setHours(0, 0, 0, 0);
+                
                 const consegna = new Date(dataConsegna);
-                return consegna < today;
+                consegna.setHours(0, 0, 0, 0);
+                
+                if (consegna < today) return 'scaduto';
+                if (consegna.getTime() === today.getTime()) return 'oggi';
+                return 'futuro';
             }
 
             function getStatus(s) {
@@ -619,51 +878,20 @@
                 });
             }
 
-            async function loadData() {
-            const wrapper = document.getElementById('contentWrapper');
-            wrapper.innerHTML = '<div class="loading-state">Caricamento...</div>';
-        
-            try {
-                const { data, error } = await sb.from('Attivita').select('*');
-        
-                if (error) throw error;
-        
-                if (data && data.length > 0) {
-                    const { preventiviPerc, ordiniPerc } = calculateDelayPercentages(data);
-                    setCircularProgress('progressPreventivi', 'percentPreventivi', preventiviPerc);
-                    setCircularProgress('progressOrdini', 'percentOrdini', ordiniPerc);
-                    
-                    // ORDINA: Prima i ritardi, poi per data di consegna
-                    const today = new Date();
-                    today.setHours(0, 0, 0, 0);
-                    
-                    data.sort((a, b) => {
-                        const dataA = a._dataConsegna ? new Date(a._dataConsegna) : new Date('9999-12-31');
-                        const dataB = b._dataConsegna ? new Date(b._dataConsegna) : new Date('9999-12-31');
-                        
-                        const ritardoA = dataA < today;
-                        const ritardoB = dataB < today;
-                        
-                        // Prima i ritardi, poi ordina per data
-                        if (ritardoA && !ritardoB) return -1;
-                        if (!ritardoA && ritardoB) return 1;
-                        
-                        return dataA - dataB;
-                    });
-                }
-        
+            function renderActivities(data) {
+                const list = document.getElementById('activitiesList');
+                
                 if (!data || !data.length) {
-                    wrapper.innerHTML = '<div class="empty-state"><div class="empty-icon">📭</div>Nessuna attività</div>';
+                    list.innerHTML = '<div class="empty-state"><div class="empty-icon">📭</div>Nessuna attività trovata</div>';
                     return;
                 }
-        
-                wrapper.innerHTML = data.map(a => {
-                    const ritardo = isInRitardo(a._dataConsegna);
-                    const ritardoClass = ritardo ? 'ritardo' : 'in-tempo';
+
+                list.innerHTML = data.map(a => {
+                    const urgencyClass = getUrgencyStatus(a._dataConsegna);
                     
                     return `
                     <div class="activity-card" data-id="${a.ID_Attivita}">
-                        <div class="activity-card-header ${ritardoClass}" onclick="toggleAct(${a.ID_Attivita})">
+                        <div class="activity-card-header ${urgencyClass}" onclick="toggleAct(${a.ID_Attivita})">
                             <div class="activity-info">
                                 <div class="activity-title">
                                     #${a.ID_Attivita} · ${a.clienteApplicato || 'Cliente non specificato'}
@@ -720,20 +948,50 @@
                         </div>
                     </div>
                 `}).join('');
-        
-            } catch (e) {
-                wrapper.innerHTML = `<div class="empty-state"><div class="empty-icon">⚠️</div>Errore: ${e.message}</div>`;
             }
-        }
 
-            // Carica i dati subito per mostrare le progress bar
+            async function loadData() {
+                const wrapper = document.getElementById('contentWrapper');
+                const list = document.getElementById('activitiesList');
+                list.innerHTML = '<div class="loading-state">Caricamento...</div>';
+
+                try {
+                    const { data, error } = await sb.from('Attivita').select('*');
+
+                    if (error) throw error;
+
+                    if (data && data.length > 0) {
+                        const { preventiviPerc, ordiniPerc } = calculateDelayPercentages(data);
+                        setCircularProgress('progressPreventivi', 'percentPreventivi', preventiviPerc);
+                        setCircularProgress('progressOrdini', 'percentOrdini', ordiniPerc);
+                        
+                        // Ordina per data di consegna
+                        const today = new Date();
+                        today.setHours(0, 0, 0, 0);
+                        
+                        data.sort((a, b) => {
+                            const dataA = a._dataConsegna ? new Date(a._dataConsegna) : new Date('9999-12-31');
+                            const dataB = b._dataConsegna ? new Date(b._dataConsegna) : new Date('9999-12-31');
+                            return dataA - dataB;
+                        });
+
+                        allActivities = data;
+                        filteredActivities = data;
+                        
+                        populateFilters(data);
+                        renderActivities(data);
+                    } else {
+                        list.innerHTML = '<div class="empty-state"><div class="empty-icon">📭</div>Nessuna attività</div>';
+                    }
+
+                } catch (e) {
+                    list.innerHTML = `<div class="empty-state"><div class="empty-icon">⚠️</div>Errore: ${e.message}</div>`;
+                }
+            }
+
             loadData();
-
             document.getElementById('dashHeader').onclick = window.toggleDash;
         })();
     </script>
 </body>
 </html>
-
-
-

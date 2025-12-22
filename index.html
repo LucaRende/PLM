@@ -38,7 +38,6 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            text-shadow: 0 0 30px rgba(102, 126, 234, 0.3);
             margin-bottom: 15px;
             letter-spacing: 2px;
         }
@@ -49,22 +48,14 @@
             font-weight: 300;
         }
 
-        /* Dashboard Card - Stile Archivio NODO */
+        /* Dashboard */
         .dashboard {
             background: rgba(30, 30, 46, 0.95);
-            backdrop-filter: blur(10px);
             border: 1px solid rgba(102, 126, 234, 0.3);
             border-radius: 25px;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
             overflow: hidden;
             margin-bottom: 30px;
-            transition: all 0.3s ease;
-        }
-
-        .dashboard:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 25px 70px rgba(102, 126, 234, 0.4);
-            border-color: rgba(102, 126, 234, 0.5);
         }
 
         .dashboard-header {
@@ -74,13 +65,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            user-select: none;
             border-bottom: 1px solid rgba(102, 126, 234, 0.2);
-            transition: all 0.3s ease;
-        }
-
-        .dashboard-header:hover {
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.4) 0%, rgba(118, 75, 162, 0.4) 100%);
         }
 
         .dashboard-title {
@@ -94,56 +79,35 @@
             font-size: 2em;
             font-weight: 600;
             margin: 0;
-            text-shadow: 0 0 20px rgba(102, 126, 234, 0.5);
         }
 
         .dashboard-icon {
             font-size: 2.2em;
-            filter: drop-shadow(0 0 10px rgba(102, 126, 234, 0.8));
         }
 
         .toggle-arrow {
             font-size: 2em;
             color: #667eea;
             transition: transform 0.3s ease;
-            filter: drop-shadow(0 0 10px rgba(102, 126, 234, 0.8));
-        }
-
-        .dashboard-header.active .toggle-arrow {
-            transform: rotate(180deg);
         }
 
         .dashboard-content {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            display: none;
             background: rgba(20, 20, 35, 0.5);
-        }
-
-        .dashboard-content.show {
-            max-height: 10000px;
-        }
-
-        .content-wrapper {
             padding: 30px;
         }
 
-        /* Activity Card - Box Attività CRM */
+        .dashboard-content.show {
+            display: block;
+        }
+
+        /* Activity Card */
         .activity-card {
             background: rgba(40, 40, 60, 0.8);
-            backdrop-filter: blur(10px);
             border: 1px solid rgba(102, 126, 234, 0.2);
             border-radius: 15px;
             margin-bottom: 20px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
             overflow: hidden;
-            transition: all 0.3s ease;
-        }
-
-        .activity-card:hover {
-            box-shadow: 0 8px 30px rgba(102, 126, 234, 0.3);
-            border-color: rgba(102, 126, 234, 0.4);
-            transform: translateX(5px);
         }
 
         .activity-card-header {
@@ -153,12 +117,6 @@
             justify-content: space-between;
             align-items: center;
             border-left: 5px solid #667eea;
-            transition: all 0.3s ease;
-        }
-
-        .activity-card-header:hover {
-            background: rgba(102, 126, 234, 0.1);
-            border-left-width: 7px;
         }
 
         .activity-info {
@@ -170,7 +128,6 @@
             font-weight: 600;
             color: #ffffff;
             margin-bottom: 12px;
-            text-shadow: 0 0 10px rgba(102, 126, 234, 0.3);
         }
 
         .activity-meta {
@@ -204,8 +161,6 @@
             font-size: 0.9em;
             font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
         }
 
         .status-aperto {
@@ -236,27 +191,17 @@
             font-size: 1.5em;
             color: #667eea;
             transition: transform 0.3s ease;
-            filter: drop-shadow(0 0 5px rgba(102, 126, 234, 0.6));
-        }
-
-        .activity-card.active .activity-arrow {
-            transform: rotate(180deg);
         }
 
         .activity-details {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            display: none;
             background: rgba(25, 25, 40, 0.6);
-        }
-
-        .activity-card.active .activity-details {
-            max-height: 2000px;
-        }
-
-        .details-wrapper {
             padding: 30px;
             border-top: 1px solid rgba(102, 126, 234, 0.2);
+        }
+
+        .activity-details.show {
+            display: block;
         }
 
         .details-grid {
@@ -267,18 +212,9 @@
 
         .detail-box {
             background: rgba(50, 50, 70, 0.6);
-            backdrop-filter: blur(5px);
             padding: 20px;
             border-radius: 12px;
             border: 1px solid rgba(102, 126, 234, 0.2);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-            transition: all 0.3s ease;
-        }
-
-        .detail-box:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
-            border-color: rgba(102, 126, 234, 0.4);
         }
 
         .detail-label {
@@ -286,7 +222,6 @@
             font-weight: 600;
             color: #667eea;
             text-transform: uppercase;
-            letter-spacing: 1px;
             margin-bottom: 8px;
         }
 
@@ -301,8 +236,6 @@
             padding: 60px 20px;
             color: #667eea;
             font-size: 1.3em;
-            font-weight: 500;
-            text-shadow: 0 0 10px rgba(102, 126, 234, 0.5);
         }
 
         .empty-state {
@@ -314,7 +247,6 @@
             font-size: 5em;
             margin-bottom: 20px;
             opacity: 0.3;
-            filter: grayscale(1);
         }
 
         .empty-state h3 {
@@ -327,54 +259,25 @@
             color: #808080;
             font-size: 1.1em;
         }
-
-        /* Animazioni */
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .activity-card {
-            animation: slideIn 0.5s ease forwards;
-        }
-
-        @keyframes glow {
-            0%, 100% {
-                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-            }
-            50% {
-                box-shadow: 0 25px 70px rgba(102, 126, 234, 0.4);
-            }
-        }
-
-        .dashboard:hover {
-            animation: glow 2s infinite;
-        }
     </style>
 </head>
 <body>
     <div class="main-container">
         <div class="title-section">
-            <h1 class="main-title">🎯 Pro System</h1>
+            <h1 class="main-title">🎯 CRM Sistema</h1>
             <p class="subtitle">Gestione Attività e Clienti</p>
         </div>
 
         <div class="dashboard">
-            <div class="dashboard-header" id="dashboardHeader">
+            <div class="dashboard-header" onclick="toggleDashboard()">
                 <div class="dashboard-title">
                     <span class="dashboard-icon">📋</span>
                     <h2>Attività CRM</h2>
                 </div>
-                <span class="toggle-arrow">▼</span>
+                <span class="toggle-arrow" id="dashArrow">▼</span>
             </div>
-            <div class="dashboard-content" id="dashboardContent">
-                <div class="content-wrapper" id="contentWrapper">
+            <div class="dashboard-content" id="dashContent">
+                <div id="activitiesList">
                     <div class="loading-state">Caricamento attività...</div>
                 </div>
             </div>
@@ -383,32 +286,45 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        // Configurazione Supabase
         const SUPABASE_URL = 'https://uoykvjxerdrthnmnfmgc.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_iGVhzkLqAktDZmpccXl7OA_PZ2nUYSY';
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        let activitiesLoaded = false;
+        let loaded = false;
 
-        // Toggle Dashboard
-        document.getElementById('dashboardHeader').addEventListener('click', function() {
-            this.classList.toggle('active');
-            const content = document.getElementById('dashboardContent');
-            content.classList.toggle('show');
+        function toggleDashboard() {
+            console.log('DASHBOARD CLICKED!!!');
+            const content = document.getElementById('dashContent');
+            const arrow = document.getElementById('dashArrow');
             
-            if (content.classList.contains('show') && !activitiesLoaded) {
-                activitiesLoaded = true;
-                loadActivities();
+            if (content.classList.contains('show')) {
+                content.classList.remove('show');
+                arrow.style.transform = 'rotate(0deg)';
+            } else {
+                content.classList.add('show');
+                arrow.style.transform = 'rotate(180deg)';
+                
+                if (!loaded) {
+                    loaded = true;
+                    loadActivities();
+                }
             }
-        });
-
-        // Toggle Activity Details
-        function toggleActivity(element) {
-            const card = element.closest('.activity-card');
-            card.classList.toggle('active');
         }
 
-        // Determina classe stato
+        function toggleActivity(id) {
+            console.log('ACTIVITY CLICKED:', id);
+            const details = document.getElementById('details-' + id);
+            const arrow = document.getElementById('arrow-' + id);
+            
+            if (details.classList.contains('show')) {
+                details.classList.remove('show');
+                arrow.style.transform = 'rotate(0deg)';
+            } else {
+                details.classList.add('show');
+                arrow.style.transform = 'rotate(180deg)';
+            }
+        }
+
         function getStatusClass(stato) {
             if (!stato) return 'status-aperto';
             const lower = stato.toLowerCase();
@@ -418,7 +334,6 @@
             return 'status-aperto';
         }
 
-        // Formatta data
         function formatDate(dateString) {
             if (!dateString) return 'Non specificata';
             const date = new Date(dateString);
@@ -429,10 +344,9 @@
             });
         }
 
-        // Carica attività
         async function loadActivities() {
-            const wrapper = document.getElementById('contentWrapper');
-            wrapper.innerHTML = '<div class="loading-state">Caricamento attività...</div>';
+            const list = document.getElementById('activitiesList');
+            list.innerHTML = '<div class="loading-state">Caricamento attività...</div>';
 
             try {
                 const { data, error } = await supabase
@@ -440,79 +354,80 @@
                     .select('*')
                     .order('ID_Attivita', { ascending: false });
 
+                console.log('DATA:', data);
+                console.log('ERROR:', error);
+
                 if (error) throw error;
 
                 if (!data || data.length === 0) {
-                    wrapper.innerHTML = `
+                    list.innerHTML = `
                         <div class="empty-state">
                             <div class="empty-icon">📭</div>
-                            <h3>Nessuna attività presente</h3>
+                            <h3>Nessuna attività</h3>
                             <p>Non ci sono attività da visualizzare</p>
                         </div>
                     `;
                     return;
                 }
 
-                wrapper.innerHTML = data.map(activity => `
+                list.innerHTML = data.map(a => `
                     <div class="activity-card">
-                        <div class="activity-card-header" onclick="toggleActivity(this)">
+                        <div class="activity-card-header" onclick="toggleActivity(${a.ID_Attivita})">
                             <div class="activity-info">
                                 <div class="activity-title">
-                                    Attività #${activity.ID_Attivita} - ${activity.clienteApplicato || 'Cliente non specificato'}
+                                    Attività #${a.ID_Attivita} - ${a.clienteApplicato || 'Cliente non specificato'}
                                 </div>
                                 <div class="activity-meta">
                                     <div class="meta-item">
                                         <span class="meta-label">📅 Creazione:</span>
-                                        <span>${activity.dataCreazioneFormattata || formatDate(activity._dataCreazione)}</span>
+                                        <span>${a.dataCreazioneFormattata || formatDate(a._dataCreazione)}</span>
                                     </div>
                                     <div class="meta-item">
                                         <span class="meta-label">🎯 Consegna:</span>
-                                        <span>${activity.dataConsegnaFormattata || formatDate(activity._dataConsegna)}</span>
+                                        <span>${a.dataConsegnaFormattata || formatDate(a._dataConsegna)}</span>
                                     </div>
                                     <div class="meta-item">
                                         <span class="meta-label">📦 Tipo:</span>
-                                        <span>${activity.tipologiaFormattata || 'Non specificato'}</span>
+                                        <span>${a.tipologiaFormattata || 'Non specificato'}</span>
                                     </div>
                                 </div>
                             </div>
                             <div class="activity-right">
-                                <span class="status-badge ${getStatusClass(activity.stato)}">
-                                    ${activity.stato || 'Aperto'}
+                                <span class="status-badge ${getStatusClass(a.stato)}">
+                                    ${a.stato || 'Aperto'}
                                 </span>
-                                <span class="activity-arrow">▼</span>
+                                <span class="activity-arrow" id="arrow-${a.ID_Attivita}">▼</span>
                             </div>
                         </div>
-                        <div class="activity-details">
-                            <div class="details-wrapper">
-                                <div class="details-grid">
-                                    <div class="detail-box">
-                                        <div class="detail-label">ID Attività</div>
-                                        <div class="detail-value">#${activity.ID_Attivita}</div>
-                                    </div>
-                                    <div class="detail-box">
-                                        <div class="detail-label">Cliente</div>
-                                        <div class="detail-value">${activity.clienteApplicato || 'Non specificato'}</div>
-                                    </div>
-                                    <div class="detail-box">
-                                        <div class="detail-label">Data Creazione</div>
-                                        <div class="detail-value">${activity.dataCreazioneFormattata || formatDate(activity._dataCreazione)}</div>
-                                    </div>
-                                    <div class="detail-box">
-                                        <div class="detail-label">Data Consegna</div>
-                                        <div class="detail-value">${activity.dataConsegnaFormattata || formatDate(activity._dataConsegna)}</div>
-                                    </div>
-                                    <div class="detail-box">
-                                        <div class="detail-label">Tipologia</div>
-                                        <div class="detail-value">${activity.tipologiaFormattata || 'Non specificato'}</div>
-                                    </div>
-                                    <div class="detail-box">
-                                        <div class="detail-label">Trasferimento</div>
-                                        <div class="detail-value">${activity.trasferimento || 'Non specificato'}</div>
-                                    </div>
-                                    <div class="detail-box">
-                                        <div class="detail-label">Stato</div>
-                                        <div class="detail-value">${activity.stato || 'Aperto'}</div>
-                                    </div>
+                        <div class="activity-details" id="details-${a.ID_Attivita}">
+                            <div class="details-grid">
+                                <div class="detail-box">
+                                    <div class="detail-label">ID Attività</div>
+                                    <div class="detail-value">#${a.ID_Attivita}</div>
+                                </div>
+                                <div class="detail-box">
+                                    <div class="detail-label">Cliente</div>
+                                    <div class="detail-value">${a.clienteApplicato || 'Non specificato'}</div>
+                                </div>
+                                <div class="detail-box">
+                                    <div class="detail-label">Data Creazione</div>
+                                    <div class="detail-value">${a.dataCreazioneFormattata || formatDate(a._dataCreazione)}</div>
+                                </div>
+                                <div class="detail-box">
+                                    <div class="detail-label">Data Consegna</div>
+                                    <div class="detail-value">${a.dataConsegnaFormattata || formatDate(a._dataConsegna)}</div>
+                                </div>
+                                <div class="detail-box">
+                                    <div class="detail-label">Tipologia</div>
+                                    <div class="detail-value">${a.tipologiaFormattata || 'Non specificato'}</div>
+                                </div>
+                                <div class="detail-box">
+                                    <div class="detail-label">Trasferimento</div>
+                                    <div class="detail-value">${a.trasferimento || 'Non specificato'}</div>
+                                </div>
+                                <div class="detail-box">
+                                    <div class="detail-label">Stato</div>
+                                    <div class="detail-value">${a.stato || 'Aperto'}</div>
                                 </div>
                             </div>
                         </div>
@@ -520,11 +435,11 @@
                 `).join('');
 
             } catch (error) {
-                console.error('Errore:', error);
-                wrapper.innerHTML = `
+                console.error('ERRORE:', error);
+                list.innerHTML = `
                     <div class="empty-state">
                         <div class="empty-icon">⚠️</div>
-                        <h3>Errore nel caricamento</h3>
+                        <h3>Errore</h3>
                         <p>${error.message}</p>
                     </div>
                 `;

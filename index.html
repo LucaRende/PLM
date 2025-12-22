@@ -43,22 +43,15 @@
             margin-bottom: 20px;
         }
 
-.logo-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 20px;
-    background: transparent !important;
-}
-
-.logo {
-    width: 100px;
-    height: 100px;
-    object-fit: contain;
-    background: transparent !important;
-    filter: drop-shadow(0 8px 24px rgba(59, 130, 246, 0.5));
-    transition: all 0.3s ease;
-}
+        .logo {
+            width: 100px;
+            height: 100px;
+            object-fit: contain;
+            filter: drop-shadow(0 8px 24px rgba(59, 130, 246, 0.5));
+            transition: all 0.3s ease;
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: crisp-edges;
+        }
 
         .logo:active {
             transform: scale(0.95);
@@ -454,25 +447,9 @@
 <body>
     <div class="main-container">
         <div class="title-section">
-         <div class="logo-container">
-    <!-- DEBUG: Prova TUTTI i possibili percorsi -->
-    <img src="Logo tondo.png" alt="Logo 1" class="logo" 
-         onerror="console.error('Tentativo 1 fallito: Logo tondo.png'); 
-                  this.src='logo tondo.png'; 
-                  this.onerror=function(){
-                      console.error('Tentativo 2 fallito: logo tondo.png');
-                      this.src='Logo Tondo.png';
-                      this.onerror=function(){
-                          console.error('Tentativo 3 fallito: Logo Tondo.png');
-                          this.src='logo-tondo.png';
-                          this.onerror=function(){
-                              console.error('Tentativo 4 fallito: logo-tondo.png');
-                              this.src='https://via.placeholder.com/100/667eea/ffffff?text=LOGO';
-                              console.error('LOGO NON TROVATO - Usando placeholder');
-                          }
-                      }
-                  }">
-</div>
+            <div class="logo-container">
+                <img src="logo.png" alt="Logo CRM" class="logo">
+            </div>
             <p class="subtitle">Gestione Attività e Clienti</p>
         </div>
 
@@ -731,12 +708,11 @@
                 }
             }
 
+            // Carica i dati subito per mostrare le progress bar
             loadData();
+
             document.getElementById('dashHeader').onclick = window.toggleDash;
         })();
     </script>
 </body>
 </html>
-
-
-

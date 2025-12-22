@@ -537,12 +537,6 @@
             overflow-x: auto;
             overflow-y: hidden;
             max-height: 800px;
-            transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .gantt-container.collapsed {
-            max-height: 0;
-            padding: 0;
         }
 
         .gantt-timeline {
@@ -1038,7 +1032,7 @@
                 </div>
             </div>
 
-            <div class="gantt-container collapsed" id="ganttContainer">
+            <div class="gantt-container" id="ganttContainer">
                 <div class="gantt-timeline" id="ganttTimeline"></div>
                 <div id="ganttRows"></div>
             </div>
@@ -1064,11 +1058,6 @@
                 
                 header.classList.toggle('active');
                 content.classList.toggle('show');
-                
-                if (content.classList.contains('show') && !loaded) {
-                    loaded = true;
-                    loadData();
-                }
             };
 
             window.toggleFilters = function() {
@@ -1330,6 +1319,7 @@
             }
 
             document.getElementById('dashHeader').onclick = window.toggleDash;
+            loadData(); // Load data immediately on page load
         })();
 
         // ===== UFFICIO TECNICO GANTT DASHBOARD =====
@@ -1346,7 +1336,23 @@
                 const container = document.getElementById('ganttContainer');
                 
                 header.classList.toggle('active');
-                container.classList.toggle('collapsed');
+                
+                // Toggle visibility of task details for all persons
+                const allDetails = document.querySelectorAll('.person-details');
+                allDetails.forEach(detail => {
+                    if (header.classList.contains('active')) {
+                        // Dashboard is expanded - allow clicking on persons
+                        detail.parentElement.style.pointerEvents = 'auto';
+                    } else {
+                        // Dashboard is collapsed - hide all details and disable clicking
+                        detail.classList.remove('expanded');
+                        detail.parentElement.style.pointerEvents = 'none';
+                    }
+                });
+                
+                if (!header.classList.contains('active')) {
+                    expandedPerson = null;
+                }
             }
 
             function togglePerson(personName, element) {
@@ -1471,7 +1477,7 @@
                     }).join('');
 
                     return `
-                        <div class="gantt-row" onclick="togglePerson('${person}', this)">
+                        <div class="gantt-row" onclick="togglePerson('${person}', this)" style="pointer-events: none;">
                             <div class="gantt-person">${person}</div>
                             <div class="gantt-bars">
                                 ${[...Array(11)].map(() => '<div class="gantt-slot"></div>').join('')}

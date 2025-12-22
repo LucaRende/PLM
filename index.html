@@ -861,10 +861,10 @@
 
         /* Gantt Chart Styles */
         .gantt-container {
-            padding: 20px;
+            padding: 20px 20px 40px 20px;
             overflow-x: auto;
             overflow-y: auto;
-            max-height: 2000px;
+            max-height: 3000px;
             transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             background: rgba(0, 0, 0, 0.2);
         }
@@ -1852,6 +1852,13 @@
                         `;
                     }
                     
+                    // Sort tasks by start time
+                    tasks.sort((a, b) => {
+                        const timeA = a.OraInizio || '00:00:00';
+                        const timeB = b.OraInizio || '00:00:00';
+                        return timeA.localeCompare(timeB);
+                    });
+                    
                     const taskList = tasks.map(task => {
                         const urgent = isUrgent(task.DataConsegna);
                         return `
@@ -1946,31 +1953,29 @@
 
                     if (error) throw error;
 
+                    console.log('Dati ricevuti:', data); // Debug
+
                     // Transform the data into individual tasks with REAL times
                     const tasks = [];
                     
                     if (data && data.length > 0) {
                         data.forEach(record => {
-                            // Disegno 2D
+                            // Disegno 2D - if it has time slots, show it
                             if (record.Disegno_2D_Assegnato && 
                                 record.Operatore_Disegno_2D_Assegnato && 
                                 record.Ora_Disegno_2D_Inizio && 
                                 record.Ora_Disegno_2D_Fine) {
                                 
-                                const endDate = record.Data_Disegno_2D_Assegnato_FinePrevista;
-                                
-                                // Check if this task is for today
-                                if (endDate === todayStr || !endDate) {
-                                    tasks.push({
-                                        ID: record.id,
-                                        Persona: record.Operatore_Disegno_2D_Assegnato,
-                                        Descrizione: `Disegno 2D - ${record.codiceProgetto || 'Progetto'}`,
-                                        OraInizio: record.Ora_Disegno_2D_Inizio,
-                                        OraFine: record.Ora_Disegno_2D_Fine,
-                                        DataConsegna: record.Data_Disegno_2D_Assegnato_FinePrevista,
-                                        Stato: record.Disegno_2D_Fatto ? 'Completato' : 'In corso'
-                                    });
-                                }
+                                tasks.push({
+                                    ID: record.id,
+                                    Persona: record.Operatore_Disegno_2D_Assegnato,
+                                    Descrizione: `Disegno 2D - ${record.codiceProgetto || 'Progetto'}`,
+                                    OraInizio: record.Ora_Disegno_2D_Inizio,
+                                    OraFine: record.Ora_Disegno_2D_Fine,
+                                    DataConsegna: record.Data_Disegno_2D_Assegnato_FinePrevista,
+                                    Stato: record.Disegno_2D_Fatto ? 'Completato' : 'In corso',
+                                    Tipo: 'Disegno 2D'
+                                });
                             }
 
                             // Disegno 3D
@@ -1979,23 +1984,16 @@
                                 record.Ora_Disegno_3D_Inizio && 
                                 record.Ora_Disegno_3D_Fine) {
                                 
-                                const startDate = record.Data_Disegno_3D_Assegnato_InizioPrevista;
-                                const endDate = record.Data_Disegno_3D_Assegnato_FinePrevista;
-                                
-                                if (startDate === todayStr || endDate === todayStr || 
-                                    (startDate && endDate && startDate <= todayStr && endDate >= todayStr) ||
-                                    !startDate) {
-                                    
-                                    tasks.push({
-                                        ID: record.id,
-                                        Persona: record.Operatore_Disegno_3D_Assegnato,
-                                        Descrizione: `Disegno 3D - ${record.codiceProgetto || 'Progetto'}`,
-                                        OraInizio: record.Ora_Disegno_3D_Inizio,
-                                        OraFine: record.Ora_Disegno_3D_Fine,
-                                        DataConsegna: record.Data_Disegno_3D_Assegnato_FinePrevista,
-                                        Stato: record.Disegno_3D_Fatto ? 'Completato' : 'In corso'
-                                    });
-                                }
+                                tasks.push({
+                                    ID: record.id,
+                                    Persona: record.Operatore_Disegno_3D_Assegnato,
+                                    Descrizione: `Disegno 3D - ${record.codiceProgetto || 'Progetto'}`,
+                                    OraInizio: record.Ora_Disegno_3D_Inizio,
+                                    OraFine: record.Ora_Disegno_3D_Fine,
+                                    DataConsegna: record.Data_Disegno_3D_Assegnato_FinePrevista,
+                                    Stato: record.Disegno_3D_Fatto ? 'Completato' : 'In corso',
+                                    Tipo: 'Disegno 3D'
+                                });
                             }
 
                             // Distinta
@@ -2004,23 +2002,16 @@
                                 record.Ora_Distinta_Inizio && 
                                 record.Ora_Distinta_Fine) {
                                 
-                                const startDate = record.Data_Distinta_Assegnato_InizioPrevista;
-                                const endDate = record.Data_Distinta_Assegnato_FinePrevista;
-                                
-                                if (startDate === todayStr || endDate === todayStr || 
-                                    (startDate && endDate && startDate <= todayStr && endDate >= todayStr) ||
-                                    !startDate) {
-                                    
-                                    tasks.push({
-                                        ID: record.id,
-                                        Persona: record.Operatore_Distinta_Assegnato,
-                                        Descrizione: `Distinta - ${record.codiceProgetto || 'Progetto'}`,
-                                        OraInizio: record.Ora_Distinta_Inizio,
-                                        OraFine: record.Ora_Distinta_Fine,
-                                        DataConsegna: record.Data_Distinta_Assegnato_FinePrevista,
-                                        Stato: record.Distinta_Fatto ? 'Completato' : 'In corso'
-                                    });
-                                }
+                                tasks.push({
+                                    ID: record.id,
+                                    Persona: record.Operatore_Distinta_Assegnato,
+                                    Descrizione: `Distinta - ${record.codiceProgetto || 'Progetto'}`,
+                                    OraInizio: record.Ora_Distinta_Inizio,
+                                    OraFine: record.Ora_Distinta_Fine,
+                                    DataConsegna: record.Data_Distinta_Assegnato_FinePrevista,
+                                    Stato: record.Distinta_Fatto ? 'Completato' : 'In corso',
+                                    Tipo: 'Distinta'
+                                });
                             }
 
                             // Stampare 2D
@@ -2029,26 +2020,21 @@
                                 record.Ora_Stampare_2D_Inizio && 
                                 record.Ora_Stampare_2D_Fine) {
                                 
-                                const startDate = record.Data_Stampare_2D_Assegnato_InizioPrevista;
-                                const endDate = record.Data_Stampare_2D_Assegnato_FinePrevista;
-                                
-                                if (startDate === todayStr || endDate === todayStr || 
-                                    (startDate && endDate && startDate <= todayStr && endDate >= todayStr) ||
-                                    !startDate) {
-                                    
-                                    tasks.push({
-                                        ID: record.id,
-                                        Persona: record.Operatore_Stampare_2D_Assegnato,
-                                        Descrizione: `Stampare 2D - ${record.codiceProgetto || 'Progetto'}`,
-                                        OraInizio: record.Ora_Stampare_2D_Inizio,
-                                        OraFine: record.Ora_Stampare_2D_Fine,
-                                        DataConsegna: record.Data_Stampare_2D_Assegnato_FinePrevista,
-                                        Stato: record.Stampare_2D_Fatto ? 'Completato' : 'In corso'
-                                    });
-                                }
+                                tasks.push({
+                                    ID: record.id,
+                                    Persona: record.Operatore_Stampare_2D_Assegnato,
+                                    Descrizione: `Stampare 2D - ${record.codiceProgetto || 'Progetto'}`,
+                                    OraInizio: record.Ora_Stampare_2D_Inizio,
+                                    OraFine: record.Ora_Stampare_2D_Fine,
+                                    DataConsegna: record.Data_Stampare_2D_Assegnato_FinePrevista,
+                                    Stato: record.Stampare_2D_Fatto ? 'Completato' : 'In corso',
+                                    Tipo: 'Stampare 2D'
+                                });
                             }
                         });
                     }
+
+                    console.log('Tasks trovati:', tasks); // Debug
 
                     allTasks = tasks;
                     

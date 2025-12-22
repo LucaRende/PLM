@@ -18,60 +18,75 @@
 
         body {
             font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #0a0a0a 0%, #1a0000 100%);
+            background: linear-gradient(135deg, #0f1729 0%, #1a2332 50%, #0d1117 100%);
             min-height: 100vh;
-            padding: 15px;
-            color: #e0e0e0;
+            padding: 20px 15px;
+            color: #ffffff;
             overflow-x: hidden;
         }
 
         .main-container {
-            max-width: 100%;
+            max-width: 500px;
             margin: 0 auto;
         }
 
         .title-section {
             text-align: center;
-            margin-bottom: 25px;
+            margin-bottom: 30px;
             padding: 10px;
         }
 
-        .main-title {
-            font-size: 2em;
-            font-weight: 700;
-            background: linear-gradient(135deg, #ff0000 0%, #cc0000 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 8px;
-            letter-spacing: 1px;
-            text-shadow: 0 0 20px rgba(255, 0, 0, 0.3);
-        }
-
-        .subtitle {
-            font-size: 0.9em;
-            color: rgba(255, 255, 255, 0.7);
-            font-weight: 300;
-        }
-
-        /* Dashboard - Ingrandito */
-        .dashboard {
-            background: rgba(20, 0, 0, 0.95);
-            border: 2px solid rgba(255, 0, 0, 0.3);
-            border-radius: 20px;
-            box-shadow: 0 10px 40px rgba(255, 0, 0, 0.3);
-            overflow: hidden;
+        .logo-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
             margin-bottom: 20px;
         }
 
+        .logo {
+            width: 100px;
+            height: 100px;
+            object-fit: contain;
+            filter: drop-shadow(0 8px 24px rgba(59, 130, 246, 0.5));
+            transition: all 0.3s ease;
+        }
+
+        .logo:active {
+            transform: scale(0.95);
+        }
+
+        .subtitle {
+            font-size: 0.95em;
+            color: rgba(255, 255, 255, 0.6);
+            font-weight: 400;
+            letter-spacing: 0.5px;
+        }
+
+        /* Dashboard Elegante */
+        .dashboard {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            overflow: hidden;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .dashboard:active {
+            transform: scale(0.99);
+        }
+
         .dashboard-header {
-            background: linear-gradient(135deg, rgba(255, 0, 0, 0.3) 0%, rgba(139, 0, 0, 0.3) 100%);
-            padding: 25px 18px;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(147, 51, 234, 0.15) 100%);
+            padding: 24px 20px;
             cursor: pointer;
             display: flex;
             flex-direction: column;
             gap: 20px;
-            border-bottom: 2px solid rgba(255, 0, 0, 0.3);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
             -webkit-user-select: none;
             user-select: none;
         }
@@ -90,81 +105,82 @@
 
         .dashboard-title h2 {
             color: white;
-            font-size: 1.4em;
+            font-size: 1.35em;
             font-weight: 600;
             margin: 0;
-            text-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+            letter-spacing: -0.5px;
         }
 
         .dashboard-icon {
-            font-size: 1.7em;
-            filter: drop-shadow(0 0 10px rgba(255, 0, 0, 0.8));
+            font-size: 1.5em;
         }
 
         .toggle-arrow {
-            font-size: 1.5em;
-            color: #ff0000;
-            transition: transform 0.3s ease;
-            filter: drop-shadow(0 0 10px rgba(255, 0, 0, 0.8));
+            font-size: 1.3em;
+            color: rgba(255, 255, 255, 0.6);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        /* Progress Bars Container */
+        .dashboard-header.active .toggle-arrow {
+            transform: rotate(180deg);
+        }
+
+        /* Progress Bars Container - Ottimizzato iPhone */
         .progress-container {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
-            padding: 20px 10px;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            padding: 8px 0 16px 0;
         }
 
         .progress-item {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 15px;
+            gap: 12px;
         }
 
         .progress-label {
-            font-size: 0.85em;
-            color: #ffffff;
-            font-weight: 600;
+            font-size: 0.75em;
+            color: rgba(255, 255, 255, 0.7);
+            font-weight: 500;
             text-align: center;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 0.3px;
         }
 
-        /* Circular Progress Bar */
+        /* Circular Progress - Ridisegnato */
         .circular-progress {
             position: relative;
-            width: 120px;
-            height: 120px;
+            width: 110px;
+            height: 110px;
         }
 
-        .circular-progress svg {
+        .progress-ring {
             transform: rotate(-90deg);
         }
 
-        .progress-bg {
+        .progress-ring-bg {
             fill: none;
-            stroke: rgba(255, 255, 255, 0.1);
-            stroke-width: 10;
+            stroke: rgba(255, 255, 255, 0.08);
+            stroke-width: 8;
         }
 
-        .progress-bar {
+        .progress-ring-fill {
             fill: none;
-            stroke-width: 10;
+            stroke-width: 8;
             stroke-linecap: round;
-            transition: stroke-dashoffset 1s ease;
+            transition: stroke-dashoffset 1.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .progress-bar.preventivi {
+        .progress-ring-fill.preventivi {
             stroke: url(#gradient-preventivi);
         }
 
-        .progress-bar.ordini {
+        .progress-ring-fill.ordini {
             stroke: url(#gradient-ordini);
         }
 
-        .progress-text {
+        .progress-content {
             position: absolute;
             top: 50%;
             left: 50%;
@@ -172,43 +188,66 @@
             text-align: center;
         }
 
-        .progress-percentage {
-            font-size: 1.8em;
+        .progress-value {
+            font-size: 1.9em;
             font-weight: 700;
-            color: #ff0000;
-            text-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+            color: white;
+            line-height: 1;
+            letter-spacing: -1px;
         }
 
-        .progress-subtitle {
-            font-size: 0.7em;
-            color: rgba(255, 255, 255, 0.6);
-            margin-top: -5px;
+        .progress-unit {
+            font-size: 0.65em;
+            color: rgba(255, 255, 255, 0.5);
+            font-weight: 500;
+            margin-top: 2px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .dashboard-content {
-            display: none;
-            background: rgba(10, 0, 0, 0.7);
-            padding: 15px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            background: rgba(0, 0, 0, 0.2);
         }
 
         .dashboard-content.show {
-            display: block;
+            max-height: 5000px;
         }
 
-        /* Activity Card */
+        .content-wrapper {
+            padding: 16px;
+        }
+
+        /* Activity Card - Ridisegnata */
         .activity-card {
-            background: rgba(30, 0, 0, 0.8);
-            border: 1px solid rgba(255, 0, 0, 0.2);
-            border-radius: 15px;
-            margin-bottom: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            margin-bottom: 12px;
             overflow: hidden;
-            box-shadow: 0 5px 15px rgba(255, 0, 0, 0.2);
+            transition: all 0.2s ease;
+        }
+
+        .activity-card:active {
+            transform: scale(0.98);
         }
 
         .activity-card-header {
-            padding: 18px 15px;
+            padding: 16px;
             cursor: pointer;
-            border-left: 4px solid #ff0000;
+            border-left: 3px solid transparent;
+            transition: all 0.2s ease;
+        }
+
+        .activity-card-header.ritardo {
+            border-left-color: #ef4444;
+        }
+
+        .activity-card-header.in-tempo {
+            border-left-color: #3b82f6;
         }
 
         .activity-info {
@@ -216,119 +255,125 @@
         }
 
         .activity-title {
-            font-size: 1.05em;
+            font-size: 1em;
             font-weight: 600;
             color: #ffffff;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
             line-height: 1.4;
-            word-wrap: break-word;
+            letter-spacing: -0.3px;
         }
 
         .activity-meta {
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 6px;
         }
 
         .meta-item {
             display: flex;
             align-items: center;
             gap: 6px;
-            font-size: 0.85em;
-            color: #b0b0b0;
-            flex-wrap: wrap;
+            font-size: 0.8em;
+            color: rgba(255, 255, 255, 0.6);
         }
 
         .meta-label {
             font-weight: 600;
-            color: #ff0000;
-            white-space: nowrap;
+            color: rgba(255, 255, 255, 0.8);
         }
 
         .activity-footer {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-top: 15px;
+            margin-top: 12px;
             padding-top: 12px;
-            border-top: 1px solid rgba(255, 0, 0, 0.2);
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
         }
 
         .status-badge {
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 0.75em;
+            padding: 6px 14px;
+            border-radius: 12px;
+            font-size: 0.7em;
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
 
         .status-aperto {
-            background: rgba(255, 69, 0, 0.2);
-            color: #ff6347;
-            border: 1px solid rgba(255, 69, 0, 0.4);
+            background: rgba(59, 130, 246, 0.15);
+            color: #3b82f6;
+            border: 1px solid rgba(59, 130, 246, 0.3);
         }
 
         .status-in-corso {
-            background: rgba(255, 140, 0, 0.2);
-            color: #ffa500;
-            border: 1px solid rgba(255, 140, 0, 0.4);
+            background: rgba(251, 146, 60, 0.15);
+            color: #fb923c;
+            border: 1px solid rgba(251, 146, 60, 0.3);
         }
 
         .status-completato {
-            background: rgba(0, 255, 0, 0.2);
-            color: #32cd32;
-            border: 1px solid rgba(0, 255, 0, 0.4);
+            background: rgba(34, 197, 94, 0.15);
+            color: #22c55e;
+            border: 1px solid rgba(34, 197, 94, 0.3);
         }
 
         .status-annullato {
-            background: rgba(139, 0, 0, 0.3);
-            color: #dc143c;
-            border: 1px solid rgba(139, 0, 0, 0.5);
+            background: rgba(239, 68, 68, 0.15);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.3);
         }
 
         .activity-arrow {
-            font-size: 1.3em;
-            color: #ff0000;
-            transition: transform 0.3s ease;
+            font-size: 1.2em;
+            color: rgba(255, 255, 255, 0.4);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .activity-card.active .activity-arrow {
+            transform: rotate(180deg);
         }
 
         .activity-details {
-            display: none;
-            background: rgba(15, 0, 0, 0.8);
-            padding: 18px 15px;
-            border-top: 1px solid rgba(255, 0, 0, 0.2);
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            background: rgba(0, 0, 0, 0.2);
         }
 
-        .activity-details.show {
-            display: block;
+        .activity-card.active .activity-details {
+            max-height: 1000px;
+        }
+
+        .details-wrapper {
+            padding: 16px;
         }
 
         .details-grid {
             display: grid;
             grid-template-columns: 1fr;
-            gap: 12px;
+            gap: 10px;
         }
 
         .detail-box {
-            background: rgba(40, 0, 0, 0.6);
-            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 12px 14px;
             border-radius: 10px;
-            border: 1px solid rgba(255, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.06);
         }
 
         .detail-label {
-            font-size: 0.75em;
+            font-size: 0.7em;
             font-weight: 600;
-            color: #ff0000;
+            color: rgba(255, 255, 255, 0.5);
             text-transform: uppercase;
-            margin-bottom: 6px;
+            margin-bottom: 5px;
             letter-spacing: 0.5px;
         }
 
         .detail-value {
-            font-size: 1em;
-            color: #e0e0e0;
+            font-size: 0.95em;
+            color: rgba(255, 255, 255, 0.9);
             font-weight: 500;
             word-wrap: break-word;
         }
@@ -336,8 +381,8 @@
         .loading-state, .empty-state {
             text-align: center;
             padding: 40px 20px;
-            color: #ff0000;
-            font-size: 1.1em;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 1em;
         }
 
         .empty-icon {
@@ -346,19 +391,11 @@
             opacity: 0.3;
         }
 
-        /* Animazioni */
-        .activity-card {
-            transition: transform 0.2s ease;
-        }
-
-        .activity-card:active {
-            transform: scale(0.98);
-        }
-
         /* Responsive */
         @media (max-width: 375px) {
-            .progress-container {
-                gap: 15px;
+            .logo {
+                width: 80px;
+                height: 80px;
             }
 
             .circular-progress {
@@ -366,19 +403,27 @@
                 height: 100px;
             }
 
-            .progress-percentage {
-                font-size: 1.5em;
+            .progress-value {
+                font-size: 1.7em;
             }
         }
 
         @media (min-width: 430px) {
+            .main-container {
+                max-width: 600px;
+            }
+
             .details-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
 
             .circular-progress {
-                width: 140px;
-                height: 140px;
+                width: 130px;
+                height: 130px;
+            }
+
+            .progress-value {
+                font-size: 2.1em;
             }
         }
 
@@ -390,12 +435,19 @@
                 padding-bottom: max(15px, env(safe-area-inset-bottom));
             }
         }
+
+        /* Smooth scroll */
+        html {
+            scroll-behavior: smooth;
+        }
     </style>
 </head>
 <body>
     <div class="main-container">
         <div class="title-section">
-            <h1 class="main-title">🎯 CRM Sistema</h1>
+            <div class="logo-container">
+                <img src="Logo tondo.png" alt="Logo CRM" class="logo">
+            </div>
             <p class="subtitle">Gestione Attività e Clienti</p>
         </div>
 
@@ -409,25 +461,25 @@
                     <span class="toggle-arrow" id="dashArrow">▼</span>
                 </div>
                 
-                <!-- Progress Bars -->
+                <!-- Progress Bars Ottimizzate -->
                 <div class="progress-container">
                     <div class="progress-item">
                         <div class="progress-label">Ritardi Preventivi</div>
                         <div class="circular-progress">
-                            <svg width="120" height="120" viewBox="0 0 120 120">
+                            <svg class="progress-ring" width="110" height="110" viewBox="0 0 110 110">
                                 <defs>
                                     <linearGradient id="gradient-preventivi" x1="0%" y1="0%" x2="100%" y2="100%">
-                                        <stop offset="0%" style="stop-color:#ff0000;stop-opacity:1" />
-                                        <stop offset="100%" style="stop-color:#8b0000;stop-opacity:1" />
+                                        <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
+                                        <stop offset="100%" style="stop-color:#8b5cf6;stop-opacity:1" />
                                     </linearGradient>
                                 </defs>
-                                <circle class="progress-bg" cx="60" cy="60" r="52"></circle>
-                                <circle class="progress-bar preventivi" id="progressPreventivi" cx="60" cy="60" r="52"
-                                    stroke-dasharray="326.73" stroke-dashoffset="326.73"></circle>
+                                <circle class="progress-ring-bg" cx="55" cy="55" r="48"></circle>
+                                <circle class="progress-ring-fill preventivi" id="progressPreventivi" cx="55" cy="55" r="48"
+                                    stroke-dasharray="301.59" stroke-dashoffset="301.59"></circle>
                             </svg>
-                            <div class="progress-text">
-                                <div class="progress-percentage" id="percentPreventivi">0%</div>
-                                <div class="progress-subtitle">ritardo</div>
+                            <div class="progress-content">
+                                <div class="progress-value" id="percentPreventivi">0</div>
+                                <div class="progress-unit">ritardo</div>
                             </div>
                         </div>
                     </div>
@@ -435,20 +487,20 @@
                     <div class="progress-item">
                         <div class="progress-label">Ritardi Ordini</div>
                         <div class="circular-progress">
-                            <svg width="120" height="120" viewBox="0 0 120 120">
+                            <svg class="progress-ring" width="110" height="110" viewBox="0 0 110 110">
                                 <defs>
                                     <linearGradient id="gradient-ordini" x1="0%" y1="0%" x2="100%" y2="100%">
-                                        <stop offset="0%" style="stop-color:#dc143c;stop-opacity:1" />
-                                        <stop offset="100%" style="stop-color:#8b0000;stop-opacity:1" />
+                                        <stop offset="0%" style="stop-color:#ef4444;stop-opacity:1" />
+                                        <stop offset="100%" style="stop-color:#f97316;stop-opacity:1" />
                                     </linearGradient>
                                 </defs>
-                                <circle class="progress-bg" cx="60" cy="60" r="52"></circle>
-                                <circle class="progress-bar ordini" id="progressOrdini" cx="60" cy="60" r="52"
-                                    stroke-dasharray="326.73" stroke-dashoffset="326.73"></circle>
+                                <circle class="progress-ring-bg" cx="55" cy="55" r="48"></circle>
+                                <circle class="progress-ring-fill ordini" id="progressOrdini" cx="55" cy="55" r="48"
+                                    stroke-dasharray="301.59" stroke-dashoffset="301.59"></circle>
                             </svg>
-                            <div class="progress-text">
-                                <div class="progress-percentage" id="percentOrdini">0%</div>
-                                <div class="progress-subtitle">ritardo</div>
+                            <div class="progress-content">
+                                <div class="progress-value" id="percentOrdini">0</div>
+                                <div class="progress-unit">ritardo</div>
                             </div>
                         </div>
                     </div>
@@ -456,7 +508,7 @@
             </div>
 
             <div class="dashboard-content" id="dashContent">
-                <div id="activitiesList">
+                <div class="content-wrapper" id="contentWrapper">
                     <div class="loading-state">Caricamento...</div>
                 </div>
             </div>
@@ -474,45 +526,34 @@
             let loaded = false;
 
             window.toggleDash = function() {
+                const header = document.getElementById('dashHeader');
                 const content = document.getElementById('dashContent');
                 const arrow = document.getElementById('dashArrow');
                 
-                if (content.classList.contains('show')) {
-                    content.classList.remove('show');
-                    arrow.style.transform = 'rotate(0deg)';
-                } else {
-                    content.classList.add('show');
-                    arrow.style.transform = 'rotate(180deg)';
-                    if (!loaded) {
-                        loaded = true;
-                        loadData();
-                    }
+                header.classList.toggle('active');
+                content.classList.toggle('show');
+                
+                if (content.classList.contains('show') && !loaded) {
+                    loaded = true;
+                    loadData();
                 }
             };
 
             window.toggleAct = function(id) {
-                const details = document.getElementById('det-' + id);
-                const arrow = document.getElementById('arr-' + id);
-                
-                if (details.classList.contains('show')) {
-                    details.classList.remove('show');
-                    arrow.style.transform = 'rotate(0deg)';
-                } else {
-                    details.classList.add('show');
-                    arrow.style.transform = 'rotate(180deg)';
-                }
+                const card = document.querySelector(`[data-id="${id}"]`);
+                card.classList.toggle('active');
             };
 
             function setCircularProgress(elementId, percentId, percentage) {
                 const circle = document.getElementById(elementId);
                 const percentText = document.getElementById(percentId);
-                const circumference = 326.73;
+                const circumference = 301.59;
                 const offset = circumference - (percentage / 100) * circumference;
                 
                 setTimeout(() => {
                     circle.style.strokeDashoffset = offset;
                     percentText.textContent = Math.round(percentage) + '%';
-                }, 100);
+                }, 200);
             }
 
             function calculateDelayPercentages(data) {
@@ -531,7 +572,6 @@
                     const tipo = (a.tipologiaFormattata || '').toLowerCase();
                     const stato = (a.stato || '').toLowerCase();
                     
-                    // Escludi completati
                     if (stato.includes('completato') || stato.includes('chiuso')) return;
 
                     const isRitardo = consegna < today;
@@ -549,6 +589,14 @@
                 const ordiniPerc = ordiniTotal > 0 ? (ordiniRitardo / ordiniTotal) * 100 : 0;
 
                 return { preventiviPerc, ordiniPerc };
+            }
+
+            function isInRitardo(dataConsegna) {
+                if (!dataConsegna) return false;
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                const consegna = new Date(dataConsegna);
+                return consegna < today;
             }
 
             function getStatus(s) {
@@ -570,15 +618,14 @@
             }
 
             async function loadData() {
-                const list = document.getElementById('activitiesList');
-                list.innerHTML = '<div class="loading-state">Caricamento...</div>';
+                const wrapper = document.getElementById('contentWrapper');
+                wrapper.innerHTML = '<div class="loading-state">Caricamento...</div>';
 
                 try {
                     const { data, error } = await sb.from('Attivita').select('*').order('ID_Attivita', { ascending: false });
 
                     if (error) throw error;
 
-                    // Calcola percentuali ritardo
                     if (data && data.length > 0) {
                         const { preventiviPerc, ordiniPerc } = calculateDelayPercentages(data);
                         setCircularProgress('progressPreventivi', 'percentPreventivi', preventiviPerc);
@@ -586,86 +633,82 @@
                     }
 
                     if (!data || !data.length) {
-                        list.innerHTML = '<div class="empty-state"><div class="empty-icon">📭</div>Nessuna attività</div>';
+                        wrapper.innerHTML = '<div class="empty-state"><div class="empty-icon">📭</div>Nessuna attività</div>';
                         return;
                     }
 
-                    list.innerHTML = data.map(a => `
-                        <div class="activity-card">
-                            <div class="activity-card-header" onclick="toggleAct(${a.ID_Attivita})">
+                    wrapper.innerHTML = data.map(a => {
+                        const ritardo = isInRitardo(a._dataConsegna);
+                        const ritardoClass = ritardo ? 'ritardo' : 'in-tempo';
+                        
+                        return `
+                        <div class="activity-card" data-id="${a.ID_Attivita}">
+                            <div class="activity-card-header ${ritardoClass}" onclick="toggleAct(${a.ID_Attivita})">
                                 <div class="activity-info">
                                     <div class="activity-title">
-                                        Attività #${a.ID_Attivita}<br>
-                                        ${a.clienteApplicato || 'Cliente non specificato'}
+                                        #${a.ID_Attivita} · ${a.clienteApplicato || 'Cliente non specificato'}
                                     </div>
                                     <div class="activity-meta">
                                         <div class="meta-item">
-                                            <span class="meta-label">📅 Creazione:</span>
+                                            <span class="meta-label">📅</span>
                                             <span>${a.dataCreazioneFormattata || fmtDate(a._dataCreazione)}</span>
                                         </div>
                                         <div class="meta-item">
-                                            <span class="meta-label">🎯 Consegna:</span>
+                                            <span class="meta-label">🎯</span>
                                             <span>${a.dataConsegnaFormattata || fmtDate(a._dataConsegna)}</span>
                                         </div>
                                         <div class="meta-item">
-                                            <span class="meta-label">📦 Tipo:</span>
+                                            <span class="meta-label">📦</span>
                                             <span>${a.tipologiaFormattata || 'Non specificato'}</span>
                                         </div>
                                     </div>
                                     <div class="activity-footer">
                                         <span class="status-badge ${getStatus(a.stato)}">${a.stato || 'Aperto'}</span>
-                                        <span class="activity-arrow" id="arr-${a.ID_Attivita}">▼</span>
+                                        <span class="activity-arrow">▼</span>
                                     </div>
                                 </div>
                             </div>
-                            <div class="activity-details" id="det-${a.ID_Attivita}">
-                                <div class="details-grid">
-                                    <div class="detail-box">
-                                        <div class="detail-label">ID Attività</div>
-                                        <div class="detail-value">#${a.ID_Attivita}</div>
-                                    </div>
-                                    <div class="detail-box">
-                                        <div class="detail-label">Cliente</div>
-                                        <div class="detail-value">${a.clienteApplicato || 'Non specificato'}</div>
-                                    </div>
-                                    <div class="detail-box">
-                                        <div class="detail-label">Data Creazione</div>
-                                        <div class="detail-value">${a.dataCreazioneFormattata || fmtDate(a._dataCreazione)}</div>
-                                    </div>
-                                    <div class="detail-box">
-                                        <div class="detail-label">Data Consegna</div>
-                                        <div class="detail-value">${a.dataConsegnaFormattata || fmtDate(a._dataConsegna)}</div>
-                                    </div>
-                                    <div class="detail-box">
-                                        <div class="detail-label">Tipologia</div>
-                                        <div class="detail-value">${a.tipologiaFormattata || 'Non specificato'}</div>
-                                    </div>
-                                    <div class="detail-box">
-                                        <div class="detail-label">Trasferimento</div>
-                                        <div class="detail-value">${a.trasferimento || 'Non specificato'}</div>
-                                    </div>
-                                    <div class="detail-box">
-                                        <div class="detail-label">Stato</div>
-                                        <div class="detail-value">${a.stato || 'Aperto'}</div>
+                            <div class="activity-details">
+                                <div class="details-wrapper">
+                                    <div class="details-grid">
+                                        <div class="detail-box">
+                                            <div class="detail-label">Cliente</div>
+                                            <div class="detail-value">${a.clienteApplicato || 'Non specificato'}</div>
+                                        </div>
+                                        <div class="detail-box">
+                                            <div class="detail-label">Tipologia</div>
+                                            <div class="detail-value">${a.tipologiaFormattata || 'Non specificato'}</div>
+                                        </div>
+                                        <div class="detail-box">
+                                            <div class="detail-label">Data Creazione</div>
+                                            <div class="detail-value">${a.dataCreazioneFormattata || fmtDate(a._dataCreazione)}</div>
+                                        </div>
+                                        <div class="detail-box">
+                                            <div class="detail-label">Data Consegna</div>
+                                            <div class="detail-value">${a.dataConsegnaFormattata || fmtDate(a._dataConsegna)}</div>
+                                        </div>
+                                        <div class="detail-box">
+                                            <div class="detail-label">Trasferimento</div>
+                                            <div class="detail-value">${a.trasferimento || 'Non specificato'}</div>
+                                        </div>
+                                        <div class="detail-box">
+                                            <div class="detail-label">Stato</div>
+                                            <div class="detail-value">${a.stato || 'Aperto'}</div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    `).join('');
+                    `}).join('');
 
                 } catch (e) {
-                    list.innerHTML = `<div class="empty-state"><div class="empty-icon">⚠️</div>Errore: ${e.message}</div>`;
+                    wrapper.innerHTML = `<div class="empty-state"><div class="empty-icon">⚠️</div>Errore: ${e.message}</div>`;
                 }
             }
 
-            // Carica i dati all'avvio per mostrare le progress bar
             loadData();
-
             document.getElementById('dashHeader').onclick = window.toggleDash;
         })();
     </script>
 </body>
 </html>
-
-
-

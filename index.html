@@ -1601,33 +1601,47 @@
                 const ganttSummaryRows = document.getElementById('ganttSummaryRows');
                 const ganttDetailsRows = document.getElementById('ganttDetailsRows');
                 
+                // Fixed list of operators
+                const operators = [
+                    "Alessandro Colio",
+                    "Caterina Dello Stritto",
+                    "Christian D'Angelo",
+                    "Federico Cavazza",
+                    "Marco Garzesi"
+                ];
+                
                 if (!data || data.length === 0) {
-                    ganttSummaryRows.innerHTML = `
+                    // Show all operators even with no tasks
+                    renderEmptyGantt(operators);
+                    ganttDetailsRows.innerHTML = `
                         <div class="empty-state">
                             <div class="empty-icon">📋</div>
                             <div class="empty-text">Nessun lavoro programmato</div>
                         </div>
                     `;
-                    ganttDetailsRows.innerHTML = ganttSummaryRows.innerHTML;
                     return;
                 }
 
+                // Group tasks by person
                 const byPerson = {};
+                operators.forEach(op => {
+                    byPerson[op] = [];
+                });
+                
                 data.forEach(task => {
                     const person = task.Persona || 'Non Assegnato';
-                    if (!byPerson[person]) {
-                        byPerson[person] = [];
+                    if (byPerson[person]) {
+                        byPerson[person].push(task);
                     }
-                    byPerson[person].push(task);
                 });
 
-                document.getElementById('totalPersons').textContent = Object.keys(byPerson).length;
+                // Update stats
+                const operatorsWithTasks = operators.filter(op => byPerson[op].length > 0).length;
+                document.getElementById('totalPersons').textContent = operatorsWithTasks;
                 document.getElementById('totalTasks').textContent = data.length;
                 
-                const avgOccupation = Math.round(data.length / Math.max(Object.keys(byPerson).length, 1));
+                const avgOccupation = operatorsWithTasks > 0 ? Math.round(data.length / operatorsWithTasks) : 0;
                 document.getElementById('avgOccupation').textContent = avgOccupation;
-
-                const sortedPersons = Object.keys(byPerson).sort();
 
                 // Calculate current time position for the indicator
                 const now = new Date();
@@ -1641,7 +1655,7 @@
                 }
 
                 // Render Summary View (collapsed state)
-                ganttSummaryRows.innerHTML = sortedPersons.map(person => {
+                ganttSummaryRows.innerHTML = operators.map(person => {
                     const tasks = byPerson[person];
                     
                     // Create 10 hour slots (8-17)
@@ -1679,8 +1693,24 @@
                 }).join('');
 
                 // Render Detail View (expanded state)
-                ganttDetailsRows.innerHTML = sortedPersons.map(person => {
+                ganttDetailsRows.innerHTML = operators.map(person => {
                     const tasks = byPerson[person];
+                    
+                    if (tasks.length === 0) {
+                        return `
+                            <div class="person-section">
+                                <div class="person-section-header">
+                                    <h3>${person}</h3>
+                                    <span class="task-count">0 lavori</span>
+                                </div>
+                                <div class="task-list">
+                                    <div class="empty-state" style="padding: 20px;">
+                                        <div class="empty-text" style="font-size: 0.85em;">Nessun lavoro assegnato</div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }
                     
                     const taskList = tasks.map(task => {
                         const urgent = isUrgent(task.DataConsegna);
@@ -1711,6 +1741,45 @@
                             </div>
                             <div class="task-list">
                                 ${taskList}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            function renderEmptyGantt(operators) {
+                const ganttSummaryRows = document.getElementById('ganttSummaryRows');
+                
+                // Calculate current time position
+                const now = new Date();
+                const currentHour = now.getHours() + (now.getMinutes() / 60);
+                const startHour = 8;
+                const endHour = 18;
+                let currentTimePercent = null;
+                
+                if (currentHour >= startHour && currentHour < endHour) {
+                    currentTimePercent = ((currentHour - startHour) / (endHour - startHour)) * 100;
+                }
+                
+                document.getElementById('totalPersons').textContent = '0';
+                document.getElementById('totalTasks').textContent = '0';
+                document.getElementById('avgOccupation').textContent = '0';
+
+                ganttSummaryRows.innerHTML = operators.map(person => {
+                    const slots = Array(10).fill(null).map((_, i) => 
+                        `<div class="gantt-hour-slot"></div>`
+                    ).join('');
+
+                    const currentTimeLine = currentTimePercent !== null 
+                        ? `<div class="current-time-line" style="left: ${currentTimePercent}%;"></div>` 
+                        : '';
+
+                    return `
+                        <div class="gantt-summary-row">
+                            <div class="gantt-person-cell">${person}</div>
+                            <div class="gantt-timeline-row">
+                                ${slots}
+                                ${currentTimeLine}
                             </div>
                         </div>
                     `;

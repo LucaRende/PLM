@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>PLM - Ufficio Tecnico</title>
+    <title>PLM 2</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
@@ -17,8 +17,8 @@
         }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: linear-gradient(135deg, #0a0e1a 0%, #1a1f2e 50%, #0d1117 100%);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #0f1729 0%, #1a2332 50%, #0d1117 100%);
             min-height: 100vh;
             padding: 20px 15px;
             color: #ffffff;
@@ -49,6 +49,12 @@
             object-fit: contain;
             filter: drop-shadow(0 8px 24px rgba(59, 130, 246, 0.5));
             transition: all 0.3s ease;
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: crisp-edges;
+        }
+
+        .logo:active {
+            transform: scale(0.95);
         }
 
         .subtitle {
@@ -58,7 +64,7 @@
             letter-spacing: 0.5px;
         }
 
-        /* Dashboard Gantt */
+        /* Dashboard Elegante */
         .dashboard {
             background: rgba(255, 255, 255, 0.05);
             backdrop-filter: blur(20px);
@@ -68,7 +74,7 @@
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
             overflow: hidden;
             margin-bottom: 20px;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.3s ease;
         }
 
         .dashboard:active {
@@ -76,15 +82,19 @@
         }
 
         .dashboard-header {
-            background: linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(16, 185, 129, 0.15) 100%);
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(147, 51, 234, 0.15) 100%);
             padding: 24px 20px;
             cursor: pointer;
             display: flex;
             flex-direction: column;
-            gap: 16px;
+            gap: 20px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.08);
             -webkit-user-select: none;
             user-select: none;
+        }
+
+        .dashboard-header.gantt {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(59, 130, 246, 0.15) 100%);
         }
 
         .dashboard-top {
@@ -102,7 +112,7 @@
         .dashboard-title h2 {
             color: white;
             font-size: 1.35em;
-            font-weight: 700;
+            font-weight: 600;
             margin: 0;
             letter-spacing: -0.5px;
         }
@@ -129,7 +139,399 @@
             margin-top: 4px;
         }
 
-        /* Gantt Chart */
+        /* Progress Bars Container */
+        .progress-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            padding: 8px 0 16px 0;
+        }
+
+        .progress-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .progress-label {
+            font-size: 0.75em;
+            color: rgba(255, 255, 255, 0.7);
+            font-weight: 500;
+            text-align: center;
+            letter-spacing: 0.3px;
+        }
+
+        .circular-progress {
+            position: relative;
+            width: 110px;
+            height: 110px;
+        }
+
+        .progress-ring {
+            transform: rotate(-90deg);
+        }
+
+        .progress-ring-bg {
+            fill: none;
+            stroke: rgba(255, 255, 255, 0.08);
+            stroke-width: 8;
+        }
+
+        .progress-ring-fill {
+            fill: none;
+            stroke-width: 8;
+            stroke-linecap: round;
+            transition: stroke-dashoffset 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .progress-ring-fill.preventivi {
+            stroke: url(#gradient-preventivi);
+        }
+
+        .progress-ring-fill.ordini {
+            stroke: url(#gradient-ordini);
+        }
+
+        .progress-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+
+        .progress-value {
+            font-size: 1.9em;
+            font-weight: 700;
+            color: white;
+            line-height: 1;
+            letter-spacing: -1px;
+        }
+
+        .progress-unit {
+            font-size: 0.65em;
+            color: rgba(255, 255, 255, 0.5);
+            font-weight: 500;
+            margin-top: 2px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .dashboard-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .dashboard-content.show {
+            max-height: 5000px;
+        }
+
+        .content-wrapper {
+            padding: 16px;
+        }
+
+        /* Filtri Box */
+        .filters-box {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            margin-bottom: 16px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .filters-header {
+            padding: 16px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 3px solid #8b5cf6;
+        }
+
+        .filters-header:active {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .filters-title {
+            font-size: 1em;
+            font-weight: 600;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .filters-arrow {
+            font-size: 1.2em;
+            color: rgba(255, 255, 255, 0.4);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .filters-box.active .filters-arrow {
+            transform: rotate(180deg);
+        }
+
+        .filters-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .filters-box.active .filters-content {
+            max-height: 800px;
+        }
+
+        .filters-wrapper {
+            padding: 16px;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .filter-group {
+            margin-bottom: 16px;
+        }
+
+        .filter-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .filter-label {
+            font-size: 0.75em;
+            color: rgba(255, 255, 255, 0.6);
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            letter-spacing: 0.5px;
+        }
+
+        .filter-select {
+            width: 100%;
+            padding: 10px 12px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            color: white;
+            font-size: 0.9em;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: #3b82f6;
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .filter-select option {
+            background: #1a2332;
+            color: white;
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 16px;
+        }
+
+        .filter-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 10px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.85em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .filter-btn-apply {
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            color: white;
+        }
+
+        .filter-btn-apply:active {
+            transform: scale(0.96);
+        }
+
+        .filter-btn-reset {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .filter-btn-reset:active {
+            transform: scale(0.96);
+        }
+
+        /* Activity Card */
+        .activity-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            margin-bottom: 12px;
+            overflow: hidden;
+            transition: all 0.2s ease;
+        }
+
+        .activity-card:active {
+            transform: scale(0.98);
+        }
+
+        .activity-card-header {
+            padding: 16px;
+            cursor: pointer;
+            border-left: 3px solid transparent;
+            transition: all 0.2s ease;
+        }
+
+        .activity-card-header.scaduto {
+            border-left-color: #ef4444;
+        }
+
+        .activity-card-header.oggi {
+            border-left-color: #eab308;
+        }
+
+        .activity-card-header.futuro {
+            border-left-color: #22c55e;
+        }
+
+        .activity-info {
+            width: 100%;
+        }
+
+        .activity-title {
+            font-size: 1em;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 10px;
+            line-height: 1.4;
+            letter-spacing: -0.3px;
+        }
+
+        .activity-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.8em;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .meta-label {
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .activity-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .status-badge {
+            padding: 6px 14px;
+            border-radius: 12px;
+            font-size: 0.7em;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-aperto {
+            background: rgba(59, 130, 246, 0.15);
+            color: #3b82f6;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+
+        .status-in-corso {
+            background: rgba(251, 146, 60, 0.15);
+            color: #fb923c;
+            border: 1px solid rgba(251, 146, 60, 0.3);
+        }
+
+        .status-completato {
+            background: rgba(34, 197, 94, 0.15);
+            color: #22c55e;
+            border: 1px solid rgba(34, 197, 94, 0.3);
+        }
+
+        .status-annullato {
+            background: rgba(239, 68, 68, 0.15);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .activity-arrow {
+            font-size: 1.2em;
+            color: rgba(255, 255, 255, 0.4);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .activity-card.active .activity-arrow {
+            transform: rotate(180deg);
+        }
+
+        .activity-details {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .activity-card.active .activity-details {
+            max-height: 1000px;
+        }
+
+        .details-wrapper {
+            padding: 16px;
+        }
+
+        .details-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+        }
+
+        .detail-box {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 12px 14px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .detail-label {
+            font-size: 0.7em;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.5);
+            text-transform: uppercase;
+            margin-bottom: 5px;
+            letter-spacing: 0.5px;
+        }
+
+        .detail-value {
+            font-size: 0.95em;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 500;
+            word-wrap: break-word;
+        }
+
+        /* Gantt Chart Styles */
         .gantt-container {
             padding: 20px;
             overflow-x: auto;
@@ -357,15 +759,49 @@
             color: #10b981;
         }
 
-        .empty-state {
+        /* Stats Summary */
+        .stats-summary {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .stat-item {
             text-align: center;
-            padding: 60px 20px;
-            color: rgba(255, 255, 255, 0.4);
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 10px;
+        }
+
+        .stat-value {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 0.7em;
+            color: rgba(255, 255, 255, 0.5);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .loading-state, .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 1em;
         }
 
         .empty-icon {
             font-size: 3em;
-            margin-bottom: 16px;
+            margin-bottom: 15px;
+            opacity: 0.3;
         }
 
         .empty-text {
@@ -374,13 +810,6 @@
         }
 
         /* Loading Animation */
-        .loading-state {
-            text-align: center;
-            padding: 40px;
-            color: rgba(255, 255, 255, 0.6);
-            font-weight: 500;
-        }
-
         .loading-spinner {
             width: 40px;
             height: 40px;
@@ -414,36 +843,52 @@
             background: rgba(255, 255, 255, 0.2);
         }
 
-        /* Stats Summary */
-        .stats-summary {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
-            margin-top: 16px;
-            padding-top: 16px;
-            border-top: 1px solid rgba(255, 255, 255, 0.08);
+        /* Responsive */
+        @media (max-width: 375px) {
+            .logo {
+                width: 80px;
+                height: 80px;
+            }
+
+            .circular-progress {
+                width: 100px;
+                height: 100px;
+            }
+
+            .progress-value {
+                font-size: 1.7em;
+            }
         }
 
-        .stat-item {
-            text-align: center;
-            padding: 12px;
-            background: rgba(255, 255, 255, 0.03);
-            border-radius: 10px;
+        @media (min-width: 430px) {
+            .main-container {
+                max-width: 600px;
+            }
+
+            .details-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .circular-progress {
+                width: 130px;
+                height: 130px;
+            }
+
+            .progress-value {
+                font-size: 2.1em;
+            }
         }
 
-        .stat-value {
-            font-size: 1.5em;
-            font-weight: 700;
-            color: white;
-            margin-bottom: 4px;
+        @supports (padding: max(0px)) {
+            body {
+                padding-left: max(15px, env(safe-area-inset-left));
+                padding-right: max(15px, env(safe-area-inset-right));
+                padding-bottom: max(15px, env(safe-area-inset-bottom));
+            }
         }
 
-        .stat-label {
-            font-size: 0.7em;
-            color: rgba(255, 255, 255, 0.5);
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+        html {
+            scroll-behavior: smooth;
         }
     </style>
 </head>
@@ -451,14 +896,124 @@
     <div class="main-container">
         <div class="title-section">
             <div class="logo-container">
-                <img class="logo" src="https://nfgsxpkrotvgbxmidukg.supabase.co/storage/v1/object/public/loghi/logonodo.png" alt="PLM Logo">
+                <img src="logo-tondo.png" alt="Logo CRM" class="logo">
             </div>
-            <div class="subtitle">Gestione Ufficio Tecnico</div>
+            <p class="subtitle">PLM 2</p>
         </div>
 
-        <!-- Dashboard Gantt Ufficio Tecnico -->
+        <!-- Dashboard Attività -->
         <div class="dashboard">
-            <div class="dashboard-header" id="ganttHeader">
+            <div class="dashboard-header" id="dashHeader">
+                <div class="dashboard-top">
+                    <div class="dashboard-title">
+                        <span class="dashboard-icon">📋</span>
+                        <h2>Attività CRM</h2>
+                    </div>
+                    <span class="toggle-arrow" id="dashArrow">▼</span>
+                </div>
+                
+                <div class="progress-container">
+                    <div class="progress-item">
+                        <div class="progress-label">Ritardi Preventivi</div>
+                        <div class="circular-progress">
+                            <svg class="progress-ring" width="110" height="110" viewBox="0 0 110 110">
+                                <defs>
+                                    <linearGradient id="gradient-preventivi" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" style="stop-color:#ef4444;stop-opacity:1" />
+                                        <stop offset="100%" style="stop-color:#dc2626;stop-opacity:1" />
+                                    </linearGradient>
+                                </defs>
+                                <circle class="progress-ring-bg" cx="55" cy="55" r="48"></circle>
+                                <circle class="progress-ring-fill preventivi" id="progressPreventivi" cx="55" cy="55" r="48"
+                                    stroke-dasharray="301.59" stroke-dashoffset="301.59"></circle>
+                            </svg>
+                            <div class="progress-content">
+                                <div class="progress-value" id="percentPreventivi">0</div>
+                                <div class="progress-unit">ritardo</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="progress-item">
+                        <div class="progress-label">Ritardi Ordini</div>
+                        <div class="circular-progress">
+                            <svg class="progress-ring" width="110" height="110" viewBox="0 0 110 110">
+                                <defs>
+                                    <linearGradient id="gradient-ordini" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" style="stop-color:#f97316;stop-opacity:1" />
+                                        <stop offset="100%" style="stop-color:#ea580c;stop-opacity:1" />
+                                    </linearGradient>
+                                </defs>
+                                <circle class="progress-ring-bg" cx="55" cy="55" r="48"></circle>
+                                <circle class="progress-ring-fill ordini" id="progressOrdini" cx="55" cy="55" r="48"
+                                    stroke-dasharray="301.59" stroke-dashoffset="301.59"></circle>
+                            </svg>
+                            <div class="progress-content">
+                                <div class="progress-value" id="percentOrdini">0</div>
+                                <div class="progress-unit">ritardo</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard-content" id="dashContent">
+                <div class="content-wrapper" id="contentWrapper">
+                    <div class="filters-box" id="filtersBox">
+                        <div class="filters-header" onclick="toggleFilters()">
+                            <div class="filters-title">
+                                <span>🔍</span>
+                                <span>Filtri</span>
+                            </div>
+                            <span class="filters-arrow">▼</span>
+                        </div>
+                        <div class="filters-content">
+                            <div class="filters-wrapper">
+                                <div class="filter-group">
+                                    <div class="filter-label">Cliente</div>
+                                    <select class="filter-select" id="filterCliente">
+                                        <option value="">Tutti i clienti</option>
+                                    </select>
+                                </div>
+                                <div class="filter-group">
+                                    <div class="filter-label">Tipologia</div>
+                                    <select class="filter-select" id="filterTipologia">
+                                        <option value="">Tutte le tipologie</option>
+                                    </select>
+                                </div>
+                                <div class="filter-group">
+                                    <div class="filter-label">Stato</div>
+                                    <select class="filter-select" id="filterStato">
+                                        <option value="">Tutti gli stati</option>
+                                    </select>
+                                </div>
+                                <div class="filter-group">
+                                    <div class="filter-label">Scadenza</div>
+                                    <select class="filter-select" id="filterScadenza">
+                                        <option value="">Tutte</option>
+                                        <option value="scaduto">Scadute</option>
+                                        <option value="oggi">Scadono oggi</option>
+                                        <option value="futuro">Future</option>
+                                    </select>
+                                </div>
+                                <div class="filter-buttons">
+                                    <button class="filter-btn filter-btn-apply" onclick="applyFilters()">Applica</button>
+                                    <button class="filter-btn filter-btn-reset" onclick="resetFilters()">Reset</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="activitiesList">
+                        <div class="loading-state">Caricamento...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Ufficio Tecnico con Gantt -->
+        <div class="dashboard">
+            <div class="dashboard-header gantt" id="ganttHeader">
                 <div class="dashboard-top">
                     <div class="dashboard-title">
                         <span class="dashboard-icon">👷</span>
@@ -492,229 +1047,496 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        const SUPABASE_URL = 'https://uoykvjxerdrthnmnfmgc.supabase.co';
-        const SUPABASE_KEY = 'sb_publishable_iGVhzkLqAktDZmpccXl7OA_PZ2nUYSY';
-       const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        // ===== ATTIVITA CRM DASHBOARD =====
+        (function() {
+            const sb = window.supabase.createClient(
+                'https://uoykvjxerdrthnmnfmgc.supabase.co',
+                'sb_publishable_iGVhzkLqAktDZmpccXl7OA_PZ2nUYSY'
+            );
 
-        let allTasks = [];
-        let expandedPerson = null;
+            let loaded = false;
+            let allActivities = [];
+            let filteredActivities = [];
 
-        // Toggle dashboard
-        function toggleDashboard() {
-            const header = document.getElementById('ganttHeader');
-            const container = document.getElementById('ganttContainer');
-            
-            header.classList.toggle('active');
-            container.classList.toggle('collapsed');
-        }
-
-        // Toggle person details
-        function togglePerson(personName, element) {
-            const detailsDiv = element.querySelector('.person-details');
-            
-            if (expandedPerson === personName) {
-                detailsDiv.classList.remove('expanded');
-                expandedPerson = null;
-            } else {
-                // Close any open person
-                document.querySelectorAll('.person-details.expanded').forEach(d => {
-                    d.classList.remove('expanded');
-                });
+            window.toggleDash = function() {
+                const header = document.getElementById('dashHeader');
+                const content = document.getElementById('dashContent');
                 
-                detailsDiv.classList.add('expanded');
-                expandedPerson = personName;
-            }
-        }
-
-        // Generate timeline (8:00 - 18:00)
-        function generateTimeline() {
-            const timeline = document.getElementById('ganttTimeline');
-            const hours = ['8:00', '9:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00'];
-            
-            timeline.innerHTML = hours.map(h => 
-                `<div class="gantt-hour">${h}</div>`
-            ).join('');
-        }
-
-        // Calculate task position and width
-        function calculateTaskPosition(oraInizio, oraFine) {
-            const startHour = 8;
-            const endHour = 18;
-            const totalHours = endHour - startHour;
-            
-            // Parse times
-            const [startH, startM] = oraInizio.split(':').map(Number);
-            const [endH, endM] = oraFine.split(':').map(Number);
-            
-            const startDecimal = startH + (startM / 60);
-            const endDecimal = endH + (endM / 60);
-            
-            // Calculate position and width as percentages
-            const left = ((startDecimal - startHour) / totalHours) * 100;
-            const width = ((endDecimal - startDecimal) / totalHours) * 100;
-            
-            return { left: Math.max(0, left), width: Math.max(0, width) };
-        }
-
-        // Check if task is urgent (delivery today)
-        function isUrgent(dataConsegna) {
-            if (!dataConsegna) return false;
-            const today = new Date();
-            const delivery = new Date(dataConsegna);
-            return today.toDateString() === delivery.toDateString();
-        }
-
-        // Format time
-        function formatTime(time) {
-            if (!time) return 'N/D';
-            return time.substring(0, 5); // HH:MM
-        }
-
-        // Render Gantt chart
-        function renderGantt(data) {
-            const ganttRows = document.getElementById('ganttRows');
-            
-            if (!data || data.length === 0) {
-                ganttRows.innerHTML = `
-                    <div class="empty-state">
-                        <div class="empty-icon">📋</div>
-                        <div class="empty-text">Nessun lavoro programmato per oggi</div>
-                    </div>
-                `;
-                return;
-            }
-
-            // Group by person
-            const byPerson = {};
-            data.forEach(task => {
-                const person = task.Persona || 'Non Assegnato';
-                if (!byPerson[person]) {
-                    byPerson[person] = [];
+                header.classList.toggle('active');
+                content.classList.toggle('show');
+                
+                if (content.classList.contains('show') && !loaded) {
+                    loaded = true;
+                    loadData();
                 }
-                byPerson[person].push(task);
-            });
+            };
 
-            // Update stats
-            document.getElementById('totalPersons').textContent = Object.keys(byPerson).length;
-            document.getElementById('totalTasks').textContent = data.length;
-            
-            const avgOccupation = Math.round(data.length / Math.max(Object.keys(byPerson).length, 1));
-            document.getElementById('avgOccupation').textContent = avgOccupation;
+            window.toggleFilters = function() {
+                const filtersBox = document.getElementById('filtersBox');
+                filtersBox.classList.toggle('active');
+            };
 
-            // Sort persons by name
-            const sortedPersons = Object.keys(byPerson).sort();
+            window.toggleAct = function(id) {
+                const card = document.querySelector(`[data-id="${id}"]`);
+                card.classList.toggle('active');
+            };
 
-            ganttRows.innerHTML = sortedPersons.map(person => {
-                const tasks = byPerson[person];
+            window.applyFilters = function() {
+                const cliente = document.getElementById('filterCliente').value;
+                const tipologia = document.getElementById('filterTipologia').value;
+                const stato = document.getElementById('filterStato').value;
+                const scadenza = document.getElementById('filterScadenza').value;
+
+                filteredActivities = allActivities.filter(a => {
+                    if (cliente && a.clienteApplicato !== cliente) return false;
+                    if (tipologia && a.tipologiaFormattata !== tipologia) return false;
+                    if (stato && a.stato !== stato) return false;
+                    if (scadenza) {
+                        const urgenza = getUrgencyStatus(a._dataConsegna);
+                        if (scadenza !== urgenza) return false;
+                    }
+                    return true;
+                });
+
+                renderActivities(filteredActivities);
+            };
+
+            window.resetFilters = function() {
+                document.getElementById('filterCliente').value = '';
+                document.getElementById('filterTipologia').value = '';
+                document.getElementById('filterStato').value = '';
+                document.getElementById('filterScadenza').value = '';
+                filteredActivities = allActivities;
+                renderActivities(filteredActivities);
+            };
+
+            function populateFilters(data) {
+                const clienti = [...new Set(data.map(a => a.clienteApplicato).filter(Boolean))].sort();
+                const tipologie = [...new Set(data.map(a => a.tipologiaFormattata).filter(Boolean))].sort();
+                const stati = [...new Set(data.map(a => a.stato).filter(Boolean))].sort();
+
+                const filterCliente = document.getElementById('filterCliente');
+                const filterTipologia = document.getElementById('filterTipologia');
+                const filterStato = document.getElementById('filterStato');
+
+                clienti.forEach(c => {
+                    const option = document.createElement('option');
+                    option.value = c;
+                    option.textContent = c;
+                    filterCliente.appendChild(option);
+                });
+
+                tipologie.forEach(t => {
+                    const option = document.createElement('option');
+                    option.value = t;
+                    option.textContent = t;
+                    filterTipologia.appendChild(option);
+                });
+
+                stati.forEach(s => {
+                    const option = document.createElement('option');
+                    option.value = s;
+                    option.textContent = s;
+                    filterStato.appendChild(option);
+                });
+            }
+
+            function setCircularProgress(elementId, percentId, percentage) {
+                const circle = document.getElementById(elementId);
+                const percentText = document.getElementById(percentId);
+                const circumference = 301.59;
+                const offset = circumference - (percentage / 100) * circumference;
                 
-                // Generate task bars
-                const taskBars = tasks.map(task => {
-                    const { left, width } = calculateTaskPosition(task.OraInizio, task.OraFine);
-                    const urgent = isUrgent(task.DataConsegna);
+                setTimeout(() => {
+                    circle.style.strokeDashoffset = offset;
+                    percentText.textContent = Math.round(percentage) + '%';
+                }, 200);
+            }
+
+            function calculateDelayPercentages(data) {
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+
+                let preventiviTotal = 0;
+                let preventiviRitardo = 0;
+                let ordiniTotal = 0;
+                let ordiniRitardo = 0;
+
+                data.forEach(a => {
+                    const consegna = a._dataConsegna ? new Date(a._dataConsegna) : null;
+                    if (!consegna) return;
+
+                    const tipo = (a.tipologiaFormattata || '').toLowerCase();
+                    const stato = (a.stato || '').toLowerCase();
+                    
+                    if (stato.includes('completato') || stato.includes('chiuso')) return;
+
+                    const isRitardo = consegna < today;
+
+                    if (tipo.includes('preventivo')) {
+                        preventiviTotal++;
+                        if (isRitardo) preventiviRitardo++;
+                    } else if (tipo.includes('ordine') || tipo.includes('ordini')) {
+                        ordiniTotal++;
+                        if (isRitardo) ordiniRitardo++;
+                    }
+                });
+
+                const preventiviPerc = preventiviTotal > 0 ? (preventiviRitardo / preventiviTotal) * 100 : 0;
+                const ordiniPerc = ordiniTotal > 0 ? (ordiniRitardo / ordiniTotal) * 100 : 0;
+
+                return { preventiviPerc, ordiniPerc };
+            }
+
+            function getUrgencyStatus(dataConsegna) {
+                if (!dataConsegna) return 'futuro';
+                
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                
+                const consegna = new Date(dataConsegna);
+                consegna.setHours(0, 0, 0, 0);
+                
+                if (consegna < today) return 'scaduto';
+                if (consegna.getTime() === today.getTime()) return 'oggi';
+                return 'futuro';
+            }
+
+            function getStatus(s) {
+                if (!s) return 'status-aperto';
+                const l = s.toLowerCase();
+                if (l.includes('completato') || l.includes('chiuso')) return 'status-completato';
+                if (l.includes('corso')) return 'status-in-corso';
+                if (l.includes('annullato')) return 'status-annullato';
+                return 'status-aperto';
+            }
+
+            function fmtDate(d) {
+                if (!d) return 'N/D';
+                return new Date(d).toLocaleDateString('it-IT', { 
+                    day: '2-digit', 
+                    month: '2-digit', 
+                    year: 'numeric' 
+                });
+            }
+
+            function renderActivities(data) {
+                const list = document.getElementById('activitiesList');
+                
+                if (!data || !data.length) {
+                    list.innerHTML = '<div class="empty-state"><div class="empty-icon">📭</div>Nessuna attività trovata</div>';
+                    return;
+                }
+
+                list.innerHTML = data.map(a => {
+                    const urgencyClass = getUrgencyStatus(a._dataConsegna);
                     
                     return `
-                        <div class="gantt-task ${urgent ? 'urgente' : ''}" 
-                             style="left: ${left}%; width: ${width}%;"
-                             title="${task.Descrizione || 'Lavoro'} (${formatTime(task.OraInizio)} - ${formatTime(task.OraFine)})">
-                            #${task.ID || '?'}
-                        </div>
-                    `;
-                }).join('');
-
-                // Generate task list for person details
-                const taskList = tasks.map(task => {
-                    const urgent = isUrgent(task.DataConsegna);
-                    return `
-                        <div class="task-card">
-                            <div class="task-header">
-                                <div class="task-id">#${task.ID || '?'}</div>
-                                <div class="task-time">${formatTime(task.OraInizio)} - ${formatTime(task.OraFine)}</div>
-                            </div>
-                            <div class="task-description">${task.Descrizione || 'Nessuna descrizione'}</div>
-                            <div class="task-footer">
-                                <div class="task-badge ${urgent ? 'priority-high' : 'priority-normal'}">
-                                    ${urgent ? '🔥 Urgente' : '📅 Normale'}
+                    <div class="activity-card" data-id="${a.ID_Attivita}">
+                        <div class="activity-card-header ${urgencyClass}" onclick="toggleAct(${a.ID_Attivita})">
+                            <div class="activity-info">
+                                <div class="activity-title">
+                                    #${a.ID_Attivita} · ${a.clienteApplicato || 'Cliente non specificato'}
                                 </div>
-                                <div class="task-badge status">
-                                    ✓ ${task.Stato || 'In corso'}
+                                <div class="activity-meta">
+                                    <div class="meta-item">
+                                        <span class="meta-label">📅</span>
+                                        <span>${a.dataCreazioneFormattata || fmtDate(a._dataCreazione)}</span>
+                                    </div>
+                                    <div class="meta-item">
+                                        <span class="meta-label">🎯</span>
+                                        <span>${a.dataConsegnaFormattata || fmtDate(a._dataConsegna)}</span>
+                                    </div>
+                                    <div class="meta-item">
+                                        <span class="meta-label">📦</span>
+                                        <span>${a.tipologiaFormattata || 'Non specificato'}</span>
+                                    </div>
+                                </div>
+                                <div class="activity-footer">
+                                    <span class="status-badge ${getStatus(a.stato)}">${a.stato || 'Aperto'}</span>
+                                    <span class="activity-arrow">▼</span>
                                 </div>
                             </div>
                         </div>
-                    `;
-                }).join('');
-
-                return `
-                    <div class="gantt-row" onclick="togglePerson('${person}', this)">
-                        <div class="gantt-person">${person}</div>
-                        <div class="gantt-bars">
-                            ${[...Array(11)].map(() => '<div class="gantt-slot"></div>').join('')}
-                            ${taskBars}
-                        </div>
-                        <div class="person-details">
-                            <div class="task-list">
-                                ${taskList}
+                        <div class="activity-details">
+                            <div class="details-wrapper">
+                                <div class="details-grid">
+                                    <div class="detail-box">
+                                        <div class="detail-label">Cliente</div>
+                                        <div class="detail-value">${a.clienteApplicato || 'Non specificato'}</div>
+                                    </div>
+                                    <div class="detail-box">
+                                        <div class="detail-label">Tipologia</div>
+                                        <div class="detail-value">${a.tipologiaFormattata || 'Non specificato'}</div>
+                                    </div>
+                                    <div class="detail-box">
+                                        <div class="detail-label">Data Creazione</div>
+                                        <div class="detail-value">${a.dataCreazioneFormattata || fmtDate(a._dataCreazione)}</div>
+                                    </div>
+                                    <div class="detail-box">
+                                        <div class="detail-label">Data Consegna</div>
+                                        <div class="detail-value">${a.dataConsegnaFormattata || fmtDate(a._dataConsegna)}</div>
+                                    </div>
+                                    <div class="detail-box">
+                                        <div class="detail-label">Trasferimento</div>
+                                        <div class="detail-value">${a.trasferimento || 'Non specificato'}</div>
+                                    </div>
+                                    <div class="detail-box">
+                                        <div class="detail-label">Stato</div>
+                                        <div class="detail-value">${a.stato || 'Aperto'}</div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                `;
-            }).join('');
-        }
-
-        // Load data from Supabase
-        async function loadData() {
-            const container = document.getElementById('ganttRows');
-            container.innerHTML = `
-                <div class="loading-state">
-                    <div class="loading-spinner"></div>
-                    <div>Caricamento dati...</div>
-                </div>
-            `;
-
-            try {
-                // Get today's date
-                const today = new Date();
-                const todayStr = today.toISOString().split('T')[0];
-
-                // Query UfficioTecnico table for today's tasks
-                const { data, error } = await sb
-                    .from('UfficioTecnico')
-                    .select('*')
-                    .eq('Data', todayStr)
-                    .order('Persona', { ascending: true })
-                    .order('OraInizio', { ascending: true });
-
-                if (error) throw error;
-
-                allTasks = data || [];
-                
-                // Update date label
-                const dateLabel = today.toLocaleDateString('it-IT', { 
-                    weekday: 'long', 
-                    day: 'numeric', 
-                    month: 'long' 
-                });
-                document.getElementById('currentDate').textContent = dateLabel.charAt(0).toUpperCase() + dateLabel.slice(1);
-
-                renderGantt(allTasks);
-
-            } catch (e) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <div class="empty-icon">⚠️</div>
-                        <div class="empty-text">Errore: ${e.message}</div>
-                    </div>
-                `;
+                `}).join('');
             }
-        }
 
-        // Initialize
-        document.getElementById('ganttHeader').onclick = toggleDashboard;
-        generateTimeline();
-        loadData();
+            async function loadData() {
+                const list = document.getElementById('activitiesList');
+                list.innerHTML = '<div class="loading-state">Caricamento...</div>';
 
-        // Auto refresh every 5 minutes
-        setInterval(loadData, 5 * 60 * 1000);
+                try {
+                    const { data, error } = await sb.from('Attivita').select('*');
+
+                    if (error) throw error;
+
+                    if (data && data.length > 0) {
+                        const { preventiviPerc, ordiniPerc } = calculateDelayPercentages(data);
+                        setCircularProgress('progressPreventivi', 'percentPreventivi', preventiviPerc);
+                        setCircularProgress('progressOrdini', 'percentOrdini', ordiniPerc);
+                        
+                        const today = new Date();
+                        today.setHours(0, 0, 0, 0);
+                        
+                        data.sort((a, b) => {
+                            const dataA = a._dataConsegna ? new Date(a._dataConsegna) : new Date('9999-12-31');
+                            const dataB = b._dataConsegna ? new Date(b._dataConsegna) : new Date('9999-12-31');
+                            return dataA - dataB;
+                        });
+
+                        allActivities = data;
+                        filteredActivities = data;
+                        
+                        populateFilters(data);
+                        renderActivities(data);
+                    } else {
+                        list.innerHTML = '<div class="empty-state"><div class="empty-icon">📭</div>Nessuna attività</div>';
+                    }
+
+                } catch (e) {
+                    list.innerHTML = `<div class="empty-state"><div class="empty-icon">⚠️</div>Errore: ${e.message}</div>`;
+                }
+            }
+
+            document.getElementById('dashHeader').onclick = window.toggleDash;
+        })();
+
+        // ===== UFFICIO TECNICO GANTT DASHBOARD =====
+        (function() {
+            const SUPABASE_URL = 'https://uoykvjxerdrthnmnfmgc.supabase.co';
+            const SUPABASE_KEY = 'sb_publishable_iGVhzkLqAktDZmpccXl7OA_PZ2nUYSY';
+            const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+            let allTasks = [];
+            let expandedPerson = null;
+
+            function toggleGanttDashboard() {
+                const header = document.getElementById('ganttHeader');
+                const container = document.getElementById('ganttContainer');
+                
+                header.classList.toggle('active');
+                container.classList.toggle('collapsed');
+            }
+
+            function togglePerson(personName, element) {
+                const detailsDiv = element.querySelector('.person-details');
+                
+                if (expandedPerson === personName) {
+                    detailsDiv.classList.remove('expanded');
+                    expandedPerson = null;
+                } else {
+                    document.querySelectorAll('.person-details.expanded').forEach(d => {
+                        d.classList.remove('expanded');
+                    });
+                    
+                    detailsDiv.classList.add('expanded');
+                    expandedPerson = personName;
+                }
+            }
+
+            function generateTimeline() {
+                const timeline = document.getElementById('ganttTimeline');
+                const hours = ['8:00', '9:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00'];
+                
+                timeline.innerHTML = hours.map(h => 
+                    `<div class="gantt-hour">${h}</div>`
+                ).join('');
+            }
+
+            function calculateTaskPosition(oraInizio, oraFine) {
+                const startHour = 8;
+                const endHour = 18;
+                const totalHours = endHour - startHour;
+                
+                const [startH, startM] = oraInizio.split(':').map(Number);
+                const [endH, endM] = oraFine.split(':').map(Number);
+                
+                const startDecimal = startH + (startM / 60);
+                const endDecimal = endH + (endM / 60);
+                
+                const left = ((startDecimal - startHour) / totalHours) * 100;
+                const width = ((endDecimal - startDecimal) / totalHours) * 100;
+                
+                return { left: Math.max(0, left), width: Math.max(0, width) };
+            }
+
+            function isUrgent(dataConsegna) {
+                if (!dataConsegna) return false;
+                const today = new Date();
+                const delivery = new Date(dataConsegna);
+                return today.toDateString() === delivery.toDateString();
+            }
+
+            function formatTime(time) {
+                if (!time) return 'N/D';
+                return time.substring(0, 5);
+            }
+
+            function renderGantt(data) {
+                const ganttRows = document.getElementById('ganttRows');
+                
+                if (!data || data.length === 0) {
+                    ganttRows.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-icon">📋</div>
+                            <div class="empty-text">Nessun lavoro programmato per oggi</div>
+                        </div>
+                    `;
+                    return;
+                }
+
+                const byPerson = {};
+                data.forEach(task => {
+                    const person = task.Persona || 'Non Assegnato';
+                    if (!byPerson[person]) {
+                        byPerson[person] = [];
+                    }
+                    byPerson[person].push(task);
+                });
+
+                document.getElementById('totalPersons').textContent = Object.keys(byPerson).length;
+                document.getElementById('totalTasks').textContent = data.length;
+                
+                const avgOccupation = Math.round(data.length / Math.max(Object.keys(byPerson).length, 1));
+                document.getElementById('avgOccupation').textContent = avgOccupation;
+
+                const sortedPersons = Object.keys(byPerson).sort();
+
+                ganttRows.innerHTML = sortedPersons.map(person => {
+                    const tasks = byPerson[person];
+                    
+                    const taskBars = tasks.map(task => {
+                        const { left, width } = calculateTaskPosition(task.OraInizio, task.OraFine);
+                        const urgent = isUrgent(task.DataConsegna);
+                        
+                        return `
+                            <div class="gantt-task ${urgent ? 'urgente' : ''}" 
+                                 style="left: ${left}%; width: ${width}%;"
+                                 title="${task.Descrizione || 'Lavoro'} (${formatTime(task.OraInizio)} - ${formatTime(task.OraFine)})">
+                                #${task.ID || '?'}
+                            </div>
+                        `;
+                    }).join('');
+
+                    const taskList = tasks.map(task => {
+                        const urgent = isUrgent(task.DataConsegna);
+                        return `
+                            <div class="task-card">
+                                <div class="task-header">
+                                    <div class="task-id">#${task.ID || '?'}</div>
+                                    <div class="task-time">${formatTime(task.OraInizio)} - ${formatTime(task.OraFine)}</div>
+                                </div>
+                                <div class="task-description">${task.Descrizione || 'Nessuna descrizione'}</div>
+                                <div class="task-footer">
+                                    <div class="task-badge ${urgent ? 'priority-high' : 'priority-normal'}">
+                                        ${urgent ? '🔥 Urgente' : '📅 Normale'}
+                                    </div>
+                                    <div class="task-badge status">
+                                        ✓ ${task.Stato || 'In corso'}
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+
+                    return `
+                        <div class="gantt-row" onclick="togglePerson('${person}', this)">
+                            <div class="gantt-person">${person}</div>
+                            <div class="gantt-bars">
+                                ${[...Array(11)].map(() => '<div class="gantt-slot"></div>').join('')}
+                                ${taskBars}
+                            </div>
+                            <div class="person-details">
+                                <div class="task-list">
+                                    ${taskList}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            async function loadGanttData() {
+                const container = document.getElementById('ganttRows');
+                container.innerHTML = `
+                    <div class="loading-state">
+                        <div class="loading-spinner"></div>
+                        <div>Caricamento dati...</div>
+                    </div>
+                `;
+
+                try {
+                    const today = new Date();
+                    const todayStr = today.toISOString().split('T')[0];
+
+                    const { data, error } = await sb
+                        .from('UfficioTecnico')
+                        .select('*')
+                        .eq('Data', todayStr)
+                        .order('Persona', { ascending: true })
+                        .order('OraInizio', { ascending: true });
+
+                    if (error) throw error;
+
+                    allTasks = data || [];
+                    
+                    const dateLabel = today.toLocaleDateString('it-IT', { 
+                        weekday: 'long', 
+                        day: 'numeric', 
+                        month: 'long' 
+                    });
+                    document.getElementById('currentDate').textContent = dateLabel.charAt(0).toUpperCase() + dateLabel.slice(1);
+
+                    renderGantt(allTasks);
+
+                } catch (e) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-icon">⚠️</div>
+                            <div class="empty-text">Errore: ${e.message}</div>
+                        </div>
+                    `;
+                }
+            }
+
+            window.togglePerson = togglePerson;
+            document.getElementById('ganttHeader').onclick = toggleGanttDashboard;
+            generateTimeline();
+            loadGanttData();
+
+            setInterval(loadGanttData, 5 * 60 * 1000);
+        })();
     </script>
 </body>
 </html>
-

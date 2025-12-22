@@ -2,7 +2,9 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>CRM - Gestione Attività</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
@@ -11,81 +13,87 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
             font-family: 'Poppins', sans-serif;
             background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
             min-height: 100vh;
-            padding: 40px 20px;
+            padding: 15px;
             color: #e0e0e0;
+            overflow-x: hidden;
         }
 
         .main-container {
-            max-width: 1400px;
+            max-width: 100%;
             margin: 0 auto;
         }
 
         .title-section {
             text-align: center;
-            margin-bottom: 50px;
+            margin-bottom: 25px;
+            padding: 10px;
         }
 
         .main-title {
-            font-size: 3.5em;
+            font-size: 2em;
             font-weight: 700;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            margin-bottom: 15px;
-            letter-spacing: 2px;
+            margin-bottom: 8px;
+            letter-spacing: 1px;
         }
 
         .subtitle {
-            font-size: 1.3em;
+            font-size: 0.9em;
             color: rgba(255, 255, 255, 0.7);
             font-weight: 300;
         }
 
+        /* Dashboard */
         .dashboard {
             background: rgba(30, 30, 46, 0.95);
             border: 1px solid rgba(102, 126, 234, 0.3);
-            border-radius: 25px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
             overflow: hidden;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
         }
 
         .dashboard-header {
             background: linear-gradient(135deg, rgba(102, 126, 234, 0.3) 0%, rgba(118, 75, 162, 0.3) 100%);
-            padding: 30px 40px;
+            padding: 20px 18px;
             cursor: pointer;
             display: flex;
             justify-content: space-between;
             align-items: center;
             border-bottom: 1px solid rgba(102, 126, 234, 0.2);
+            -webkit-user-select: none;
+            user-select: none;
         }
 
         .dashboard-title {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 12px;
         }
 
         .dashboard-title h2 {
             color: white;
-            font-size: 2em;
+            font-size: 1.3em;
             font-weight: 600;
             margin: 0;
         }
 
         .dashboard-icon {
-            font-size: 2.2em;
+            font-size: 1.5em;
         }
 
         .toggle-arrow {
-            font-size: 2em;
+            font-size: 1.5em;
             color: #667eea;
             transition: transform 0.3s ease;
         }
@@ -93,72 +101,78 @@
         .dashboard-content {
             display: none;
             background: rgba(20, 20, 35, 0.5);
-            padding: 30px;
+            padding: 15px;
         }
 
         .dashboard-content.show {
             display: block;
         }
 
+        /* Activity Card - Ottimizzato Mobile */
         .activity-card {
             background: rgba(40, 40, 60, 0.8);
             border: 1px solid rgba(102, 126, 234, 0.2);
             border-radius: 15px;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             overflow: hidden;
         }
 
         .activity-card-header {
-            padding: 25px 30px;
+            padding: 18px 15px;
             cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-left: 5px solid #667eea;
+            border-left: 4px solid #667eea;
         }
 
         .activity-info {
-            flex: 1;
+            width: 100%;
         }
 
         .activity-title {
-            font-size: 1.3em;
+            font-size: 1.05em;
             font-weight: 600;
             color: #ffffff;
             margin-bottom: 12px;
+            line-height: 1.4;
+            word-wrap: break-word;
         }
 
         .activity-meta {
             display: flex;
-            gap: 25px;
-            flex-wrap: wrap;
+            flex-direction: column;
+            gap: 8px;
         }
 
         .meta-item {
             display: flex;
             align-items: center;
-            gap: 8px;
-            font-size: 0.95em;
+            gap: 6px;
+            font-size: 0.85em;
             color: #b0b0b0;
+            flex-wrap: wrap;
         }
 
         .meta-label {
             font-weight: 600;
             color: #667eea;
+            white-space: nowrap;
         }
 
-        .activity-right {
+        .activity-footer {
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            gap: 15px;
+            margin-top: 15px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(102, 126, 234, 0.15);
         }
 
         .status-badge {
-            padding: 10px 20px;
-            border-radius: 25px;
-            font-size: 0.9em;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.75em;
             font-weight: 600;
             text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .status-aperto {
@@ -186,7 +200,7 @@
         }
 
         .activity-arrow {
-            font-size: 1.5em;
+            font-size: 1.3em;
             color: #667eea;
             transition: transform 0.3s ease;
         }
@@ -194,7 +208,7 @@
         .activity-details {
             display: none;
             background: rgba(25, 25, 40, 0.6);
-            padding: 30px;
+            padding: 18px 15px;
             border-top: 1px solid rgba(102, 126, 234, 0.2);
         }
 
@@ -204,43 +218,118 @@
 
         .details-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
+            grid-template-columns: 1fr;
+            gap: 12px;
         }
 
         .detail-box {
             background: rgba(50, 50, 70, 0.6);
-            padding: 20px;
-            border-radius: 12px;
+            padding: 15px;
+            border-radius: 10px;
             border: 1px solid rgba(102, 126, 234, 0.2);
         }
 
         .detail-label {
-            font-size: 0.85em;
+            font-size: 0.75em;
             font-weight: 600;
             color: #667eea;
             text-transform: uppercase;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
+            letter-spacing: 0.5px;
         }
 
         .detail-value {
-            font-size: 1.15em;
+            font-size: 1em;
             color: #e0e0e0;
             font-weight: 500;
+            word-wrap: break-word;
         }
 
         .loading-state, .empty-state {
             text-align: center;
-            padding: 60px 20px;
+            padding: 40px 20px;
             color: #667eea;
-            font-size: 1.3em;
+            font-size: 1.1em;
+        }
+
+        .empty-icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+            opacity: 0.3;
+        }
+
+        /* Animazioni smooth per mobile */
+        .activity-card {
+            transition: transform 0.2s ease;
+        }
+
+        .activity-card:active {
+            transform: scale(0.98);
+        }
+
+        /* Ottimizzazioni per schermi piccoli */
+        @media (max-width: 375px) {
+            body {
+                padding: 10px;
+            }
+
+            .main-title {
+                font-size: 1.8em;
+            }
+
+            .dashboard-title h2 {
+                font-size: 1.1em;
+            }
+
+            .activity-title {
+                font-size: 0.95em;
+            }
+
+            .meta-item {
+                font-size: 0.8em;
+            }
+        }
+
+        /* Ottimizzazioni per iPhone Pro Max */
+        @media (min-width: 430px) {
+            .details-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* Landscape mode */
+        @media (orientation: landscape) and (max-height: 500px) {
+            .title-section {
+                margin-bottom: 15px;
+            }
+
+            .main-title {
+                font-size: 1.5em;
+            }
+
+            .subtitle {
+                font-size: 0.8em;
+            }
+
+            .dashboard-header {
+                padding: 15px 18px;
+            }
+        }
+
+        /* Safe area per iPhone con notch */
+        @supports (padding: max(0px)) {
+            body {
+                padding-left: max(15px, env(safe-area-inset-left));
+                padding-right: max(15px, env(safe-area-inset-right));
+                padding-bottom: max(15px, env(safe-area-inset-bottom));
+            }
         }
     </style>
 </head>
 <body>
     <div class="main-container">
         <div class="title-section">
-            <h1 class="main-title">Pro System s.r.l.</h1>
+            <h1 class="main-title">🎯 CRM Sistema</h1>
             <p class="subtitle">Gestione Attività e Clienti</p>
         </div>
 
@@ -265,7 +354,7 @@
         (function() {
             const sb = window.supabase.createClient(
                 'https://uoykvjxerdrthnmnfmgc.supabase.co',
-                'sb_publishable_iGVhzkLqAktDZmpccXl7OA_PZ2nUYSY'
+                'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVveWt2anhvcmRydGhubW5mbWdjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzQ4ODA4NTgsImV4cCI6MjA1MDQ1Njg1OH0.HNXrLZnZf6vRWnz4b8gqQFEeFMXoJjqCHsAJb_xZbJQ'
             );
 
             let loaded = false;
@@ -311,7 +400,11 @@
 
             function fmtDate(d) {
                 if (!d) return 'N/D';
-                return new Date(d).toLocaleDateString('it-IT');
+                return new Date(d).toLocaleDateString('it-IT', { 
+                    day: '2-digit', 
+                    month: '2-digit', 
+                    year: 'numeric' 
+                });
             }
 
             async function loadData() {
@@ -323,7 +416,7 @@
 
                     if (error) throw error;
                     if (!data || !data.length) {
-                        list.innerHTML = '<div class="empty-state">Nessuna attività</div>';
+                        list.innerHTML = '<div class="empty-state"><div class="empty-icon">📭</div>Nessuna attività</div>';
                         return;
                     }
 
@@ -331,34 +424,67 @@
                         <div class="activity-card">
                             <div class="activity-card-header" onclick="toggleAct(${a.ID_Attivita})">
                                 <div class="activity-info">
-                                    <div class="activity-title">Attività #${a.ID_Attivita} - ${a.clienteApplicato || 'N/D'}</div>
-                                    <div class="activity-meta">
-                                        <div class="meta-item"><span class="meta-label">📅 Creazione:</span> ${a.dataCreazioneFormattata || fmtDate(a._dataCreazione)}</div>
-                                        <div class="meta-item"><span class="meta-label">🎯 Consegna:</span> ${a.dataConsegnaFormattata || fmtDate(a._dataConsegna)}</div>
-                                        <div class="meta-item"><span class="meta-label">📦 Tipo:</span> ${a.tipologiaFormattata || 'N/D'}</div>
+                                    <div class="activity-title">
+                                        Attività #${a.ID_Attivita}<br>
+                                        ${a.clienteApplicato || 'Cliente non specificato'}
                                     </div>
-                                </div>
-                                <div class="activity-right">
-                                    <span class="status-badge ${getStatus(a.stato)}">${a.stato || 'Aperto'}</span>
-                                    <span class="activity-arrow" id="arr-${a.ID_Attivita}">▼</span>
+                                    <div class="activity-meta">
+                                        <div class="meta-item">
+                                            <span class="meta-label">📅 Creazione:</span>
+                                            <span>${a.dataCreazioneFormattata || fmtDate(a._dataCreazione)}</span>
+                                        </div>
+                                        <div class="meta-item">
+                                            <span class="meta-label">🎯 Consegna:</span>
+                                            <span>${a.dataConsegnaFormattata || fmtDate(a._dataConsegna)}</span>
+                                        </div>
+                                        <div class="meta-item">
+                                            <span class="meta-label">📦 Tipo:</span>
+                                            <span>${a.tipologiaFormattata || 'Non specificato'}</span>
+                                        </div>
+                                    </div>
+                                    <div class="activity-footer">
+                                        <span class="status-badge ${getStatus(a.stato)}">${a.stato || 'Aperto'}</span>
+                                        <span class="activity-arrow" id="arr-${a.ID_Attivita}">▼</span>
+                                    </div>
                                 </div>
                             </div>
                             <div class="activity-details" id="det-${a.ID_Attivita}">
                                 <div class="details-grid">
-                                    <div class="detail-box"><div class="detail-label">ID</div><div class="detail-value">#${a.ID_Attivita}</div></div>
-                                    <div class="detail-box"><div class="detail-label">Cliente</div><div class="detail-value">${a.clienteApplicato || 'N/D'}</div></div>
-                                    <div class="detail-box"><div class="detail-label">Creazione</div><div class="detail-value">${a.dataCreazioneFormattata || fmtDate(a._dataCreazione)}</div></div>
-                                    <div class="detail-box"><div class="detail-label">Consegna</div><div class="detail-value">${a.dataConsegnaFormattata || fmtDate(a._dataConsegna)}</div></div>
-                                    <div class="detail-box"><div class="detail-label">Tipologia</div><div class="detail-value">${a.tipologiaFormattata || 'N/D'}</div></div>
-                                    <div class="detail-box"><div class="detail-label">Trasferimento</div><div class="detail-value">${a.trasferimento || 'N/D'}</div></div>
-                                    <div class="detail-box"><div class="detail-label">Stato</div><div class="detail-value">${a.stato || 'N/D'}</div></div>
+                                    <div class="detail-box">
+                                        <div class="detail-label">ID Attività</div>
+                                        <div class="detail-value">#${a.ID_Attivita}</div>
+                                    </div>
+                                    <div class="detail-box">
+                                        <div class="detail-label">Cliente</div>
+                                        <div class="detail-value">${a.clienteApplicato || 'Non specificato'}</div>
+                                    </div>
+                                    <div class="detail-box">
+                                        <div class="detail-label">Data Creazione</div>
+                                        <div class="detail-value">${a.dataCreazioneFormattata || fmtDate(a._dataCreazione)}</div>
+                                    </div>
+                                    <div class="detail-box">
+                                        <div class="detail-label">Data Consegna</div>
+                                        <div class="detail-value">${a.dataConsegnaFormattata || fmtDate(a._dataConsegna)}</div>
+                                    </div>
+                                    <div class="detail-box">
+                                        <div class="detail-label">Tipologia</div>
+                                        <div class="detail-value">${a.tipologiaFormattata || 'Non specificato'}</div>
+                                    </div>
+                                    <div class="detail-box">
+                                        <div class="detail-label">Trasferimento</div>
+                                        <div class="detail-value">${a.trasferimento || 'Non specificato'}</div>
+                                    </div>
+                                    <div class="detail-box">
+                                        <div class="detail-label">Stato</div>
+                                        <div class="detail-value">${a.stato || 'Aperto'}</div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     `).join('');
 
                 } catch (e) {
-                    list.innerHTML = `<div class="empty-state">Errore: ${e.message}</div>`;
+                    list.innerHTML = `<div class="empty-state"><div class="empty-icon">⚠️</div>Errore: ${e.message}</div>`;
                 }
             }
 
@@ -367,5 +493,3 @@
     </script>
 </body>
 </html>
-
-

@@ -1216,191 +1216,49 @@
             </div>
         </div>
 
-        <!-- ===== UFFICIO TECNICO GANTT DASHBOARD ===== -->
-<script>
-(function() {
-    const SUPABASE_URL = 'https://uoykvjxerdrthnmnfmgc.supabase.co';
-    const SUPABASE_KEY = 'sb_publishable_iGVhzkLqAktDZmpccXl7OA_PZ2nUYSY';
-    const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-    let allTasks = [];
-
-    function toggleGanttDashboard() {
-        const header = document.getElementById('ganttHeader');
-        const container = document.getElementById('ganttContainer');
-        header.classList.toggle('active');
-        container.classList.toggle('collapsed');
-    }
-
-    function generateTimeline() {
-        const timelineHeader = document.getElementById('ganttTimelineHeader');
-        const hours = ['08','09','10','11','12','13','14','15','16','17'];
-        timelineHeader.innerHTML = hours.map(h =>
-            `<div class="gantt-hour-header">${h}</div>`
-        ).join('');
-    }
-
-    function calculateTaskPosition(oraInizio, oraFine) {
-        const startHour = 8;
-        const endHour = 18;
-        const totalHours = endHour - startHour;
-
-        const [sh, sm] = oraInizio.split(':').map(Number);
-        const [eh, em] = oraFine.split(':').map(Number);
-
-        const start = sh + sm / 60;
-        const end = eh + em / 60;
-
-        return {
-            left: ((start - startHour) / totalHours) * 100,
-            width: ((end - start) / totalHours) * 100
-        };
-    }
-
-    function isUrgent(data) {
-        if (!data) return false;
-        const d = new Date(data);
-        const t = new Date();
-        return d.toDateString() === t.toDateString();
-    }
-
-    function formatTime(t) {
-        return t ? t.substring(0,5) : 'N/D';
-    }
-
-    function renderGantt(data) {
-        const ganttSummaryRows = document.getElementById('ganttSummaryRows');
-        const ganttDetailsRows = document.getElementById('ganttDetailsRows');
-
-        if (!data || data.length === 0) {
-            ganttSummaryRows.innerHTML = '';
-            ganttDetailsRows.innerHTML = `
-                <div class="empty-state">
-                    <div class="empty-icon">📋</div>
-                    <div class="empty-text">Nessun lavoro programmato</div>
-                </div>`;
-            return;
-        }
-
-        /* ===== OPERATORI LETTI DAL DB ===== */
-        const operators = [
-            ...new Set(
-                data
-                    .map(t => (t.Persona || '').trim())
-                    .filter(p => p !== '')
-            )
-        ].sort();
-
-        /* ===== TASK RAGGRUPPATI ===== */
-        const byPerson = {};
-        operators.forEach(o => byPerson[o] = []);
-
-        data.forEach(t => {
-            const p = (t.Persona || '').trim();
-            if (!byPerson[p]) byPerson[p] = [];
-            byPerson[p].push(t);
-        });
-
-        /* ===== STATISTICHE ===== */
-        document.getElementById('totalPersons').textContent = operators.length;
-        document.getElementById('totalTasks').textContent = data.length;
-        document.getElementById('avgOccupation').textContent =
-            operators.length ? Math.round(data.length / operators.length) : 0;
-
-        /* ===== ORA ATTUALE ===== */
-        const now = new Date();
-        const currentHour = now.getHours() + now.getMinutes() / 60;
-        const currentTimePercent =
-            currentHour >= 8 && currentHour <= 18
-                ? ((currentHour - 8) / 10) * 100
-                : null;
-
-        /* ===== GANTT COMPATTO ===== */
-        ganttSummaryRows.innerHTML = operators.map(person => {
-            const tasks = byPerson[person];
-
-            const bars = tasks.map(t => {
-                const { left, width } = calculateTaskPosition(t.OraInizio, t.OraFine);
-                return `
-                    <div class="gantt-task-bar ${isUrgent(t.DataConsegna) ? 'urgente' : ''}"
-                        style="left:${left}%; width:${width}%"
-                        title="${t.Descrizione || ''}">
-                    </div>`;
-            }).join('');
-
-            return `
-                <div class="gantt-summary-row">
-                    <div class="gantt-person-cell">${person}</div>
-                    <div class="gantt-timeline-row">
-                        ${Array(10).fill('<div class="gantt-hour-slot"></div>').join('')}
-                        ${bars}
-                        ${currentTimePercent !== null
-                            ? `<div class="current-time-line" style="left:${currentTimePercent}%"></div>`
-                            : ''}
+        <!-- Dashboard Ufficio Tecnico con Gantt -->
+        <div class="dashboard">
+            <div class="dashboard-header gantt" id="ganttHeader">
+                <div class="dashboard-top">
+                    <div class="dashboard-title">
+                        <span class="dashboard-icon">🧑‍💻</span>
+                        <h2>Ufficio Tecnico</h2>
                     </div>
-                </div>`;
-        }).join('');
-
-        /* ===== GANTT DETTAGLIO ===== */
-        ganttDetailsRows.innerHTML = operators.map(person => {
-            const tasks = byPerson[person];
-
-            if (!tasks.length) {
-                return `
-                    <div class="person-section">
-                        <div class="person-section-header">
-                            <h3>${person}</h3>
-                            <span class="task-count">0 lavori</span>
+                    <span class="toggle-arrow">▼</span>
+                </div>
+                <div class="date-label" id="currentDate">Oggi</div>
+                <div class="stats-summary" id="statsSummary">
+                    <div class="stat-item">
+                        <div class="stat-value" id="totalPersons">-</div>
+                        <div class="stat-label">Persone</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="totalTasks">-</div>
+                        <div class="stat-label">Lavori</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="avgOccupation">-</div>
+                        <div class="stat-label">Occupaz.</div>
+                    </div>
+                </div>
+                
+                <!-- Gantt Summary (visible when collapsed) -->
+                <div class="gantt-summary" id="ganttSummary">
+                    <div class="gantt-grid">
+                        <div class="gantt-header-row">
+                            <div class="gantt-person-header"></div>
+                            <div class="gantt-timeline-header" id="ganttTimelineHeader"></div>
                         </div>
-                        <div class="task-list">
-                            <div class="empty-state">
-                                <div class="empty-text">Nessun lavoro assegnato</div>
-                            </div>
-                        </div>
-                    </div>`;
-            }
-
-            return `
-                <div class="person-section">
-                    <div class="person-section-header">
-                        <h3>${person}</h3>
-                        <span class="task-count">${tasks.length} lavori</span>
+                        <div id="ganttSummaryRows"></div>
                     </div>
-                    <div class="task-list">
-                        ${tasks.map(t => `
-                            <div class="task-card">
-                                <div class="task-header">
-                                    <div class="task-id">#${t.ID || '-'}</div>
-                                    <div class="task-time">${formatTime(t.OraInizio)} - ${formatTime(t.OraFine)}</div>
-                                </div>
-                                <div class="task-description">${t.Descrizione || ''}</div>
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>`;
-        }).join('');
-    }
+                </div>
+            </div>
 
-    async function loadGanttData() {
-        const today = new Date().toISOString().split('T')[0];
-
-        const { data, error } = await sb
-            .from('UfficioTecnico')
-            .select('*')
-            .eq('Data', today)
-            .order('Persona', { ascending: true })
-            .order('OraInizio', { ascending: true });
-
-        if (!error) renderGantt(data || []);
-    }
-
-    document.getElementById('ganttHeader').onclick = toggleGanttDashboard;
-    generateTimeline();
-    loadGanttData();
-    setInterval(loadGanttData, 300000);
-})();
-</script>
-
+            <div class="gantt-container collapsed" id="ganttContainer">
+                <div id="ganttDetailsRows"></div>
+            </div>
+        </div>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
@@ -1980,5 +1838,3 @@
     </script>
 </body>
 </html>
-
-

@@ -250,7 +250,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-left: 3px solid #8b5cf6;
+            border-left: 3px solid #c51d34;
         }
 
         .filters-header:active {
@@ -323,7 +323,7 @@
 
         .filter-select:focus {
             outline: none;
-            border-color: #3b82f6;
+            border-color: #c51d34;
             background: rgba(59, 130, 246, 0.1);
         }
 
@@ -351,7 +351,7 @@
         }
 
         .filter-btn-apply {
-            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            background: linear-gradient(135deg, #c51d34 0%, #c51d34 100%);
             color: white;
         }
 
@@ -455,7 +455,7 @@
 
         .status-aperto {
             background: rgba(59, 130, 246, 0.15);
-            color: #3b82f6;
+            color: #c51d34;
             border: 1px solid rgba(59, 130, 246, 0.3);
         }
 
@@ -795,7 +795,7 @@
             height: 28px;
             top: 50%;
             transform: translateY(-50%);
-            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            background: linear-gradient(135deg, #c51d34 0%, #c51d34 100%);
             border-radius: 6px;
             box-shadow: 0 2px 8px rgba(59, 130, 246, 0.4);
             z-index: 2;
@@ -962,7 +962,7 @@
         .gantt-task {
             position: absolute;
             height: 100%;
-            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            background: linear-gradient(135deg, #c51d34 0%, #c51d34 100%);
             border-radius: 6px;
             display: flex;
             align-items: center;
@@ -1096,7 +1096,7 @@
 
         .task-badge.priority-normal {
             background: rgba(59, 130, 246, 0.15);
-            color: #3b82f6;
+            color: #c51d34;
         }
 
         .task-badge.status {
@@ -1159,7 +1159,7 @@
             width: 40px;
             height: 40px;
             border: 3px solid rgba(255, 255, 255, 0.1);
-            border-top-color: #3b82f6;
+            border-top-color: #c51d34;
             border-radius: 50%;
             animation: spin 1s linear infinite;
             margin: 0 auto 16px;
@@ -1262,6 +1262,8 @@
             justify-content: center;
             opacity: 1;
             transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 20px;
+            box-sizing: border-box;
         }
 
         .login-overlay.fade-out {
@@ -1280,7 +1282,7 @@
         .particle {
             position: absolute;
             border-radius: 50%;
-            background: radial-gradient(circle, rgba(59, 130, 246, 0.4) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(197, 29, 52, 0.4) 0%, transparent 70%);
             animation: float 20s infinite;
         }
 
@@ -1298,7 +1300,7 @@
             top: 60%;
             left: 80%;
             animation-delay: 4s;
-            background: radial-gradient(circle, rgba(139, 92, 246, 0.4) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(197, 29, 52, 0.3) 0%, transparent 70%);
         }
 
         .particle:nth-child(3) {
@@ -1315,7 +1317,7 @@
             top: 30%;
             left: 70%;
             animation-delay: 12s;
-            background: radial-gradient(circle, rgba(139, 92, 246, 0.4) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(197, 29, 52, 0.35) 0%, transparent 70%);
         }
 
         @keyframes float {
@@ -1345,6 +1347,9 @@
             gap: 30px;
             opacity: 1;
             transition: opacity 0.5s ease;
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto;
         }
 
         .loading-container.hidden {
@@ -1362,11 +1367,11 @@
         @keyframes pulse-logo {
             0%, 100% {
                 transform: scale(1);
-                filter: drop-shadow(0 0 20px rgba(59, 130, 246, 0.6));
+                filter: drop-shadow(0 0 20px rgba(197, 29, 52, 0.6));
             }
             50% {
                 transform: scale(1.05);
-                filter: drop-shadow(0 0 40px rgba(139, 92, 246, 0.8));
+                filter: drop-shadow(0 0 40px rgba(197, 29, 52, 0.8));
             }
         }
 
@@ -1374,7 +1379,7 @@
             width: 60px;
             height: 60px;
             border: 4px solid rgba(255, 255, 255, 0.1);
-            border-top: 4px solid #3b82f6;
+            border-top: 4px solid #c51d34;
             border-radius: 50%;
             animation: spin 1s linear infinite;
         }
@@ -1404,6 +1409,9 @@
             align-items: center;
             gap: 30px;
             animation: slide-up 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            width: 100%;
+            max-width: 450px;
+            margin: 0 auto;
         }
 
         .login-form-container.active {
@@ -1427,7 +1435,9 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 24px;
             padding: 50px 40px;
-            min-width: 400px;
+            width: 100%;
+            max-width: 400px;
+            box-sizing: border-box;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
             position: relative;
             overflow: hidden;
@@ -1440,7 +1450,7 @@
             left: 0;
             right: 0;
             height: 2px;
-            background: linear-gradient(90deg, transparent 0%, #3b82f6 50%, transparent 100%);
+            background: linear-gradient(90deg, transparent 0%, #c51d34 50%, transparent 100%);
             animation: shimmer-login 3s infinite;
         }
 
@@ -1481,7 +1491,7 @@
         .login-title {
             font-size: 1.8em;
             font-weight: 700;
-            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            background: linear-gradient(135deg, #c51d34 0%, #c51d34 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -1512,9 +1522,9 @@
 
         .login-input:focus {
             outline: none;
-            border-color: #3b82f6;
+            border-color: #c51d34;
             background: rgba(255, 255, 255, 0.08);
-            box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+            box-shadow: 0 0 20px rgba(197, 29, 52, 0.3);
         }
 
         .login-input::placeholder {
@@ -1524,7 +1534,7 @@
         .login-button {
             width: 100%;
             padding: 16px;
-            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            background: linear-gradient(135deg, #c51d34 0%, #c51d34 100%);
             border: none;
             border-radius: 12px;
             color: white;
@@ -1532,12 +1542,12 @@
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.4);
+            box-shadow: 0 10px 30px rgba(197, 29, 52, 0.4);
         }
 
         .login-button:hover {
             transform: translateY(-2px);
-            box-shadow: 0 15px 40px rgba(59, 130, 246, 0.6);
+            box-shadow: 0 15px 40px rgba(197, 29, 52, 0.6);
         }
 
         .login-button:active {
@@ -1675,9 +1685,9 @@
             height: 1px;
             background: linear-gradient(90deg, 
                 transparent 0%, 
-                rgba(59, 130, 246, 0.5) 20%, 
-                rgba(139, 92, 246, 0.5) 50%, 
-                rgba(59, 130, 246, 0.5) 80%, 
+                rgba(197, 29, 52, 0.5) 20%, 
+                rgba(197, 29, 52, 0.5) 50%, 
+                rgba(197, 29, 52, 0.5) 80%, 
                 transparent 100%
             );
             animation: shimmer 3s infinite;
@@ -1719,7 +1729,7 @@
             content: '';
             width: 3px;
             height: 16px;
-            background: linear-gradient(180deg, #3b82f6 0%, #8b5cf6 100%);
+            background: linear-gradient(180deg, #c51d34 0%, #c51d34 100%);
             border-radius: 2px;
         }
 
@@ -1770,7 +1780,7 @@
         .footer-stat-value {
             font-size: 1.4em;
             font-weight: 700;
-            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            background: linear-gradient(135deg, #c51d34 0%, #c51d34 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -1833,7 +1843,7 @@
         }
 
         .social-link:hover {
-            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            background: linear-gradient(135deg, #c51d34 0%, #c51d34 100%);
             border-color: transparent;
             color: white;
             transform: translateY(-2px);

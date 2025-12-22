@@ -446,7 +446,11 @@
     <div class="main-container">
         <div class="title-section">
             <div class="logo-container">
-                <img src="Logo-tondo.png" alt="Logo CRM" class="logo">
+                <!-- Prova tutti i possibili percorsi del logo -->
+                <img src="https://raw.githubusercontent.com/LucaRende/PLM/master/Logo%20tondo.png" 
+                     alt="Logo CRM" 
+                     class="logo"
+                     onerror="this.onerror=null; this.src='https://raw.githubusercontent.com/LucaRende/PLM/main/Logo%20tondo.png';">
             </div>
             <p class="subtitle">Gestione Attività e Clienti</p>
         </div>
@@ -461,7 +465,7 @@
                     <span class="toggle-arrow" id="dashArrow">▼</span>
                 </div>
                 
-                <!-- Progress Bars Ottimizzate -->
+                <!-- Progress Bars con ROSSO per Preventivi -->
                 <div class="progress-container">
                     <div class="progress-item">
                         <div class="progress-label">Ritardi Preventivi</div>
@@ -469,8 +473,8 @@
                             <svg class="progress-ring" width="110" height="110" viewBox="0 0 110 110">
                                 <defs>
                                     <linearGradient id="gradient-preventivi" x1="0%" y1="0%" x2="100%" y2="100%">
-                                        <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
-                                        <stop offset="100%" style="stop-color:#8b5cf6;stop-opacity:1" />
+                                        <stop offset="0%" style="stop-color:#ef4444;stop-opacity:1" />
+                                        <stop offset="100%" style="stop-color:#dc2626;stop-opacity:1" />
                                     </linearGradient>
                                 </defs>
                                 <circle class="progress-ring-bg" cx="55" cy="55" r="48"></circle>
@@ -490,8 +494,8 @@
                             <svg class="progress-ring" width="110" height="110" viewBox="0 0 110 110">
                                 <defs>
                                     <linearGradient id="gradient-ordini" x1="0%" y1="0%" x2="100%" y2="100%">
-                                        <stop offset="0%" style="stop-color:#ef4444;stop-opacity:1" />
-                                        <stop offset="100%" style="stop-color:#f97316;stop-opacity:1" />
+                                        <stop offset="0%" style="stop-color:#f97316;stop-opacity:1" />
+                                        <stop offset="100%" style="stop-color:#ea580c;stop-opacity:1" />
                                     </linearGradient>
                                 </defs>
                                 <circle class="progress-ring-bg" cx="55" cy="55" r="48"></circle>
@@ -520,7 +524,7 @@
         (function() {
             const sb = window.supabase.createClient(
                 'https://uoykvjxerdrthnmnfmgc.supabase.co',
-                'sb_publishable_iGVhzkLqAktDZmpccXl7OA_PZ2nUYSY'
+                'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVveWt2anhvcmRydGhubW5mbWdjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzQ4ODA4NTgsImV4cCI6MjA1MDQ1Njg1OH0.HNXrLZnZf6vRWnz4b8gqQFEeFMXoJjqCHsAJb_xZbJQ'
             );
 
             let loaded = false;
@@ -712,4 +716,3 @@
     </script>
 </body>
 </html>
-

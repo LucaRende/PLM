@@ -113,7 +113,7 @@
         }
 
         .dashboard-content.active {
-            max-height: 3000px;
+            max-height: 5000px;
         }
 
         .activities-list {
@@ -237,7 +237,7 @@
         }
 
         .activity-item.active .activity-details {
-            max-height: 800px;
+            max-height: 1000px;
         }
 
         .details-content {
@@ -371,14 +371,17 @@
         // Toggle Dashboard
         const dashboardHeader = document.getElementById('dashboardHeader');
         const dashboardContent = document.getElementById('dashboardContent');
+        let activitiesLoaded = false;
 
         dashboardHeader.addEventListener('click', () => {
+            console.log('Dashboard header clicked!'); // DEBUG
             dashboardHeader.classList.toggle('active');
             dashboardContent.classList.toggle('active');
             
-            // Carica le attività solo quando apri il cruscotto
-            if (dashboardContent.classList.contains('active') && 
-                document.getElementById('activitiesList').children.length === 1) {
+            // Carica le attività solo la prima volta che apri il cruscotto
+            if (dashboardContent.classList.contains('active') && !activitiesLoaded) {
+                console.log('Loading activities...'); // DEBUG
+                activitiesLoaded = true;
                 loadActivities();
             }
         });
@@ -414,10 +417,14 @@
             activitiesList.innerHTML = '<div class="loading">Caricamento attività...</div>';
 
             try {
+                console.log('Fetching data from Supabase...'); // DEBUG
                 const { data, error } = await supabase
                     .from('Attivita')
                     .select('*')
                     .order('ID_Attivita', { ascending: false });
+
+                console.log('Data received:', data); // DEBUG
+                console.log('Error:', error); // DEBUG
 
                 if (error) throw error;
 
@@ -435,7 +442,7 @@
                 // Genera l'HTML per ogni attività
                 activitiesList.innerHTML = data.map(activity => `
                     <div class="activity-item" data-id="${activity.ID_Attivita}">
-                        <div class="activity-header">
+                        <div class="activity-header" onclick="toggleActivity(this)">
                             <div class="activity-main-info">
                                 <div class="activity-title">
                                     Attività #${activity.ID_Attivita} - ${activity.clienteApplicato || 'Cliente non specificato'}
@@ -499,13 +506,7 @@
                     </div>
                 `).join('');
 
-                // Aggiungi event listener per espandere le singole attività
-                document.querySelectorAll('.activity-header').forEach(header => {
-                    header.addEventListener('click', function() {
-                        const activityItem = this.closest('.activity-item');
-                        activityItem.classList.toggle('active');
-                    });
-                });
+                console.log('Activities rendered!'); // DEBUG
 
             } catch (error) {
                 console.error('Errore nel caricamento delle attività:', error);
@@ -517,6 +518,13 @@
                     </div>
                 `;
             }
+        }
+
+        // Funzione per espandere/contrarre singola attività
+        function toggleActivity(headerElement) {
+            console.log('Activity clicked!'); // DEBUG
+            const activityItem = headerElement.closest('.activity-item');
+            activityItem.classList.toggle('active');
         }
     </script>
 </body>

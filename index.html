@@ -2689,6 +2689,7 @@
             border-radius: 8px;
             padding: 8px;
             margin-bottom: 8px;
+            width: 100%;
         }
         
         .firma-canvas {
@@ -2696,6 +2697,8 @@
             border-radius: 4px;
             cursor: crosshair;
             touch-action: none;
+            width: 100%;
+            display: block;
         }
         
         .firma-buttons {
@@ -2724,11 +2727,12 @@
         }
         
         .bollettino-modal-footer {
-            padding: 24px;
+            padding: 16px;
             border-top: 1px solid rgba(255, 255, 255, 0.1);
             display: flex;
             gap: 12px;
             justify-content: flex-end;
+            flex-wrap: wrap;
         }
         
         .btn-bollettino {
@@ -2739,6 +2743,8 @@
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s ease;
+            flex: 1;
+            min-width: 120px;
         }
         
         .btn-bollettino-cancel {
@@ -2767,6 +2773,40 @@
             
             .bollettino-form-row {
                 grid-template-columns: 1fr;
+            }
+            
+            .bollettino-modal-content {
+                max-height: 95vh;
+                margin: 0;
+                border-radius: 20px 20px 0 0;
+            }
+            
+            .bollettino-modal-header {
+                padding: 16px;
+            }
+            
+            .bollettino-modal-title {
+                font-size: 1.2em;
+            }
+            
+            .bollettino-modal-body {
+                padding: 16px;
+            }
+            
+            .bollettino-modal-footer {
+                padding: 16px;
+                position: sticky;
+                bottom: 0;
+                background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            }
+            
+            .btn-bollettino {
+                flex: 1;
+            }
+            
+            .firma-canvas {
+                width: 100%;
+                max-width: 100%;
             }
         }
     </style>
@@ -3968,7 +4008,7 @@
                         <div class="bollettino-form-group">
                             <label class="bollettino-form-label">Firma Cliente</label>
                             <div class="firma-canvas-container">
-                                <canvas id="firmaCanvas" class="firma-canvas" width="400" height="150"></canvas>
+                                <canvas id="firmaCanvas" class="firma-canvas"></canvas>
                             </div>
                             <div class="firma-buttons">
                                 <button type="button" class="btn-firma btn-firma-clear" onclick="clearFirma()">🗑️ Cancella Firma</button>
@@ -4276,6 +4316,22 @@
                 firmaCanvas = document.getElementById('firmaCanvas');
                 if (!firmaCanvas) return;
                 
+                // Imposta dimensioni responsive
+                const container = firmaCanvas.parentElement;
+                const containerWidth = container.offsetWidth - 16; // padding
+                firmaCanvas.width = Math.min(containerWidth, 400);
+                firmaCanvas.height = 150;
+                
+                firmaCtx = firmaCanvas.getContext('2d');
+                firmaCtx.strokeStyle = '#000';
+                firmaCtx.lineWidth = 2;
+                firmaCtx.lineCap = 'round';
+                firmaCtx.lineJoin = 'round';
+                
+                // Pulisci eventi precedenti
+                const newCanvas = firmaCanvas.cloneNode(true);
+                firmaCanvas.parentNode.replaceChild(newCanvas, firmaCanvas);
+                firmaCanvas = newCanvas;
                 firmaCtx = firmaCanvas.getContext('2d');
                 firmaCtx.strokeStyle = '#000';
                 firmaCtx.lineWidth = 2;
@@ -4286,12 +4342,39 @@
                 firmaCanvas.addEventListener('mousedown', startDrawing);
                 firmaCanvas.addEventListener('mousemove', draw);
                 firmaCanvas.addEventListener('mouseup', stopDrawing);
-                firmaCanvas.addEventListener('mouseout', stopDrawing);
+                firmaCanvas.addEventListener('mouseleave', stopDrawing);
                 
-                // Touch events
-                firmaCanvas.addEventListener('touchstart', handleTouch);
-                firmaCanvas.addEventListener('touchmove', handleTouch);
-                firmaCanvas.addEventListener('touchend', stopDrawing);
+                // Touch events per mobile
+                firmaCanvas.addEventListener('touchstart', function(e) {
+                    e.preventDefault();
+                    const touch = e.touches[0];
+                    const rect = firmaCanvas.getBoundingClientRect();
+                    const x = touch.clientX - rect.left;
+                    const y = touch.clientY - rect.top;
+                    
+                    isDrawing = true;
+                    currentPath = [{x: x, y: y}];
+                }, { passive: false });
+                
+                firmaCanvas.addEventListener('touchmove', function(e) {
+                    e.preventDefault();
+                    if (!isDrawing) return;
+                    
+                    const touch = e.touches[0];
+                    const rect = firmaCanvas.getBoundingClientRect();
+                    const x = touch.clientX - rect.left;
+                    const y = touch.clientY - rect.top;
+                    
+                    currentPath.push({x: x, y: y});
+                    
+                    firmaCtx.beginPath();
+                    const lastPoint = currentPath[currentPath.length - 2];
+                    firmaCtx.moveTo(lastPoint.x, lastPoint.y);
+                    firmaCtx.lineTo(x, y);
+                    firmaCtx.stroke();
+                }, { passive: false });
+                
+                firmaCanvas.addEventListener('touchend', stopDrawing, { passive: false });
             }
             
             function startDrawing(e) {
@@ -4322,16 +4405,6 @@
                 currentPath = [];
             }
             
-            function handleTouch(e) {
-                e.preventDefault();
-                const touch = e.touches[0];
-                const mouseEvent = new MouseEvent(e.type === 'touchstart' ? 'mousedown' : 'mousemove', {
-                    clientX: touch.clientX,
-                    clientY: touch.clientY
-                });
-                firmaCanvas.dispatchEvent(mouseEvent);
-            }
-            
             function getMousePos(e) {
                 const rect = firmaCanvas.getBoundingClientRect();
                 return {
@@ -4341,6 +4414,7 @@
             }
             
             window.clearFirma = function() {
+                if (!firmaCanvas || !firmaCtx) return;
                 firmaCtx.clearRect(0, 0, firmaCanvas.width, firmaCanvas.height);
                 firmaPaths = [];
                 currentPath = [];
@@ -4378,8 +4452,13 @@
             window.openBollettinoModal = function() {
                 document.getElementById('bollettinoModal').classList.add('active');
                 document.getElementById('bollettinoForm').reset();
-                clearFirma();
-                initFirmaCanvas();
+                
+                // Aspetta che il modal sia visibile prima di inizializzare il canvas
+                setTimeout(() => {
+                    firmaPaths = [];
+                    currentPath = [];
+                    initFirmaCanvas();
+                }, 100);
                 
                 // Imposta data di oggi
                 document.getElementById('bollettinoData').valueAsDate = new Date();

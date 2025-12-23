@@ -3075,17 +3075,32 @@
                 const list = document.getElementById('castellettiList');
                 const banche = Object.keys(fatturePerBanca).sort();
                 
-                list.innerHTML = banche.map((banca, idx) => `
+                list.innerHTML = banche.map((banca, idx) => {
+                    const castelletto = castellettiPerBanca[banca] || 0;
+                    
+                    return `
                     <div class="banca-card">
                         <div class="banca-header" onclick="toggleBanca(${idx})">
-                            <div class="banca-name">${banca}</div>
-                            <span class="banca-arrow" id="bancaArrow${idx}">▼</span>
+                            <div style="display: flex; align-items: center; gap: 16px; flex: 1;">
+                                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M3 9L12 2L21 9V20C21 20.5304 20.7893 21.0391 20.4142 21.4142C20.0391 21.7893 19.5304 22 19 22H5C4.46957 22 3.96086 21.7893 3.58579 21.4142C3.21071 21.0391 3 20.5304 3 20V9Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M9 22V12H15V22" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                                <div class="banca-name">${banca}</div>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 16px;">
+                                <div style="text-align: right;">
+                                    <div style="font-size: 0.75em; color: rgba(255,255,255,0.6); margin-bottom: 2px;">Castelletto</div>
+                                    <div style="font-size: 1.1em; font-weight: 700; color: #22c55e;">${formatEuro(castelletto)}</div>
+                                </div>
+                                <span class="banca-arrow" id="bancaArrow${idx}">▼</span>
+                            </div>
                         </div>
                         <div class="banca-content" id="bancaContent${idx}">
                             <div class="mesi-grid" id="mesiGrid${idx}"></div>
                         </div>
                     </div>
-                `).join('');
+                `}).join('');
             }
             
             // Toggle banca

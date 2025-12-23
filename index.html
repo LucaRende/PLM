@@ -83,7 +83,7 @@
             background: rgba(255, 255, 255, 0.05);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 2px solid transparent;
             border-radius: 24px;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
             overflow: hidden;
@@ -91,9 +91,10 @@
             transition: all 0.3s ease;
             position: relative;
             z-index: 1;
+            background-clip: padding-box;
         }
         
-        /* Effetto bordo rosso che gira intorno */
+        /* Bordo rosso che gira */
         .dashboard::before {
             content: '';
             position: absolute;
@@ -101,11 +102,16 @@
             left: -2px;
             right: -2px;
             bottom: -2px;
-            background: linear-gradient(45deg, #c51d34, transparent, transparent, transparent, #c51d34);
             border-radius: 24px;
+            background: conic-gradient(from 0deg at 50% 50%, 
+                #c51d34 0deg,
+                #c51d34 20deg,
+                transparent 20deg,
+                transparent 340deg,
+                #c51d34 340deg,
+                #c51d34 360deg);
             z-index: -1;
             animation: rotate-border 3s linear infinite;
-            opacity: 0.6;
         }
         
         @keyframes rotate-border {
@@ -3279,8 +3285,8 @@
 
         <div class="footer-bottom">
             <div class="footer-credits">
-                <div>© 2025 PLM 2 - Tutti i diritti riservati</div>
-                <div style="font-size: 0.9em; color: rgba(255, 255, 255, 0.5); margin-top: 8px;">
+                <div style="margin-bottom: 8px;">© 2025 PLM 2 - Tutti i diritti riservati</div>
+                <div style="font-size: 0.9em; color: rgba(255, 255, 255, 0.5);">
                     Power by: <span style="font-family: 'Satisfaction', cursive; font-size: 1.4em; color: white;">Rende Luca</span>
                 </div>
             </div>

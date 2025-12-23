@@ -1375,6 +1375,115 @@
         .activity-card.slide-out-right {
             animation: slideOutRight 0.3s ease-out forwards;
         }
+        
+        /* Menu floating stile Notion */
+        .floating-menu {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 9999;
+        }
+        
+        .menu-toggle {
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, #c51d34 0%, #a01628 100%);
+            border: none;
+            box-shadow: 0 8px 24px rgba(197, 29, 52, 0.4), 0 2px 8px rgba(0, 0, 0, 0.3);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        .menu-toggle:hover {
+            transform: scale(1.05);
+            box-shadow: 0 12px 32px rgba(197, 29, 52, 0.5), 0 4px 12px rgba(0, 0, 0, 0.4);
+        }
+        
+        .menu-toggle:active {
+            transform: scale(0.95);
+        }
+        
+        .menu-toggle svg {
+            width: 28px;
+            height: 28px;
+            stroke: white;
+            transition: transform 0.3s ease;
+        }
+        
+        .menu-toggle.active svg {
+            transform: rotate(45deg);
+        }
+        
+        .menu-panel {
+            position: absolute;
+            bottom: 70px;
+            right: 0;
+            background: rgba(30, 35, 45, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 8px;
+            min-width: 220px;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px) scale(0.95);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            pointer-events: none;
+        }
+        
+        .menu-panel.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0) scale(1);
+            pointer-events: all;
+        }
+        
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 14px;
+            border-radius: 10px;
+            color: white;
+            text-decoration: none;
+            font-size: 0.95em;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        
+        .menu-item:hover {
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateX(-2px);
+        }
+        
+        .menu-item:active {
+            transform: scale(0.98);
+        }
+        
+        .menu-item-icon {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .menu-item-text {
+            flex: 1;
+        }
+        
+        .menu-item.current {
+            background: rgba(197, 29, 52, 0.15);
+            border-left: 3px solid #c51d34;
+        }
 
         /* Loading Animation */
         .loading-spinner {
@@ -3637,6 +3746,62 @@
         
         // Rendi la funzione accessibile globalmente
         window.scrollToDashboard = scrollToDashboard;
+        
+        // Menu floating toggle
+        function toggleMenu() {
+            const menuPanel = document.getElementById('menuPanel');
+            const menuToggle = document.getElementById('menuToggle');
+            menuPanel.classList.toggle('active');
+            menuToggle.classList.toggle('active');
+        }
+        
+        // Chiudi menu quando clicchi fuori
+        document.addEventListener('click', function(e) {
+            const menu = document.querySelector('.floating-menu');
+            if (menu && !menu.contains(e.target)) {
+                document.getElementById('menuPanel').classList.remove('active');
+                document.getElementById('menuToggle').classList.remove('active');
+            }
+        });
     </script>
+    
+    <!-- Menu Floating Stile Notion -->
+    <div class="floating-menu">
+        <button class="menu-toggle" id="menuToggle" onclick="toggleMenu()">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="1"></circle>
+                <circle cx="12" cy="5" r="1"></circle>
+                <circle cx="12" cy="19" r="1"></circle>
+            </svg>
+        </button>
+        
+        <div class="menu-panel" id="menuPanel">
+            <a href="index.html" class="menu-item current">
+                <div class="menu-item-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="3" width="7" height="7" rx="1"></rect>
+                        <rect x="14" y="3" width="7" height="7" rx="1"></rect>
+                        <rect x="14" y="14" width="7" height="7" rx="1"></rect>
+                        <rect x="3" y="14" width="7" height="7" rx="1"></rect>
+                    </svg>
+                </div>
+                <span class="menu-item-text">Dashboard principale</span>
+            </a>
+            
+            <a href="Amministrazione.html" class="menu-item">
+                <div class="menu-item-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="3"></circle>
+                        <path d="M12 1v6m0 6v6m0-13a9 9 0 0 1 9 9m-9-9a9 9 0 0 0-9 9m9 9a9 9 0 0 1-9-9m9 9a9 9 0 0 0 9-9"></path>
+                        <line x1="12" y1="2" x2="12" y2="4"></line>
+                        <line x1="12" y1="20" x2="12" y2="22"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                    </svg>
+                </div>
+                <span class="menu-item-text">Amministrazione</span>
+            </a>
+        </div>
+    </div>
 </body>
 </html>

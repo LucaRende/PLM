@@ -6,7 +6,6 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>PLM 2</title>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
         @import url('https://fonts.googleapis.com/css2?family=Satisfy&display=swap');
@@ -1272,181 +1271,6 @@
             font-weight: 500;
         }
         
-        /* Castelletti Styles */
-        .banca-card {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 16px;
-            margin-bottom: 16px;
-            overflow: hidden;
-        }
-        
-        .banca-card:first-child {
-            margin-top: 20px;
-        }
-        
-        .banca-header {
-            padding: 20px;
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: all 0.2s ease;
-        }
-        
-        .banca-header:active {
-            transform: scale(0.99);
-        }
-        
-        .banca-name {
-            font-size: 1.1em;
-            font-weight: 600;
-            color: white;
-        }
-        
-        .banca-arrow {
-            color: rgba(255, 255, 255, 0.6);
-            transition: transform 0.3s ease;
-        }
-        
-        .banca-header.active .banca-arrow {
-            transform: rotate(180deg);
-        }
-        
-        .banca-content {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.3s ease;
-        }
-        
-        .banca-content.show {
-            max-height: 5000px;
-        }
-        
-        .mesi-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-            gap: 16px;
-            padding: 20px;
-        }
-        
-        .mese-card {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            border-radius: 12px;
-            padding: 20px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            text-align: center;
-        }
-        
-        .mese-card:hover {
-            background: rgba(255, 255, 255, 0.06);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-        }
-        
-        .mese-card:active {
-            transform: scale(0.98);
-        }
-        
-        .mese-nome {
-            font-size: 1.1em;
-            font-weight: 700;
-            color: white;
-            margin-bottom: 16px;
-            letter-spacing: 0.5px;
-        }
-        
-        .mese-progress {
-            width: 100px;
-            height: 100px;
-            margin: 0 auto 16px;
-        }
-        
-        .mese-stats {
-            font-size: 0.8em;
-            color: rgba(255, 255, 255, 0.7);
-            margin-top: 12px;
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-        
-        .mese-stats-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .mese-stats-value {
-            color: white;
-            font-weight: 700;
-            font-size: 1.1em;
-        }
-        
-        .mese-badge {
-            display: inline-block;
-            padding: 4px 10px;
-            border-radius: 6px;
-            font-size: 0.75em;
-            font-weight: 600;
-            margin-top: 8px;
-        }
-        
-        .mese-badge.green {
-            background: rgba(34, 197, 94, 0.2);
-            color: #22c55e;
-        }
-        
-        .mese-badge.yellow {
-            background: rgba(245, 158, 11, 0.2);
-            color: #f59e0b;
-        }
-        
-        .mese-badge.red {
-            background: rgba(239, 68, 68, 0.2);
-            color: #ef4444;
-        }
-        
-        .fatture-list {
-            padding: 0 20px 20px;
-        }
-        
-        .fattura-item {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 10px;
-            padding: 12px;
-            margin-bottom: 8px;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            gap: 12px;
-            font-size: 0.85em;
-        }
-        
-        .fattura-field {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-        
-        .fattura-label {
-            color: rgba(255, 255, 255, 0.5);
-            font-size: 0.85em;
-        }
-        
-        .fattura-value {
-            color: white;
-            font-weight: 500;
-        }
-        
-        @media (max-width: 768px) {
-            .mesi-grid {
-                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            }
-        }
-        
         /* Paginazione */
         .pagination-controls {
             display: flex;
@@ -2658,10 +2482,7 @@
                 }
             }
         }
-    
-        /* ===== BOLLETTINI MONTATORI ===== */
-        .bollettino-card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.05);border-radius:12px;padding:16px;margin-bottom:12px;transition:all 0.2s ease}.bollettino-card:hover{background:rgba(255,255,255,0.05);transform:translateY(-2px)}.bollettino-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid rgba(255,255,255,0.08)}.bollettino-date{font-size:1.1em;font-weight:700;color:white}.bollettino-day{font-size:0.85em;color:rgba(255,255,255,0.6);margin-left:8px}.bollettino-time-badge{background:rgba(197,29,52,0.2);color:#c51d34;padding:6px 12px;border-radius:8px;font-size:0.85em;font-weight:600}.bollettino-body{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}.bollettino-field{display:flex;flex-direction:column;gap:4px}.bollettino-label{font-size:0.75em;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.5px}.bollettino-value{font-size:0.95em;color:white;font-weight:500}.bollettino-firma{margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,0.08)}.firma-preview{width:100%;max-width:300px;height:100px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.4);font-size:0.85em}.firma-preview svg{width:100%;height:100%}.bollettino-modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);backdrop-filter:blur(10px);display:none;align-items:flex-end;justify-content:center;z-index:10000;padding:0;overflow-x:hidden;overflow-y:auto}.bollettino-modal.active{display:flex}.bollettino-modal-content{background:linear-gradient(135deg,#1e293b 0%,#0f172a 100%);border:1px solid rgba(255,255,255,0.1);border-radius:20px 20px 0 0;max-width:100%;width:100%;max-height:92vh;overflow-y:auto;overflow-x:hidden;position:relative}.bollettino-modal-header{padding:16px;border-bottom:1px solid rgba(255,255,255,0.1);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:linear-gradient(135deg,#1e293b 0%,#0f172a 100%);z-index:10}.bollettino-modal-title{font-size:1.2em;font-weight:700;color:white}.bollettino-modal-close{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.05);border:none;color:white;font-size:1.3em;cursor:pointer;transition:all 0.2s ease;flex-shrink:0}.bollettino-modal-close:hover{background:rgba(255,255,255,0.1)}.bollettino-modal-body{padding:16px}.bollettino-form-row{display:grid;grid-template-columns:1fr;gap:12px;margin-bottom:12px}.bollettino-form-group{display:flex;flex-direction:column;gap:6px}.bollettino-form-label{font-size:0.85em;color:rgba(255,255,255,0.7);font-weight:600}.bollettino-form-input{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:12px;color:white;font-size:16px;transition:all 0.2s ease;-webkit-appearance:none}.bollettino-form-input:focus{outline:none;border-color:#c51d34;background:rgba(255,255,255,0.08)}.bollettino-form-textarea{min-height:80px;resize:vertical;font-family:inherit}.firma-canvas-container{background:white;border-radius:8px;padding:8px;margin-bottom:8px;width:100%}.firma-canvas{border:2px dashed #ccc;border-radius:4px;cursor:crosshair;touch-action:none;width:100%;display:block}.firma-buttons{display:flex;gap:8px;margin-top:8px}.btn-firma{padding:10px 16px;border-radius:8px;border:none;font-size:0.9em;font-weight:600;cursor:pointer;transition:all 0.2s ease}.btn-firma-clear{background:rgba(255,255,255,0.1);color:white}.btn-firma-clear:hover{background:rgba(255,255,255,0.15)}.bollettino-modal-footer{padding:16px;border-top:1px solid rgba(255,255,255,0.1);display:flex;gap:12px;justify-content:flex-end;position:sticky;bottom:0;background:linear-gradient(135deg,#1e293b 0%,#0f172a 100%);z-index:10}.btn-bollettino{padding:14px 24px;border-radius:10px;border:none;font-size:1em;font-weight:600;cursor:pointer;transition:all 0.2s ease;flex:1}.btn-bollettino-cancel{background:rgba(255,255,255,0.05);color:white}.btn-bollettino-cancel:hover{background:rgba(255,255,255,0.1)}.btn-bollettino-save{background:linear-gradient(135deg,#c51d34 0%,#a01628 100%);color:white}.btn-bollettino-save:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(197,29,52,0.4)}@media (min-width:768px){.bollettino-modal{padding:20px;align-items:center}.bollettino-modal-content{max-width:800px;border-radius:20px;max-height:90vh}.bollettino-modal-header{padding:24px}.bollettino-modal-title{font-size:1.5em}.bollettino-modal-body{padding:24px}.bollettino-form-row{grid-template-columns:repeat(2,1fr);gap:16px;margin-bottom:16px}.bollettino-body{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}}
-</style>
+    </style>
 </head>
 <body>
     <!-- Login Screen Overlay -->
@@ -2750,288 +2571,998 @@
         </div>
 
         <div class="dashboards-grid">
-            <!-- Dashboard Panoramica Castelletti -->
+            <!-- Dashboard Attività -->
             <div class="dashboard">
-            <div class="dashboard-header" id="castellettiHeader">
+            <div class="dashboard-header" id="dashHeader">
                 <div class="dashboard-top">
                     <div class="dashboard-title">
                         <span class="dashboard-icon">
                             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <rect x="3" y="4" width="18" height="16" rx="2" stroke="white" stroke-width="2" fill="none"/>
-                                <line x1="3" y1="10" x2="21" y2="10" stroke="white" stroke-width="2"/>
-                                <line x1="9" y1="10" x2="9" y2="20" stroke="white" stroke-width="2"/>
-                                <line x1="15" y1="10" x2="15" y2="20" stroke="white" stroke-width="2"/>
+                                <rect x="4" y="2" width="16" height="20" rx="2" fill="white" opacity="0.9"/>
+                                <path d="M8 7h8M8 11h8M8 15h5" stroke="#1a2332" stroke-width="1.5" stroke-linecap="round"/>
+                                <circle cx="17" cy="17" r="5" fill="white"/>
+                                <path d="M15 17l1.5 1.5L19 16" stroke="#1a2332" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                             </svg>
                         </span>
-                        <h2>Panoramica Castelletti</h2>
+                        <h2>Attività CRM</h2>
+                    </div>
+                    <span class="toggle-arrow" id="dashArrow">▼</span>
+                </div>
+                
+                <div class="progress-container">
+                    <div class="progress-item">
+                        <div class="progress-label">Ritardi Preventivi</div>
+                        <div class="circular-progress">
+                            <svg class="progress-ring" viewBox="0 0 110 110">
+                                <defs>
+                                    <linearGradient id="gradient-preventivi" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" style="stop-color:#ef4444;stop-opacity:1" />
+                                        <stop offset="100%" style="stop-color:#dc2626;stop-opacity:1" />
+                                    </linearGradient>
+                                </defs>
+                                <circle class="progress-ring-bg" cx="55" cy="55" r="48"></circle>
+                                <circle class="progress-ring-fill preventivi" id="progressPreventivi" cx="55" cy="55" r="48"
+                                    stroke-dasharray="301.59" stroke-dashoffset="301.59"></circle>
+                            </svg>
+                            <div class="progress-content">
+                                <div class="progress-value" id="percentPreventivi">0</div>
+                                <div class="progress-unit">ritardo</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="progress-item">
+                        <div class="progress-label">Ritardi Ordini</div>
+                        <div class="circular-progress">
+                            <svg class="progress-ring" viewBox="0 0 110 110">
+                                <defs>
+                                    <linearGradient id="gradient-ordini" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" style="stop-color:#f97316;stop-opacity:1" />
+                                        <stop offset="100%" style="stop-color:#ea580c;stop-opacity:1" />
+                                    </linearGradient>
+                                </defs>
+                                <circle class="progress-ring-bg" cx="55" cy="55" r="48"></circle>
+                                <circle class="progress-ring-fill ordini" id="progressOrdini" cx="55" cy="55" r="48"
+                                    stroke-dasharray="301.59" stroke-dashoffset="301.59"></circle>
+                            </svg>
+                            <div class="progress-content">
+                                <div class="progress-value" id="percentOrdini">0</div>
+                                <div class="progress-unit">ritardo</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard-content" id="dashContent">
+                <div class="content-wrapper" id="contentWrapper">
+                    <div class="filters-box" id="filtersBox">
+                        <div class="filters-header" onclick="toggleFilters()">
+                            <div class="filters-title">
+                                <span>🔍</span>
+                                <span>Filtri</span>
+                            </div>
+                            <span class="filters-arrow">▼</span>
+                        </div>
+                        <div class="filters-content">
+                            <div class="filters-wrapper">
+                                <div class="filter-group">
+                                    <div class="filter-label">Cliente</div>
+                                    <select class="filter-select" id="filterCliente">
+                                        <option value="">Tutti i clienti</option>
+                                    </select>
+                                </div>
+                                <div class="filter-group">
+                                    <div class="filter-label">Tipologia</div>
+                                    <select class="filter-select" id="filterTipologia">
+                                        <option value="">Tutte le tipologie</option>
+                                    </select>
+                                </div>
+                                <div class="filter-group">
+                                    <div class="filter-label">Stato</div>
+                                    <select class="filter-select" id="filterStato">
+                                        <option value="">Tutti gli stati</option>
+                                    </select>
+                                </div>
+                                <div class="filter-group">
+                                    <div class="filter-label">Scadenza</div>
+                                    <select class="filter-select" id="filterScadenza">
+                                        <option value="">Tutte</option>
+                                        <option value="scaduto">Scadute</option>
+                                        <option value="oggi">Scadono oggi</option>
+                                        <option value="futuro">Future</option>
+                                    </select>
+                                </div>
+                                <div class="filter-buttons">
+                                    <button class="filter-btn filter-btn-apply" onclick="applyFilters()">Applica</button>
+                                    <button class="filter-btn filter-btn-reset" onclick="resetFilters()">Reset</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="activitiesList">
+                        <div class="loading-state">Caricamento...</div>
+                    </div>
+                    
+                    <!-- Paginazione -->
+                    <div class="pagination-controls" id="paginationControls" style="display: none;">
+                        <button class="pagination-btn" id="prevPage" onclick="window.changePage(-1)">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M15 18l-6-6 6-6"/>
+                            </svg>
+                        </button>
+                        <div class="pagination-info">
+                            <span id="currentPage">1</span> / <span id="totalPages">1</span>
+                        </div>
+                        <button class="pagination-btn" id="nextPage" onclick="window.changePage(1)">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M9 18l6-6-6-6"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+
+        <!-- Dashboard Ufficio Tecnico con Gantt (Full Width) -->
+        <div class="gantt-dashboard-wrapper">
+        <div class="dashboard">
+            <div class="dashboard-header gantt" id="ganttHeader">
+                <div class="dashboard-top">
+                    <div class="dashboard-title">
+                        <span class="dashboard-icon">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <!-- Schermo computer -->
+                                <rect x="3" y="3" width="18" height="13" rx="1" stroke="white" stroke-width="1.5" fill="none" opacity="0.9"/>
+                                <line x1="7" y1="19" x2="17" y2="19" stroke="white" stroke-width="1.5" stroke-linecap="round" opacity="0.9"/>
+                                <line x1="12" y1="16" x2="12" y2="19" stroke="white" stroke-width="1.5" opacity="0.9"/>
+                                <!-- Disegno CAD sullo schermo -->
+                                <path d="M7 7L10 10L13 7L16 10" stroke="white" stroke-width="1.2" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="0.9"/>
+                                <circle cx="8" cy="11" r="1.5" fill="white" opacity="0.9"/>
+                                <rect x="13" y="9" width="3" height="3" fill="white" opacity="0.8"/>
+                                <line x1="6" y1="13" x2="18" y2="13" stroke="white" stroke-width="0.8" stroke-dasharray="1 1" opacity="0.7"/>
+                            </svg>
+                        </span>
+                        <h2>Ufficio Tecnico</h2>
                     </div>
                     <span class="toggle-arrow">▼</span>
                 </div>
-            </div>
-            <div class="dashboard-content" id="castellettiContent">
-                <div class="dashboard-body" style="padding: 24px 20px;">
-                    <div id="castellettiList">
-                        <div class="loading-state">Caricamento castelletti...</div>
+                <div class="date-label" id="currentDate">Oggi</div>
+                <div class="stats-summary" id="statsSummary">
+                    <div class="stat-item">
+                        <div class="stat-icon">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="9" cy="7" r="3" fill="white" opacity="0.9"/>
+                                <circle cx="15" cy="9" r="2.5" fill="white" opacity="0.8"/>
+                                <path d="M3 18c0-2.5 2.5-4.5 6-4.5s6 2 6 4.5" fill="white" opacity="0.9"/>
+                                <path d="M15 18c0-1.8 1.5-3.5 4-3.5s4 1.7 4 3.5" fill="white" opacity="0.8"/>
+                            </svg>
+                        </div>
+                        <div class="stat-value" id="totalPersons">-</div>
+                        <div class="stat-label">Persone</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-icon">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <rect x="4" y="6" width="16" height="14" rx="2" fill="white" opacity="0.9"/>
+                                <path d="M8 11l2 2 4-4" stroke="#1a2332" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <rect x="8" y="3" width="8" height="3" rx="1" fill="white" opacity="0.7"/>
+                            </svg>
+                        </div>
+                        <div class="stat-value" id="totalTasks">-</div>
+                        <div class="stat-label">Lavori</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-icon">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="12" cy="12" r="9" fill="white" opacity="0.9"/>
+                                <path d="M8 12l3 3 5-6" stroke="#1a2332" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                        <div class="stat-value" id="avgOccupation">-</div>
+                        <div class="stat-label">Occupati</div>
+                    </div>
+                </div>
+                
+                <!-- Gantt Summary (visible when collapsed) -->
+                <div class="gantt-summary" id="ganttSummary">
+                    <div class="gantt-grid">
+                        <div class="gantt-header-row">
+                            <div class="gantt-person-header"></div>
+                            <div class="gantt-timeline-header" id="ganttTimelineHeader"></div>
+                        </div>
+                        <div id="ganttSummaryRows"></div>
                     </div>
                 </div>
             </div>
+
+            <div class="gantt-container collapsed" id="ganttContainer">
+                <div id="ganttDetailsRows"></div>
             </div>
         </div>
     </div>
 
-    
-<div class="dashboard"><div class="dashboard-header" id="bollettiniHeader"><div class="dashboard-top"><div class="dashboard-title"><span class="dashboard-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M14 2H6C5.46957 2 4.96086 2.21071 4.58579 2.58579C4.21071 2.96086 4 3.46957 4 4V20C4 20.5304 4.21071 21.0391 4.58579 21.4142C4.96086 21.7893 5.46957 22 6 22H18C18.5304 22 19.0391 21.7893 19.4142 21.4142C19.7893 21.0391 20 20.5304 20 20V8L14 2Z" stroke="white" stroke-width="2"/><path d="M14 2V8H20" stroke="white" stroke-width="2"/><path d="M16 13H8M16 17H8M10 9H8" stroke="white" stroke-width="2"/></svg></span><h2>Bollettini Montatori</h2></div><span class="toggle-arrow">▼</span></div></div><div class="dashboard-content" id="bollettiniContent"><div class="dashboard-body"><div class="filter-section"><div class="filter-group"><input type="date" id="filterDataBollettini" class="filter-input"><input type="text" id="filterClienteBollettini" class="filter-input" placeholder="Cliente"><input type="text" id="filterTecnicoBollettini" class="filter-input" placeholder="Tecnico"><button class="filter-btn" onclick="applyFiltersBollettini()">Filtra</button><button class="filter-btn-reset" onclick="resetFiltersBollettini()">Reset</button></div></div><div id="bollettiniList" class="activities-list"><div class="loading-state">Caricamento...</div></div><div class="pagination-controls"><button class="pagination-btn" id="prevPageBollettini" onclick="changePageBollettini('prev')" disabled>←</button><span class="pagination-info" id="paginationInfoBollettini">1/1</span><button class="pagination-btn" id="nextPageBollettini" onclick="changePageBollettini('next')" disabled>→</button></div><div style="text-align:center;margin-top:20px"><button class="btn-bollettino-save" onclick="openBollettinoModal()" style="padding:14px 32px;font-size:1em">+ Aggiungi</button></div></div></div></div><div class="bollettino-modal" id="bollettinoModal"><div class="bollettino-modal-content"><div class="bollettino-modal-header"><h3 class="bollettino-modal-title">Nuovo Bollettino</h3><button class="bollettino-modal-close" onclick="closeBollettinoModal()">×</button></div><div class="bollettino-modal-body"><form id="bollettinoForm" onsubmit="saveBollettino(event)"><div class="bollettino-form-row"><div class="bollettino-form-group"><label class="bollettino-form-label">Data *</label><input type="date" id="bollettinoData" class="bollettino-form-input" required></div><div class="bollettino-form-group"><label class="bollettino-form-label">Inizio *</label><input type="time" id="bollettinoInizio" class="bollettino-form-input" required></div></div><div class="bollettino-form-row"><div class="bollettino-form-group"><label class="bollettino-form-label">Fine *</label><input type="time" id="bollettinoFine" class="bollettino-form-input" required></div><div class="bollettino-form-group"><label class="bollettino-form-label">Pausa (min)</label><input type="number" id="bollettinoPausa" class="bollettino-form-input" value="0" min="0"></div></div><div class="bollettino-form-row"><div class="bollettino-form-group"><label class="bollettino-form-label">Macchina *</label><input type="text" id="bollettinoMacchina" class="bollettino-form-input" required></div><div class="bollettino-form-group"><label class="bollettino-form-label">Cliente *</label><input type="text" id="bollettinoCliente" class="bollettino-form-input" required></div></div><div class="bollettino-form-group"><label class="bollettino-form-label">Tecnico *</label><input type="text" id="bollettinoTecnico" class="bollettino-form-input" required></div><div class="bollettino-form-group"><label class="bollettino-form-label">Lavori *</label><textarea id="bollettinoLavori" class="bollettino-form-input bollettino-form-textarea" required></textarea></div><div class="bollettino-form-group"><label class="bollettino-form-label">Note</label><textarea id="bollettinoNote" class="bollettino-form-input bollettino-form-textarea"></textarea></div><div class="bollettino-form-group"><label class="bollettino-form-label">Firma Cliente</label><div class="firma-canvas-container"><canvas id="firmaCanvas" class="firma-canvas"></canvas></div><div class="firma-buttons"><button type="button" class="btn-firma btn-firma-clear" onclick="clearFirma()">Cancella</button></div></div></form></div><div class="bollettino-modal-footer"><button class="btn-bollettino btn-bollettino-cancel" onclick="closeBollettinoModal()">Annulla</button><button class="btn-bollettino btn-bollettino-save" onclick="document.getElementById('bollettinoForm').requestSubmit()">Salva</button></div></div></div>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        // BOLLETTINI MONTATORI
+        // ===== ATTIVITA CRM DASHBOARD =====
         (function() {
-            const sb = window.supabase.createClient('https://uoykvjxerdrthnmnfmgc.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVveWt2anhlcmRydGhubW5mbWdjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzMzMTMwNTQsImV4cCI6MjA0ODg4OTA1NH0.gxtB0EFvF4AwbRHVfb_c4qGe7dRVdjkf8qITEAd_EEk');
-            let allBollettini = [], filteredBollettini = [], currentPageBollettini = 1, itemsPerPageBollettini = 5;
-            let firmaCanvas, firmaCtx, isDrawing = false, firmaPaths = [], currentPath = [];
-            
-            document.getElementById('bollettiniHeader').addEventListener('click', function() {
-                const header = this, content = document.getElementById('bollettiniContent');
+            const sb = window.supabase.createClient(
+                'https://uoykvjxerdrthnmnfmgc.supabase.co',
+                'sb_publishable_iGVhzkLqAktDZmpccXl7OA_PZ2nUYSY'
+            );
+
+            let loaded = false;
+            let allActivities = [];
+            let filteredActivities = [];
+
+            window.toggleDash = function() {
+                const header = document.getElementById('dashHeader');
+                const content = document.getElementById('dashContent');
+                
+                // Forza reflow per iOS - fix animazioni ripetute
                 void header.offsetHeight;
+                void content.offsetHeight;
+                
                 header.classList.toggle('active');
                 content.classList.toggle('show');
-                setTimeout(() => void content.offsetHeight, 350);
-                if (allBollettini.length === 0) loadBollettini();
-            });
-            
-            function initFirmaCanvas() {
-                firmaCanvas = document.getElementById('firmaCanvas');
-                if (!firmaCanvas) return;
-                const container = firmaCanvas.parentElement, containerWidth = container.offsetWidth - 16;
-                firmaCanvas.width = Math.min(containerWidth, 400);
-                firmaCanvas.height = 150;
-                firmaCtx = firmaCanvas.getContext('2d');
-                firmaCtx.strokeStyle = '#000';
-                firmaCtx.lineWidth = 2;
-                firmaCtx.lineCap = 'round';
-                firmaCtx.lineJoin = 'round';
-                const newCanvas = firmaCanvas.cloneNode(true);
-                firmaCanvas.parentNode.replaceChild(newCanvas, firmaCanvas);
-                firmaCanvas = newCanvas;
-                firmaCtx = firmaCanvas.getContext('2d');
-                firmaCtx.strokeStyle = '#000';
-                firmaCtx.lineWidth = 2;
-                firmaCtx.lineCap = 'round';
-                firmaCtx.lineJoin = 'round';
-                firmaCanvas.addEventListener('mousedown', startDrawing);
-                firmaCanvas.addEventListener('mousemove', draw);
-                firmaCanvas.addEventListener('mouseup', stopDrawing);
-                firmaCanvas.addEventListener('mouseleave', stopDrawing);
-                firmaCanvas.addEventListener('touchstart', function(e) {
-                    e.preventDefault();
-                    const touch = e.touches[0], rect = firmaCanvas.getBoundingClientRect();
-                    isDrawing = true;
-                    currentPath = [{x: touch.clientX - rect.left, y: touch.clientY - rect.top}];
-                }, {passive: false});
-                firmaCanvas.addEventListener('touchmove', function(e) {
-                    e.preventDefault();
-                    if (!isDrawing) return;
-                    const touch = e.touches[0], rect = firmaCanvas.getBoundingClientRect();
-                    const x = touch.clientX - rect.left, y = touch.clientY - rect.top;
-                    currentPath.push({x: x, y: y});
-                    firmaCtx.beginPath();
-                    const lastPoint = currentPath[currentPath.length - 2];
-                    firmaCtx.moveTo(lastPoint.x, lastPoint.y);
-                    firmaCtx.lineTo(x, y);
-                    firmaCtx.stroke();
-                }, {passive: false});
-                firmaCanvas.addEventListener('touchend', stopDrawing, {passive: false});
-            }
-            
-            function startDrawing(e) {
-                isDrawing = true;
-                const pos = getMousePos(e);
-                currentPath = [{x: pos.x, y: pos.y}];
-            }
-            
-            function draw(e) {
-                if (!isDrawing) return;
-                e.preventDefault();
-                const pos = getMousePos(e);
-                currentPath.push({x: pos.x, y: pos.y});
-                firmaCtx.beginPath();
-                const lastPoint = currentPath[currentPath.length - 2];
-                firmaCtx.moveTo(lastPoint.x, lastPoint.y);
-                firmaCtx.lineTo(pos.x, pos.y);
-                firmaCtx.stroke();
-            }
-            
-            function stopDrawing() {
-                if (isDrawing && currentPath.length > 0) firmaPaths.push([...currentPath]);
-                isDrawing = false;
-                currentPath = [];
-            }
-            
-            function getMousePos(e) {
-                const rect = firmaCanvas.getBoundingClientRect();
-                return {x: e.clientX - rect.left, y: e.clientY - rect.top};
-            }
-            
-            window.clearFirma = function() {
-                if (!firmaCanvas || !firmaCtx) return;
-                firmaCtx.clearRect(0, 0, firmaCanvas.width, firmaCanvas.height);
-                firmaPaths = [];
-                currentPath = [];
-            };
-            
-            function getFirmaJSON() {
-                if (firmaPaths.length === 0) return null;
-                return {paths: firmaPaths, width: firmaCanvas.width, height: firmaCanvas.height, timestamp: new Date().toISOString()};
-            }
-            
-            function renderFirma(firmaJSON) {
-                if (!firmaJSON || !firmaJSON.paths) return '';
-                const pathStrings = firmaJSON.paths.map(path => {
-                    if (path.length === 0) return '';
-                    let d = `M ${path[0].x} ${path[0].y}`;
-                    for (let i = 1; i < path.length; i++) d += ` L ${path[i].x} ${path[i].y}`;
-                    return d;
-                }).filter(p => p).join(' ');
-                return `<svg width="${firmaJSON.width}" height="${firmaJSON.height}" style="background: white; border-radius: 4px;"><path d="${pathStrings}" stroke="#000" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
-            }
-            
-            window.openBollettinoModal = function() {
-                document.getElementById('bollettinoModal').classList.add('active');
-                document.getElementById('bollettinoForm').reset();
+                
+                // Forza re-render dopo transizione
                 setTimeout(() => {
-                    firmaPaths = [];
-                    currentPath = [];
-                    initFirmaCanvas();
-                }, 100);
-                document.getElementById('bollettinoData').valueAsDate = new Date();
+                    void content.offsetHeight;
+                }, 350);
             };
-            
-            window.closeBollettinoModal = function() {
-                document.getElementById('bollettinoModal').classList.remove('active');
+
+            window.toggleFilters = function() {
+                const filtersBox = document.getElementById('filtersBox');
+                filtersBox.classList.toggle('active');
             };
-            
-            window.saveBollettino = async function(e) {
-                e.preventDefault();
-                const data = document.getElementById('bollettinoData').value;
-                const inizio = document.getElementById('bollettinoInizio').value;
-                const fine = document.getElementById('bollettinoFine').value;
-                const pausa = parseInt(document.getElementById('bollettinoPausa').value) || 0;
-                const inizioMinuti = parseInt(inizio.split(':')[0]) * 60 + parseInt(inizio.split(':')[1]);
-                const fineMinuti = parseInt(fine.split(':')[0]) * 60 + parseInt(fine.split(':')[1]);
-                const oreTotali = ((fineMinuti - inizioMinuti - pausa) / 60).toFixed(2);
-                const firmaJSON = getFirmaJSON();
-                
-                const bollettino = {
-                    data: data,
-                    orario_inizio: inizio,
-                    orario_fine: fine,
-                    pausa_minuti: pausa,
-                    ore_totali: parseFloat(oreTotali),
-                    montaggio_macchina: document.getElementById('bollettinoMacchina').value,
-                    cliente: document.getElementById('bollettinoCliente').value,
-                    tecnico_installatore: document.getElementById('bollettinoTecnico').value,
-                    lavori_eseguiti: document.getElementById('bollettinoLavori').value,
-                    note: document.getElementById('bollettinoNote').value,
-                    firma_cliente: firmaJSON
-                };
-                
-                try {
-                    const {data: result, error} = await sb.from('BollettiniMontatori').insert([bollettino]).select();
-                    if (error) {
-                        console.error('Errore:', error);
-                        if (error.message.includes('relation') || error.message.includes('does not exist')) {
-                            alert('Crea prima la tabella BollettiniMontatori su Supabase!');
-                        } else {
-                            alert('Errore: ' + error.message);
-                        }
-                        return;
+
+            window.toggleAct = function(id) {
+                const card = document.querySelector(`[data-id="${id}"]`);
+                card.classList.toggle('active');
+            };
+
+            window.applyFilters = function() {
+                const cliente = document.getElementById('filterCliente').value;
+                const tipologia = document.getElementById('filterTipologia').value;
+                const stato = document.getElementById('filterStato').value;
+                const scadenza = document.getElementById('filterScadenza').value;
+
+                filteredActivities = allActivities.filter(a => {
+                    if (cliente && a.clienteApplicato !== cliente) return false;
+                    if (tipologia && a.tipologiaFormattata !== tipologia) return false;
+                    if (stato && a.stato !== stato) return false;
+                    if (scadenza) {
+                        const urgenza = getUrgencyStatus(a._dataConsegna);
+                        if (scadenza !== urgenza) return false;
                     }
-                    alert('Bollettino salvato!');
-                    closeBollettinoModal();
-                    loadBollettini();
-                } catch (err) {
-                    alert('Errore: ' + err.message);
-                }
+                    return true;
+                });
+
+                currentPage = 1; // Reset alla prima pagina
+                renderActivities(filteredActivities);
             };
-            
-            async function loadBollettini() {
-                const list = document.getElementById('bollettiniList');
-                list.innerHTML = '<div class="loading-state">Caricamento...</div>';
-                try {
-                    const {data, error} = await sb.from('BollettiniMontatori').select('*').order('data', {ascending: false});
-                    if (error) throw error;
-                    allBollettini = data || [];
-                    filteredBollettini = [...allBollettini];
-                    currentPageBollettini = 1;
-                    renderBollettini();
-                } catch (err) {
-                    list.innerHTML = `<div class="empty-state"><div class="empty-icon">!</div><div class="empty-text">Errore: ${err.message}</div></div>`;
-                }
+
+            window.resetFilters = function() {
+                document.getElementById('filterCliente').value = '';
+                document.getElementById('filterTipologia').value = '';
+                document.getElementById('filterStato').value = '';
+                document.getElementById('filterScadenza').value = '';
+                filteredActivities = allActivities;
+                currentPage = 1; // Reset alla prima pagina
+                renderActivities(filteredActivities);
+            };
+
+            function populateFilters(data) {
+                const clienti = [...new Set(data.map(a => a.clienteApplicato).filter(Boolean))].sort();
+                const tipologie = [...new Set(data.map(a => a.tipologiaFormattata).filter(Boolean))].sort();
+                const stati = [...new Set(data.map(a => a.stato).filter(Boolean))].sort();
+
+                const filterCliente = document.getElementById('filterCliente');
+                const filterTipologia = document.getElementById('filterTipologia');
+                const filterStato = document.getElementById('filterStato');
+
+                clienti.forEach(c => {
+                    const option = document.createElement('option');
+                    option.value = c;
+                    option.textContent = c;
+                    filterCliente.appendChild(option);
+                });
+
+                tipologie.forEach(t => {
+                    const option = document.createElement('option');
+                    option.value = t;
+                    option.textContent = t;
+                    filterTipologia.appendChild(option);
+                });
+
+                stati.forEach(s => {
+                    const option = document.createElement('option');
+                    option.value = s;
+                    option.textContent = s;
+                    filterStato.appendChild(option);
+                });
             }
-            
-            function renderBollettini() {
-                const list = document.getElementById('bollettiniList');
-                const totalPages = Math.ceil(filteredBollettini.length / itemsPerPageBollettini);
-                const startIndex = (currentPageBollettini - 1) * itemsPerPageBollettini;
-                const currentData = filteredBollettini.slice(startIndex, startIndex + itemsPerPageBollettini);
+
+            function setCircularProgress(elementId, percentId, percentage) {
+                const circle = document.getElementById(elementId);
+                const percentText = document.getElementById(percentId);
+                const circumference = 301.59;
+                const offset = circumference - (percentage / 100) * circumference;
                 
-                if (currentData.length === 0) {
-                    list.innerHTML = '<div class="empty-state"><div class="empty-icon">-</div><div class="empty-text">Nessun bollettino</div></div>';
-                    updatePaginationBollettini(0, 0);
+                setTimeout(() => {
+                    circle.style.strokeDashoffset = offset;
+                    percentText.textContent = Math.round(percentage) + '%';
+                }, 200);
+            }
+
+            function calculateDelayPercentages(data) {
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+
+                let preventiviTotal = 0;
+                let preventiviRitardo = 0;
+                let ordiniTotal = 0;
+                let ordiniRitardo = 0;
+
+                data.forEach(a => {
+                    const consegna = a._dataConsegna ? new Date(a._dataConsegna) : null;
+                    if (!consegna) return;
+
+                    const tipo = (a.tipologiaFormattata || '').toLowerCase();
+                    const stato = (a.stato || '').toLowerCase();
+                    
+                    if (stato.includes('completato') || stato.includes('chiuso')) return;
+
+                    const isRitardo = consegna < today;
+
+                    if (tipo.includes('preventivo')) {
+                        preventiviTotal++;
+                        if (isRitardo) preventiviRitardo++;
+                    } else if (tipo.includes('ordine') || tipo.includes('ordini')) {
+                        ordiniTotal++;
+                        if (isRitardo) ordiniRitardo++;
+                    }
+                });
+
+                const preventiviPerc = preventiviTotal > 0 ? (preventiviRitardo / preventiviTotal) * 100 : 0;
+                const ordiniPerc = ordiniTotal > 0 ? (ordiniRitardo / ordiniTotal) * 100 : 0;
+
+                return { preventiviPerc, ordiniPerc };
+            }
+
+            function getUrgencyStatus(dataConsegna) {
+                if (!dataConsegna) return 'futuro';
+                
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                
+                const consegna = new Date(dataConsegna);
+                consegna.setHours(0, 0, 0, 0);
+                
+                if (consegna < today) return 'scaduto';
+                if (consegna.getTime() === today.getTime()) return 'oggi';
+                return 'futuro';
+            }
+
+            function getStatus(s) {
+                if (!s) return 'status-aperto';
+                const l = s.toLowerCase();
+                if (l.includes('completato') || l.includes('chiuso')) return 'status-completato';
+                if (l.includes('corso')) return 'status-in-corso';
+                if (l.includes('annullato')) return 'status-annullato';
+                return 'status-aperto';
+            }
+
+            function fmtDate(d) {
+                if (!d) return 'N/D';
+                return new Date(d).toLocaleDateString('it-IT', { 
+                    day: '2-digit', 
+                    month: '2-digit', 
+                    year: 'numeric' 
+                });
+            }
+
+            let currentPage = 1;
+            const itemsPerPage = 5;
+            let animationDirection = 'right';
+            
+            function renderActivities(data) {
+                const list = document.getElementById('activitiesList');
+                const paginationControls = document.getElementById('paginationControls');
+                
+                if (!data || !data.length) {
+                    list.innerHTML = '<div class="empty-state"><div class="empty-icon">📭</div>Nessuna attività trovata</div>';
+                    paginationControls.style.display = 'none';
                     return;
                 }
                 
-                list.innerHTML = currentData.map(b => {
-                    const dataObj = new Date(b.data + 'T00:00:00');
-                    const giorni = ['Domenica', 'Lunedi', 'Martedi', 'Mercoledi', 'Giovedi', 'Venerdi', 'Sabato'];
-                    const dataFormattata = dataObj.toLocaleDateString('it-IT', {day: '2-digit', month: '2-digit', year: 'numeric'});
-                    
-                    return `<div class="bollettino-card"><div class="bollettino-header"><div><span class="bollettino-date">${dataFormattata}</span><span class="bollettino-day">${giorni[dataObj.getDay()]}</span></div><div class="bollettino-time-badge">${b.ore_totali || 0} ore</div></div><div class="bollettino-body"><div class="bollettino-field"><div class="bollettino-label">Orario</div><div class="bollettino-value">${b.orario_inizio || '--'} - ${b.orario_fine || '--'} (Pausa: ${b.pausa_minuti || 0} min)</div></div><div class="bollettino-field"><div class="bollettino-label">Macchina</div><div class="bollettino-value">${b.montaggio_macchina || '--'}</div></div><div class="bollettino-field"><div class="bollettino-label">Cliente</div><div class="bollettino-value">${b.cliente || '--'}</div></div><div class="bollettino-field"><div class="bollettino-label">Tecnico</div><div class="bollettino-value">${b.tecnico_installatore || '--'}</div></div><div class="bollettino-field" style="grid-column: 1 / -1;"><div class="bollettino-label">Lavori</div><div class="bollettino-value">${b.lavori_eseguiti || '--'}</div></div>${b.note ? `<div class="bollettino-field" style="grid-column: 1 / -1;"><div class="bollettino-label">Note</div><div class="bollettino-value">${b.note}</div></div>` : ''}</div>${b.firma_cliente ? `<div class="bollettino-firma"><div class="bollettino-label">Firma Cliente</div><div class="firma-preview">${renderFirma(b.firma_cliente)}</div></div>` : ''}</div>`;
-                }).join('');
+                const totalPages = Math.ceil(data.length / itemsPerPage);
+                const startIndex = (currentPage - 1) * itemsPerPage;
+                const endIndex = startIndex + itemsPerPage;
+                const currentData = data.slice(startIndex, endIndex);
                 
-                updatePaginationBollettini(currentPageBollettini, totalPages);
+                // Aggiorna info paginazione
+                document.getElementById('currentPage').textContent = currentPage;
+                document.getElementById('totalPages').textContent = totalPages;
+                document.getElementById('prevPage').disabled = currentPage === 1;
+                document.getElementById('nextPage').disabled = currentPage === totalPages;
+                
+                // Mostra controlli se ci sono più pagine
+                paginationControls.style.display = totalPages > 1 ? 'flex' : 'none';
+
+                list.innerHTML = currentData.map((a, index) => {
+                    const urgencyClass = getUrgencyStatus(a._dataConsegna);
+                    const animClass = animationDirection === 'right' ? 'slide-in-right' : 'slide-in-left';
+                    const delay = index * 0.05;
+                    
+                    return `
+                    <div class="activity-card ${animClass}" data-id="${a.ID_Attivita}" style="animation-delay: ${delay}s;">
+                        <div class="activity-card-header ${urgencyClass}" onclick="toggleAct(${a.ID_Attivita})">
+                            <div class="activity-info">
+                                <div class="activity-title">
+                                    #${a.ID_Attivita} · ${a.clienteApplicato || 'Cliente non specificato'}
+                                </div>
+                                <div class="activity-meta">
+                                    <div class="meta-item">
+                                        <span class="meta-label">📅</span>
+                                        <span>${a.dataCreazioneFormattata || fmtDate(a._dataCreazione)}</span>
+                                    </div>
+                                    <div class="meta-item">
+                                        <span class="meta-label">🎯</span>
+                                        <span>${a.dataConsegnaFormattata || fmtDate(a._dataConsegna)}</span>
+                                    </div>
+                                    <div class="meta-item">
+                                        <span class="meta-label">📦</span>
+                                        <span>${a.tipologiaFormattata || 'Non specificato'}</span>
+                                    </div>
+                                </div>
+                                <div class="activity-footer">
+                                    <span class="status-badge ${getStatus(a.stato)}">${a.stato || 'Aperto'}</span>
+                                    <span class="activity-arrow">▼</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="activity-details">
+                            <div class="details-wrapper">
+                                <div class="details-grid">
+                                    <div class="detail-box">
+                                        <div class="detail-label">Cliente</div>
+                                        <div class="detail-value">${a.clienteApplicato || 'Non specificato'}</div>
+                                    </div>
+                                    <div class="detail-box">
+                                        <div class="detail-label">Tipologia</div>
+                                        <div class="detail-value">${a.tipologiaFormattata || 'Non specificato'}</div>
+                                    </div>
+                                    <div class="detail-box">
+                                        <div class="detail-label">Data Creazione</div>
+                                        <div class="detail-value">${a.dataCreazioneFormattata || fmtDate(a._dataCreazione)}</div>
+                                    </div>
+                                    <div class="detail-box">
+                                        <div class="detail-label">Data Consegna</div>
+                                        <div class="detail-value">${a.dataConsegnaFormattata || fmtDate(a._dataConsegna)}</div>
+                                    </div>
+                                    <div class="detail-box">
+                                        <div class="detail-label">Trasferimento</div>
+                                        <div class="detail-value">${a.trasferimento || 'Non specificato'}</div>
+                                    </div>
+                                    <div class="detail-box">
+                                        <div class="detail-label">Stato</div>
+                                        <div class="detail-value">${a.stato || 'Aperto'}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `}).join('');
             }
             
-            function updatePaginationBollettini(page, totalPages) {
-                document.getElementById('paginationInfoBollettini').textContent = `${page} / ${totalPages}`;
-                document.getElementById('prevPageBollettini').disabled = page <= 1;
-                document.getElementById('nextPageBollettini').disabled = page >= totalPages;
-            }
-            
-            window.changePageBollettini = function(direction) {
-                const totalPages = Math.ceil(filteredBollettini.length / itemsPerPageBollettini);
-                if (direction === 'prev' && currentPageBollettini > 1) {
-                    currentPageBollettini--;
-                } else if (direction === 'next' && currentPageBollettini < totalPages) {
-                    currentPageBollettini++;
-                }
-                renderBollettini();
-                document.getElementById('bollettiniList').scrollIntoView({behavior: 'smooth', block: 'nearest'});
-            };
-            
-            window.applyFiltersBollettini = function() {
-                const filterData = document.getElementById('filterDataBollettini').value;
-                const filterCliente = document.getElementById('filterClienteBollettini').value.toLowerCase();
-                const filterTecnico = document.getElementById('filterTecnicoBollettini').value.toLowerCase();
-                filteredBollettini = allBollettini.filter(b => {
-                    const matchData = !filterData || b.data === filterData;
-                    const matchCliente = !filterCliente || (b.cliente && b.cliente.toLowerCase().includes(filterCliente));
-                    const matchTecnico = !filterTecnico || (b.tecnico_installatore && b.tecnico_installatore.toLowerCase().includes(filterTecnico));
-                    return matchData && matchCliente && matchTecnico;
+            window.changePage = function(direction) {
+                const totalPages = Math.ceil(filteredActivities.length / itemsPerPage);
+                const newPage = currentPage + direction;
+                
+                if (newPage < 1 || newPage > totalPages) return;
+                
+                // Imposta direzione animazione
+                animationDirection = direction > 0 ? 'right' : 'left';
+                
+                // Animazione uscita
+                const cards = document.querySelectorAll('.activity-card');
+                const outClass = direction > 0 ? 'slide-out-left' : 'slide-out-right';
+                cards.forEach((card, index) => {
+                    card.style.animationDelay = `${index * 0.03}s`;
+                    card.classList.add(outClass);
                 });
-                currentPageBollettini = 1;
-                renderBollettini();
+                
+                // Dopo animazione uscita, cambia pagina
+                setTimeout(() => {
+                    currentPage = newPage;
+                    renderActivities(filteredActivities);
+                    
+                    // Scroll alla prima attività della nuova pagina
+                    setTimeout(() => {
+                        const firstCard = document.querySelector('.activity-card');
+                        if (firstCard) {
+                            firstCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                        }
+                    }, 50);
+                }, 300);
             };
+
+            async function loadData() {
+                const list = document.getElementById('activitiesList');
+                list.innerHTML = '<div class="loading-state">Caricamento...</div>';
+
+                try {
+                    const { data, error } = await sb.from('Attivita').select('*');
+
+                    if (error) throw error;
+
+                    if (data && data.length > 0) {
+                        const { preventiviPerc, ordiniPerc } = calculateDelayPercentages(data);
+                        setCircularProgress('progressPreventivi', 'percentPreventivi', preventiviPerc);
+                        setCircularProgress('progressOrdini', 'percentOrdini', ordiniPerc);
+                        
+                        const today = new Date();
+                        today.setHours(0, 0, 0, 0);
+                        
+                        data.sort((a, b) => {
+                            const dataA = a._dataConsegna ? new Date(a._dataConsegna) : new Date('9999-12-31');
+                            const dataB = b._dataConsegna ? new Date(b._dataConsegna) : new Date('9999-12-31');
+                            return dataA - dataB;
+                        });
+
+                        allActivities = data;
+                        filteredActivities = data;
+                        
+                        populateFilters(data);
+                        renderActivities(data);
+                    } else {
+                        list.innerHTML = '<div class="empty-state"><div class="empty-icon">📭</div>Nessuna attività</div>';
+                    }
+
+                } catch (e) {
+                    list.innerHTML = `<div class="empty-state"><div class="empty-icon">⚠️</div>Errore: ${e.message}</div>`;
+                }
+            }
+
+            // Event listener semplice che funziona sia su desktop che iPhone
+            const dashHeader = document.getElementById('dashHeader');
+            dashHeader.addEventListener('click', window.toggleDash);
             
-            window.resetFiltersBollettini = function() {
-                document.getElementById('filterDataBollettini').value = '';
-                document.getElementById('filterClienteBollettini').value = '';
-                document.getElementById('filterTecnicoBollettini').value = '';
-                filteredBollettini = [...allBollettini];
-                currentPageBollettini = 1;
-                renderBollettini();
-            };
+            loadData(); // Load data immediately on page load
+        })();
+
+        // ===== UFFICIO TECNICO GANTT DASHBOARD =====
+        (function() {
+            const SUPABASE_URL = 'https://uoykvjxerdrthnmnfmgc.supabase.co';
+            const SUPABASE_KEY = 'sb_publishable_iGVhzkLqAktDZmpccXl7OA_PZ2nUYSY';
+            const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+            let allTasks = [];
+
+            function toggleGanttDashboard() {
+                const header = document.getElementById('ganttHeader');
+                const container = document.getElementById('ganttContainer');
+                
+                // Forza reflow per iOS - fix animazioni ripetute
+                void header.offsetHeight;
+                void container.offsetHeight;
+                
+                header.classList.toggle('active');
+                container.classList.toggle('collapsed');
+                
+                // Forza re-render dopo transizione
+                setTimeout(() => {
+                    void container.offsetHeight;
+                }, 350);
+            }
+
+            function generateTimeline() {
+                const timelineHeader = document.getElementById('ganttTimelineHeader');
+                const hours = ['08', '09', '10', '11', '12', '13', '14', '15', '16', '17'];
+                
+                timelineHeader.innerHTML = hours.map(h => 
+                    `<div class="gantt-hour-header">${h}</div>`
+                ).join('');
+            }
+
+            function calculateTaskPosition(oraInizio, oraFine) {
+                const startHour = 8;
+                const endHour = 18;
+                const totalHours = endHour - startHour;
+                
+                // Parse time format: "11.00.00" or "11:00:00" (dots or colons)
+                const parseTime = (timeStr) => {
+                    if (!timeStr) return 0;
+                    
+                    const str = String(timeStr).trim();
+                    // Split by dots OR colons
+                    const parts = str.split(/[.:]/).map(Number);
+                    const hours = parts[0] || 0;
+                    const minutes = parts[1] || 0;
+                    
+                    return hours + (minutes / 60);
+                };
+                
+                const startDecimal = parseTime(oraInizio);
+                const endDecimal = parseTime(oraFine);
+                
+                const left = ((startDecimal - startHour) / totalHours) * 100;
+                const width = ((endDecimal - startDecimal) / totalHours) * 100;
+                
+                return { left: Math.max(0, left), width: Math.max(0, width) };
+            }
+
+            function isUrgent(dataConsegna) {
+                if (!dataConsegna) return false;
+                const today = new Date();
+                const delivery = new Date(dataConsegna);
+                return today.toDateString() === delivery.toDateString();
+            }
+
+            function formatTime(time) {
+                if (!time) return 'N/D';
+                // Convert dots to colons for display: 11.00.00 → 11:00
+                const cleaned = String(time).replace(/\./g, ':');
+                return cleaned.substring(0, 5); // HH:MM
+            }
+
+            function renderGantt(data) {
+                const ganttSummaryRows = document.getElementById('ganttSummaryRows');
+                const ganttDetailsRows = document.getElementById('ganttDetailsRows');
+                
+                // Fixed list of operators
+                const operators = [
+                    "Alessandro Colio",
+                    "Caterina Dello Stritto",
+                    "Christian D'Angelo",
+                    "Federico Cavazza",
+                    "Marco Garzesi"
+                ];
+                
+                if (!data || data.length === 0) {
+                    // Show all operators even with no tasks
+                    renderEmptyGantt(operators);
+                    ganttDetailsRows.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-icon">📋</div>
+                            <div class="empty-text">Nessun lavoro programmato</div>
+                        </div>
+                    `;
+                    return;
+                }
+
+                // Group tasks by person - CORRECTLY
+                const byPerson = {};
+                operators.forEach(op => {
+                    byPerson[op] = [];
+                });
+                
+                // Add each task to its assigned operator
+                data.forEach(task => {
+                    const person = task.Persona;
+                    console.log('Task:', task.Descrizione, 'assigned to:', person); // Debug
+                    
+                    // Check if this operator exists in our list
+                    if (person && byPerson[person] !== undefined) {
+                        byPerson[person].push(task);
+                    } else {
+                        console.warn('Operator not found in list:', person); // Debug
+                    }
+                });
+
+                // Debug: show what each operator has
+                console.log('Tasks by person:', byPerson);
+
+                // Update stats
+                // Persone = numero totale di operatori
+                document.getElementById('totalPersons').textContent = operators.length;
+                document.getElementById('totalTasks').textContent = data.length;
+                
+                // Occupati = numero di operatori che hanno almeno una lavorazione
+                const operatorsWithTasks = operators.filter(op => byPerson[op].length > 0).length;
+                document.getElementById('avgOccupation').textContent = operatorsWithTasks;
+
+                // Calculate current time position for the indicator
+                const now = new Date();
+                const currentHour = now.getHours() + (now.getMinutes() / 60);
+                const startHour = 8;
+                const endHour = 18;
+                let currentTimePercent = null;
+                
+                if (currentHour >= startHour && currentHour < endHour) {
+                    currentTimePercent = ((currentHour - startHour) / (endHour - startHour)) * 100;
+                }
+
+                // Render Summary View (collapsed state)
+                ganttSummaryRows.innerHTML = operators.map(person => {
+                    const tasks = byPerson[person] || [];
+                    
+                    // Create 10 hour slots (8-17)
+                    const slots = Array(10).fill(null).map((_, i) => 
+                        `<div class="gantt-hour-slot"></div>`
+                    ).join('');
+
+                    // Create task bars for THIS person's tasks - NO OVERLAP
+                    const taskBars = tasks.map(task => {
+                        const { left, width } = calculateTaskPosition(task.OraInizio, task.OraFine);
+                        const urgent = isUrgent(task.DataConsegna);
+                        
+                        return `
+                            <div class="gantt-task-bar ${urgent ? 'urgente' : ''}" 
+                                 style="left: ${left}%; width: ${width}%;"
+                                 title="${task.Descrizione} (${formatTime(task.OraInizio)} - ${formatTime(task.OraFine)})"></div>
+                        `;
+                    }).join('');
+                    // Add current time line if within working hours
+                    const currentTimeLine = currentTimePercent !== null 
+                        ? `<div class="current-time-line" style="left: ${currentTimePercent}%;"></div>` 
+                        : '';
+
+                    return `
+                        <div class="gantt-summary-row">
+                            <div class="gantt-row-header">
+                                <div class="gantt-person-cell">${person}</div>
+                            </div>
+                            <div class="gantt-row-timeline">
+                                <div class="gantt-timeline-wrapper">
+                                    ${slots}
+                                    ${taskBars}
+                                    ${currentTimeLine}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+                // Render Detail View (expanded state)
+                ganttDetailsRows.innerHTML = operators.map(person => {
+                    const tasks = byPerson[person] || [];
+                    
+                    if (tasks.length === 0) {
+                        return `
+                            <div class="person-section">
+                                <div class="person-section-header">
+                                    <h3>${person}</h3>
+                                    <span class="task-count">0 lavori</span>
+                                </div>
+                                <div class="task-list">
+                                    <div class="empty-state" style="padding: 20px;">
+                                        <div class="empty-text" style="font-size: 0.85em;">Nessun lavoro assegnato</div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }
+                    
+                    // Sort tasks by start time
+                    tasks.sort((a, b) => {
+                        const timeA = a.OraInizio || '00:00:00';
+                        const timeB = b.OraInizio || '00:00:00';
+                        return timeA.localeCompare(timeB);
+                    });
+                    
+                    const taskList = tasks.map(task => {
+                        const urgent = isUrgent(task.DataConsegna);
+                        return `
+                            <div class="task-card">
+                                <div class="task-header">
+                                    <div class="task-id">#${task.ID || '?'}</div>
+                                    <div class="task-time">${formatTime(task.OraInizio)} - ${formatTime(task.OraFine)}</div>
+                                </div>
+                                <div class="task-description">${task.Descrizione || 'Nessuna descrizione'}</div>
+                                <div class="task-footer">
+                                    <div class="task-badge ${urgent ? 'priority-high' : 'priority-normal'}">
+                                        ${urgent ? '🔥 Urgente' : '📅 Normale'}
+                                    </div>
+                                    <div class="task-badge status">
+                                        ✓ ${task.Stato || 'In corso'}
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+
+                    return `
+                        <div class="person-section">
+                            <div class="person-section-header">
+                                <h3>${person}</h3>
+                                <span class="task-count">${tasks.length} ${tasks.length === 1 ? 'lavoro' : 'lavori'}</span>
+                            </div>
+                            <div class="task-list">
+                                ${taskList}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            function renderEmptyGantt(operators) {
+                const ganttSummaryRows = document.getElementById('ganttSummaryRows');
+                
+                // Calculate current time position
+                const now = new Date();
+                const currentHour = now.getHours() + (now.getMinutes() / 60);
+                const startHour = 8;
+                const endHour = 18;
+                let currentTimePercent = null;
+                
+                if (currentHour >= startHour && currentHour < endHour) {
+                    currentTimePercent = ((currentHour - startHour) / (endHour - startHour)) * 100;
+                }
+                
+                document.getElementById('totalPersons').textContent = '0';
+                document.getElementById('totalTasks').textContent = '0';
+                document.getElementById('avgOccupation').textContent = '0';
+
+                ganttSummaryRows.innerHTML = operators.map(person => {
+                    const slots = Array(10).fill(null).map((_, i) => 
+                        `<div class="gantt-hour-slot"></div>`
+                    ).join('');
+
+                    const currentTimeLine = currentTimePercent !== null 
+                        ? `<div class="current-time-line" style="left: ${currentTimePercent}%;"></div>` 
+                        : '';
+
+                    return `
+                        <div class="gantt-summary-row">
+                            <div class="gantt-row-header">
+                                <div class="gantt-person-cell">${person}</div>
+                            </div>
+                            <div class="gantt-row-timeline">
+                                <div class="gantt-timeline-wrapper">
+                                    ${slots}
+                                    ${currentTimeLine}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            async function loadGanttData() {
+                const container = document.getElementById('ganttSummaryRows');
+                container.innerHTML = `
+                    <div class="loading-state">
+                        <div class="loading-spinner"></div>
+                        <div>Caricamento dati...</div>
+                    </div>
+                `;
+
+                try {
+                    const today = new Date();
+                    const todayStr = today.toISOString().split('T')[0];
+
+                    // Get all records from UfficioTecnico
+                    const { data, error } = await sb
+                        .from('UfficioTecnico')
+                        .select('*');
+
+                    if (error) throw error;
+
+                    // Transform the data into individual tasks with REAL times
+                    const tasks = [];
+                    
+                    if (data && data.length > 0) {
+                        data.forEach(record => {
+                            // Disegno 2D - if it has time slots, show it
+                            if (record.Disegno_2D_Assegnato && 
+                                record.Operatore_Disegno_2D_Assegnato && 
+                                record.Ora_Disegno_2D_Inizio && 
+                                record.Ora_Disegno_2D_Fine) {
+                                
+                                tasks.push({
+                                    ID: record.id,
+                                    Persona: record.Operatore_Disegno_2D_Assegnato,
+                                    Descrizione: `Disegno 2D - ${record.codiceProgetto || 'Progetto'}`,
+                                    OraInizio: record.Ora_Disegno_2D_Inizio,
+                                    OraFine: record.Ora_Disegno_2D_Fine,
+                                    DataConsegna: record.Data_Disegno_2D_Assegnato_FinePrevista,
+                                    Stato: record.Disegno_2D_Fatto ? 'Completato' : 'In corso',
+                                    Tipo: 'Disegno 2D'
+                                });
+                            }
+
+                            // Disegno 3D
+                            if (record.Disegno_3D_Assegnato && 
+                                record.Operatore_Disegno_3D_Assegnato && 
+                                record.Ora_Disegno_3D_Inizio && 
+                                record.Ora_Disegno_3D_Fine) {
+                                
+                                tasks.push({
+                                    ID: record.id,
+                                    Persona: record.Operatore_Disegno_3D_Assegnato,
+                                    Descrizione: `Disegno 3D - ${record.codiceProgetto || 'Progetto'}`,
+                                    OraInizio: record.Ora_Disegno_3D_Inizio,
+                                    OraFine: record.Ora_Disegno_3D_Fine,
+                                    DataConsegna: record.Data_Disegno_3D_Assegnato_FinePrevista,
+                                    Stato: record.Disegno_3D_Fatto ? 'Completato' : 'In corso',
+                                    Tipo: 'Disegno 3D'
+                                });
+                            }
+
+                            // Distinta
+                            if (record.Distinta_Assegnato && 
+                                record.Operatore_Distinta_Assegnato && 
+                                record.Ora_Distinta_Inizio && 
+                                record.Ora_Distinta_Fine) {
+                                
+                                tasks.push({
+                                    ID: record.id,
+                                    Persona: record.Operatore_Distinta_Assegnato,
+                                    Descrizione: `Distinta - ${record.codiceProgetto || 'Progetto'}`,
+                                    OraInizio: record.Ora_Distinta_Inizio,
+                                    OraFine: record.Ora_Distinta_Fine,
+                                    DataConsegna: record.Data_Distinta_Assegnato_FinePrevista,
+                                    Stato: record.Distinta_Fatto ? 'Completato' : 'In corso',
+                                    Tipo: 'Distinta'
+                                });
+                            }
+
+                            // Stampare 2D
+                            if (record.Stampare_2D_Assegnato && 
+                                record.Operatore_Stampare_2D_Assegnato && 
+                                record.Ora_Stampare_2D_Inizio && 
+                                record.Ora_Stampare_2D_Fine) {
+                                
+                                tasks.push({
+                                    ID: record.id,
+                                    Persona: record.Operatore_Stampare_2D_Assegnato,
+                                    Descrizione: `Stampare 2D - ${record.codiceProgetto || 'Progetto'}`,
+                                    OraInizio: record.Ora_Stampare_2D_Inizio,
+                                    OraFine: record.Ora_Stampare_2D_Fine,
+                                    DataConsegna: record.Data_Stampare_2D_Assegnato_FinePrevista,
+                                    Stato: record.Stampare_2D_Fatto ? 'Completato' : 'In corso',
+                                    Tipo: 'Stampare 2D'
+                                });
+                            }
+                        });
+                    }
+
+                    allTasks = tasks;
+                    
+                    const dateLabel = today.toLocaleDateString('it-IT', { 
+                        weekday: 'long', 
+                        day: 'numeric', 
+                        month: 'long' 
+                    });
+                    document.getElementById('currentDate').textContent = dateLabel.charAt(0).toUpperCase() + dateLabel.slice(1);
+
+                    renderGantt(allTasks);
+
+                } catch (e) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-icon">⚠️</div>
+                            <div class="empty-text">Errore: ${e.message}</div>
+                        </div>
+                    `;
+                    console.error('Errore caricamento:', e);
+                }
+            }
+
+            function formatHour(decimalHour) {
+                const hours = Math.floor(decimalHour);
+                const minutes = Math.floor((decimalHour - hours) * 60);
+                return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:00`;
+            }
+
+            // Event listener semplice che funziona sia su desktop che iPhone
+            const ganttHeader = document.getElementById('ganttHeader');
+            ganttHeader.addEventListener('click', toggleGanttDashboard);
+            
+            generateTimeline();
+            loadGanttData();
+
+            setInterval(loadGanttData, 5 * 60 * 1000);
         })();
     </script>
-<!-- Modern Footer -->
+    </div>
+
+    <!-- Modern Footer -->
     <footer class="modern-footer">
         <div class="footer-content">
             <div class="footer-section">
@@ -3047,7 +3578,7 @@
                 <div class="footer-links">
                     <a href="#" class="footer-link">Documentazione</a>
                     <a href="#" class="footer-link">Guide & Tutorial</a>
-                    <a href="/cdn-cgi/l/email-protection#eb879e888ac5998e858f8eab9b99849892989f8e86989987c58e9ed4989e89818e889fd6b9828883828e989f8aced9db8f82ced9db8a829e9f84cd89848f92d6bd84878e9d84ced9db8883828e8f8e998eced9db9e85ced9db82858d8499868a918284858eced9db989e87878aced9db859e849d8aced9db8f8a988389848a998fced9db84858782858eced9db8f8e87ced9dbbba7a6ced9dbd9c5" class="footer-link">Supporto</a>
+                    <a href="mailto:luca.rende@prosystemsrl.eu?subject=Richiesta%20di%20aiuto&body=Volevo%20chiedere%20un%20informazione%20sulla%20nuova%20dashboard%20online%20del%20PLM%202." class="footer-link">Supporto</a>
                 </div>
             </div>
 
@@ -3079,7 +3610,7 @@
             <div class="footer-credits">
                 <div style="margin-bottom: 10px;">© 2025 PLM 2 - Tutti i diritti riservati</div>
                 <div style="font-size: 0.9em; color: rgba(255, 255, 255, 0.5);">
-                    Power by: <span style="font-family: 'Inter', -apple-system, sans-serif; font-size: 1.5em; color: white;">Rende Luca</span>
+                    Powered by: <span style="font-family: 'Inter', -apple-system, sans-serif; font-size: 1.5em; color: white;">Rende Luca</span>
                 </div>
             </div>
             <div class="footer-social">
@@ -3090,7 +3621,7 @@
         </div>
     </footer>
 
-    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+    <script>
         // Login System
         const CORRECT_PASSWORD = 'Prosystem2025!';
         const ADMIN_PASSWORD = 'ProsystemPro';
@@ -3244,325 +3775,6 @@
         setTimeout(updateFooterStats, 1000);
         setInterval(updateFooterStats, 10000);
         
-        // ===== PANORAMICA CASTELLETTI DASHBOARD =====
-        (function() {
-            const SUPABASE_URL = 'https://uoykvjxerdrthnmnfmgc.supabase.co';
-            const SUPABASE_KEY = 'sb_publishable_iGVhzkLqAktDZmpccXl7OA_PZ2nUYSY';
-            const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-            
-            const MESI = ['Gennaio', 'Febbraio', 'Marzo', 'Aprile', 'Maggio', 'Giugno', 
-                         'Luglio', 'Agosto', 'Settembre', 'Ottobre', 'Novembre', 'Dicembre'];
-            
-            let allFatture = [];
-            let fatturePerBanca = {};
-            let castellettiPerBanca = {}; // Castelletti specifici per ogni banca
-            
-            // Toggle dashboard
-            document.getElementById('castellettiHeader').addEventListener('click', function() {
-                const header = this;
-                const content = document.getElementById('castellettiContent');
-                
-                void header.offsetHeight;
-                header.classList.toggle('active');
-                content.classList.toggle('show');
-                
-                setTimeout(() => void content.offsetHeight, 350);
-            });
-            
-            // Carica dati
-            async function loadData() {
-                const list = document.getElementById('castellettiList');
-                list.innerHTML = '<div class="loading-state">Caricamento castelletti...</div>';
-                
-                try {
-                    // Carica PRIMA i castelletti
-                    const { data: bancheData, error: bancheError } = await sb.from('ImportiCastelletti').select('*');
-                    if (bancheError) throw bancheError;
-                    
-                    // Mappa castelletti per nome banca
-                    if (bancheData) {
-                        bancheData.forEach(b => {
-                            castellettiPerBanca[b.nome] = b.totaleCastelletto || 0;
-                        });
-                    }
-                    
-                    // Poi carica le fatture
-                    const { data, error } = await sb.from('FattureCastelletti').select('*');
-                    if (error) throw error;
-                    
-                    if (data && data.length > 0) {
-                        allFatture = data;
-                        organizzaDatiPerBanca(data);
-                        renderBanche();
-                    } else {
-                        list.innerHTML = '<div class="empty-state"><div class="empty-icon">📊</div><div class="empty-text">Nessuna fattura trovata</div></div>';
-                    }
-                } catch (e) {
-                    list.innerHTML = `<div class="empty-state"><div class="empty-icon">⚠️</div><div class="empty-text">Errore: ${e.message}</div></div>`;
-                }
-            }
-            
-            // Organizza dati per banca e mese
-            function organizzaDatiPerBanca(fatture) {
-                fatturePerBanca = {};
-                
-                fatture.forEach(f => {
-                    const banca = f.bancaAssociata || 'Banca non specificata';
-                    
-                    if (!fatturePerBanca[banca]) {
-                        fatturePerBanca[banca] = {};
-                        MESI.forEach((_, idx) => {
-                            fatturePerBanca[banca][idx] = [];
-                        });
-                    }
-                    
-                    // Estrai mese dalla data scadenza
-                    if (f.dataScadenza) {
-                        const date = new Date(f.dataScadenza);
-                        const meseIdx = date.getMonth();
-                        fatturePerBanca[banca][meseIdx].push(f);
-                    }
-                });
-            }
-            
-            // Render lista banche
-            function renderBanche() {
-                const list = document.getElementById('castellettiList');
-                const banche = Object.keys(fatturePerBanca).sort();
-                
-                list.innerHTML = banche.map((banca, idx) => {
-                    const castelletto = castellettiPerBanca[banca] || 0;
-                    
-                    return `
-                    <div class="banca-card">
-                        <div class="banca-header" onclick="toggleBanca(${idx})">
-                            <div style="display: flex; align-items: center; gap: 16px; flex: 1;">
-                                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M3 9L12 2L21 9V20C21 20.5304 20.7893 21.0391 20.4142 21.4142C20.0391 21.7893 19.5304 22 19 22H5C4.46957 22 3.96086 21.7893 3.58579 21.4142C3.21071 21.0391 3 20.5304 3 20V9Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                    <path d="M9 22V12H15V22" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                </svg>
-                                <div class="banca-name">${banca}</div>
-                            </div>
-                            <div style="display: flex; align-items: center; gap: 16px;">
-                                <div style="text-align: right;">
-                                    <div style="font-size: 0.75em; color: rgba(255,255,255,0.6); margin-bottom: 2px;">Castelletto</div>
-                                    <div style="font-size: 1.1em; font-weight: 700; color: #22c55e;">${formatEuro(castelletto)}</div>
-                                </div>
-                                <span class="banca-arrow" id="bancaArrow${idx}">▼</span>
-                            </div>
-                        </div>
-                        <div class="banca-content" id="bancaContent${idx}">
-                            <div class="mesi-grid" id="mesiGrid${idx}"></div>
-                        </div>
-                    </div>
-                `}).join('');
-            }
-            
-            // Toggle banca
-            window.toggleBanca = function(bancaIdx) {
-                const header = document.querySelector(`.banca-card:nth-child(${bancaIdx + 1}) .banca-header`);
-                const content = document.getElementById(`bancaContent${bancaIdx}`);
-                const arrow = document.getElementById(`bancaArrow${bancaIdx}`);
-                
-                const isOpen = header.classList.contains('active');
-                
-                if (!isOpen) {
-                    // Apri e carica mesi
-                    header.classList.add('active');
-                    content.classList.add('show');
-                    
-                    const banca = Object.keys(fatturePerBanca).sort()[bancaIdx];
-                    renderMesi(bancaIdx, banca);
-                } else {
-                    // Chiudi
-                    header.classList.remove('active');
-                    content.classList.remove('show');
-                }
-            };
-            
-            // Render mesi per una banca
-            function renderMesi(bancaIdx, banca) {
-                const grid = document.getElementById(`mesiGrid${bancaIdx}`);
-                
-                // Prendi castelletto specifico per questa banca
-                const CASTELLETTO_TOTALE = castellettiPerBanca[banca] || 0;
-                
-                // Calcola totale da pagare per tutta la banca
-                const tutteFattureBanca = Object.values(fatturePerBanca[banca]).flat();
-                const totaleDaPagare = tutteFattureBanca.reduce((sum, f) => sum + (f.importoDaPagare || 0), 0);
-                
-                grid.innerHTML = MESI.map((mese, meseIdx) => {
-                    const fatture = fatturePerBanca[banca][meseIdx] || [];
-                    
-                    // Somma da pagare del mese
-                    const daPagareMese = fatture.reduce((sum, f) => sum + (f.importoDaPagare || 0), 0);
-                    
-                    // Castelletto occupato = X - da pagare mese
-                    const occupato = totaleDaPagare - daPagareMese;
-                    
-                    // Castelletto rimanente = castelletto totale + occupato
-                    const rimanente = CASTELLETTO_TOTALE + occupato;
-                    
-                    // Percentuale basata su quanto è occupato rispetto al totale
-                    const percentuale = CASTELLETTO_TOTALE > 0 
-                        ? Math.min(100, Math.max(0, ((CASTELLETTO_TOTALE - rimanente) / CASTELLETTO_TOTALE) * 100))
-                        : 0;
-                    
-                    let badgeClass = 'green';
-                    let badgeText = 'Disponibile';
-                    if (percentuale > 80) {
-                        badgeClass = 'red';
-                        badgeText = 'Critico';
-                    } else if (percentuale > 50) {
-                        badgeClass = 'yellow';
-                        badgeText = 'Attenzione';
-                    }
-                    
-                    return `
-                        <div class="mese-card" id="meseCard_${bancaIdx}_${meseIdx}" onclick="toggleMese(${bancaIdx}, ${meseIdx}, '${banca}')">
-                            <div class="mese-nome">${mese}</div>
-                            <svg class="mese-progress" viewBox="0 0 100 100">
-                                <circle cx="50" cy="50" r="40" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="8"/>
-                                <circle cx="50" cy="50" r="40" fill="none" 
-                                    stroke="${percentuale > 80 ? '#ef4444' : percentuale > 50 ? '#f59e0b' : '#22c55e'}"
-                                    stroke-width="8" stroke-linecap="round"
-                                    stroke-dasharray="${Math.PI * 80}" 
-                                    stroke-dashoffset="${Math.PI * 80 * (1 - percentuale / 100)}"
-                                    transform="rotate(-90 50 50)"/>
-                                <text x="50" y="50" text-anchor="middle" dy="0.3em" fill="white" font-size="20" font-weight="700">
-                                    ${percentuale.toFixed(0)}%
-                                </text>
-                            </svg>
-                            <div class="mese-stats">
-                                <div class="mese-stats-row">
-                                    <span>Occupato:</span>
-                                    <span class="mese-stats-value">${formatEuroShort(Math.abs(occupato))}</span>
-                                </div>
-                                <div class="mese-stats-row">
-                                    <span>Disponibile:</span>
-                                    <span class="mese-stats-value">${formatEuroShort(Math.abs(rimanente))}</span>
-                                </div>
-                                <div class="mese-stats-row">
-                                    <span>Fatture:</span>
-                                    <span class="mese-stats-value">${fatture.length}</span>
-                                </div>
-                            </div>
-                            <div class="mese-badge ${badgeClass}">${badgeText}</div>
-                        </div>
-                    `;
-                }).join('');
-                
-                // Aggiungi div per fatture sotto la griglia
-                grid.insertAdjacentHTML('afterend', '<div id="fattureContainer' + bancaIdx + '"></div>');
-            }
-            
-            // Toggle mese per mostrare fatture (SOLO UNO APERTO ALLA VOLTA)
-            window.toggleMese = function(bancaIdx, meseIdx, banca) {
-                const container = document.getElementById(`fattureContainer${bancaIdx}`);
-                const currentMeseId = `fatture_${bancaIdx}_${meseIdx}`;
-                
-                // Se già aperto, chiudi
-                if (container.dataset.currentMese === currentMeseId) {
-                    container.innerHTML = '';
-                    container.dataset.currentMese = '';
-                    return;
-                }
-                
-                // CHIUDI TUTTI gli altri mesi aperti in TUTTE le banche
-                document.querySelectorAll('[id^="fattureContainer"]').forEach(cont => {
-                    if (cont !== container) {
-                        cont.innerHTML = '';
-                        cont.dataset.currentMese = '';
-                    }
-                });
-                
-                // Mostra fatture del mese
-                const fatture = fatturePerBanca[banca][meseIdx] || [];
-                container.dataset.currentMese = currentMeseId;
-                
-                if (fatture.length === 0) {
-                    container.innerHTML = '<div class="fatture-list"><div style="text-align: center; color: rgba(255,255,255,0.5); padding: 20px;">Nessuna fattura in questo mese</div></div>';
-                } else {
-                    container.innerHTML = `
-                        <div class="fatture-list">
-                            <h4 style="color: white; margin-bottom: 12px; padding: 0 0 8px; border-bottom: 1px solid rgba(255,255,255,0.1);">
-                                Fatture ${MESI[meseIdx]} (${fatture.length})
-                            </h4>
-                            ${fatture.map(f => `
-                                <div class="fattura-item">
-                                    <div class="fattura-field">
-                                        <div class="fattura-label">Cliente</div>
-                                        <div class="fattura-value">${f.cliente || '-'}</div>
-                                    </div>
-                                    <div class="fattura-field">
-                                        <div class="fattura-label">N° Fattura</div>
-                                        <div class="fattura-value">${f.numeroFattura || '-'}</div>
-                                    </div>
-                                    <div class="fattura-field">
-                                        <div class="fattura-label">Tipologia</div>
-                                        <div class="fattura-value">${f.tipologiaFattura || '-'}</div>
-                                    </div>
-                                    <div class="fattura-field">
-                                        <div class="fattura-label">Creazione</div>
-                                        <div class="fattura-value">${f.dataCreazione_Formattato || '-'}</div>
-                                    </div>
-                                    <div class="fattura-field">
-                                        <div class="fattura-label">Scadenza</div>
-                                        <div class="fattura-value">${f.dataScadenzaFormattato || '-'}</div>
-                                    </div>
-                                    <div class="fattura-field">
-                                        <div class="fattura-label">Da Pagare</div>
-                                        <div class="fattura-value" style="color: ${f.importoDaPagare < 0 ? '#22c55e' : '#ef4444'}">
-                                            ${f.importoDaPagare_Formattato || '-'}
-                                        </div>
-                                    </div>
-                                </div>
-                            `).join('')}
-                        </div>
-                    `;
-                }
-                
-                // AUTO-SCROLL al container delle fatture dopo breve delay per animazione
-                setTimeout(() => {
-                    container.scrollIntoView({ 
-                        behavior: 'smooth', 
-                        block: 'nearest'
-                    });
-                }, 100);
-            };
-            
-            // Format euro
-            function formatEuro(value) {
-                return new Intl.NumberFormat('it-IT', { 
-                    style: 'currency', 
-                    currency: 'EUR',
-                    minimumFractionDigits: 0,
-                    maximumFractionDigits: 0
-                }).format(Math.abs(value));
-            }
-            
-            // Format euro short (con K)
-            function formatEuroShort(value) {
-                const abs = Math.abs(value);
-                if (abs >= 1000) {
-                    return (abs / 1000).toFixed(0) + 'K€';
-                }
-                return abs.toFixed(0) + '€';
-            }
-            
-            // Carica dati all'avvio
-            loadData();
-        })();
-        
-        // Controllo accesso admin
-        window.addEventListener('DOMContentLoaded', function() {
-            const accessLevel = localStorage.getItem('plm_access_level');
-            if (accessLevel !== 'admin') {
-                alert('Accesso negato. Solo gli amministratori possono accedere a questa sezione.');
-                window.location.href = 'index.html';
-            }
-        });
-        
         // Funzione per scroll ai cruscotti
         function scrollToDashboard(headerId) {
             const header = document.getElementById(headerId);
@@ -3632,7 +3844,7 @@
         </button>
         
         <div class="menu-panel" id="menuPanel">
-            <a href="index.html" class="menu-item">
+            <a href="#" class="menu-item current" onclick="window.scrollTo({top: 0, behavior: 'smooth'}); return false;">
                 <div class="menu-item-icon">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <rect x="3" y="3" width="7" height="7" rx="1"></rect>
@@ -3644,7 +3856,7 @@
                 <span class="menu-item-text">Dashboard principale</span>
             </a>
             
-            <a href="Amministrazione.html" class="menu-item current" id="adminMenuItem" style="display: block;">
+            <a href="Amministrazione.html" class="menu-item" id="adminMenuItem" style="display: none;">
                 <div class="menu-item-icon">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <circle cx="12" cy="12" r="3"></circle>
@@ -3661,14 +3873,13 @@
                 <div class="menu-item-icon">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-                        <polyline points="15 17 21 12 15 7"></polyline>
+                        <polyline points="16 17 21 12 16 7"></polyline>
                         <line x1="21" y1="12" x2="9" y2="12"></line>
                     </svg>
                 </div>
-                <span class="menu-item-text">Logout</span>
+                <span class="menu-item-text">Esci</span>
             </a>
         </div>
     </div>
 </body>
 </html>
-

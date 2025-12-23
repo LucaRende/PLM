@@ -2673,22 +2673,19 @@
             const savedAccessLevel = localStorage.getItem('plm_access_level');
             
             if ((savedPassword === CORRECT_PASSWORD || savedPassword === ADMIN_PASSWORD) && savedAccessLevel) {
-                // Skip login, vai direttamente alla dashboard
+                // GIÀ LOGGATO - SKIP TUTTO IL LOGIN E LOADING
                 userAccessLevel = savedAccessLevel;
                 updateMenuVisibility();
                 
-                setTimeout(() => {
-                    document.getElementById('loadingContainer').classList.add('hidden');
-                    setTimeout(() => {
-                        document.getElementById('loginOverlay').classList.add('fade-out');
-                        setTimeout(() => {
-                            document.getElementById('loginOverlay').remove();
-                            initializeDashboard();
-                        }, 800);
-                    }, 300);
-                }, 2000);
+                // Rimuovi overlay immediatamente senza animazioni
+                const loginOverlay = document.getElementById('loginOverlay');
+                if (loginOverlay) {
+                    loginOverlay.style.display = 'none';
+                }
+                initializeDashboard();
+                
             } else {
-                // Mostra login normale
+                // NON LOGGATO - Mostra login normale
                 setTimeout(() => {
                     document.getElementById('loadingContainer').classList.add('hidden');
                     setTimeout(() => {

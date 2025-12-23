@@ -1270,6 +1270,111 @@
             font-size: 0.95em;
             font-weight: 500;
         }
+        
+        /* Paginazione */
+        .pagination-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            padding: 20px;
+            margin-top: 10px;
+        }
+        
+        .pagination-btn {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+        }
+        
+        .pagination-btn:active {
+            transform: scale(0.9);
+            background: rgba(255, 255, 255, 0.15);
+        }
+        
+        .pagination-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+        
+        .pagination-info {
+            font-size: 1em;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 600;
+            min-width: 80px;
+            text-align: center;
+        }
+        
+        /* Animazione slide per le card */
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        @keyframes slideOutLeft {
+            from {
+                opacity: 1;
+                transform: translateX(0);
+            }
+            to {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+        }
+        
+        @keyframes slideOutRight {
+            from {
+                opacity: 1;
+                transform: translateX(0);
+            }
+            to {
+                opacity: 0;
+                transform: translateX(30px);
+            }
+        }
+        
+        .activity-card.slide-in-right {
+            animation: slideInRight 0.3s ease-out forwards;
+        }
+        
+        .activity-card.slide-in-left {
+            animation: slideInLeft 0.3s ease-out forwards;
+        }
+        
+        .activity-card.slide-out-left {
+            animation: slideOutLeft 0.3s ease-out forwards;
+        }
+        
+        .activity-card.slide-out-right {
+            animation: slideOutRight 0.3s ease-out forwards;
+        }
 
         /* Loading Animation */
         .loading-spinner {
@@ -2455,6 +2560,23 @@
                     <div id="activitiesList">
                         <div class="loading-state">Caricamento...</div>
                     </div>
+                    
+                    <!-- Paginazione -->
+                    <div class="pagination-controls" id="paginationControls" style="display: none;">
+                        <button class="pagination-btn" id="prevPage" onclick="window.changePage(-1)">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M15 18l-6-6 6-6"/>
+                            </svg>
+                        </button>
+                        <div class="pagination-info">
+                            <span id="currentPage">1</span> / <span id="totalPages">1</span>
+                        </div>
+                        <button class="pagination-btn" id="nextPage" onclick="window.changePage(1)">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M9 18l6-6-6-6"/>
+                            </svg>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -2595,6 +2717,7 @@
                     return true;
                 });
 
+                currentPage = 1; // Reset alla prima pagina
                 renderActivities(filteredActivities);
             };
 
@@ -2604,6 +2727,7 @@
                 document.getElementById('filterStato').value = '';
                 document.getElementById('filterScadenza').value = '';
                 filteredActivities = allActivities;
+                currentPage = 1; // Reset alla prima pagina
                 renderActivities(filteredActivities);
             };
 
@@ -2717,19 +2841,41 @@
                 });
             }
 
+            let currentPage = 1;
+            const itemsPerPage = 5;
+            let animationDirection = 'right';
+            
             function renderActivities(data) {
                 const list = document.getElementById('activitiesList');
+                const paginationControls = document.getElementById('paginationControls');
                 
                 if (!data || !data.length) {
                     list.innerHTML = '<div class="empty-state"><div class="empty-icon">📭</div>Nessuna attività trovata</div>';
+                    paginationControls.style.display = 'none';
                     return;
                 }
+                
+                const totalPages = Math.ceil(data.length / itemsPerPage);
+                const startIndex = (currentPage - 1) * itemsPerPage;
+                const endIndex = startIndex + itemsPerPage;
+                const currentData = data.slice(startIndex, endIndex);
+                
+                // Aggiorna info paginazione
+                document.getElementById('currentPage').textContent = currentPage;
+                document.getElementById('totalPages').textContent = totalPages;
+                document.getElementById('prevPage').disabled = currentPage === 1;
+                document.getElementById('nextPage').disabled = currentPage === totalPages;
+                
+                // Mostra controlli se ci sono più pagine
+                paginationControls.style.display = totalPages > 1 ? 'flex' : 'none';
 
-                list.innerHTML = data.map(a => {
+                list.innerHTML = currentData.map((a, index) => {
                     const urgencyClass = getUrgencyStatus(a._dataConsegna);
+                    const animClass = animationDirection === 'right' ? 'slide-in-right' : 'slide-in-left';
+                    const delay = index * 0.05;
                     
                     return `
-                    <div class="activity-card" data-id="${a.ID_Attivita}">
+                    <div class="activity-card ${animClass}" data-id="${a.ID_Attivita}" style="animation-delay: ${delay}s;">
                         <div class="activity-card-header ${urgencyClass}" onclick="toggleAct(${a.ID_Attivita})">
                             <div class="activity-info">
                                 <div class="activity-title">
@@ -2788,6 +2934,30 @@
                     </div>
                 `}).join('');
             }
+            
+            window.changePage = function(direction) {
+                const totalPages = Math.ceil(filteredActivities.length / itemsPerPage);
+                const newPage = currentPage + direction;
+                
+                if (newPage < 1 || newPage > totalPages) return;
+                
+                // Imposta direzione animazione
+                animationDirection = direction > 0 ? 'right' : 'left';
+                
+                // Animazione uscita
+                const cards = document.querySelectorAll('.activity-card');
+                const outClass = direction > 0 ? 'slide-out-left' : 'slide-out-right';
+                cards.forEach((card, index) => {
+                    card.style.animationDelay = `${index * 0.03}s`;
+                    card.classList.add(outClass);
+                });
+                
+                // Dopo animazione uscita, cambia pagina
+                setTimeout(() => {
+                    currentPage = newPage;
+                    renderActivities(filteredActivities);
+                }, 300);
+            };
 
             async function loadData() {
                 const list = document.getElementById('activitiesList');
@@ -3439,4 +3609,3 @@
     </script>
 </body>
 </html>
-

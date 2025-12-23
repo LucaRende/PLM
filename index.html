@@ -2482,6 +2482,293 @@
                 }
             }
         }
+        
+        /* Bollettini Montatori Styles */
+        .bollettino-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            transition: all 0.2s ease;
+        }
+        
+        .bollettino-card:hover {
+            background: rgba(255, 255, 255, 0.05);
+            transform: translateY(-2px);
+        }
+        
+        .bollettino-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        
+        .bollettino-date {
+            font-size: 1.1em;
+            font-weight: 700;
+            color: white;
+        }
+        
+        .bollettino-day {
+            font-size: 0.85em;
+            color: rgba(255, 255, 255, 0.6);
+            margin-left: 8px;
+        }
+        
+        .bollettino-time-badge {
+            background: rgba(197, 29, 52, 0.2);
+            color: #c51d34;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+        
+        .bollettino-body {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+        }
+        
+        .bollettino-field {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        
+        .bollettino-label {
+            font-size: 0.75em;
+            color: rgba(255, 255, 255, 0.5);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .bollettino-value {
+            font-size: 0.95em;
+            color: white;
+            font-weight: 500;
+        }
+        
+        .bollettino-firma {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        
+        .firma-preview {
+            width: 100%;
+            max-width: 300px;
+            height: 100px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 0.85em;
+        }
+        
+        .firma-preview svg {
+            width: 100%;
+            height: 100%;
+        }
+        
+        /* Modal Bollettino */
+        .bollettino-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            padding: 20px;
+        }
+        
+        .bollettino-modal.active {
+            display: flex;
+        }
+        
+        .bollettino-modal-content {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            max-width: 800px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+        }
+        
+        .bollettino-modal-header {
+            padding: 24px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .bollettino-modal-title {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: white;
+        }
+        
+        .bollettino-modal-close {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05);
+            border: none;
+            color: white;
+            font-size: 1.5em;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .bollettino-modal-close:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: rotate(90deg);
+        }
+        
+        .bollettino-modal-body {
+            padding: 24px;
+        }
+        
+        .bollettino-form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+        
+        .bollettino-form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .bollettino-form-label {
+            font-size: 0.85em;
+            color: rgba(255, 255, 255, 0.7);
+            font-weight: 600;
+        }
+        
+        .bollettino-form-input {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 12px;
+            color: white;
+            font-size: 0.95em;
+            transition: all 0.2s ease;
+        }
+        
+        .bollettino-form-input:focus {
+            outline: none;
+            border-color: #c51d34;
+            background: rgba(255, 255, 255, 0.08);
+        }
+        
+        .bollettino-form-textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+        
+        .firma-canvas-container {
+            background: white;
+            border-radius: 8px;
+            padding: 8px;
+            margin-bottom: 8px;
+        }
+        
+        .firma-canvas {
+            border: 2px dashed #ccc;
+            border-radius: 4px;
+            cursor: crosshair;
+            touch-action: none;
+        }
+        
+        .firma-buttons {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+        }
+        
+        .btn-firma {
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: none;
+            font-size: 0.85em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .btn-firma-clear {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+        
+        .btn-firma-clear:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+        
+        .bollettino-modal-footer {
+            padding: 24px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+        
+        .btn-bollettino {
+            padding: 12px 24px;
+            border-radius: 10px;
+            border: none;
+            font-size: 0.95em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .btn-bollettino-cancel {
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+        }
+        
+        .btn-bollettino-cancel:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .btn-bollettino-save {
+            background: linear-gradient(135deg, #c51d34 0%, #a01628 100%);
+            color: white;
+        }
+        
+        .btn-bollettino-save:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(197, 29, 52, 0.4);
+        }
+        
+        @media (max-width: 768px) {
+            .bollettino-body {
+                grid-template-columns: 1fr;
+            }
+            
+            .bollettino-form-row {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 </head>
 <body>
@@ -3562,6 +3849,141 @@
     </script>
     </div>
 
+
+        <!-- Dashboard Bollettini Montatori -->
+        <div class="dashboard">
+            <div class="dashboard-header" id="bollettiniHeader">
+                <div class="dashboard-top">
+                    <div class="dashboard-title">
+                        <span class="dashboard-icon">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M14 2H6C5.46957 2 4.96086 2.21071 4.58579 2.58579C4.21071 2.96086 4 3.46957 4 4V20C4 20.5304 4.21071 21.0391 4.58579 21.4142C4.96086 21.7893 5.46957 22 6 22H18C18.5304 22 19.0391 21.7893 19.4142 21.4142C19.7893 21.0391 20 20.5304 20 20V8L14 2Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M14 2V8H20" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M16 13H8" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M16 17H8" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M10 9H9H8" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </span>
+                        <h2>Bollettini Montatori</h2>
+                    </div>
+                    <span class="toggle-arrow">▼</span>
+                </div>
+            </div>
+            <div class="dashboard-content" id="bollettiniContent">
+                <div class="dashboard-body">
+                    <!-- Filtri -->
+                    <div class="filter-section">
+                        <div class="filter-group">
+                            <input type="date" id="filterDataBollettini" class="filter-input" placeholder="Data">
+                            <input type="text" id="filterClienteBollettini" class="filter-input" placeholder="Cliente">
+                            <input type="text" id="filterTecnicoBollettini" class="filter-input" placeholder="Tecnico">
+                            <button class="filter-btn" onclick="applyFiltersBollettini()">🔍 Filtra</button>
+                            <button class="filter-btn-reset" onclick="resetFiltersBollettini()">✖ Reset</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Lista bollettini -->
+                    <div id="bollettiniList" class="activities-list">
+                        <div class="loading-state">Caricamento bollettini...</div>
+                    </div>
+                    
+                    <!-- Paginazione -->
+                    <div class="pagination-controls">
+                        <button class="pagination-btn" id="prevPageBollettini" onclick="changePageBollettini('prev')" disabled>
+                            ←
+                        </button>
+                        <span class="pagination-info" id="paginationInfoBollettini">1 / 1</span>
+                        <button class="pagination-btn" id="nextPageBollettini" onclick="changePageBollettini('next')" disabled>
+                            →
+                        </button>
+                    </div>
+                    
+                    <!-- Bottone Aggiungi -->
+                    <div style="text-align: center; margin-top: 20px;">
+                        <button class="btn-bollettino-save" onclick="openBollettinoModal()" style="padding: 14px 32px; font-size: 1em;">
+                            ➕ Aggiungi Bollettino
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Modal Bollettino -->
+        <div class="bollettino-modal" id="bollettinoModal">
+            <div class="bollettino-modal-content">
+                <div class="bollettino-modal-header">
+                    <h3 class="bollettino-modal-title">Nuovo Bollettino</h3>
+                    <button class="bollettino-modal-close" onclick="closeBollettinoModal()">×</button>
+                </div>
+                <div class="bollettino-modal-body">
+                    <form id="bollettinoForm" onsubmit="saveBollettino(event)">
+                        <!-- Data e Orari -->
+                        <div class="bollettino-form-row">
+                            <div class="bollettino-form-group">
+                                <label class="bollettino-form-label">Data *</label>
+                                <input type="date" id="bollettinoData" class="bollettino-form-input" required>
+                            </div>
+                            <div class="bollettino-form-group">
+                                <label class="bollettino-form-label">Orario Inizio *</label>
+                                <input type="time" id="bollettinoInizio" class="bollettino-form-input" required>
+                            </div>
+                            <div class="bollettino-form-group">
+                                <label class="bollettino-form-label">Orario Fine *</label>
+                                <input type="time" id="bollettinoFine" class="bollettino-form-input" required>
+                            </div>
+                            <div class="bollettino-form-group">
+                                <label class="bollettino-form-label">Pausa (minuti)</label>
+                                <input type="number" id="bollettinoPausa" class="bollettino-form-input" value="0" min="0">
+                            </div>
+                        </div>
+                        
+                        <!-- Dati Tecnici -->
+                        <div class="bollettino-form-row">
+                            <div class="bollettino-form-group">
+                                <label class="bollettino-form-label">Montaggio Macchina *</label>
+                                <input type="text" id="bollettinoMacchina" class="bollettino-form-input" required>
+                            </div>
+                            <div class="bollettino-form-group">
+                                <label class="bollettino-form-label">Cliente *</label>
+                                <input type="text" id="bollettinoCliente" class="bollettino-form-input" required>
+                            </div>
+                            <div class="bollettino-form-group">
+                                <label class="bollettino-form-label">Tecnico Installatore *</label>
+                                <input type="text" id="bollettinoTecnico" class="bollettino-form-input" required>
+                            </div>
+                        </div>
+                        
+                        <!-- Lavori e Note -->
+                        <div class="bollettino-form-group">
+                            <label class="bollettino-form-label">Lavori Eseguiti *</label>
+                            <textarea id="bollettinoLavori" class="bollettino-form-input bollettino-form-textarea" required></textarea>
+                        </div>
+                        
+                        <div class="bollettino-form-group">
+                            <label class="bollettino-form-label">Note</label>
+                            <textarea id="bollettinoNote" class="bollettino-form-input bollettino-form-textarea"></textarea>
+                        </div>
+                        
+                        <!-- Firma Cliente -->
+                        <div class="bollettino-form-group">
+                            <label class="bollettino-form-label">Firma Cliente</label>
+                            <div class="firma-canvas-container">
+                                <canvas id="firmaCanvas" class="firma-canvas" width="400" height="150"></canvas>
+                            </div>
+                            <div class="firma-buttons">
+                                <button type="button" class="btn-firma btn-firma-clear" onclick="clearFirma()">🗑️ Cancella Firma</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="bollettino-modal-footer">
+                    <button class="btn-bollettino btn-bollettino-cancel" onclick="closeBollettinoModal()">Annulla</button>
+                    <button class="btn-bollettino btn-bollettino-save" onclick="document.getElementById('bollettinoForm').requestSubmit()">💾 Salva</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Modern Footer -->
     <footer class="modern-footer">
         <div class="footer-content">
@@ -3578,7 +4000,7 @@
                 <div class="footer-links">
                     <a href="#" class="footer-link">Documentazione</a>
                     <a href="#" class="footer-link">Guide & Tutorial</a>
-                    <a href="mailto:luca.rende@prosystemsrl.eu?subject=Richiesta%20di%20aiuto&body=Volevo%20chiedere%20un%20informazione%20sulla%20nuova%20dashboard%20online%20del%20PLM%202." class="footer-link">Supporto</a>
+                    <a href="/cdn-cgi/l/email-protection#a8c4ddcbc986dacdc6cccde8d8dac7dbd1dbdccdc5dbdac486cddd97dbddcac2cdcbdc95fac1cbc0c1cddbdcc98d9a98ccc18d9a98c9c1dddcc78ecac7ccd195fec7c4cddec78d9a98cbc0c1cdcccddacd8d9a98ddc68d9a98c1c6cec7dac5c9d2c1c7c6cd8d9a98dbddc4c4c98d9a98c6ddc7dec98d9a98ccc9dbc0cac7c9dacc8d9a98c7c6c4c1c6cd8d9a98cccdc48d9a98f8e4e58d9a989a86" class="footer-link">Supporto</a>
                 </div>
             </div>
 
@@ -3621,7 +4043,7 @@
         </div>
     </footer>
 
-    <script>
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
         // Login System
         const CORRECT_PASSWORD = 'Prosystem2025!';
         const ADMIN_PASSWORD = 'ProsystemPro';
@@ -3815,6 +4237,333 @@
         
         window.logout = logout;
         
+        // ===== BOLLETTINI MONTATORI DASHBOARD =====
+        (function() {
+            const SUPABASE_URL = 'https://uoykvjxerdrthnmnfmgc.supabase.co';
+            const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVveWt2anhlcmRydGhubW5mbWdjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzMzMTMwNTQsImV4cCI6MjA0ODg4OTA1NH0.gxtB0EFvF4AwbRHVfb_c4qGe7dRVdjkf8qITEAd_EEk';
+            const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+            
+            let allBollettini = [];
+            let filteredBollettini = [];
+            let currentPageBollettini = 1;
+            const itemsPerPageBollettini = 5;
+            
+            // Canvas firma
+            let firmaCanvas, firmaCtx;
+            let isDrawing = false;
+            let firmaPaths = [];
+            let currentPath = [];
+            
+            // Toggle dashboard
+            document.getElementById('bollettiniHeader').addEventListener('click', function() {
+                const header = this;
+                const content = document.getElementById('bollettiniContent');
+                
+                void header.offsetHeight;
+                header.classList.toggle('active');
+                content.classList.toggle('show');
+                
+                setTimeout(() => void content.offsetHeight, 350);
+                
+                // Carica dati se non già caricati
+                if (allBollettini.length === 0) {
+                    loadBollettini();
+                }
+            });
+            
+            // Inizializza canvas firma
+            function initFirmaCanvas() {
+                firmaCanvas = document.getElementById('firmaCanvas');
+                if (!firmaCanvas) return;
+                
+                firmaCtx = firmaCanvas.getContext('2d');
+                firmaCtx.strokeStyle = '#000';
+                firmaCtx.lineWidth = 2;
+                firmaCtx.lineCap = 'round';
+                firmaCtx.lineJoin = 'round';
+                
+                // Mouse events
+                firmaCanvas.addEventListener('mousedown', startDrawing);
+                firmaCanvas.addEventListener('mousemove', draw);
+                firmaCanvas.addEventListener('mouseup', stopDrawing);
+                firmaCanvas.addEventListener('mouseout', stopDrawing);
+                
+                // Touch events
+                firmaCanvas.addEventListener('touchstart', handleTouch);
+                firmaCanvas.addEventListener('touchmove', handleTouch);
+                firmaCanvas.addEventListener('touchend', stopDrawing);
+            }
+            
+            function startDrawing(e) {
+                isDrawing = true;
+                const pos = getMousePos(e);
+                currentPath = [{x: pos.x, y: pos.y}];
+            }
+            
+            function draw(e) {
+                if (!isDrawing) return;
+                e.preventDefault();
+                
+                const pos = getMousePos(e);
+                currentPath.push({x: pos.x, y: pos.y});
+                
+                firmaCtx.beginPath();
+                const lastPoint = currentPath[currentPath.length - 2];
+                firmaCtx.moveTo(lastPoint.x, lastPoint.y);
+                firmaCtx.lineTo(pos.x, pos.y);
+                firmaCtx.stroke();
+            }
+            
+            function stopDrawing() {
+                if (isDrawing && currentPath.length > 0) {
+                    firmaPaths.push([...currentPath]);
+                }
+                isDrawing = false;
+                currentPath = [];
+            }
+            
+            function handleTouch(e) {
+                e.preventDefault();
+                const touch = e.touches[0];
+                const mouseEvent = new MouseEvent(e.type === 'touchstart' ? 'mousedown' : 'mousemove', {
+                    clientX: touch.clientX,
+                    clientY: touch.clientY
+                });
+                firmaCanvas.dispatchEvent(mouseEvent);
+            }
+            
+            function getMousePos(e) {
+                const rect = firmaCanvas.getBoundingClientRect();
+                return {
+                    x: e.clientX - rect.left,
+                    y: e.clientY - rect.top
+                };
+            }
+            
+            window.clearFirma = function() {
+                firmaCtx.clearRect(0, 0, firmaCanvas.width, firmaCanvas.height);
+                firmaPaths = [];
+                currentPath = [];
+            };
+            
+            function getFirmaJSON() {
+                if (firmaPaths.length === 0) return null;
+                
+                return {
+                    paths: firmaPaths,
+                    width: firmaCanvas.width,
+                    height: firmaCanvas.height,
+                    timestamp: new Date().toISOString()
+                };
+            }
+            
+            function renderFirma(firmaJSON) {
+                if (!firmaJSON || !firmaJSON.paths) return '';
+                
+                const pathStrings = firmaJSON.paths.map(path => {
+                    if (path.length === 0) return '';
+                    let d = `M ${path[0].x} ${path[0].y}`;
+                    for (let i = 1; i < path.length; i++) {
+                        d += ` L ${path[i].x} ${path[i].y}`;
+                    }
+                    return d;
+                }).filter(p => p).join(' ');
+                
+                return `<svg width="${firmaJSON.width}" height="${firmaJSON.height}" style="background: white; border-radius: 4px;">
+                    <path d="${pathStrings}" stroke="#000" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>`;
+            }
+            
+            // Modal
+            window.openBollettinoModal = function() {
+                document.getElementById('bollettinoModal').classList.add('active');
+                document.getElementById('bollettinoForm').reset();
+                clearFirma();
+                initFirmaCanvas();
+                
+                // Imposta data di oggi
+                document.getElementById('bollettinoData').valueAsDate = new Date();
+            };
+            
+            window.closeBollettinoModal = function() {
+                document.getElementById('bollettinoModal').classList.remove('active');
+            };
+            
+            // Salva bollettino
+            window.saveBollettino = async function(e) {
+                e.preventDefault();
+                
+                const data = document.getElementById('bollettinoData').value;
+                const inizio = document.getElementById('bollettinoInizio').value;
+                const fine = document.getElementById('bollettinoFine').value;
+                const pausa = parseInt(document.getElementById('bollettinoPausa').value) || 0;
+                
+                // Calcola ore totali
+                const inizioMinuti = parseInt(inizio.split(':')[0]) * 60 + parseInt(inizio.split(':')[1]);
+                const fineMinuti = parseInt(fine.split(':')[0]) * 60 + parseInt(fine.split(':')[1]);
+                const oreTotali = ((fineMinuti - inizioMinuti - pausa) / 60).toFixed(2);
+                
+                const firmaJSON = getFirmaJSON();
+                
+                const bollettino = {
+                    data: data,
+                    orario_inizio: inizio,
+                    orario_fine: fine,
+                    pausa_minuti: pausa,
+                    ore_totali: parseFloat(oreTotali),
+                    montaggio_macchina: document.getElementById('bollettinoMacchina').value,
+                    cliente: document.getElementById('bollettinoCliente').value,
+                    tecnico_installatore: document.getElementById('bollettinoTecnico').value,
+                    lavori_eseguiti: document.getElementById('bollettinoLavori').value,
+                    note: document.getElementById('bollettinoNote').value,
+                    firma_cliente: firmaJSON
+                };
+                
+                try {
+                    const { data: result, error } = await sb.from('BollettiniMontatori').insert([bollettino]).select();
+                    
+                    if (error) throw error;
+                    
+                    alert('✅ Bollettino salvato con successo!');
+                    closeBollettinoModal();
+                    loadBollettini();
+                } catch (err) {
+                    alert('❌ Errore durante il salvataggio: ' + err.message);
+                }
+            };
+            
+            // Carica bollettini
+            async function loadBollettini() {
+                const list = document.getElementById('bollettiniList');
+                list.innerHTML = '<div class="loading-state">Caricamento bollettini...</div>';
+                
+                try {
+                    const { data, error } = await sb.from('BollettiniMontatori').select('*').order('data', { ascending: false });
+                    
+                    if (error) throw error;
+                    
+                    allBollettini = data || [];
+                    filteredBollettini = [...allBollettini];
+                    currentPageBollettini = 1;
+                    renderBollettini();
+                } catch (err) {
+                    list.innerHTML = `<div class="empty-state"><div class="empty-icon">⚠️</div><div class="empty-text">Errore: ${err.message}</div></div>`;
+                }
+            }
+            
+            // Render bollettini
+            function renderBollettini() {
+                const list = document.getElementById('bollettiniList');
+                const totalPages = Math.ceil(filteredBollettini.length / itemsPerPageBollettini);
+                const startIndex = (currentPageBollettini - 1) * itemsPerPageBollettini;
+                const currentData = filteredBollettini.slice(startIndex, startIndex + itemsPerPageBollettini);
+                
+                if (currentData.length === 0) {
+                    list.innerHTML = '<div class="empty-state"><div class="empty-icon">📋</div><div class="empty-text">Nessun bollettino trovato</div></div>';
+                    updatePaginationBollettini(0, 0);
+                    return;
+                }
+                
+                list.innerHTML = currentData.map(b => {
+                    const dataObj = new Date(b.data + 'T00:00:00');
+                    const giornoSettimana = ['Domenica', 'Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato'][dataObj.getDay()];
+                    const dataFormattata = dataObj.toLocaleDateString('it-IT', { day: '2-digit', month: '2-digit', year: 'numeric' });
+                    
+                    return `
+                        <div class="bollettino-card">
+                            <div class="bollettino-header">
+                                <div>
+                                    <span class="bollettino-date">${dataFormattata}</span>
+                                    <span class="bollettino-day">${giornoSettimana}</span>
+                                </div>
+                                <div class="bollettino-time-badge">${b.ore_totali || 0} ore</div>
+                            </div>
+                            <div class="bollettino-body">
+                                <div class="bollettino-field">
+                                    <div class="bollettino-label">Orario</div>
+                                    <div class="bollettino-value">${b.orario_inizio || '--'} - ${b.orario_fine || '--'} (Pausa: ${b.pausa_minuti || 0} min)</div>
+                                </div>
+                                <div class="bollettino-field">
+                                    <div class="bollettino-label">Macchina</div>
+                                    <div class="bollettino-value">${b.montaggio_macchina || '--'}</div>
+                                </div>
+                                <div class="bollettino-field">
+                                    <div class="bollettino-label">Cliente</div>
+                                    <div class="bollettino-value">${b.cliente || '--'}</div>
+                                </div>
+                                <div class="bollettino-field">
+                                    <div class="bollettino-label">Tecnico</div>
+                                    <div class="bollettino-value">${b.tecnico_installatore || '--'}</div>
+                                </div>
+                                <div class="bollettino-field" style="grid-column: 1 / -1;">
+                                    <div class="bollettino-label">Lavori Eseguiti</div>
+                                    <div class="bollettino-value">${b.lavori_eseguiti || '--'}</div>
+                                </div>
+                                ${b.note ? `
+                                <div class="bollettino-field" style="grid-column: 1 / -1;">
+                                    <div class="bollettino-label">Note</div>
+                                    <div class="bollettino-value">${b.note}</div>
+                                </div>` : ''}
+                            </div>
+                            ${b.firma_cliente ? `
+                            <div class="bollettino-firma">
+                                <div class="bollettino-label">Firma Cliente</div>
+                                <div class="firma-preview">${renderFirma(b.firma_cliente)}</div>
+                            </div>` : ''}
+                        </div>
+                    `;
+                }).join('');
+                
+                updatePaginationBollettini(currentPageBollettini, totalPages);
+            }
+            
+            // Paginazione
+            function updatePaginationBollettini(page, totalPages) {
+                document.getElementById('paginationInfoBollettini').textContent = `${page} / ${totalPages}`;
+                document.getElementById('prevPageBollettini').disabled = page <= 1;
+                document.getElementById('nextPageBollettini').disabled = page >= totalPages;
+            }
+            
+            window.changePageBollettini = function(direction) {
+                const totalPages = Math.ceil(filteredBollettini.length / itemsPerPageBollettini);
+                
+                if (direction === 'prev' && currentPageBollettini > 1) {
+                    currentPageBollettini--;
+                } else if (direction === 'next' && currentPageBollettini < totalPages) {
+                    currentPageBollettini++;
+                }
+                
+                renderBollettini();
+                document.getElementById('bollettiniList').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            };
+            
+            // Filtri
+            window.applyFiltersBollettini = function() {
+                const filterData = document.getElementById('filterDataBollettini').value;
+                const filterCliente = document.getElementById('filterClienteBollettini').value.toLowerCase();
+                const filterTecnico = document.getElementById('filterTecnicoBollettini').value.toLowerCase();
+                
+                filteredBollettini = allBollettini.filter(b => {
+                    const matchData = !filterData || b.data === filterData;
+                    const matchCliente = !filterCliente || (b.cliente && b.cliente.toLowerCase().includes(filterCliente));
+                    const matchTecnico = !filterTecnico || (b.tecnico_installatore && b.tecnico_installatore.toLowerCase().includes(filterTecnico));
+                    return matchData && matchCliente && matchTecnico;
+                });
+                
+                currentPageBollettini = 1;
+                renderBollettini();
+            };
+            
+            window.resetFiltersBollettini = function() {
+                document.getElementById('filterDataBollettini').value = '';
+                document.getElementById('filterClienteBollettini').value = '';
+                document.getElementById('filterTecnicoBollettini').value = '';
+                filteredBollettini = [...allBollettini];
+                currentPageBollettini = 1;
+                renderBollettini();
+            };
+        })();
+        
         // Menu floating toggle
         function toggleMenu() {
             const menuPanel = document.getElementById('menuPanel');
@@ -3873,14 +4622,4 @@
                 <div class="menu-item-icon">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-                        <polyline points="16 17 21 12 16 7"></polyline>
-                        <line x1="21" y1="12" x2="9" y2="12"></line>
-                    </svg>
-                </div>
-                <span class="menu-item-text">Esci</span>
-            </a>
-        </div>
-    </div>
-</body>
-</html>
-
+                        <polyline

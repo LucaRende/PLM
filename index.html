@@ -2956,6 +2956,14 @@
                 setTimeout(() => {
                     currentPage = newPage;
                     renderActivities(filteredActivities);
+                    
+                    // Scroll alla prima attività della nuova pagina
+                    setTimeout(() => {
+                        const firstCard = document.querySelector('.activity-card');
+                        if (firstCard) {
+                            firstCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                        }
+                    }, 50);
                 }, 300);
             };
 
@@ -3436,8 +3444,8 @@
             <div class="footer-section">
                 <h3 class="footer-title">Dashboard</h3>
                 <div class="footer-links">
-                    <a href="#" class="footer-link">Attività CRM</a>
-                    <a href="#" class="footer-link">Ufficio Tecnico</a>
+                    <a href="#" class="footer-link" onclick="scrollToDashboard('dashHeader'); return false;">Attività CRM</a>
+                    <a href="#" class="footer-link" onclick="scrollToDashboard('ganttHeader'); return false;">Ufficio Tecnico</a>
                 </div>
             </div>
 
@@ -3446,7 +3454,7 @@
                 <div class="footer-links">
                     <a href="#" class="footer-link">Documentazione</a>
                     <a href="#" class="footer-link">Guide & Tutorial</a>
-                    <a href="#" class="footer-link">Supporto</a>
+                    <a href="mailto:luca.rende@prosystemsrl.eu?subject=Richiesta%20di%20aiuto&body=Volevo%20chiedere%20un%20informazione%20sulla%20nuova%20dashboard%20online%20del%20PLM%202." class="footer-link">Supporto</a>
                 </div>
             </div>
 
@@ -3606,6 +3614,29 @@
         // Update stats when page loads and when data changes
         setTimeout(updateFooterStats, 1000);
         setInterval(updateFooterStats, 10000);
+        
+        // Funzione per scroll ai cruscotti
+        function scrollToDashboard(headerId) {
+            const header = document.getElementById(headerId);
+            if (!header) return;
+            
+            // Se il cruscotto è chiuso, aprilo prima
+            const isActive = header.classList.contains('active');
+            if (!isActive) {
+                header.click();
+                
+                // Dopo l'apertura, scrolla
+                setTimeout(() => {
+                    header.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 350);
+            } else {
+                // Se già aperto, scrolla direttamente
+                header.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+        
+        // Rendi la funzione accessibile globalmente
+        window.scrollToDashboard = scrollToDashboard;
     </script>
 </body>
 </html>

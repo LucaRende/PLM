@@ -2526,6 +2526,21 @@
                             required
                         >
                     </div>
+                    
+                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 20px;">
+                        <input 
+                            type="checkbox" 
+                            id="rememberPassword" 
+                            style="width: 18px; height: 18px; cursor: pointer; accent-color: #c51d34;"
+                        >
+                        <label 
+                            for="rememberPassword" 
+                            style="color: rgba(255, 255, 255, 0.7); font-size: 0.9em; cursor: pointer; user-select: none;"
+                        >
+                            Ricorda password
+                        </label>
+                    </div>
+                    
                     <button type="submit" class="login-button">
                         Accedi
                     </button>
@@ -3612,14 +3627,31 @@
         
         // Show loading animation on page load
         window.addEventListener('DOMContentLoaded', function() {
-            // After 2 seconds, hide loading and show login form
-            setTimeout(() => {
-                document.getElementById('loadingContainer').classList.add('hidden');
+            // Controlla se password è salvata
+            const savedPassword = localStorage.getItem('plm_remembered_password');
+            
+            if (savedPassword === CORRECT_PASSWORD) {
+                // Skip login, vai direttamente alla dashboard
                 setTimeout(() => {
-                    document.getElementById('loginFormContainer').classList.add('active');
-                    document.getElementById('passwordInput').focus();
-                }, 300);
-            }, 2000);
+                    document.getElementById('loadingContainer').classList.add('hidden');
+                    setTimeout(() => {
+                        document.getElementById('loginOverlay').classList.add('fade-out');
+                        setTimeout(() => {
+                            document.getElementById('loginOverlay').remove();
+                            initializeDashboard();
+                        }, 800);
+                    }, 300);
+                }, 2000);
+            } else {
+                // Mostra login normale
+                setTimeout(() => {
+                    document.getElementById('loadingContainer').classList.add('hidden');
+                    setTimeout(() => {
+                        document.getElementById('loginFormContainer').classList.add('active');
+                        document.getElementById('passwordInput').focus();
+                    }, 300);
+                }, 2000);
+            }
         });
 
         function handleLogin(event) {
@@ -3631,10 +3663,18 @@
             const successCheck = document.getElementById('successCheck');
             const loginOverlay = document.getElementById('loginOverlay');
             const loginIcon = document.querySelector('.login-icon');
+            const rememberPassword = document.getElementById('rememberPassword');
             
             const enteredPassword = passwordInput.value;
             
             if (enteredPassword === CORRECT_PASSWORD) {
+                // Salva password se checkbox è selezionato
+                if (rememberPassword.checked) {
+                    localStorage.setItem('plm_remembered_password', enteredPassword);
+                } else {
+                    localStorage.removeItem('plm_remembered_password');
+                }
+                
                 // Success!
                 loginError.classList.remove('show');
                 loginForm.style.display = 'none';
@@ -3776,7 +3816,7 @@
         </button>
         
         <div class="menu-panel" id="menuPanel">
-            <a href="index.html" class="menu-item current">
+            <a href="#" class="menu-item current" onclick="location.reload(); return false;">
                 <div class="menu-item-icon">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <rect x="3" y="3" width="7" height="7" rx="1"></rect>

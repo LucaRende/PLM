@@ -18,7 +18,7 @@
 
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #0f1729 0%, #1a2332 50%, #0d1117 100%);
+            background: linear-gradient(135deg, #2d0a0e 0%, #4a1419 50%, #1a0608 100%);
             min-height: 100vh;
             padding: 20px 15px;
             color: #ffffff;
@@ -118,7 +118,18 @@
         }
 
         .dashboard-icon {
-            font-size: 1.5em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 42px;
+            height: 42px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+        
+        .dashboard-icon svg {
+            filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.3));
         }
 
         .toggle-arrow {
@@ -1119,6 +1130,25 @@
             padding: 12px;
             background: rgba(255, 255, 255, 0.03);
             border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .stat-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 48px;
+            height: 48px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            margin-bottom: 4px;
+        }
+        
+        .stat-icon svg {
+            filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.3));
         }
 
         .stat-value {
@@ -2141,7 +2171,20 @@
             <div class="dashboard-header" id="dashHeader">
                 <div class="dashboard-top">
                     <div class="dashboard-title">
-                        <span class="dashboard-icon">📋</span>
+                        <span class="dashboard-icon">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <rect x="4" y="2" width="16" height="20" rx="2" fill="url(#crmGradient)"/>
+                                <path d="M8 7h8M8 11h8M8 15h5" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+                                <circle cx="17" cy="17" r="5" fill="#10b981"/>
+                                <path d="M15 17l1.5 1.5L19 16" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                <defs>
+                                    <linearGradient id="crmGradient" x1="4" y1="2" x2="20" y2="22" gradientUnits="userSpaceOnUse">
+                                        <stop stop-color="#c51d34"/>
+                                        <stop offset="1" stop-color="#9333ea"/>
+                                    </linearGradient>
+                                </defs>
+                            </svg>
+                        </span>
                         <h2>Attività CRM</h2>
                     </div>
                     <span class="toggle-arrow" id="dashArrow">▼</span>
@@ -2253,7 +2296,24 @@
             <div class="dashboard-header gantt" id="ganttHeader">
                 <div class="dashboard-top">
                     <div class="dashboard-title">
-                        <span class="dashboard-icon">👷</span>
+                        <span class="dashboard-icon">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="12" cy="6" r="3" fill="#fbbf24"/>
+                                <path d="M6 20c0-3.314 2.686-6 6-6s6 2.686 6 6" fill="url(#techGradient)"/>
+                                <rect x="8" y="2" width="8" height="3" rx="1.5" fill="#ef4444"/>
+                                <path d="M14 10l4 4-1 6h-10l-1-6 4-4" fill="url(#vestGradient)" stroke="#10b981" stroke-width="1"/>
+                                <defs>
+                                    <linearGradient id="techGradient" x1="6" y1="14" x2="18" y2="20" gradientUnits="userSpaceOnUse">
+                                        <stop stop-color="#10b981"/>
+                                        <stop offset="1" stop-color="#059669"/>
+                                    </linearGradient>
+                                    <linearGradient id="vestGradient" x1="6" y1="10" x2="18" y2="20" gradientUnits="userSpaceOnUse">
+                                        <stop stop-color="#fbbf24"/>
+                                        <stop offset="1" stop-color="#f59e0b"/>
+                                    </linearGradient>
+                                </defs>
+                            </svg>
+                        </span>
                         <h2>Ufficio Tecnico</h2>
                     </div>
                     <span class="toggle-arrow">▼</span>
@@ -2261,16 +2321,59 @@
                 <div class="date-label" id="currentDate">Oggi</div>
                 <div class="stats-summary" id="statsSummary">
                     <div class="stat-item">
+                        <div class="stat-icon">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="9" cy="7" r="3" fill="url(#peopleGrad1)"/>
+                                <circle cx="15" cy="9" r="2.5" fill="url(#peopleGrad2)"/>
+                                <path d="M3 18c0-2.5 2.5-4.5 6-4.5s6 2 6 4.5" fill="url(#peopleGrad1)"/>
+                                <path d="M15 18c0-1.8 1.5-3.5 4-3.5s4 1.7 4 3.5" fill="url(#peopleGrad2)"/>
+                                <defs>
+                                    <linearGradient id="peopleGrad1" x1="3" y1="4" x2="15" y2="18" gradientUnits="userSpaceOnUse">
+                                        <stop stop-color="#3b82f6"/>
+                                        <stop offset="1" stop-color="#1d4ed8"/>
+                                    </linearGradient>
+                                    <linearGradient id="peopleGrad2" x1="15" y1="6" x2="23" y2="18" gradientUnits="userSpaceOnUse">
+                                        <stop stop-color="#60a5fa"/>
+                                        <stop offset="1" stop-color="#3b82f6"/>
+                                    </linearGradient>
+                                </defs>
+                            </svg>
+                        </div>
                         <div class="stat-value" id="totalPersons">-</div>
                         <div class="stat-label">Persone</div>
                     </div>
                     <div class="stat-item">
+                        <div class="stat-icon">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <rect x="4" y="6" width="16" height="14" rx="2" fill="url(#tasksGrad)"/>
+                                <path d="M8 11l2 2 4-4" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <rect x="8" y="3" width="8" height="3" rx="1" fill="#fbbf24"/>
+                                <defs>
+                                    <linearGradient id="tasksGrad" x1="4" y1="6" x2="20" y2="20" gradientUnits="userSpaceOnUse">
+                                        <stop stop-color="#10b981"/>
+                                        <stop offset="1" stop-color="#059669"/>
+                                    </linearGradient>
+                                </defs>
+                            </svg>
+                        </div>
                         <div class="stat-value" id="totalTasks">-</div>
                         <div class="stat-label">Lavori</div>
                     </div>
                     <div class="stat-item">
+                        <div class="stat-icon">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="12" cy="12" r="9" fill="url(#busyGrad)"/>
+                                <path d="M8 12l3 3 5-6" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                <defs>
+                                    <linearGradient id="busyGrad" x1="3" y1="3" x2="21" y2="21" gradientUnits="userSpaceOnUse">
+                                        <stop stop-color="#f59e0b"/>
+                                        <stop offset="1" stop-color="#d97706"/>
+                                    </linearGradient>
+                                </defs>
+                            </svg>
+                        </div>
                         <div class="stat-value" id="avgOccupation">-</div>
-                        <div class="stat-label">Occupaz.</div>
+                        <div class="stat-label">Occupati</div>
                     </div>
                 </div>
                 
@@ -2689,12 +2792,13 @@
                 console.log('Tasks by person:', byPerson);
 
                 // Update stats
-                const operatorsWithTasks = operators.filter(op => byPerson[op].length > 0).length;
-                document.getElementById('totalPersons').textContent = operatorsWithTasks;
+                // Persone = numero totale di operatori
+                document.getElementById('totalPersons').textContent = operators.length;
                 document.getElementById('totalTasks').textContent = data.length;
                 
-                const avgOccupation = operatorsWithTasks > 0 ? Math.round(data.length / operatorsWithTasks) : 0;
-                document.getElementById('avgOccupation').textContent = avgOccupation;
+                // Occupati = numero di operatori che hanno almeno una lavorazione
+                const operatorsWithTasks = operators.filter(op => byPerson[op].length > 0).length;
+                document.getElementById('avgOccupation').textContent = operatorsWithTasks;
 
                 // Calculate current time position for the indicator
                 const now = new Date();
@@ -3129,4 +3233,3 @@
     </script>
 </body>
 </html>
-

@@ -60,7 +60,7 @@
             width: 100px;
             height: 100px;
             object-fit: contain;
-            filter: drop-shadow(0 8px 24px rgba(197, 29, 52, 0.5));
+            filter: drop-shadow(0 8px 24px rgba(59, 130, 246, 0.5));
             transition: all 0.3s ease;
             image-rendering: -webkit-optimize-contrast;
             image-rendering: crisp-edges;
@@ -1327,7 +1327,7 @@
         .particle {
             position: absolute;
             border-radius: 50%;
-            background: radial-gradient(circle, rgba(197, 29, 52, 0.4) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.3) 0%, transparent 70%);
             animation: float 20s infinite;
         }
 
@@ -1345,7 +1345,7 @@
             top: 60%;
             left: 80%;
             animation-delay: 4s;
-            background: radial-gradient(circle, rgba(197, 29, 52, 0.3) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(197, 29, 52, 0.2) 0%, transparent 70%);
         }
 
         .particle:nth-child(3) {
@@ -1362,7 +1362,7 @@
             top: 30%;
             left: 70%;
             animation-delay: 12s;
-            background: radial-gradient(circle, rgba(197, 29, 52, 0.35) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.25) 0%, transparent 70%);
         }
 
         @keyframes float {
@@ -2246,16 +2246,10 @@
                     <div class="dashboard-title">
                         <span class="dashboard-icon">
                             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <rect x="4" y="2" width="16" height="20" rx="2" fill="url(#crmGradient)"/>
-                                <path d="M8 7h8M8 11h8M8 15h5" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
-                                <circle cx="17" cy="17" r="5" fill="#10b981"/>
-                                <path d="M15 17l1.5 1.5L19 16" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                <defs>
-                                    <linearGradient id="crmGradient" x1="4" y1="2" x2="20" y2="22" gradientUnits="userSpaceOnUse">
-                                        <stop stop-color="#c51d34"/>
-                                        <stop offset="1" stop-color="#9333ea"/>
-                                    </linearGradient>
-                                </defs>
+                                <rect x="4" y="2" width="16" height="20" rx="2" fill="white" opacity="0.9"/>
+                                <path d="M8 7h8M8 11h8M8 15h5" stroke="#1a2332" stroke-width="1.5" stroke-linecap="round"/>
+                                <circle cx="17" cy="17" r="5" fill="white"/>
+                                <path d="M15 17l1.5 1.5L19 16" stroke="#1a2332" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                             </svg>
                         </span>
                         <h2>Attività CRM</h2>
@@ -2372,27 +2366,17 @@
                         <span class="dashboard-icon">
                             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <!-- Righello -->
-                                <rect x="2" y="10" width="20" height="4" rx="1" fill="url(#techGrad1)"/>
-                                <line x1="4" y1="10" x2="4" y2="14" stroke="white" stroke-width="1" opacity="0.6"/>
-                                <line x1="7" y1="10" x2="7" y2="14" stroke="white" stroke-width="1" opacity="0.6"/>
-                                <line x1="10" y1="10" x2="10" y2="14" stroke="white" stroke-width="1.5" opacity="0.8"/>
-                                <line x1="13" y1="10" x2="13" y2="14" stroke="white" stroke-width="1" opacity="0.6"/>
-                                <line x1="16" y1="10" x2="16" y2="14" stroke="white" stroke-width="1" opacity="0.6"/>
-                                <line x1="19" y1="10" x2="19" y2="14" stroke="white" stroke-width="1.5" opacity="0.8"/>
+                                <rect x="2" y="10" width="20" height="4" rx="1" fill="white" opacity="0.9"/>
+                                <line x1="4" y1="10" x2="4" y2="14" stroke="#1a2332" stroke-width="1" opacity="0.6"/>
+                                <line x1="7" y1="10" x2="7" y2="14" stroke="#1a2332" stroke-width="1" opacity="0.6"/>
+                                <line x1="10" y1="10" x2="10" y2="14" stroke="#1a2332" stroke-width="1.5" opacity="0.8"/>
+                                <line x1="13" y1="10" x2="13" y2="14" stroke="#1a2332" stroke-width="1" opacity="0.6"/>
+                                <line x1="16" y1="10" x2="16" y2="14" stroke="#1a2332" stroke-width="1" opacity="0.6"/>
+                                <line x1="19" y1="10" x2="19" y2="14" stroke="#1a2332" stroke-width="1.5" opacity="0.8"/>
                                 <!-- Matita -->
-                                <path d="M18 2L22 6L12 16L8 17L9 13L19 3Z" fill="url(#techGrad2)"/>
-                                <path d="M18 2L22 6L20 8L16 4L18 2Z" fill="#fbbf24"/>
-                                <circle cx="9" cy="15" r="1.5" fill="#64748b"/>
-                                <defs>
-                                    <linearGradient id="techGrad1" x1="2" y1="10" x2="22" y2="14" gradientUnits="userSpaceOnUse">
-                                        <stop stop-color="#10b981"/>
-                                        <stop offset="1" stop-color="#059669"/>
-                                    </linearGradient>
-                                    <linearGradient id="techGrad2" x1="8" y1="2" x2="22" y2="17" gradientUnits="userSpaceOnUse">
-                                        <stop stop-color="#3b82f6"/>
-                                        <stop offset="1" stop-color="#1d4ed8"/>
-                                    </linearGradient>
-                                </defs>
+                                <path d="M18 2L22 6L12 16L8 17L9 13L19 3Z" fill="white" opacity="0.9"/>
+                                <path d="M18 2L22 6L20 8L16 4L18 2Z" fill="white" opacity="0.7"/>
+                                <circle cx="9" cy="15" r="1.5" fill="white" opacity="0.6"/>
                             </svg>
                         </span>
                         <h2>Ufficio Tecnico</h2>
@@ -2404,20 +2388,10 @@
                     <div class="stat-item">
                         <div class="stat-icon">
                             <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <circle cx="9" cy="7" r="3" fill="url(#peopleGrad1)"/>
-                                <circle cx="15" cy="9" r="2.5" fill="url(#peopleGrad2)"/>
-                                <path d="M3 18c0-2.5 2.5-4.5 6-4.5s6 2 6 4.5" fill="url(#peopleGrad1)"/>
-                                <path d="M15 18c0-1.8 1.5-3.5 4-3.5s4 1.7 4 3.5" fill="url(#peopleGrad2)"/>
-                                <defs>
-                                    <linearGradient id="peopleGrad1" x1="3" y1="4" x2="15" y2="18" gradientUnits="userSpaceOnUse">
-                                        <stop stop-color="#3b82f6"/>
-                                        <stop offset="1" stop-color="#1d4ed8"/>
-                                    </linearGradient>
-                                    <linearGradient id="peopleGrad2" x1="15" y1="6" x2="23" y2="18" gradientUnits="userSpaceOnUse">
-                                        <stop stop-color="#60a5fa"/>
-                                        <stop offset="1" stop-color="#3b82f6"/>
-                                    </linearGradient>
-                                </defs>
+                                <circle cx="9" cy="7" r="3" fill="white" opacity="0.9"/>
+                                <circle cx="15" cy="9" r="2.5" fill="white" opacity="0.8"/>
+                                <path d="M3 18c0-2.5 2.5-4.5 6-4.5s6 2 6 4.5" fill="white" opacity="0.9"/>
+                                <path d="M15 18c0-1.8 1.5-3.5 4-3.5s4 1.7 4 3.5" fill="white" opacity="0.8"/>
                             </svg>
                         </div>
                         <div class="stat-value" id="totalPersons">-</div>
@@ -2426,15 +2400,9 @@
                     <div class="stat-item">
                         <div class="stat-icon">
                             <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <rect x="4" y="6" width="16" height="14" rx="2" fill="url(#tasksGrad)"/>
-                                <path d="M8 11l2 2 4-4" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                <rect x="8" y="3" width="8" height="3" rx="1" fill="#fbbf24"/>
-                                <defs>
-                                    <linearGradient id="tasksGrad" x1="4" y1="6" x2="20" y2="20" gradientUnits="userSpaceOnUse">
-                                        <stop stop-color="#10b981"/>
-                                        <stop offset="1" stop-color="#059669"/>
-                                    </linearGradient>
-                                </defs>
+                                <rect x="4" y="6" width="16" height="14" rx="2" fill="white" opacity="0.9"/>
+                                <path d="M8 11l2 2 4-4" stroke="#1a2332" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <rect x="8" y="3" width="8" height="3" rx="1" fill="white" opacity="0.7"/>
                             </svg>
                         </div>
                         <div class="stat-value" id="totalTasks">-</div>
@@ -2443,14 +2411,8 @@
                     <div class="stat-item">
                         <div class="stat-icon">
                             <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <circle cx="12" cy="12" r="9" fill="url(#busyGrad)"/>
-                                <path d="M8 12l3 3 5-6" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                <defs>
-                                    <linearGradient id="busyGrad" x1="3" y1="3" x2="21" y2="21" gradientUnits="userSpaceOnUse">
-                                        <stop stop-color="#f59e0b"/>
-                                        <stop offset="1" stop-color="#d97706"/>
-                                    </linearGradient>
-                                </defs>
+                                <circle cx="12" cy="12" r="9" fill="white" opacity="0.9"/>
+                                <path d="M8 12l3 3 5-6" stroke="#1a2332" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
                             </svg>
                         </div>
                         <div class="stat-value" id="avgOccupation">-</div>

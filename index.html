@@ -24,11 +24,70 @@
             padding: 20px 15px;
             color: #ffffff;
             overflow-x: hidden;
+            position: relative;
+        }
+        
+        /* Sfondo animato tecnologico */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(90deg, rgba(59, 130, 246, 0.03) 1px, transparent 1px),
+                linear-gradient(0deg, rgba(59, 130, 246, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: grid-move 20s linear infinite;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 200%;
+            height: 200%;
+            background-image: 
+                repeating-linear-gradient(
+                    0deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(59, 130, 246, 0.03) 2px,
+                    rgba(59, 130, 246, 0.03) 4px
+                );
+            animation: scan-lines 8s linear infinite;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.5;
+        }
+        
+        @keyframes grid-move {
+            0% {
+                transform: translate(0, 0);
+            }
+            100% {
+                transform: translate(50px, 50px);
+            }
+        }
+        
+        @keyframes scan-lines {
+            0% {
+                transform: translateY(0);
+            }
+            100% {
+                transform: translateY(-50%);
+            }
         }
 
         .main-container {
             max-width: 500px;
             margin: 0 auto;
+            position: relative;
+            z-index: 1;
         }
 
         .title-section {
@@ -1552,7 +1611,7 @@
         }
 
         .login-subtitle {
-            color: rgba(255, 255, 255, 0.6);
+            color: #c51d34;
             font-size: 0.9em;
         }
 
@@ -2037,8 +2096,13 @@
 
             /* Progress circles larger */
             .circular-progress {
-                width: 140px;
-                height: 140px;
+                width: 160px;
+                height: 160px;
+            }
+            
+            .progress-ring-bg,
+            .progress-ring-fill {
+                stroke-width: 10;
             }
             
             .progress-circle {
@@ -2047,7 +2111,7 @@
             }
 
             .progress-value {
-                font-size: 2.5em;
+                font-size: 2.8em;
             }
 
             .progress-label {

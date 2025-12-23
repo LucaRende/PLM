@@ -3498,7 +3498,7 @@
         // ===== UFFICIO TECNICO GANTT DASHBOARD =====
         (function() {
             const SUPABASE_URL = 'https://uoykvjxerdrthnmnfmgc.supabase.co';
-            const SUPABASE_KEY = 'sb_publishable_iGVhzkLqAktDZmpccXl7OA_PZ2nUYSY';
+            const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVveWt2anhlcmRydGhubW5mbWdjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzMzMTMwNTQsImV4cCI6MjA0ODg4OTA1NH0.gxtB0EFvF4AwbRHVfb_c4qGe7dRVdjkf8qITEAd_EEk';
             const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
             let allTasks = [];
@@ -4312,9 +4312,10 @@
         
         // ===== BOLLETTINI MONTATORI DASHBOARD =====
         (function() {
-            const SUPABASE_URL = 'https://uoykvjxerdrthnmnfmgc.supabase.co';
-            const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVveWt2anhlcmRydGhubW5mbWdjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzMzMTMwNTQsImV4cCI6MjA0ODg4OTA1NH0.gxtB0EFvF4AwbRHVfb_c4qGe7dRVdjkf8qITEAd_EEk';
-            const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+            const sb = window.supabase.createClient(
+                'https://uoykvjxerdrthnmnfmgc.supabase.co',
+                'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVveWt2anhlcmRydGhubW5mbWdjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzMzMTMwNTQsImV4cCI6MjA0ODg4OTA1NH0.gxtB0EFvF4AwbRHVfb_c4qGe7dRVdjkf8qITEAd_EEk'
+            );
             
             let allBollettini = [];
             let filteredBollettini = [];

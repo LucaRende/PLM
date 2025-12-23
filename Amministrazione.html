@@ -2995,12 +2995,12 @@
             const SUPABASE_KEY = 'sb_publishable_iGVhzkLqAktDZmpccXl7OA_PZ2nUYSY';
             const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
             
-            const CASTELLETTO_TOTALE = 200000; // 200.000€ per ogni banca
             const MESI = ['Gennaio', 'Febbraio', 'Marzo', 'Aprile', 'Maggio', 'Giugno', 
                          'Luglio', 'Agosto', 'Settembre', 'Ottobre', 'Novembre', 'Dicembre'];
             
             let allFatture = [];
             let fatturePerBanca = {};
+            let castellettiPerBanca = {}; // Castelletti specifici per ogni banca
             
             // Toggle dashboard
             document.getElementById('castellettiHeader').addEventListener('click', function() {
@@ -3020,8 +3020,19 @@
                 list.innerHTML = '<div class="loading-state">Caricamento castelletti...</div>';
                 
                 try {
-                    const { data, error } = await sb.from('FattureCastelletti').select('*');
+                    // Carica PRIMA i castelletti
+                    const { data: bancheData, error: bancheError } = await sb.from('ImportiCastelletti').select('*');
+                    if (bancheError) throw bancheError;
                     
+                    // Mappa castelletti per nome banca
+                    if (bancheData) {
+                        bancheData.forEach(b => {
+                            castellettiPerBanca[b.nome] = b.totaleCastelletto || 0;
+                        });
+                    }
+                    
+                    // Poi carica le fatture
+                    const { data, error } = await sb.from('FattureCastelletti').select('*');
                     if (error) throw error;
                     
                     if (data && data.length > 0) {
@@ -3103,6 +3114,9 @@
             function renderMesi(bancaIdx, banca) {
                 const grid = document.getElementById(`mesiGrid${bancaIdx}`);
                 
+                // Prendi castelletto specifico per questa banca
+                const CASTELLETTO_TOTALE = castellettiPerBanca[banca] || 0;
+                
                 // Calcola totale da pagare per tutta la banca
                 const tutteFattureBanca = Object.values(fatturePerBanca[banca]).flat();
                 const totaleDaPagare = tutteFattureBanca.reduce((sum, f) => sum + (f.importoDaPagare || 0), 0);
@@ -3120,7 +3134,9 @@
                     const rimanente = CASTELLETTO_TOTALE + occupato;
                     
                     // Percentuale basata su quanto è occupato rispetto al totale
-                    const percentuale = Math.min(100, Math.max(0, ((CASTELLETTO_TOTALE - rimanente) / CASTELLETTO_TOTALE) * 100));
+                    const percentuale = CASTELLETTO_TOTALE > 0 
+                        ? Math.min(100, Math.max(0, ((CASTELLETTO_TOTALE - rimanente) / CASTELLETTO_TOTALE) * 100))
+                        : 0;
                     
                     let badgeClass = 'green';
                     let badgeText = 'Disponibile';
@@ -3385,4 +3401,3 @@
     </div>
 </body>
 </html>
-

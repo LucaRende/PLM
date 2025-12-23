@@ -1281,6 +1281,10 @@
             overflow: hidden;
         }
         
+        .banca-card:first-child {
+            margin-top: 20px;
+        }
+        
         .banca-header {
             padding: 20px;
             cursor: pointer;
@@ -1321,8 +1325,8 @@
         
         .mesi-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-            gap: 12px;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 16px;
             padding: 20px;
         }
         
@@ -1330,7 +1334,7 @@
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid rgba(255, 255, 255, 0.06);
             border-radius: 12px;
-            padding: 16px;
+            padding: 20px;
             cursor: pointer;
             transition: all 0.2s ease;
             text-align: center;
@@ -1339,6 +1343,7 @@
         .mese-card:hover {
             background: rgba(255, 255, 255, 0.06);
             transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
         }
         
         .mese-card:active {
@@ -1346,27 +1351,62 @@
         }
         
         .mese-nome {
-            font-size: 0.9em;
-            font-weight: 600;
+            font-size: 1.1em;
+            font-weight: 700;
             color: white;
-            margin-bottom: 12px;
+            margin-bottom: 16px;
+            letter-spacing: 0.5px;
         }
         
         .mese-progress {
-            width: 80px;
-            height: 80px;
-            margin: 0 auto 10px;
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 16px;
         }
         
         .mese-stats {
-            font-size: 0.75em;
-            color: rgba(255, 255, 255, 0.6);
-            margin-top: 8px;
+            font-size: 0.8em;
+            color: rgba(255, 255, 255, 0.7);
+            margin-top: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        
+        .mese-stats-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
         
         .mese-stats-value {
             color: white;
+            font-weight: 700;
+            font-size: 1.1em;
+        }
+        
+        .mese-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.75em;
             font-weight: 600;
+            margin-top: 8px;
+        }
+        
+        .mese-badge.green {
+            background: rgba(34, 197, 94, 0.2);
+            color: #22c55e;
+        }
+        
+        .mese-badge.yellow {
+            background: rgba(245, 158, 11, 0.2);
+            color: #f59e0b;
+        }
+        
+        .mese-badge.red {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
         }
         
         .fatture-list {
@@ -1399,6 +1439,12 @@
         .fattura-value {
             color: white;
             font-weight: 500;
+        }
+        
+        @media (max-width: 768px) {
+            .mesi-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
         }
         
         /* Paginazione */
@@ -2946,7 +2992,7 @@
         // ===== PANORAMICA CASTELLETTI DASHBOARD =====
         (function() {
             const SUPABASE_URL = 'https://uoykvjxerdrthnmnfmgc.supabase.co';
-            const SUPABASE_KEY = 'sb_publishable_iGVhzkLqAktDZmpccXl7OA_PZ2nUYSY';
+            const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVveWt2anhlcmRydGhubW5mbWdjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzMzMTMwNTQsImV4cCI6MjA0ODg4OTA1NH0.gxtB0EFvF4AwbRHVfb_c4qGe7dRVdjkf8qITEAd_EEk';
             const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
             
             const CASTELLETTO_TOTALE = 200000; // 200.000€ per ogni banca
@@ -3057,14 +3103,37 @@
             function renderMesi(bancaIdx, banca) {
                 const grid = document.getElementById(`mesiGrid${bancaIdx}`);
                 
+                // Calcola totale da pagare per tutta la banca
+                const tutteFattureBanca = Object.values(fatturePerBanca[banca]).flat();
+                const totaleDaPagare = tutteFattureBanca.reduce((sum, f) => sum + (f.importoDaPagare || 0), 0);
+                
                 grid.innerHTML = MESI.map((mese, meseIdx) => {
                     const fatture = fatturePerBanca[banca][meseIdx] || [];
-                    const occupato = fatture.reduce((sum, f) => sum + (Math.abs(f.importoDaPagare) || 0), 0);
-                    const rimanente = CASTELLETTO_TOTALE - occupato;
-                    const percentuale = Math.min(100, (occupato / CASTELLETTO_TOTALE) * 100);
+                    
+                    // Somma da pagare del mese
+                    const daPagareMese = fatture.reduce((sum, f) => sum + (f.importoDaPagare || 0), 0);
+                    
+                    // Castelletto occupato = X - da pagare mese
+                    const occupato = totaleDaPagare - daPagareMese;
+                    
+                    // Castelletto rimanente = castelletto totale + occupato
+                    const rimanente = CASTELLETTO_TOTALE + occupato;
+                    
+                    // Percentuale basata su quanto è occupato rispetto al totale
+                    const percentuale = Math.min(100, Math.max(0, ((CASTELLETTO_TOTALE - rimanente) / CASTELLETTO_TOTALE) * 100));
+                    
+                    let badgeClass = 'green';
+                    let badgeText = 'Disponibile';
+                    if (percentuale > 80) {
+                        badgeClass = 'red';
+                        badgeText = 'Critico';
+                    } else if (percentuale > 50) {
+                        badgeClass = 'yellow';
+                        badgeText = 'Attenzione';
+                    }
                     
                     return `
-                        <div class="mese-card" onclick="toggleMese(${bancaIdx}, ${meseIdx}, '${banca}')">
+                        <div class="mese-card" id="meseCard_${bancaIdx}_${meseIdx}" onclick="toggleMese(${bancaIdx}, ${meseIdx}, '${banca}')">
                             <div class="mese-nome">${mese}</div>
                             <svg class="mese-progress" viewBox="0 0 100 100">
                                 <circle cx="50" cy="50" r="40" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="8"/>
@@ -3074,14 +3143,25 @@
                                     stroke-dasharray="${Math.PI * 80}" 
                                     stroke-dashoffset="${Math.PI * 80 * (1 - percentuale / 100)}"
                                     transform="rotate(-90 50 50)"/>
-                                <text x="50" y="50" text-anchor="middle" dy="0.3em" fill="white" font-size="16" font-weight="600">
+                                <text x="50" y="50" text-anchor="middle" dy="0.3em" fill="white" font-size="20" font-weight="700">
                                     ${percentuale.toFixed(0)}%
                                 </text>
                             </svg>
                             <div class="mese-stats">
-                                <div>Occupato: <span class="mese-stats-value">${formatEuro(occupato)}</span></div>
-                                <div>Rimanente: <span class="mese-stats-value">${formatEuro(rimanente)}</span></div>
+                                <div class="mese-stats-row">
+                                    <span>Occupato:</span>
+                                    <span class="mese-stats-value">${formatEuroShort(Math.abs(occupato))}</span>
+                                </div>
+                                <div class="mese-stats-row">
+                                    <span>Disponibile:</span>
+                                    <span class="mese-stats-value">${formatEuroShort(Math.abs(rimanente))}</span>
+                                </div>
+                                <div class="mese-stats-row">
+                                    <span>Fatture:</span>
+                                    <span class="mese-stats-value">${fatture.length}</span>
+                                </div>
                             </div>
+                            <div class="mese-badge ${badgeClass}">${badgeText}</div>
                         </div>
                     `;
                 }).join('');
@@ -3090,7 +3170,7 @@
                 grid.insertAdjacentHTML('afterend', '<div id="fattureContainer' + bancaIdx + '"></div>');
             }
             
-            // Toggle mese per mostrare fatture
+            // Toggle mese per mostrare fatture (SOLO UNO APERTO ALLA VOLTA)
             window.toggleMese = function(bancaIdx, meseIdx, banca) {
                 const container = document.getElementById(`fattureContainer${bancaIdx}`);
                 const currentMeseId = `fatture_${bancaIdx}_${meseIdx}`;
@@ -3102,52 +3182,67 @@
                     return;
                 }
                 
+                // CHIUDI TUTTI gli altri mesi aperti in TUTTE le banche
+                document.querySelectorAll('[id^="fattureContainer"]').forEach(cont => {
+                    if (cont !== container) {
+                        cont.innerHTML = '';
+                        cont.dataset.currentMese = '';
+                    }
+                });
+                
                 // Mostra fatture del mese
                 const fatture = fatturePerBanca[banca][meseIdx] || [];
                 container.dataset.currentMese = currentMeseId;
                 
                 if (fatture.length === 0) {
                     container.innerHTML = '<div class="fatture-list"><div style="text-align: center; color: rgba(255,255,255,0.5); padding: 20px;">Nessuna fattura in questo mese</div></div>';
-                    return;
-                }
-                
-                container.innerHTML = `
-                    <div class="fatture-list">
-                        <h4 style="color: white; margin-bottom: 12px; padding: 0 0 8px; border-bottom: 1px solid rgba(255,255,255,0.1);">
-                            Fatture ${MESI[meseIdx]} (${fatture.length})
-                        </h4>
-                        ${fatture.map(f => `
-                            <div class="fattura-item">
-                                <div class="fattura-field">
-                                    <div class="fattura-label">Cliente</div>
-                                    <div class="fattura-value">${f.cliente || '-'}</div>
-                                </div>
-                                <div class="fattura-field">
-                                    <div class="fattura-label">N° Fattura</div>
-                                    <div class="fattura-value">${f.numeroFattura || '-'}</div>
-                                </div>
-                                <div class="fattura-field">
-                                    <div class="fattura-label">Tipologia</div>
-                                    <div class="fattura-value">${f.tipologiaFattura || '-'}</div>
-                                </div>
-                                <div class="fattura-field">
-                                    <div class="fattura-label">Creazione</div>
-                                    <div class="fattura-value">${f.dataCreazione_Formattato || '-'}</div>
-                                </div>
-                                <div class="fattura-field">
-                                    <div class="fattura-label">Scadenza</div>
-                                    <div class="fattura-value">${f.dataScadenzaFormattato || '-'}</div>
-                                </div>
-                                <div class="fattura-field">
-                                    <div class="fattura-label">Da Pagare</div>
-                                    <div class="fattura-value" style="color: ${f.importoDaPagare < 0 ? '#22c55e' : '#ef4444'}">
-                                        ${f.importoDaPagare_Formattato || '-'}
+                } else {
+                    container.innerHTML = `
+                        <div class="fatture-list">
+                            <h4 style="color: white; margin-bottom: 12px; padding: 0 0 8px; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                                Fatture ${MESI[meseIdx]} (${fatture.length})
+                            </h4>
+                            ${fatture.map(f => `
+                                <div class="fattura-item">
+                                    <div class="fattura-field">
+                                        <div class="fattura-label">Cliente</div>
+                                        <div class="fattura-value">${f.cliente || '-'}</div>
+                                    </div>
+                                    <div class="fattura-field">
+                                        <div class="fattura-label">N° Fattura</div>
+                                        <div class="fattura-value">${f.numeroFattura || '-'}</div>
+                                    </div>
+                                    <div class="fattura-field">
+                                        <div class="fattura-label">Tipologia</div>
+                                        <div class="fattura-value">${f.tipologiaFattura || '-'}</div>
+                                    </div>
+                                    <div class="fattura-field">
+                                        <div class="fattura-label">Creazione</div>
+                                        <div class="fattura-value">${f.dataCreazione_Formattato || '-'}</div>
+                                    </div>
+                                    <div class="fattura-field">
+                                        <div class="fattura-label">Scadenza</div>
+                                        <div class="fattura-value">${f.dataScadenzaFormattato || '-'}</div>
+                                    </div>
+                                    <div class="fattura-field">
+                                        <div class="fattura-label">Da Pagare</div>
+                                        <div class="fattura-value" style="color: ${f.importoDaPagare < 0 ? '#22c55e' : '#ef4444'}">
+                                            ${f.importoDaPagare_Formattato || '-'}
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        `).join('')}
-                    </div>
-                `;
+                            `).join('')}
+                        </div>
+                    `;
+                }
+                
+                // AUTO-SCROLL al container delle fatture dopo breve delay per animazione
+                setTimeout(() => {
+                    container.scrollIntoView({ 
+                        behavior: 'smooth', 
+                        block: 'nearest'
+                    });
+                }, 100);
             };
             
             // Format euro
@@ -3158,6 +3253,15 @@
                     minimumFractionDigits: 0,
                     maximumFractionDigits: 0
                 }).format(Math.abs(value));
+            }
+            
+            // Format euro short (con K)
+            function formatEuroShort(value) {
+                const abs = Math.abs(value);
+                if (abs >= 1000) {
+                    return (abs / 1000).toFixed(0) + 'K€';
+                }
+                return abs.toFixed(0) + '€';
             }
             
             // Carica dati all'avvio

@@ -52,7 +52,7 @@
             text-align: center;
             margin-bottom: 15px;
             letter-spacing: 5px;
-            text-shadow: 0 2px 10px rgba(255, 255, 255, 0.3);
+            filter: drop-shadow(0 8px 24px rgba(59, 130, 246, 0.5));
             -webkit-font-smoothing: antialiased;
         }
 
@@ -1547,10 +1547,7 @@
         .login-title {
             font-size: 1.8em;
             font-weight: 700;
-            background: linear-gradient(135deg, #c51d34 0%, #c51d34 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            color: white;
             margin-bottom: 10px;
         }
 
@@ -2039,6 +2036,11 @@
             }
 
             /* Progress circles larger */
+            .circular-progress {
+                width: 140px;
+                height: 140px;
+            }
+            
             .progress-circle {
                 width: 180px;
                 height: 180px;
@@ -2250,7 +2252,7 @@
             <div class="logo-container">
                 <img src="logo-tondo.png" alt="Logo CRM" class="logo">
             </div>
-            <div class="signature-text">Pro System</div>
+            <div class="signature-text">Pro System<sup style="font-size: 0.5em; margin-left: 3px; color: white;">®</sup></div>
         </div>
 
         <div class="dashboards-grid">

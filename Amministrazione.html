@@ -1,9 +1,690 @@
-<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<style>
-  body{margin:0;height:100vh;display:grid;place-items:center;
-    background:radial-gradient(circle at 30% 20%,#7b5cff,transparent 55%),
-              radial-gradient(circle at 80% 30%,#00d2ff,transparent 55%),
-              #070a12;color:#fff}
-  .sig{font:700 70px/1.1 "Brush Script MT","Snell Roundhand",cursive;transform:rotate(-2deg)}
-</style>
-<div class="sig">Pro System</div>
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>PLM 2 - Amministrazione</title>
+    <link rel="icon" type="image/png" href="logo-tondo.png">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Satisfy&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #1a2332 0%, #2d3748 50%, #1e2936 100%);
+            min-height: 100vh;
+            padding: 20px 15px;
+            color: #ffffff;
+            overflow-x: hidden;
+            position: relative;
+        }
+        
+        /* Sfondo animato tecnologico stile Apple */
+        body::before {
+            content: '';
+            position: fixed;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background-image: 
+                radial-gradient(circle at 20% 50%, rgba(59, 130, 246, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(197, 29, 52, 0.06) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, rgba(59, 130, 246, 0.05) 0%, transparent 40%);
+            animation: float-ambient 20s ease-in-out infinite;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(transparent 0%, transparent 95%, rgba(59, 130, 246, 0.02) 95%, rgba(59, 130, 246, 0.02) 100%),
+                repeating-linear-gradient(
+                    0deg,
+                    transparent,
+                    transparent 100px,
+                    rgba(59, 130, 246, 0.015) 100px,
+                    rgba(59, 130, 246, 0.015) 101px
+                );
+            animation: scan-tech 15s linear infinite;
+            pointer-events: none;
+            z-index: 0;
+            mix-blend-mode: screen;
+        }
+        
+        @keyframes float-ambient {
+            0%, 100% {
+                transform: translate(0, 0) rotate(0deg);
+                opacity: 1;
+            }
+            25% {
+                transform: translate(5%, -5%) rotate(90deg);
+                opacity: 0.8;
+            }
+            50% {
+                transform: translate(-5%, 5%) rotate(180deg);
+                opacity: 1;
+            }
+            75% {
+                transform: translate(5%, 5%) rotate(270deg);
+                opacity: 0.9;
+            }
+        }
+        
+        @keyframes scan-tech {
+            0% {
+                transform: translateY(0);
+            }
+            100% {
+                transform: translateY(10%);
+            }
+        }
+
+        .main-container {
+            max-width: 500px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .logo {
+            width: 100px;
+            height: 100px;
+            object-fit: contain;
+            filter: drop-shadow(0 8px 24px rgba(59, 130, 246, 0.5));
+            transition: all 0.3s ease;
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: crisp-edges;
+        }
+
+        .logo:active {
+            transform: scale(0.95);
+        }
+
+        .logo-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 8px;
+        }
+
+        .signature-text {
+            font-family: 'Inter', -apple-system, sans-serif;
+            font-size: 1em;
+            font-weight: 400;
+            color: white;
+            text-align: center;
+            margin-bottom: 15px;
+            letter-spacing: 5px;
+            filter: drop-shadow(0 8px 24px rgba(59, 130, 246, 0.5));
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .title-section {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        /* Particelle */
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, rgba(59, 130, 246, 0.05) 40%, transparent 70%);
+            animation: float 20s infinite ease-in-out;
+        }
+
+        .particle:nth-child(1) {
+            width: 120px;
+            height: 120px;
+            top: 10%;
+            left: 20%;
+            animation-delay: 0s;
+        }
+
+        .particle:nth-child(2) {
+            width: 150px;
+            height: 150px;
+            top: 60%;
+            left: 80%;
+            animation-delay: 5s;
+            background: radial-gradient(circle, rgba(197, 29, 52, 0.12) 0%, rgba(197, 29, 52, 0.04) 40%, transparent 70%);
+        }
+
+        .particle:nth-child(3) {
+            width: 130px;
+            height: 130px;
+            top: 80%;
+            left: 10%;
+            animation-delay: 10s;
+        }
+
+        .particle:nth-child(4) {
+            width: 110px;
+            height: 110px;
+            top: 30%;
+            left: 70%;
+            animation-delay: 15s;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.14) 0%, rgba(59, 130, 246, 0.05) 40%, transparent 70%);
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translate(0, 0) scale(1) rotate(0deg);
+                opacity: 0.5;
+            }
+            25% {
+                transform: translate(40px, -40px) scale(1.2) rotate(90deg);
+                opacity: 0.8;
+            }
+            50% {
+                transform: translate(-30px, 30px) scale(0.95) rotate(180deg);
+                opacity: 0.6;
+            }
+            75% {
+                transform: translate(50px, 15px) scale(1.1) rotate(270deg);
+                opacity: 0.7;
+            }
+        }
+
+        /* Dashboard */
+        .dashboard {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            overflow: hidden;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 1;
+        }
+
+        .dashboard-header {
+            padding: 24px;
+            cursor: pointer;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .dashboard-header:active {
+            transform: scale(0.99);
+        }
+
+        .dashboard-top {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex: 1;
+        }
+
+        .dashboard-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 42px;
+            height: 42px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .dashboard-title h2 {
+            color: white;
+            font-size: 1.35em;
+            font-weight: 600;
+            margin: 0;
+            letter-spacing: -0.5px;
+        }
+
+        .toggle-arrow {
+            font-size: 1.2em;
+            color: rgba(255, 255, 255, 0.6);
+            transition: transform 0.3s ease;
+        }
+
+        .dashboard-header.active .toggle-arrow {
+            transform: rotate(180deg);
+        }
+
+        .dashboard-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .dashboard-content.show {
+            max-height: 2000px;
+        }
+
+        .dashboard-body {
+            padding: 24px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .empty-icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+            opacity: 0.3;
+        }
+
+        /* Footer */
+        .modern-footer {
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 40px 20px 30px;
+            margin-top: 60px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .footer-section {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .footer-title {
+            color: #c51d34;
+            font-size: 0.75em;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 8px;
+        }
+
+        .footer-links {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .footer-link {
+            color: rgba(255, 255, 255, 0.6);
+            text-decoration: none;
+            font-size: 0.9em;
+            transition: all 0.2s ease;
+            padding: 4px 0;
+        }
+
+        .footer-link:hover {
+            color: white;
+            padding-left: 8px;
+        }
+
+        .footer-bottom {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .footer-credits {
+            font-size: 0.8em;
+            color: rgba(255, 255, 255, 0.4);
+            display: block;
+        }
+
+        .footer-social {
+            display: flex;
+            gap: 15px;
+        }
+
+        .social-link {
+            font-size: 1.3em;
+            transition: transform 0.2s ease;
+            text-decoration: none;
+        }
+
+        .social-link:hover {
+            transform: scale(1.2);
+        }
+
+        /* Menu floating stile Notion */
+        .floating-menu {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 9999;
+        }
+        
+        .menu-toggle {
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, #c51d34 0%, #a01628 100%);
+            border: none;
+            box-shadow: 0 8px 24px rgba(197, 29, 52, 0.4), 0 2px 8px rgba(0, 0, 0, 0.3);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        .menu-toggle:hover {
+            transform: scale(1.05);
+            box-shadow: 0 12px 32px rgba(197, 29, 52, 0.5), 0 4px 12px rgba(0, 0, 0, 0.4);
+        }
+        
+        .menu-toggle:active {
+            transform: scale(0.95);
+        }
+        
+        .menu-toggle svg {
+            width: 28px;
+            height: 28px;
+            stroke: white;
+            transition: transform 0.3s ease;
+        }
+        
+        .menu-toggle.active svg {
+            transform: rotate(45deg);
+        }
+        
+        .menu-panel {
+            position: absolute;
+            bottom: 70px;
+            right: 0;
+            background: rgba(30, 35, 45, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 8px;
+            min-width: 220px;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px) scale(0.95);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            pointer-events: none;
+        }
+        
+        .menu-panel.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0) scale(1);
+            pointer-events: all;
+        }
+        
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 14px;
+            border-radius: 10px;
+            color: white;
+            text-decoration: none;
+            font-size: 0.95em;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        
+        .menu-item:hover {
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateX(-2px);
+        }
+        
+        .menu-item:active {
+            transform: scale(0.98);
+        }
+        
+        .menu-item-icon {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .menu-item-text {
+            flex: 1;
+        }
+        
+        .menu-item.current {
+            background: rgba(197, 29, 52, 0.15);
+            border-left: 3px solid #c51d34;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 15px 10px;
+            }
+
+            .dashboard-header {
+                padding: 20px;
+            }
+
+            .dashboard-body {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <!-- Animated Background Particles -->
+        <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; overflow: hidden;">
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+        </div>
+        
+        <div class="title-section" style="position: relative; z-index: 1;">
+            <div class="logo-container">
+                <img src="logo-tondo.png" alt="Logo PLM" class="logo">
+            </div>
+            <div class="signature-text">Pro System<sup style="font-size: 0.5em; margin-left: 3px; color: white;">®</sup></div>
+        </div>
+
+        <!-- Dashboard Panoramica Castelletti -->
+        <div class="dashboard">
+            <div class="dashboard-header" id="castellettiHeader">
+                <div class="dashboard-top">
+                    <div class="dashboard-title">
+                        <span class="dashboard-icon">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <rect x="3" y="4" width="18" height="16" rx="2" stroke="white" stroke-width="2" fill="none"/>
+                                <line x1="3" y1="10" x2="21" y2="10" stroke="white" stroke-width="2"/>
+                                <line x1="9" y1="10" x2="9" y2="20" stroke="white" stroke-width="2"/>
+                                <line x1="15" y1="10" x2="15" y2="20" stroke="white" stroke-width="2"/>
+                            </svg>
+                        </span>
+                        <h2>Panoramica Castelletti</h2>
+                    </div>
+                </div>
+                <span class="toggle-arrow">▼</span>
+            </div>
+            <div class="dashboard-content" id="castellettiContent">
+                <div class="dashboard-body">
+                    <div class="empty-state">
+                        <div class="empty-icon">📊</div>
+                        <div style="color: rgba(255, 255, 255, 0.6);">Contenuto in arrivo...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modern Footer -->
+    <footer class="modern-footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3 class="footer-title">Dashboard</h3>
+                <div class="footer-links">
+                    <a href="index.html" class="footer-link">Dashboard principale</a>
+                    <a href="Amministrazione.html" class="footer-link">Amministrazione</a>
+                </div>
+            </div>
+
+            <div class="footer-section">
+                <h3 class="footer-title">Risorse</h3>
+                <div class="footer-links">
+                    <a href="#" class="footer-link">Documentazione</a>
+                    <a href="#" class="footer-link">Guide & Tutorial</a>
+                    <a href="mailto:luca.rende@prosystemsrl.eu?subject=Richiesta%20di%20aiuto&body=Volevo%20chiedere%20un%20informazione%20sulla%20nuova%20dashboard%20online%20del%20PLM%202." class="footer-link">Supporto</a>
+                </div>
+            </div>
+
+            <div class="footer-section">
+                <h3 class="footer-title">Sistema</h3>
+                <div style="color: rgba(255, 255, 255, 0.6); font-size: 0.85em;">
+                    <div style="color: #c51d34; font-weight: 600; margin-bottom: 8px;">Pro System</div>
+                </div>
+                <p style="color: rgba(255, 255, 255, 0.4); font-size: 0.75em; line-height: 1.6;">
+                    Versione 2.0.0<br>
+                    Ultimo aggiornamento: Dicembre 2025
+                </p>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <div class="footer-credits">
+                <div style="margin-bottom: 10px;">© 2025 PLM 2 - Tutti i diritti riservati</div>
+                <div style="font-size: 0.9em; color: rgba(255, 255, 255, 0.5);">
+                    Power by: <span style="font-family: 'Inter', -apple-system, sans-serif; font-size: 1.5em; color: white;">Rende Luca</span>
+                </div>
+            </div>
+            <div class="footer-social">
+                <a href="#" class="social-link" title="Documentation">📚</a>
+                <a href="#" class="social-link" title="Support">💬</a>
+                <a href="#" class="social-link" title="Settings">⚙️</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Menu Floating Stile Notion -->
+    <div class="floating-menu">
+        <button class="menu-toggle" id="menuToggle" onclick="toggleMenu()">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="1"></circle>
+                <circle cx="12" cy="5" r="1"></circle>
+                <circle cx="12" cy="19" r="1"></circle>
+            </svg>
+        </button>
+        
+        <div class="menu-panel" id="menuPanel">
+            <a href="index.html" class="menu-item">
+                <div class="menu-item-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="3" width="7" height="7" rx="1"></rect>
+                        <rect x="14" y="3" width="7" height="7" rx="1"></rect>
+                        <rect x="14" y="14" width="7" height="7" rx="1"></rect>
+                        <rect x="3" y="14" width="7" height="7" rx="1"></rect>
+                    </svg>
+                </div>
+                <span class="menu-item-text">Dashboard principale</span>
+            </a>
+            
+            <a href="Amministrazione.html" class="menu-item current">
+                <div class="menu-item-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="3"></circle>
+                        <path d="M12 1v6m0 6v6"></path>
+                        <circle cx="12" cy="12" r="10"></circle>
+                    </svg>
+                </div>
+                <span class="menu-item-text">Amministrazione</span>
+            </a>
+            
+            <div style="border-top: 1px solid rgba(255, 255, 255, 0.1); margin: 8px 0;"></div>
+            
+            <a href="#" class="menu-item" onclick="logout(); return false;">
+                <div class="menu-item-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                        <polyline points="16 17 21 12 16 7"></polyline>
+                        <line x1="21" y1="12" x2="9" y2="12"></line>
+                    </svg>
+                </div>
+                <span class="menu-item-text">Esci</span>
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // Toggle dashboard
+        document.getElementById('castellettiHeader').addEventListener('click', function() {
+            const header = this;
+            const content = document.getElementById('castellettiContent');
+            
+            header.classList.toggle('active');
+            content.classList.toggle('show');
+        });
+
+        // Menu toggle
+        function toggleMenu() {
+            const menuPanel = document.getElementById('menuPanel');
+            const menuToggle = document.getElementById('menuToggle');
+            menuPanel.classList.toggle('active');
+            menuToggle.classList.toggle('active');
+        }
+        
+        // Chiudi menu quando clicchi fuori
+        document.addEventListener('click', function(e) {
+            const menu = document.querySelector('.floating-menu');
+            if (menu && !menu.contains(e.target)) {
+                document.getElementById('menuPanel').classList.remove('active');
+                document.getElementById('menuToggle').classList.remove('active');
+            }
+        });
+
+        // Logout
+        function logout() {
+            localStorage.removeItem('plm_remembered_password');
+            localStorage.removeItem('plm_access_level');
+            window.location.href = 'index.html';
+        }
+
+        // Controlla accesso (solo admin può vedere questa pagina)
+        window.addEventListener('DOMContentLoaded', function() {
+            const accessLevel = localStorage.getItem('plm_access_level');
+            if (accessLevel !== 'admin') {
+                alert('Accesso negato. Solo gli amministratori possono accedere a questa sezione.');
+                window.location.href = 'index.html';
+            }
+        });
+    </script>
+</body>
+</html>

@@ -2145,10 +2145,23 @@
             .login-icon,
             .logo,
             .dashboard-icon,
-            .stat-icon {
+            .stat-icon,
+            .dashboard-header,
+            .dashboard-content,
+            .login-card,
+            .particle {
                 -webkit-transform: translateZ(0);
                 transform: translateZ(0);
-                will-change: transform;
+                -webkit-backface-visibility: hidden;
+                backface-visibility: hidden;
+                -webkit-perspective: 1000;
+                perspective: 1000;
+            }
+            
+            /* Forza re-rendering dopo animazioni */
+            .dashboard-header.active,
+            .dashboard-content.collapsed {
+                will-change: auto;
             }
             
             /* Rimuovi delay tap su iOS */
@@ -2157,6 +2170,7 @@
             .activity-card {
                 -webkit-tap-highlight-color: transparent;
                 touch-action: manipulation;
+                cursor: pointer;
             }
         }
         
@@ -2460,8 +2474,17 @@
                 const header = document.getElementById('dashHeader');
                 const content = document.getElementById('dashContent');
                 
+                // Forza reflow per iOS - fix animazioni ripetute
+                void header.offsetHeight;
+                void content.offsetHeight;
+                
                 header.classList.toggle('active');
                 content.classList.toggle('show');
+                
+                // Forza re-render dopo transizione
+                setTimeout(() => {
+                    void content.offsetHeight;
+                }, 350);
             };
 
             window.toggleFilters = function() {
@@ -2722,7 +2745,26 @@
                 }
             }
 
-            document.getElementById('dashHeader').onclick = window.toggleDash;
+            // Event listener ottimizzato per iPhone
+            const dashHeader = document.getElementById('dashHeader');
+            
+            // Supporto touch per iOS
+            let touchStartY = 0;
+            dashHeader.addEventListener('touchstart', function(e) {
+                touchStartY = e.touches[0].clientY;
+            }, { passive: true });
+            
+            dashHeader.addEventListener('touchend', function(e) {
+                const touchEndY = e.changedTouches[0].clientY;
+                // Evita toggle se è uno scroll
+                if (Math.abs(touchEndY - touchStartY) < 10) {
+                    window.toggleDash();
+                }
+            }, { passive: true });
+            
+            // Click normale per desktop
+            dashHeader.addEventListener('click', window.toggleDash);
+            
             loadData(); // Load data immediately on page load
         })();
 
@@ -2738,8 +2780,17 @@
                 const header = document.getElementById('ganttHeader');
                 const container = document.getElementById('ganttContainer');
                 
+                // Forza reflow per iOS - fix animazioni ripetute
+                void header.offsetHeight;
+                void container.offsetHeight;
+                
                 header.classList.toggle('active');
                 container.classList.toggle('collapsed');
+                
+                // Forza re-render dopo transizione
+                setTimeout(() => {
+                    void container.offsetHeight;
+                }, 350);
             }
 
             function generateTimeline() {
@@ -3132,7 +3183,26 @@
                 return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:00`;
             }
 
-            document.getElementById('ganttHeader').onclick = toggleGanttDashboard;
+            // Event listener ottimizzato per iPhone
+            const ganttHeader = document.getElementById('ganttHeader');
+            
+            // Supporto touch per iOS
+            let touchStartY = 0;
+            ganttHeader.addEventListener('touchstart', function(e) {
+                touchStartY = e.touches[0].clientY;
+            }, { passive: true });
+            
+            ganttHeader.addEventListener('touchend', function(e) {
+                const touchEndY = e.changedTouches[0].clientY;
+                // Evita toggle se è uno scroll
+                if (Math.abs(touchEndY - touchStartY) < 10) {
+                    toggleGanttDashboard();
+                }
+            }, { passive: true });
+            
+            // Click normale per desktop
+            ganttHeader.addEventListener('click', toggleGanttDashboard);
+            
             generateTimeline();
             loadGanttData();
 
@@ -3236,19 +3306,40 @@
                 
                 // Animazione: logo del login si sovrappone a quello della home
                 setTimeout(() => {
-                    // Ottieni posizione logo home
-                    const homeLogo = document.querySelector('.logo-container .logo');
+                    // Forza il reflow per assicurarsi che gli elementi siano renderizzati
+                    void document.body.offsetHeight;
+                    
+                    // Ottieni posizione logo home - usa querySelector più specifico
+                    const homeLogo = document.querySelector('.main-container .logo-container .logo');
+                    
+                    if (!homeLogo) {
+                        console.error('Logo home non trovato!');
+                        // Fallback: fade out normale
+                        loginOverlay.classList.add('fade-out');
+                        setTimeout(() => {
+                            loginOverlay.remove();
+                            initializeDashboard();
+                        }, 800);
+                        return;
+                    }
+                    
                     const homeLogoRect = homeLogo.getBoundingClientRect();
                     const loginIconRect = loginIcon.getBoundingClientRect();
+                    
+                    console.log('Home Logo:', homeLogoRect);
+                    console.log('Login Icon:', loginIconRect);
                     
                     // Calcola offset per spostare il logo login sopra quello home
                     const translateX = homeLogoRect.left - loginIconRect.left + (homeLogoRect.width - loginIconRect.width) / 2;
                     const translateY = homeLogoRect.top - loginIconRect.top + (homeLogoRect.height - loginIconRect.height) / 2;
                     const scale = homeLogoRect.width / loginIconRect.width;
                     
-                    // Applica trasformazione
-                    loginIcon.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
-                    loginIcon.style.transition = 'transform 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
+                    console.log('Transform:', {translateX, translateY, scale});
+                    
+                    // Applica trasformazione con supporto iOS
+                    loginIcon.style.transform = `translate3d(${translateX}px, ${translateY}px, 0) scale(${scale})`;
+                    loginIcon.style.webkitTransform = `translate3d(${translateX}px, ${translateY}px, 0) scale(${scale})`;
+                    loginIcon.style.transition = 'transform 0.8s cubic-bezier(0.4, 0, 0.2, 1), -webkit-transform 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
                     
                     // Dopo animazione, fai fade out overlay
                     setTimeout(() => {

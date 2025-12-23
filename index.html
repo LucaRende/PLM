@@ -3624,14 +3624,20 @@
     <script>
         // Login System
         const CORRECT_PASSWORD = 'Prosystem2025!';
+        const ADMIN_PASSWORD = 'ProsystemPro';
+        let userAccessLevel = 'user'; // 'user' o 'admin'
         
         // Show loading animation on page load
         window.addEventListener('DOMContentLoaded', function() {
             // Controlla se password è salvata
             const savedPassword = localStorage.getItem('plm_remembered_password');
+            const savedAccessLevel = localStorage.getItem('plm_access_level');
             
-            if (savedPassword === CORRECT_PASSWORD) {
+            if ((savedPassword === CORRECT_PASSWORD || savedPassword === ADMIN_PASSWORD) && savedAccessLevel) {
                 // Skip login, vai direttamente alla dashboard
+                userAccessLevel = savedAccessLevel;
+                updateMenuVisibility();
+                
                 setTimeout(() => {
                     document.getElementById('loadingContainer').classList.add('hidden');
                     setTimeout(() => {
@@ -3667,13 +3673,21 @@
             
             const enteredPassword = passwordInput.value;
             
-            if (enteredPassword === CORRECT_PASSWORD) {
-                // Salva password se checkbox è selezionato
+            if (enteredPassword === CORRECT_PASSWORD || enteredPassword === ADMIN_PASSWORD) {
+                // Determina livello accesso
+                userAccessLevel = enteredPassword === ADMIN_PASSWORD ? 'admin' : 'user';
+                
+                // Salva password e livello se checkbox è selezionato
                 if (rememberPassword.checked) {
                     localStorage.setItem('plm_remembered_password', enteredPassword);
+                    localStorage.setItem('plm_access_level', userAccessLevel);
                 } else {
                     localStorage.removeItem('plm_remembered_password');
+                    localStorage.removeItem('plm_access_level');
                 }
+                
+                // Aggiorna visibilità menu
+                updateMenuVisibility();
                 
                 // Success!
                 loginError.classList.remove('show');
@@ -3787,6 +3801,23 @@
         // Rendi la funzione accessibile globalmente
         window.scrollToDashboard = scrollToDashboard;
         
+        // Aggiorna visibilità voci menu in base al livello accesso
+        function updateMenuVisibility() {
+            const adminMenuItem = document.getElementById('adminMenuItem');
+            if (adminMenuItem) {
+                adminMenuItem.style.display = userAccessLevel === 'admin' ? 'flex' : 'none';
+            }
+        }
+        
+        // Logout
+        function logout() {
+            localStorage.removeItem('plm_remembered_password');
+            localStorage.removeItem('plm_access_level');
+            location.reload();
+        }
+        
+        window.logout = logout;
+        
         // Menu floating toggle
         function toggleMenu() {
             const menuPanel = document.getElementById('menuPanel');
@@ -3828,18 +3859,28 @@
                 <span class="menu-item-text">Dashboard principale</span>
             </a>
             
-            <a href="Amministrazione.html" class="menu-item">
+            <a href="Amministrazione.html" class="menu-item" id="adminMenuItem" style="display: none;">
                 <div class="menu-item-icon">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <circle cx="12" cy="12" r="3"></circle>
-                        <path d="M12 1v6m0 6v6m0-13a9 9 0 0 1 9 9m-9-9a9 9 0 0 0-9 9m9 9a9 9 0 0 1-9-9m9 9a9 9 0 0 0 9-9"></path>
-                        <line x1="12" y1="2" x2="12" y2="4"></line>
-                        <line x1="12" y1="20" x2="12" y2="22"></line>
-                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <path d="M12 1v6m0 6v6"></path>
+                        <circle cx="12" cy="12" r="10"></circle>
                     </svg>
                 </div>
                 <span class="menu-item-text">Amministrazione</span>
+            </a>
+            
+            <div style="border-top: 1px solid rgba(255, 255, 255, 0.1); margin: 8px 0;"></div>
+            
+            <a href="#" class="menu-item" onclick="logout(); return false;">
+                <div class="menu-item-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                        <polyline points="16 17 21 12 16 7"></polyline>
+                        <line x1="21" y1="12" x2="9" y2="12"></line>
+                    </svg>
+                </div>
+                <span class="menu-item-text">Esci</span>
             </a>
         </div>
     </div>

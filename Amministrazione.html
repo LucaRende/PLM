@@ -6,6 +6,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>PLM 2</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
         @import url('https://fonts.googleapis.com/css2?family=Satisfy&display=swap');
@@ -1268,6 +1269,135 @@
 
         .empty-text {
             font-size: 0.95em;
+            font-weight: 500;
+        }
+        
+        /* Castelletti Styles */
+        .banca-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            margin-bottom: 16px;
+            overflow: hidden;
+        }
+        
+        .banca-header {
+            padding: 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.2s ease;
+        }
+        
+        .banca-header:active {
+            transform: scale(0.99);
+        }
+        
+        .banca-name {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: white;
+        }
+        
+        .banca-arrow {
+            color: rgba(255, 255, 255, 0.6);
+            transition: transform 0.3s ease;
+        }
+        
+        .banca-header.active .banca-arrow {
+            transform: rotate(180deg);
+        }
+        
+        .banca-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+        
+        .banca-content.show {
+            max-height: 5000px;
+        }
+        
+        .mesi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 12px;
+            padding: 20px;
+        }
+        
+        .mese-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 12px;
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+        }
+        
+        .mese-card:hover {
+            background: rgba(255, 255, 255, 0.06);
+            transform: translateY(-2px);
+        }
+        
+        .mese-card:active {
+            transform: scale(0.98);
+        }
+        
+        .mese-nome {
+            font-size: 0.9em;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 12px;
+        }
+        
+        .mese-progress {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 10px;
+        }
+        
+        .mese-stats {
+            font-size: 0.75em;
+            color: rgba(255, 255, 255, 0.6);
+            margin-top: 8px;
+        }
+        
+        .mese-stats-value {
+            color: white;
+            font-weight: 600;
+        }
+        
+        .fatture-list {
+            padding: 0 20px 20px;
+        }
+        
+        .fattura-item {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 8px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 12px;
+            font-size: 0.85em;
+        }
+        
+        .fattura-field {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        
+        .fattura-label {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.85em;
+        }
+        
+        .fattura-value {
+            color: white;
             font-weight: 500;
         }
         
@@ -2591,9 +2721,8 @@
             </div>
             <div class="dashboard-content" id="castellettiContent">
                 <div class="dashboard-body">
-                    <div class="empty-state">
-                        <div class="empty-icon">📊</div>
-                        <div class="empty-text">Contenuto in arrivo...</div>
+                    <div id="castellettiList">
+                        <div class="loading-state">Caricamento castelletti...</div>
                     </div>
                 </div>
             </div>
@@ -2816,19 +2945,223 @@
         
         // ===== PANORAMICA CASTELLETTI DASHBOARD =====
         (function() {
+            const SUPABASE_URL = 'https://uoykvjxerdrthnmnfmgc.supabase.co';
+            const SUPABASE_KEY = 'sb_publishable_iGVhzkLqAktDZmpccXl7OA_PZ2nUYSY';
+            const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+            
+            const CASTELLETTO_TOTALE = 200000; // 200.000€ per ogni banca
+            const MESI = ['Gennaio', 'Febbraio', 'Marzo', 'Aprile', 'Maggio', 'Giugno', 
+                         'Luglio', 'Agosto', 'Settembre', 'Ottobre', 'Novembre', 'Dicembre'];
+            
+            let allFatture = [];
+            let fatturePerBanca = {};
+            
+            // Toggle dashboard
             document.getElementById('castellettiHeader').addEventListener('click', function() {
                 const header = this;
                 const content = document.getElementById('castellettiContent');
                 
-                // Forza reflow per iOS
                 void header.offsetHeight;
-                void content.offsetHeight;
-                
                 header.classList.toggle('active');
                 content.classList.toggle('show');
                 
                 setTimeout(() => void content.offsetHeight, 350);
             });
+            
+            // Carica dati
+            async function loadData() {
+                const list = document.getElementById('castellettiList');
+                list.innerHTML = '<div class="loading-state">Caricamento castelletti...</div>';
+                
+                try {
+                    const { data, error } = await sb.from('FattureCastelletti').select('*');
+                    
+                    if (error) throw error;
+                    
+                    if (data && data.length > 0) {
+                        allFatture = data;
+                        organizzaDatiPerBanca(data);
+                        renderBanche();
+                    } else {
+                        list.innerHTML = '<div class="empty-state"><div class="empty-icon">📊</div><div class="empty-text">Nessuna fattura trovata</div></div>';
+                    }
+                } catch (e) {
+                    list.innerHTML = `<div class="empty-state"><div class="empty-icon">⚠️</div><div class="empty-text">Errore: ${e.message}</div></div>`;
+                }
+            }
+            
+            // Organizza dati per banca e mese
+            function organizzaDatiPerBanca(fatture) {
+                fatturePerBanca = {};
+                
+                fatture.forEach(f => {
+                    const banca = f.bancaAssociata || 'Banca non specificata';
+                    
+                    if (!fatturePerBanca[banca]) {
+                        fatturePerBanca[banca] = {};
+                        MESI.forEach((_, idx) => {
+                            fatturePerBanca[banca][idx] = [];
+                        });
+                    }
+                    
+                    // Estrai mese dalla data scadenza
+                    if (f.dataScadenza) {
+                        const date = new Date(f.dataScadenza);
+                        const meseIdx = date.getMonth();
+                        fatturePerBanca[banca][meseIdx].push(f);
+                    }
+                });
+            }
+            
+            // Render lista banche
+            function renderBanche() {
+                const list = document.getElementById('castellettiList');
+                const banche = Object.keys(fatturePerBanca).sort();
+                
+                list.innerHTML = banche.map((banca, idx) => `
+                    <div class="banca-card">
+                        <div class="banca-header" onclick="toggleBanca(${idx})">
+                            <div class="banca-name">${banca}</div>
+                            <span class="banca-arrow" id="bancaArrow${idx}">▼</span>
+                        </div>
+                        <div class="banca-content" id="bancaContent${idx}">
+                            <div class="mesi-grid" id="mesiGrid${idx}"></div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+            
+            // Toggle banca
+            window.toggleBanca = function(bancaIdx) {
+                const header = document.querySelector(`.banca-card:nth-child(${bancaIdx + 1}) .banca-header`);
+                const content = document.getElementById(`bancaContent${bancaIdx}`);
+                const arrow = document.getElementById(`bancaArrow${bancaIdx}`);
+                
+                const isOpen = header.classList.contains('active');
+                
+                if (!isOpen) {
+                    // Apri e carica mesi
+                    header.classList.add('active');
+                    content.classList.add('show');
+                    
+                    const banca = Object.keys(fatturePerBanca).sort()[bancaIdx];
+                    renderMesi(bancaIdx, banca);
+                } else {
+                    // Chiudi
+                    header.classList.remove('active');
+                    content.classList.remove('show');
+                }
+            };
+            
+            // Render mesi per una banca
+            function renderMesi(bancaIdx, banca) {
+                const grid = document.getElementById(`mesiGrid${bancaIdx}`);
+                
+                grid.innerHTML = MESI.map((mese, meseIdx) => {
+                    const fatture = fatturePerBanca[banca][meseIdx] || [];
+                    const occupato = fatture.reduce((sum, f) => sum + (Math.abs(f.importoDaPagare) || 0), 0);
+                    const rimanente = CASTELLETTO_TOTALE - occupato;
+                    const percentuale = Math.min(100, (occupato / CASTELLETTO_TOTALE) * 100);
+                    
+                    return `
+                        <div class="mese-card" onclick="toggleMese(${bancaIdx}, ${meseIdx}, '${banca}')">
+                            <div class="mese-nome">${mese}</div>
+                            <svg class="mese-progress" viewBox="0 0 100 100">
+                                <circle cx="50" cy="50" r="40" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="8"/>
+                                <circle cx="50" cy="50" r="40" fill="none" 
+                                    stroke="${percentuale > 80 ? '#ef4444' : percentuale > 50 ? '#f59e0b' : '#22c55e'}"
+                                    stroke-width="8" stroke-linecap="round"
+                                    stroke-dasharray="${Math.PI * 80}" 
+                                    stroke-dashoffset="${Math.PI * 80 * (1 - percentuale / 100)}"
+                                    transform="rotate(-90 50 50)"/>
+                                <text x="50" y="50" text-anchor="middle" dy="0.3em" fill="white" font-size="16" font-weight="600">
+                                    ${percentuale.toFixed(0)}%
+                                </text>
+                            </svg>
+                            <div class="mese-stats">
+                                <div>Occupato: <span class="mese-stats-value">${formatEuro(occupato)}</span></div>
+                                <div>Rimanente: <span class="mese-stats-value">${formatEuro(rimanente)}</span></div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+                
+                // Aggiungi div per fatture sotto la griglia
+                grid.insertAdjacentHTML('afterend', '<div id="fattureContainer' + bancaIdx + '"></div>');
+            }
+            
+            // Toggle mese per mostrare fatture
+            window.toggleMese = function(bancaIdx, meseIdx, banca) {
+                const container = document.getElementById(`fattureContainer${bancaIdx}`);
+                const currentMeseId = `fatture_${bancaIdx}_${meseIdx}`;
+                
+                // Se già aperto, chiudi
+                if (container.dataset.currentMese === currentMeseId) {
+                    container.innerHTML = '';
+                    container.dataset.currentMese = '';
+                    return;
+                }
+                
+                // Mostra fatture del mese
+                const fatture = fatturePerBanca[banca][meseIdx] || [];
+                container.dataset.currentMese = currentMeseId;
+                
+                if (fatture.length === 0) {
+                    container.innerHTML = '<div class="fatture-list"><div style="text-align: center; color: rgba(255,255,255,0.5); padding: 20px;">Nessuna fattura in questo mese</div></div>';
+                    return;
+                }
+                
+                container.innerHTML = `
+                    <div class="fatture-list">
+                        <h4 style="color: white; margin-bottom: 12px; padding: 0 0 8px; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                            Fatture ${MESI[meseIdx]} (${fatture.length})
+                        </h4>
+                        ${fatture.map(f => `
+                            <div class="fattura-item">
+                                <div class="fattura-field">
+                                    <div class="fattura-label">Cliente</div>
+                                    <div class="fattura-value">${f.cliente || '-'}</div>
+                                </div>
+                                <div class="fattura-field">
+                                    <div class="fattura-label">N° Fattura</div>
+                                    <div class="fattura-value">${f.numeroFattura || '-'}</div>
+                                </div>
+                                <div class="fattura-field">
+                                    <div class="fattura-label">Tipologia</div>
+                                    <div class="fattura-value">${f.tipologiaFattura || '-'}</div>
+                                </div>
+                                <div class="fattura-field">
+                                    <div class="fattura-label">Creazione</div>
+                                    <div class="fattura-value">${f.dataCreazione_Formattato || '-'}</div>
+                                </div>
+                                <div class="fattura-field">
+                                    <div class="fattura-label">Scadenza</div>
+                                    <div class="fattura-value">${f.dataScadenzaFormattato || '-'}</div>
+                                </div>
+                                <div class="fattura-field">
+                                    <div class="fattura-label">Da Pagare</div>
+                                    <div class="fattura-value" style="color: ${f.importoDaPagare < 0 ? '#22c55e' : '#ef4444'}">
+                                        ${f.importoDaPagare_Formattato || '-'}
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            };
+            
+            // Format euro
+            function formatEuro(value) {
+                return new Intl.NumberFormat('it-IT', { 
+                    style: 'currency', 
+                    currency: 'EUR',
+                    minimumFractionDigits: 0,
+                    maximumFractionDigits: 0
+                }).format(Math.abs(value));
+            }
+            
+            // Carica dati all'avvio
+            loadData();
         })();
         
         // Controllo accesso admin

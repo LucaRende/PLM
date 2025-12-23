@@ -40,7 +40,20 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
+        }
+        
+        .signature-text {
+            font-family: 'Brush Script MT', 'Lucida Handwriting', 'Segoe Script', cursive;
+            font-size: 2em;
+            font-weight: 400;
+            color: white;
+            text-align: center;
+            margin-bottom: 15px;
+            letter-spacing: 2px;
+            font-style: italic;
+            text-shadow: 0 2px 10px rgba(255, 255, 255, 0.3);
+            -webkit-font-smoothing: antialiased;
         }
 
         .logo {
@@ -82,7 +95,7 @@
         }
 
         .dashboard-header {
-            background: linear-gradient(135deg, rgba(197, 29, 52, 0.15) 0%, rgba(147, 51, 234, 0.15) 100%);
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(37, 99, 235, 0.15) 100%);
             padding: 24px 20px;
             cursor: pointer;
             display: flex;
@@ -94,7 +107,7 @@
         }
 
         .dashboard-header.gantt {
-            background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(197, 29, 52, 0.15) 100%);
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(16, 185, 129, 0.15) 100%);
         }
 
         .dashboard-top {
@@ -1287,7 +1300,7 @@
             bottom: 0;
             width: 100vw;
             height: 100vh;
-            background: linear-gradient(135deg, #0f1729 0%, #1a2332 50%, #0d1117 100%);
+            background: linear-gradient(135deg, #2d0a0e 0%, #4a1419 50%, #1a0608 100%);
             z-index: 10000;
             display: flex;
             align-items: center;
@@ -2101,6 +2114,65 @@
                 font-size: 1.1em;
             }
         }
+        
+        /* Ottimizzazioni per iPhone e iOS */
+        @supports (-webkit-touch-callout: none) {
+            /* Disabilita animazioni complesse su iOS per migliori performance */
+            .particle {
+                animation: float-simple 15s infinite;
+            }
+            
+            @keyframes float-simple {
+                0%, 100% {
+                    transform: translateY(0);
+                    opacity: 0.2;
+                }
+                50% {
+                    transform: translateY(-20px);
+                    opacity: 0.4;
+                }
+            }
+            
+            /* Ottimizza backdrop-filter per iOS */
+            .dashboard {
+                -webkit-backdrop-filter: blur(20px);
+                backdrop-filter: blur(20px);
+            }
+            
+            /* Migliora scrolling su iOS */
+            .dashboard-content {
+                -webkit-overflow-scrolling: touch;
+            }
+            
+            /* Abilita accelerazione hardware per transizioni */
+            .login-icon,
+            .logo,
+            .dashboard-icon,
+            .stat-icon {
+                -webkit-transform: translateZ(0);
+                transform: translateZ(0);
+                will-change: transform;
+            }
+            
+            /* Rimuovi delay tap su iOS */
+            button,
+            .dashboard-header,
+            .activity-card {
+                -webkit-tap-highlight-color: transparent;
+                touch-action: manipulation;
+            }
+        }
+        
+        /* Fix per Safari iOS */
+        @media not all and (min-resolution:.001dpcm) {
+            @supports (-webkit-appearance:none) {
+                .login-overlay,
+                .dashboard {
+                    -webkit-transform: translateZ(0);
+                    transform: translateZ(0);
+                }
+            }
+        }
     </style>
 </head>
 <body>
@@ -2163,6 +2235,7 @@
             <div class="logo-container">
                 <img src="logo-tondo.png" alt="Logo CRM" class="logo">
             </div>
+            <div class="signature-text">Pro System</div>
         </div>
 
         <div class="dashboards-grid">
@@ -2298,18 +2371,26 @@
                     <div class="dashboard-title">
                         <span class="dashboard-icon">
                             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <circle cx="12" cy="6" r="3" fill="#fbbf24"/>
-                                <path d="M6 20c0-3.314 2.686-6 6-6s6 2.686 6 6" fill="url(#techGradient)"/>
-                                <rect x="8" y="2" width="8" height="3" rx="1.5" fill="#ef4444"/>
-                                <path d="M14 10l4 4-1 6h-10l-1-6 4-4" fill="url(#vestGradient)" stroke="#10b981" stroke-width="1"/>
+                                <!-- Righello -->
+                                <rect x="2" y="10" width="20" height="4" rx="1" fill="url(#techGrad1)"/>
+                                <line x1="4" y1="10" x2="4" y2="14" stroke="white" stroke-width="1" opacity="0.6"/>
+                                <line x1="7" y1="10" x2="7" y2="14" stroke="white" stroke-width="1" opacity="0.6"/>
+                                <line x1="10" y1="10" x2="10" y2="14" stroke="white" stroke-width="1.5" opacity="0.8"/>
+                                <line x1="13" y1="10" x2="13" y2="14" stroke="white" stroke-width="1" opacity="0.6"/>
+                                <line x1="16" y1="10" x2="16" y2="14" stroke="white" stroke-width="1" opacity="0.6"/>
+                                <line x1="19" y1="10" x2="19" y2="14" stroke="white" stroke-width="1.5" opacity="0.8"/>
+                                <!-- Matita -->
+                                <path d="M18 2L22 6L12 16L8 17L9 13L19 3Z" fill="url(#techGrad2)"/>
+                                <path d="M18 2L22 6L20 8L16 4L18 2Z" fill="#fbbf24"/>
+                                <circle cx="9" cy="15" r="1.5" fill="#64748b"/>
                                 <defs>
-                                    <linearGradient id="techGradient" x1="6" y1="14" x2="18" y2="20" gradientUnits="userSpaceOnUse">
+                                    <linearGradient id="techGrad1" x1="2" y1="10" x2="22" y2="14" gradientUnits="userSpaceOnUse">
                                         <stop stop-color="#10b981"/>
                                         <stop offset="1" stop-color="#059669"/>
                                     </linearGradient>
-                                    <linearGradient id="vestGradient" x1="6" y1="10" x2="18" y2="20" gradientUnits="userSpaceOnUse">
-                                        <stop stop-color="#fbbf24"/>
-                                        <stop offset="1" stop-color="#f59e0b"/>
+                                    <linearGradient id="techGrad2" x1="8" y1="2" x2="22" y2="17" gradientUnits="userSpaceOnUse">
+                                        <stop stop-color="#3b82f6"/>
+                                        <stop offset="1" stop-color="#1d4ed8"/>
                                     </linearGradient>
                                 </defs>
                             </svg>
@@ -3176,6 +3257,7 @@
             const loginForm = document.getElementById('loginForm');
             const successCheck = document.getElementById('successCheck');
             const loginOverlay = document.getElementById('loginOverlay');
+            const loginIcon = document.querySelector('.login-icon');
             
             const enteredPassword = passwordInput.value;
             
@@ -3185,15 +3267,32 @@
                 loginForm.style.display = 'none';
                 successCheck.classList.add('show');
                 
-                // Wait for success animation, then fade out overlay
+                // Animazione: logo del login si sovrappone a quello della home
                 setTimeout(() => {
-                    loginOverlay.classList.add('fade-out');
+                    // Ottieni posizione logo home
+                    const homeLogo = document.querySelector('.logo-container .logo');
+                    const homeLogoRect = homeLogo.getBoundingClientRect();
+                    const loginIconRect = loginIcon.getBoundingClientRect();
                     
-                    // Remove overlay from DOM after animation
+                    // Calcola offset per spostare il logo login sopra quello home
+                    const translateX = homeLogoRect.left - loginIconRect.left + (homeLogoRect.width - loginIconRect.width) / 2;
+                    const translateY = homeLogoRect.top - loginIconRect.top + (homeLogoRect.height - loginIconRect.height) / 2;
+                    const scale = homeLogoRect.width / loginIconRect.width;
+                    
+                    // Applica trasformazione
+                    loginIcon.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+                    loginIcon.style.transition = 'transform 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
+                    
+                    // Dopo animazione, fai fade out overlay
                     setTimeout(() => {
-                        loginOverlay.remove();
-                        // Start loading dashboard data
-                        initializeDashboard();
+                        loginOverlay.classList.add('fade-out');
+                        
+                        // Rimuovi overlay dopo fade
+                        setTimeout(() => {
+                            loginOverlay.remove();
+                            // Start loading dashboard data
+                            initializeDashboard();
+                        }, 800);
                     }, 800);
                 }, 1000);
                 

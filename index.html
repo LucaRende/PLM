@@ -8,6 +8,7 @@
     <title>PLM 2</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Satisfy&display=swap');
 
         * {
             margin: 0;
@@ -44,15 +45,14 @@
         }
         
         .signature-text {
-            font-family: 'Brush Script MT', 'Lucida Handwriting', 'Segoe Script', cursive;
+            font-family: 'Satisfy', cursive;
             font-size: 2em;
             font-weight: 400;
-            color: white;
+            color: #c51d34;
             text-align: center;
             margin-bottom: 15px;
             letter-spacing: 2px;
-            font-style: italic;
-            text-shadow: 0 2px 10px rgba(255, 255, 255, 0.3);
+            text-shadow: 0 2px 10px rgba(197, 29, 52, 0.4);
             -webkit-font-smoothing: antialiased;
         }
 
@@ -88,6 +88,8 @@
             overflow: hidden;
             margin-bottom: 20px;
             transition: all 0.3s ease;
+            position: relative;
+            z-index: 1;
         }
 
         .dashboard:active {
@@ -123,7 +125,7 @@
         }
 
         .dashboard-title h2 {
-            color: white;
+            color: #c51d34;
             font-size: 1.35em;
             font-weight: 600;
             margin: 0;
@@ -1924,11 +1926,6 @@
             font-weight: 600;
         }
 
-        .footer-badge::before {
-            content: '⚡';
-            animation: pulse 2s infinite;
-        }
-
         @media (max-width: 768px) {
             .footer-content {
                 grid-template-columns: 1fr;
@@ -2231,7 +2228,15 @@
     </div>
 
     <div class="main-container">
-        <div class="title-section">
+        <!-- Animated Background Particles -->
+        <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; overflow: hidden;">
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+        </div>
+        
+        <div class="title-section" style="position: relative; z-index: 1;">
             <div class="logo-container">
                 <img src="logo-tondo.png" alt="Logo CRM" class="logo">
             </div>
@@ -2246,10 +2251,10 @@
                     <div class="dashboard-title">
                         <span class="dashboard-icon">
                             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <rect x="4" y="2" width="16" height="20" rx="2" fill="white" opacity="0.9"/>
-                                <path d="M8 7h8M8 11h8M8 15h5" stroke="#1a2332" stroke-width="1.5" stroke-linecap="round"/>
-                                <circle cx="17" cy="17" r="5" fill="white"/>
-                                <path d="M15 17l1.5 1.5L19 16" stroke="#1a2332" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                <rect x="4" y="2" width="16" height="20" rx="2" fill="#c51d34" opacity="0.9"/>
+                                <path d="M8 7h8M8 11h8M8 15h5" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+                                <circle cx="17" cy="17" r="5" fill="#c51d34"/>
+                                <path d="M15 17l1.5 1.5L19 16" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                             </svg>
                         </span>
                         <h2>Attività CRM</h2>
@@ -2366,17 +2371,17 @@
                         <span class="dashboard-icon">
                             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <!-- Righello -->
-                                <rect x="2" y="10" width="20" height="4" rx="1" fill="white" opacity="0.9"/>
-                                <line x1="4" y1="10" x2="4" y2="14" stroke="#1a2332" stroke-width="1" opacity="0.6"/>
-                                <line x1="7" y1="10" x2="7" y2="14" stroke="#1a2332" stroke-width="1" opacity="0.6"/>
-                                <line x1="10" y1="10" x2="10" y2="14" stroke="#1a2332" stroke-width="1.5" opacity="0.8"/>
-                                <line x1="13" y1="10" x2="13" y2="14" stroke="#1a2332" stroke-width="1" opacity="0.6"/>
-                                <line x1="16" y1="10" x2="16" y2="14" stroke="#1a2332" stroke-width="1" opacity="0.6"/>
-                                <line x1="19" y1="10" x2="19" y2="14" stroke="#1a2332" stroke-width="1.5" opacity="0.8"/>
+                                <rect x="2" y="10" width="20" height="4" rx="1" fill="#c51d34" opacity="0.9"/>
+                                <line x1="4" y1="10" x2="4" y2="14" stroke="white" stroke-width="1" opacity="0.6"/>
+                                <line x1="7" y1="10" x2="7" y2="14" stroke="white" stroke-width="1" opacity="0.6"/>
+                                <line x1="10" y1="10" x2="10" y2="14" stroke="white" stroke-width="1.5" opacity="0.8"/>
+                                <line x1="13" y1="10" x2="13" y2="14" stroke="white" stroke-width="1" opacity="0.6"/>
+                                <line x1="16" y1="10" x2="16" y2="14" stroke="white" stroke-width="1" opacity="0.6"/>
+                                <line x1="19" y1="10" x2="19" y2="14" stroke="white" stroke-width="1.5" opacity="0.8"/>
                                 <!-- Matita -->
-                                <path d="M18 2L22 6L12 16L8 17L9 13L19 3Z" fill="white" opacity="0.9"/>
-                                <path d="M18 2L22 6L20 8L16 4L18 2Z" fill="white" opacity="0.7"/>
-                                <circle cx="9" cy="15" r="1.5" fill="white" opacity="0.6"/>
+                                <path d="M18 2L22 6L12 16L8 17L9 13L19 3Z" fill="#c51d34" opacity="0.9"/>
+                                <path d="M18 2L22 6L20 8L16 4L18 2Z" fill="#c51d34" opacity="0.7"/>
+                                <circle cx="9" cy="15" r="1.5" fill="#c51d34" opacity="0.6"/>
                             </svg>
                         </span>
                         <h2>Ufficio Tecnico</h2>
@@ -2388,10 +2393,10 @@
                     <div class="stat-item">
                         <div class="stat-icon">
                             <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <circle cx="9" cy="7" r="3" fill="white" opacity="0.9"/>
-                                <circle cx="15" cy="9" r="2.5" fill="white" opacity="0.8"/>
-                                <path d="M3 18c0-2.5 2.5-4.5 6-4.5s6 2 6 4.5" fill="white" opacity="0.9"/>
-                                <path d="M15 18c0-1.8 1.5-3.5 4-3.5s4 1.7 4 3.5" fill="white" opacity="0.8"/>
+                                <circle cx="9" cy="7" r="3" fill="#c51d34" opacity="0.9"/>
+                                <circle cx="15" cy="9" r="2.5" fill="#c51d34" opacity="0.8"/>
+                                <path d="M3 18c0-2.5 2.5-4.5 6-4.5s6 2 6 4.5" fill="#c51d34" opacity="0.9"/>
+                                <path d="M15 18c0-1.8 1.5-3.5 4-3.5s4 1.7 4 3.5" fill="#c51d34" opacity="0.8"/>
                             </svg>
                         </div>
                         <div class="stat-value" id="totalPersons">-</div>
@@ -2400,9 +2405,9 @@
                     <div class="stat-item">
                         <div class="stat-icon">
                             <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <rect x="4" y="6" width="16" height="14" rx="2" fill="white" opacity="0.9"/>
-                                <path d="M8 11l2 2 4-4" stroke="#1a2332" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                <rect x="8" y="3" width="8" height="3" rx="1" fill="white" opacity="0.7"/>
+                                <rect x="4" y="6" width="16" height="14" rx="2" fill="#c51d34" opacity="0.9"/>
+                                <path d="M8 11l2 2 4-4" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <rect x="8" y="3" width="8" height="3" rx="1" fill="#c51d34" opacity="0.7"/>
                             </svg>
                         </div>
                         <div class="stat-value" id="totalTasks">-</div>
@@ -2411,8 +2416,8 @@
                     <div class="stat-item">
                         <div class="stat-icon">
                             <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <circle cx="12" cy="12" r="9" fill="white" opacity="0.9"/>
-                                <path d="M8 12l3 3 5-6" stroke="#1a2332" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                <circle cx="12" cy="12" r="9" fill="#c51d34" opacity="0.9"/>
+                                <path d="M8 12l3 3 5-6" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
                             </svg>
                         </div>
                         <div class="stat-value" id="avgOccupation">-</div>
@@ -3144,8 +3149,6 @@
                 <div class="footer-links">
                     <a href="#" class="footer-link">Attività CRM</a>
                     <a href="#" class="footer-link">Ufficio Tecnico</a>
-                    <a href="#" class="footer-link">Reportistica</a>
-                    <a href="#" class="footer-link">Impostazioni</a>
                 </div>
             </div>
 
@@ -3154,7 +3157,6 @@
                 <div class="footer-links">
                     <a href="#" class="footer-link">Documentazione</a>
                     <a href="#" class="footer-link">Guide & Tutorial</a>
-                    <a href="#" class="footer-link">API Reference</a>
                     <a href="#" class="footer-link">Supporto</a>
                 </div>
             </div>
@@ -3185,7 +3187,10 @@
 
         <div class="footer-bottom">
             <div class="footer-credits">
-                © 2025 PLM 2 - Tutti i diritti riservati
+                © 2025 PLM 2 - Tutti i diritti riservati<br>
+                <span style="font-size: 0.85em; color: rgba(255, 255, 255, 0.5); margin-top: 4px; display: inline-block;">
+                    Power by: <span style="font-family: 'Satisfy', cursive; font-size: 1.1em; color: #c51d34;">Rende Luca</span>
+                </span>
             </div>
             <div class="footer-social">
                 <a href="#" class="social-link" title="Documentation">📚</a>

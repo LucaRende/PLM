@@ -9,7 +9,6 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
         @import url('https://fonts.googleapis.com/css2?family=Satisfy&display=swap');
-        @import url('https://fonts.googleapis.com/css2?family=Satisfaction&display=swap');
 
         * {
             margin: 0;
@@ -46,7 +45,7 @@
         }
         
         .signature-text {
-            font-family: 'Satisfaction', cursive;
+            font-family: 'Satisfy', cursive;
             font-size: 2em;
             font-weight: 400;
             color: white;
@@ -83,7 +82,7 @@
             background: rgba(255, 255, 255, 0.05);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
-            border: 2px solid transparent;
+            border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 24px;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
             overflow: hidden;
@@ -91,36 +90,6 @@
             transition: all 0.3s ease;
             position: relative;
             z-index: 1;
-            background-clip: padding-box;
-        }
-        
-        /* Bordo rosso che gira */
-        .dashboard::before {
-            content: '';
-            position: absolute;
-            top: -2px;
-            left: -2px;
-            right: -2px;
-            bottom: -2px;
-            border-radius: 24px;
-            background: conic-gradient(from 0deg at 50% 50%, 
-                #c51d34 0deg,
-                #c51d34 20deg,
-                transparent 20deg,
-                transparent 340deg,
-                #c51d34 340deg,
-                #c51d34 360deg);
-            z-index: -1;
-            animation: rotate-border 3s linear infinite;
-        }
-        
-        @keyframes rotate-border {
-            0% {
-                transform: rotate(0deg);
-            }
-            100% {
-                transform: rotate(360deg);
-            }
         }
 
         .dashboard:active {
@@ -2773,24 +2742,8 @@
                 }
             }
 
-            // Event listener ottimizzato per iPhone
+            // Event listener semplice che funziona sia su desktop che iPhone
             const dashHeader = document.getElementById('dashHeader');
-            
-            // Supporto touch per iOS
-            let touchStartY = 0;
-            dashHeader.addEventListener('touchstart', function(e) {
-                touchStartY = e.touches[0].clientY;
-            }, { passive: true });
-            
-            dashHeader.addEventListener('touchend', function(e) {
-                const touchEndY = e.changedTouches[0].clientY;
-                // Evita toggle se è uno scroll
-                if (Math.abs(touchEndY - touchStartY) < 10) {
-                    window.toggleDash();
-                }
-            }, { passive: true });
-            
-            // Click normale per desktop
             dashHeader.addEventListener('click', window.toggleDash);
             
             loadData(); // Load data immediately on page load
@@ -3211,24 +3164,8 @@
                 return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:00`;
             }
 
-            // Event listener ottimizzato per iPhone
+            // Event listener semplice che funziona sia su desktop che iPhone
             const ganttHeader = document.getElementById('ganttHeader');
-            
-            // Supporto touch per iOS
-            let touchStartY = 0;
-            ganttHeader.addEventListener('touchstart', function(e) {
-                touchStartY = e.touches[0].clientY;
-            }, { passive: true });
-            
-            ganttHeader.addEventListener('touchend', function(e) {
-                const touchEndY = e.changedTouches[0].clientY;
-                // Evita toggle se è uno scroll
-                if (Math.abs(touchEndY - touchStartY) < 10) {
-                    toggleGanttDashboard();
-                }
-            }, { passive: true });
-            
-            // Click normale per desktop
             ganttHeader.addEventListener('click', toggleGanttDashboard);
             
             generateTimeline();
@@ -3285,10 +3222,10 @@
 
         <div class="footer-bottom">
             <div class="footer-credits">
-                <div style="margin-bottom: 8px;">© 2025 PLM 2 - Tutti i diritti riservati</div>
-                <div style="font-size: 0.9em; color: rgba(255, 255, 255, 0.5);">
-                    Power by: <span style="font-family: 'Satisfaction', cursive; font-size: 1.4em; color: white;">Rende Luca</span>
-                </div>
+                © 2025 PLM 2 - Tutti i diritti riservati<br>
+                <span style="font-size: 0.9em; color: rgba(255, 255, 255, 0.5); display: block; margin-top: 8px;">
+                    Power by: <span style="font-family: 'Satisfy', cursive; font-size: 1.5em; color: white;">Rende Luca</span>
+                </span>
             </div>
             <div class="footer-social">
                 <a href="#" class="social-link" title="Documentation">📚</a>

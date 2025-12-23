@@ -2592,6 +2592,8 @@
             justify-content: center;
             z-index: 10000;
             padding: 20px;
+            overflow-x: hidden;
+            overflow-y: auto;
         }
         
         .bollettino-modal.active {
@@ -2606,6 +2608,7 @@
             width: 100%;
             max-height: 90vh;
             overflow-y: auto;
+            overflow-x: hidden;
             position: relative;
         }
         
@@ -2775,33 +2778,63 @@
                 grid-template-columns: 1fr;
             }
             
+            .bollettino-modal {
+                padding: 0;
+                align-items: flex-end;
+            }
+            
             .bollettino-modal-content {
                 max-height: 95vh;
                 margin: 0;
                 border-radius: 20px 20px 0 0;
+                max-width: 100%;
             }
             
             .bollettino-modal-header {
-                padding: 16px;
+                padding: 12px 16px;
             }
             
             .bollettino-modal-title {
-                font-size: 1.2em;
+                font-size: 1.1em;
             }
             
             .bollettino-modal-body {
-                padding: 16px;
+                padding: 12px;
+            }
+            
+            .bollettino-form-row {
+                gap: 12px;
+                margin-bottom: 12px;
+            }
+            
+            .bollettino-form-group {
+                gap: 6px;
+            }
+            
+            .bollettino-form-input {
+                padding: 10px;
+                font-size: 16px;
+            }
+            
+            .bollettino-form-textarea {
+                min-height: 60px;
             }
             
             .bollettino-modal-footer {
-                padding: 16px;
+                padding: 12px;
                 position: sticky;
                 bottom: 0;
                 background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+                border-top: 2px solid rgba(255, 255, 255, 0.1);
             }
             
             .btn-bollettino {
                 flex: 1;
+                padding: 14px 20px;
+            }
+            
+            .firma-canvas-container {
+                padding: 6px;
             }
             
             .firma-canvas {
@@ -4501,13 +4534,25 @@
                 try {
                     const { data: result, error } = await sb.from('BollettiniMontatori').insert([bollettino]).select();
                     
-                    if (error) throw error;
+                    if (error) {
+                        console.error('Errore Supabase:', error);
+                        
+                        if (error.message.includes('relation') || error.message.includes('does not exist')) {
+                            alert('⚠️ TABELLA NON TROVATA!\n\nDevi prima creare la tabella "BollettiniMontatori" su Supabase.\n\nEsegui il file SQL: create_bollettini_table.sql');
+                        } else if (error.message.includes('JWT') || error.message.includes('API')) {
+                            alert('❌ Errore API Key!\n\nVerifica che la API key di Supabase sia corretta.');
+                        } else {
+                            alert('❌ Errore durante il salvataggio:\n\n' + error.message);
+                        }
+                        return;
+                    }
                     
                     alert('✅ Bollettino salvato con successo!');
                     closeBollettinoModal();
                     loadBollettini();
                 } catch (err) {
-                    alert('❌ Errore durante il salvataggio: ' + err.message);
+                    console.error('Errore generale:', err);
+                    alert('❌ Errore imprevisto:\n\n' + err.message);
                 }
             };
             

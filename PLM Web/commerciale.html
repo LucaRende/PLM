@@ -13,6 +13,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     
+    <!-- Supabase JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
     <!-- Stili -->
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="Load/loader.css">
@@ -34,23 +37,112 @@
     </style>
     
     <style>
+        /* =============================================
+           COMMERCIALE - SUPER DESIGN IPHONE
+           ============================================= */
+        
+        /* Header Fisso Premium (come home) */
         .page-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: var(--space-3) var(--space-4);
+            background: rgba(3, 3, 5, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .page-user-info {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .page-user-surname {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+            line-height: 1.2;
+        }
+        
+        .page-user-name {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-weight: 400;
+            line-height: 1.3;
+        }
+        
+        .page-logo {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        
+        .page-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .btn-logout {
+            width: 36px;
+            height: 36px;
             display: flex;
             align-items: center;
-            gap: var(--space-4);
-            padding: var(--space-4);
-            border-bottom: 1px solid var(--border-subtle);
+            justify-content: center;
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            border-radius: 10px;
+            color: var(--error);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+        
+        .btn-logout:hover {
+            background: rgba(239, 68, 68, 0.2);
+            transform: scale(1.05);
+        }
+        
+        .btn-logout svg {
+            width: 18px;
+            height: 18px;
+        }
+        
+        /* Barra Titolo con Back */
+        .page-title-bar {
+            position: fixed;
+            top: 62px;
+            left: 0;
+            right: 0;
+            z-index: 999;
+            padding: var(--space-3) var(--space-4);
+            background: rgba(3, 3, 5, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
         }
         
         .btn-back {
-            width: 40px;
-            height: 40px;
+            width: 36px;
+            height: 36px;
             display: flex;
             align-items: center;
             justify-content: center;
             background: var(--surface-2);
             border: 1px solid var(--border-default);
-            border-radius: var(--radius-lg);
+            border-radius: 10px;
             color: var(--text-secondary);
             cursor: pointer;
             transition: all var(--transition-fast);
@@ -58,7 +150,7 @@
         
         .btn-back:hover {
             background: var(--surface-3);
-            color: var(--text-primary);
+            color: var(--primary);
         }
         
         .btn-back svg {
@@ -67,35 +159,297 @@
         }
         
         .page-title {
-            flex: 1;
-            font-size: var(--text-lg);
+            font-size: 18px;
             font-weight: 600;
             color: var(--text-primary);
         }
         
+        /* Content */
         .page-content {
-            padding: var(--space-4);
-            min-height: calc(100vh - 130px);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
+            padding: 130px var(--space-4) var(--space-4);
+            min-height: 100vh;
+            background: var(--surface-0);
         }
         
-        .empty-state {
-            text-align: center;
+        /* Fatturato Grid - 2 box grandi */
+        .fatturato-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--space-3);
+            margin-bottom: var(--space-4);
+        }
+        
+        .fatturato-box {
+            background: linear-gradient(145deg, var(--surface-2) 0%, var(--surface-1) 100%);
+            border: 1px solid var(--border-default);
+            border-radius: 20px;
+            padding: var(--space-4);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .fatturato-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--primary), transparent);
+        }
+        
+        .fatturato-box.highlight {
+            background: linear-gradient(145deg, rgba(220, 38, 38, 0.15) 0%, var(--surface-1) 100%);
+            border-color: rgba(220, 38, 38, 0.3);
+        }
+        
+        .fatturato-label {
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: var(--space-2);
+        }
+        
+        .fatturato-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--primary);
+            line-height: 1;
+            margin-bottom: var(--space-1);
+        }
+        
+        .fatturato-period {
+            font-size: 11px;
             color: var(--text-muted);
         }
         
-        .empty-state svg {
-            width: 64px;
-            height: 64px;
+        /* Selettore Mese */
+        .month-selector {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-2);
+            padding: var(--space-3);
             margin-bottom: var(--space-4);
-            opacity: 0.5;
+            background: var(--surface-2);
+            border-radius: 16px;
+            border: 1px solid var(--border-default);
         }
         
-        .empty-state p {
-            font-size: var(--text-sm);
+        .month-btn {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--surface-3);
+            border: none;
+            border-radius: 10px;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+        
+        .month-btn:hover {
+            background: var(--surface-4);
+            color: var(--text-primary);
+        }
+        
+        .month-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+        
+        .month-btn svg {
+            width: 20px;
+            height: 20px;
+        }
+        
+        .month-display {
+            flex: 1;
+            text-align: center;
+        }
+        
+        .month-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            text-transform: uppercase;
+        }
+        
+        .month-year {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+        
+        /* Box Espandibili */
+        .expandable-section {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-3);
+        }
+        
+        .expandable-box {
+            background: var(--surface-2);
+            border: 1px solid var(--border-default);
+            border-radius: 16px;
+            overflow: hidden;
+            transition: all var(--transition-base);
+        }
+        
+        .expandable-box.expanded {
+            border-color: var(--primary);
+        }
+        
+        .expandable-header {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            padding: var(--space-4);
+            cursor: pointer;
+            transition: background var(--transition-fast);
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        .expandable-header:active {
+            background: var(--surface-3);
+        }
+        
+        .expandable-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(220, 38, 38, 0.15);
+            border-radius: 12px;
+            flex-shrink: 0;
+        }
+        
+        .expandable-icon svg {
+            width: 20px;
+            height: 20px;
+            color: var(--primary);
+        }
+        
+        .expandable-info {
+            flex: 1;
+        }
+        
+        .expandable-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 2px;
+        }
+        
+        .expandable-stats {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+        
+        .expandable-stats strong {
+            color: var(--primary);
+            font-weight: 600;
+        }
+        
+        .expandable-arrow {
+            width: 24px;
+            height: 24px;
+            color: var(--text-muted);
+            transition: transform var(--transition-fast);
+        }
+        
+        .expandable-box.expanded .expandable-arrow {
+            transform: rotate(180deg);
+            color: var(--primary);
+        }
+        
+        /* Lista espansa */
+        .expandable-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+        
+        .expandable-box.expanded .expandable-content {
+            max-height: 500px;
+        }
+        
+        .expandable-list {
+            padding: 0 var(--space-4) var(--space-4);
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-2);
+        }
+        
+        .list-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--space-3);
+            background: var(--surface-3);
+            border-radius: 10px;
+        }
+        
+        .list-item-info {
+            flex: 1;
+        }
+        
+        .list-item-title {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 2px;
+        }
+        
+        .list-item-subtitle {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+        
+        .list-item-value {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+        
+        .list-empty {
+            text-align: center;
+            padding: var(--space-4);
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+        
+        /* Footer */
+        .footer {
+            padding: var(--space-6) var(--space-4);
+            text-align: center;
+            font-size: 11px;
+            color: var(--text-muted);
+            border-top: 1px solid var(--border-subtle);
+            margin-top: var(--space-6);
+        }
+        
+        /* Safe area per iPhone */
+        @supports (padding-bottom: env(safe-area-inset-bottom)) {
+            .footer {
+                padding-bottom: calc(var(--space-6) + env(safe-area-inset-bottom));
+            }
+            
+            .page-header {
+                padding-top: calc(var(--space-3) + env(safe-area-inset-top));
+            }
+            
+            .page-title-bar {
+                top: calc(62px + env(safe-area-inset-top));
+            }
+            
+            .page-content {
+                padding-top: calc(130px + env(safe-area-inset-top));
+            }
         }
     </style>
     
@@ -109,24 +463,146 @@
 </head>
 <body>
     <div class="page">
-        <!-- Header -->
+        <!-- Header Fisso -->
         <header class="page-header">
+            <div class="page-user-info">
+                <div class="page-user-surname" id="userSurname">Cognome</div>
+                <div class="page-user-name" id="userFirstName">Nome</div>
+            </div>
+            
+            <div class="page-logo">
+                <img src="/PLM/logo-tondo.png" alt="PLM">
+            </div>
+            
+            <button class="btn-logout" onclick="logout()" title="Esci">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                    <polyline points="16 17 21 12 16 7"/>
+                    <line x1="21" y1="12" x2="9" y2="12"/>
+                </svg>
+            </button>
+        </header>
+        
+        <!-- Barra Titolo -->
+        <div class="page-title-bar">
             <button class="btn-back" onclick="window.location.href='home.html'">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <polyline points="15 18 9 12 15 6"/>
                 </svg>
             </button>
             <h1 class="page-title">Commerciale</h1>
-        </header>
+        </div>
         
         <!-- Content -->
         <main class="page-content">
-            <div class="empty-state">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="12" y1="1" x2="12" y2="23"/>
-                    <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
-                </svg>
-                <p>Sezione in costruzione</p>
+            <!-- Fatturato Grid -->
+            <div class="fatturato-grid">
+                <div class="fatturato-box">
+                    <div class="fatturato-label">Fatturato Mese</div>
+                    <div class="fatturato-value" id="fatturato-mese">€ 0</div>
+                    <div class="fatturato-period" id="fatturato-mese-label">Gennaio 2026</div>
+                </div>
+                <div class="fatturato-box highlight">
+                    <div class="fatturato-label">Fatturato Totale</div>
+                    <div class="fatturato-value" id="fatturato-totale">€ 0</div>
+                    <div class="fatturato-period">ad oggi</div>
+                </div>
+            </div>
+            
+            <!-- Selettore Mese -->
+            <div class="month-selector">
+                <button class="month-btn" id="prev-month">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="15 18 9 12 15 6"/>
+                    </svg>
+                </button>
+                <div class="month-display">
+                    <div class="month-name" id="current-month">Gennaio</div>
+                    <div class="month-year" id="current-year">2026</div>
+                </div>
+                <button class="month-btn" id="next-month">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="9 18 15 12 9 6"/>
+                    </svg>
+                </button>
+            </div>
+            
+            <!-- Box Espandibili -->
+            <div class="expandable-section">
+                <!-- Preventivi Non Ordinati -->
+                <div class="expandable-box" id="box-preventivi">
+                    <div class="expandable-header" onclick="toggleBox('box-preventivi')">
+                        <div class="expandable-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                <polyline points="14 2 14 8 20 8"/>
+                                <line x1="12" y1="18" x2="12" y2="12"/>
+                                <line x1="9" y1="15" x2="15" y2="15"/>
+                            </svg>
+                        </div>
+                        <div class="expandable-info">
+                            <div class="expandable-title">Preventivi Non Ordinati</div>
+                            <div class="expandable-stats"><strong id="preventivi-count">0</strong> preventivi — <strong id="preventivi-value">€ 0</strong></div>
+                        </div>
+                        <svg class="expandable-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="6 9 12 15 18 9"/>
+                        </svg>
+                    </div>
+                    <div class="expandable-content">
+                        <div class="expandable-list" id="preventivi-list">
+                            <div class="list-empty">Nessun preventivo</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Ordini Da Fatturare -->
+                <div class="expandable-box" id="box-ordini-fatturare">
+                    <div class="expandable-header" onclick="toggleBox('box-ordini-fatturare')">
+                        <div class="expandable-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+                                <line x1="3" y1="6" x2="21" y2="6"/>
+                                <path d="M16 10a4 4 0 0 1-8 0"/>
+                            </svg>
+                        </div>
+                        <div class="expandable-info">
+                            <div class="expandable-title">Ordini Da Fatturare</div>
+                            <div class="expandable-stats"><strong id="ordini-fatturare-count">0</strong> ordini — <strong id="ordini-fatturare-value">€ 0</strong></div>
+                        </div>
+                        <svg class="expandable-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="6 9 12 15 18 9"/>
+                        </svg>
+                    </div>
+                    <div class="expandable-content">
+                        <div class="expandable-list" id="ordini-fatturare-list">
+                            <div class="list-empty">Nessun ordine</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Ordini Prodotti -->
+                <div class="expandable-box" id="box-ordini-prodotti">
+                    <div class="expandable-header" onclick="toggleBox('box-ordini-prodotti')">
+                        <div class="expandable-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="9 11 12 14 22 4"/>
+                                <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+                            </svg>
+                        </div>
+                        <div class="expandable-info">
+                            <div class="expandable-title">Ordini Prodotti</div>
+                            <div class="expandable-stats"><strong id="ordini-prodotti-count">0</strong> ordini — <strong id="ordini-prodotti-value">€ 0</strong></div>
+                        </div>
+                        <svg class="expandable-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="6 9 12 15 18 9"/>
+                        </svg>
+                    </div>
+                    <div class="expandable-content">
+                        <div class="expandable-list" id="ordini-prodotti-list">
+                            <div class="list-empty">Nessun ordine</div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </main>
         
@@ -137,7 +613,143 @@
     </div>
 
     <script>
-        window.addEventListener('load', function() {
+        // Variabili globali
+        let supabaseClient = null;
+        let currentUser = null;
+        let currentMonth = new Date().getMonth();
+        let currentYear = new Date().getFullYear();
+        
+        const mesi = ['Gennaio', 'Febbraio', 'Marzo', 'Aprile', 'Maggio', 'Giugno', 
+                      'Luglio', 'Agosto', 'Settembre', 'Ottobre', 'Novembre', 'Dicembre'];
+        
+        // Init Supabase
+        async function initSupabase() {
+            try {
+                const response = await fetch('/PLM/autenticazione.json');
+                const config = await response.json();
+                supabaseClient = supabase.createClient(config.supabase.url, config.supabase.anonKey);
+                return true;
+            } catch (error) {
+                console.error('Errore Supabase:', error);
+                return false;
+            }
+        }
+        
+        // Carica dati utente
+        function loadUserData() {
+            currentUser = JSON.parse(localStorage.getItem('plm_user') || sessionStorage.getItem('plm_user') || '{}');
+            
+            if (currentUser.cognome) {
+                document.getElementById('userSurname').textContent = currentUser.cognome;
+            }
+            if (currentUser.nome) {
+                document.getElementById('userFirstName').textContent = currentUser.nome;
+            }
+        }
+        
+        // Aggiorna display mese
+        function updateMonthDisplay() {
+            document.getElementById('current-month').textContent = mesi[currentMonth];
+            document.getElementById('current-year').textContent = currentYear;
+            document.getElementById('fatturato-mese-label').textContent = mesi[currentMonth] + ' ' + currentYear;
+            
+            // Disabilita next se siamo nel mese corrente
+            const oggi = new Date();
+            const isCurrentMonth = currentMonth === oggi.getMonth() && currentYear === oggi.getFullYear();
+            document.getElementById('next-month').disabled = isCurrentMonth;
+            
+            // Ricarica dati
+            loadMonthData();
+        }
+        
+        // Cambio mese
+        function changeMonth(delta) {
+            currentMonth += delta;
+            
+            if (currentMonth > 11) {
+                currentMonth = 0;
+                currentYear++;
+            } else if (currentMonth < 0) {
+                currentMonth = 11;
+                currentYear--;
+            }
+            
+            updateMonthDisplay();
+        }
+        
+        // Toggle box espandibile
+        function toggleBox(boxId) {
+            const box = document.getElementById(boxId);
+            box.classList.toggle('expanded');
+        }
+        
+        // Formatta valuta
+        function formatCurrency(value) {
+            return '€ ' + (value || 0).toLocaleString('it-IT', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+        }
+        
+        // Carica dati del mese
+        async function loadMonthData() {
+            // TODO: Implementare chiamate Supabase
+            // Per ora mostra dati demo
+            
+            // Dati demo
+            document.getElementById('fatturato-mese').textContent = formatCurrency(12500);
+            document.getElementById('fatturato-totale').textContent = formatCurrency(89200);
+            
+            document.getElementById('preventivi-count').textContent = '12';
+            document.getElementById('preventivi-value').textContent = formatCurrency(45000);
+            
+            document.getElementById('ordini-fatturare-count').textContent = '8';
+            document.getElementById('ordini-fatturare-value').textContent = formatCurrency(23400);
+            
+            document.getElementById('ordini-prodotti-count').textContent = '15';
+            document.getElementById('ordini-prodotti-value').textContent = formatCurrency(38900);
+        }
+        
+        // Logout
+        function logout() {
+            sessionStorage.removeItem('plm_logged_in');
+            sessionStorage.removeItem('plm_user');
+            localStorage.removeItem('plm_logged_in');
+            localStorage.removeItem('plm_user');
+            window.location.href = 'login.html';
+        }
+        
+        // Event listeners
+        document.getElementById('prev-month').addEventListener('click', () => changeMonth(-1));
+        document.getElementById('next-month').addEventListener('click', () => changeMonth(1));
+        
+        // Swipe per cambiare mese
+        let touchStartX = 0;
+        const monthSelector = document.querySelector('.month-selector');
+        
+        monthSelector.addEventListener('touchstart', (e) => {
+            touchStartX = e.touches[0].clientX;
+        }, { passive: true });
+        
+        monthSelector.addEventListener('touchend', (e) => {
+            const touchEndX = e.changedTouches[0].clientX;
+            const diff = touchStartX - touchEndX;
+            
+            if (Math.abs(diff) > 50) {
+                if (diff > 0) {
+                    // Swipe left = mese successivo
+                    const oggi = new Date();
+                    const isCurrentMonth = currentMonth === oggi.getMonth() && currentYear === oggi.getFullYear();
+                    if (!isCurrentMonth) changeMonth(1);
+                } else {
+                    // Swipe right = mese precedente
+                    changeMonth(-1);
+                }
+            }
+        }, { passive: true });
+        
+        // Init
+        window.addEventListener('load', async function() {
+            loadUserData();
+            await initSupabase();
+            updateMonthDisplay();
             Loader.hide();
         });
     </script>

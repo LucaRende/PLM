@@ -6,7 +6,7 @@
     <title>Login - PLM Web</title>
     
     <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="../favicon.ico">
+    <link rel="icon" type="image/x-icon" href="/PLM/favicon.ico">
     
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -82,7 +82,7 @@
                 <!-- Brand -->
                 <div class="login-brand">
                     <div class="logo">
-                        <img src="../logo-tondo.png" alt="PLM Web" style="width: 100%; height: 100%; object-fit: contain;">
+                        <img src="/PLM/logo-tondo.png" alt="PLM Web" style="width: 100%; height: 100%; object-fit: contain;">
                     </div>
                     <h1>PLM Web</h1>
                     <p>Accedi al sistema</p>
@@ -163,7 +163,7 @@
         // Inizializza Supabase
         async function initSupabase() {
             try {
-                const response = await fetch('../autenticazione.json');
+                const response = await fetch('/PLM/autenticazione.json');
                 const config = await response.json();
                 
                 supabaseClient = supabase.createClient(

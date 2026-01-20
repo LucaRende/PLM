@@ -178,13 +178,16 @@
             margin-bottom: var(--space-5);
         }
         
-        /* Stat Box Premium */
+        /* Stat Box Premium - Altezza fissa uguale */
         .stat-box {
             background: linear-gradient(145deg, var(--surface-2) 0%, var(--surface-1) 100%);
             border: 1px solid var(--border-default);
             border-radius: 20px;
             overflow: hidden;
             position: relative;
+            min-height: 180px;
+            display: flex;
+            flex-direction: column;
         }
         
         .stat-box::before {
@@ -201,6 +204,16 @@
         
         .stat-box:hover::before {
             opacity: 1;
+        }
+        
+        .stat-box .stat-slider {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .stat-box .stat-slider-track {
+            flex: 1;
         }
         
         .stat-box-header {
@@ -255,6 +268,9 @@
         .stat-dots {
             padding: var(--space-2);
             gap: var(--space-1);
+            display: flex;
+            justify-content: center;
+            margin-top: auto;
         }
         
         .stat-dot {

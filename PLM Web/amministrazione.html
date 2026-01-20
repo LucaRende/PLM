@@ -1429,17 +1429,6 @@
                             <input type="email" class="form-input" id="account-email">
                         </div>
                         
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label class="form-label">Telefono</label>
-                                <input type="tel" class="form-input" id="account-telefono">
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">Reparto</label>
-                                <input type="text" class="form-input" id="account-reparto">
-                            </div>
-                        </div>
-                        
                         <div class="form-group">
                             <label class="form-label">Ruolo</label>
                             <select class="form-select" id="account-ruolo">
@@ -1447,41 +1436,6 @@
                                 <option value="admin">Amministratore</option>
                                 <option value="manager">Manager</option>
                             </select>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label class="form-label">Permessi Pagine</label>
-                            <div class="permessi-grid">
-                                <label class="permesso-checkbox">
-                                    <input type="checkbox" value="home" checked disabled>
-                                    <span class="permesso-label">🏠 Home</span>
-                                </label>
-                                <label class="permesso-checkbox">
-                                    <input type="checkbox" value="commerciale">
-                                    <span class="permesso-label">💼 Commerciale</span>
-                                </label>
-                                <label class="permesso-checkbox">
-                                    <input type="checkbox" value="ufficio-tecnico">
-                                    <span class="permesso-label">📐 Ufficio Tecnico</span>
-                                </label>
-                                <label class="permesso-checkbox">
-                                    <input type="checkbox" value="amministrazione">
-                                    <span class="permesso-label">📊 Amministrazione</span>
-                                </label>
-                                <label class="permesso-checkbox">
-                                    <input type="checkbox" value="bollettini">
-                                    <span class="permesso-label">📝 Bollettini</span>
-                                </label>
-                                <label class="permesso-checkbox">
-                                    <input type="checkbox" value="trasporti">
-                                    <span class="permesso-label">🚚 Trasporti</span>
-                                </label>
-                            </div>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label class="form-label">Note</label>
-                            <textarea class="form-textarea" id="account-note" rows="2"></textarea>
                         </div>
                         
                         <div class="form-group">
@@ -1775,7 +1729,7 @@
                     const fattureHtml = fattureSorted.length > 0 ? fattureSorted.map(f => {
                         const fDate = f.dataScadenza ? new Date(f.dataScadenza) : null;
                         const day = fDate ? fDate.getDate() : '?';
-                        const numero = (f.numeroFattura || '').toLowerCase();
+                        const numero = String(f.numeroFattura || '').toLowerCase();
                         return `
                             <div class="fattura-item" data-day="${day}" data-numero="${numero}">
                                 <div class="fattura-giorno future">${day}</div>
@@ -1968,14 +1922,6 @@
         // =============================================
         
         let allAccounts = [];
-        const PAGINE_DISPONIBILI = [
-            { id: 'home', nome: '🏠 Home', sempre: true },
-            { id: 'commerciale', nome: '💼 Commerciale' },
-            { id: 'ufficio-tecnico', nome: '📐 Ufficio Tecnico' },
-            { id: 'amministrazione', nome: '📊 Amministrazione' },
-            { id: 'bollettini', nome: '📝 Bollettini' },
-            { id: 'trasporti', nome: '🚚 Trasporti' }
-        ];
         
         // Carica Account
         async function loadAccounts() {
@@ -2024,8 +1970,6 @@
             
             list.innerHTML = allAccounts.map(account => {
                 const initials = getAccountInitials(account);
-                const permessi = account.permessi_pagine || ['home'];
-                const permessiArray = Array.isArray(permessi) ? permessi : JSON.parse(permessi || '["home"]');
                 
                 return `
                     <div class="account-card ${!account.attivo ? 'inactive' : ''}" data-id="${account.id}">
@@ -2039,11 +1983,6 @@
                                 </div>
                             </div>
                             <span class="account-badge ${account.ruolo || 'utente'}">${account.ruolo || 'utente'}</span>
-                        </div>
-                        <div class="account-permessi">
-                            ${PAGINE_DISPONIBILI.map(p => `
-                                <span class="permesso-tag ${permessiArray.includes(p.id) ? 'active' : ''}">${p.nome}</span>
-                            `).join('')}
                         </div>
                     </div>
                 `;
@@ -2094,16 +2033,8 @@
             document.getElementById('account-username').value = '';
             document.getElementById('account-password').value = '';
             document.getElementById('account-email').value = '';
-            document.getElementById('account-telefono').value = '';
-            document.getElementById('account-reparto').value = '';
             document.getElementById('account-ruolo').value = 'utente';
-            document.getElementById('account-note').value = '';
             document.getElementById('account-attivo').checked = true;
-            
-            // Reset permessi (solo home checked)
-            document.querySelectorAll('.permessi-grid input[type="checkbox"]').forEach(cb => {
-                cb.checked = cb.value === 'home';
-            });
         }
         
         // Edit Account
@@ -2117,23 +2048,8 @@
             document.getElementById('account-username').value = account.username || '';
             document.getElementById('account-password').value = '';
             document.getElementById('account-email').value = account.email || '';
-            document.getElementById('account-telefono').value = account.telefono || '';
-            document.getElementById('account-reparto').value = account.reparto || '';
             document.getElementById('account-ruolo').value = account.ruolo || 'utente';
-            document.getElementById('account-note').value = account.note || '';
             document.getElementById('account-attivo').checked = account.attivo !== false;
-            
-            // Set permessi
-            const permessi = account.permessi_pagine || ['home'];
-            const permessiArray = Array.isArray(permessi) ? permessi : JSON.parse(permessi || '["home"]');
-            
-            document.querySelectorAll('.permessi-grid input[type="checkbox"]').forEach(cb => {
-                if (cb.value === 'home') {
-                    cb.checked = true;
-                } else {
-                    cb.checked = permessiArray.includes(cb.value);
-                }
-            });
             
             openAccountModal(false);
         }
@@ -2146,19 +2062,8 @@
             const username = document.getElementById('account-username').value.trim();
             const password = document.getElementById('account-password').value;
             const email = document.getElementById('account-email').value.trim();
-            const telefono = document.getElementById('account-telefono').value.trim();
-            const reparto = document.getElementById('account-reparto').value.trim();
             const ruolo = document.getElementById('account-ruolo').value;
-            const note = document.getElementById('account-note').value.trim();
             const attivo = document.getElementById('account-attivo').checked;
-            
-            // Raccogli permessi
-            const permessi = ['home']; // Home sempre incluso
-            document.querySelectorAll('.permessi-grid input[type="checkbox"]:checked').forEach(cb => {
-                if (cb.value !== 'home' && !permessi.includes(cb.value)) {
-                    permessi.push(cb.value);
-                }
-            });
             
             // Validazione
             if (!nome || !cognome || !username) {
@@ -2179,11 +2084,7 @@
                     cognome,
                     username,
                     email: email || null,
-                    telefono: telefono || null,
-                    reparto: reparto || null,
                     ruolo,
-                    permessi_pagine: permessi,
-                    note: note || null,
                     attivo
                 };
                 

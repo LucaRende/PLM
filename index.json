@@ -8,10 +8,10 @@
     "homeAfterLogin": "home"
   },
   "styles": {
-    "global": []
+    "global": ["PLM Web/Load/loader.css"]
   },
   "scripts": {
-    "global": []
+    "global": ["PLM Web/Load/loader.js"]
   },
   "pages": {
     "login": {

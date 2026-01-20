@@ -34,6 +34,35 @@
         
         .login-brand .logo {
             margin: 0 auto var(--space-5);
+            animation: logoPulse 3s ease-in-out infinite;
+        }
+        
+        @keyframes logoPulse {
+            0%, 100% {
+                transform: scale(1);
+                filter: drop-shadow(0 0 0px rgba(220, 38, 38, 0));
+            }
+            50% {
+                transform: scale(1.05);
+                filter: drop-shadow(0 0 20px rgba(220, 38, 38, 0.5));
+            }
+        }
+        
+        .login-brand .logo:hover {
+            animation: logoHover 0.5s ease forwards;
+        }
+        
+        @keyframes logoHover {
+            0% {
+                transform: scale(1.05);
+            }
+            50% {
+                transform: scale(1.1) rotate(5deg);
+            }
+            100% {
+                transform: scale(1.08);
+                filter: drop-shadow(0 0 30px rgba(220, 38, 38, 0.7));
+            }
         }
         
         .login-brand h1 {
@@ -64,6 +93,66 @@
         
         .login-alert {
             margin-bottom: var(--space-5);
+        }
+        
+        /* Custom Toggle Switch iOS Style */
+        .toggle-switch {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        .toggle-switch input {
+            display: none;
+        }
+        
+        .toggle-slider {
+            width: 52px;
+            height: 30px;
+            background: var(--surface-4);
+            border-radius: 30px;
+            position: relative;
+            transition: background 0.3s ease;
+            flex-shrink: 0;
+        }
+        
+        .toggle-slider::before {
+            content: '';
+            position: absolute;
+            width: 24px;
+            height: 24px;
+            background: white;
+            border-radius: 50%;
+            top: 3px;
+            left: 3px;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+        }
+        
+        .toggle-switch input:checked + .toggle-slider {
+            background: var(--primary);
+            box-shadow: 0 0 15px var(--primary-glow);
+        }
+        
+        .toggle-switch input:checked + .toggle-slider::before {
+            transform: translateX(22px);
+        }
+        
+        .toggle-switch:active .toggle-slider::before {
+            width: 28px;
+        }
+        
+        .toggle-switch input:checked + .toggle-slider + .toggle-label {
+            color: var(--text-primary);
+        }
+        
+        .toggle-label {
+            font-size: var(--text-sm);
+            color: var(--text-muted);
+            user-select: none;
+            transition: color 0.3s ease;
         }
     </style>
     
@@ -137,9 +226,10 @@
                     </div>
                     
                     <div class="login-options">
-                        <label class="form-check">
+                        <label class="toggle-switch">
                             <input type="checkbox" id="remember">
-                            <span class="form-check-label">Ricordami</span>
+                            <span class="toggle-slider"></span>
+                            <span class="toggle-label">Ricordami</span>
                         </label>
                     </div>
                     
@@ -152,7 +242,7 @@
         
         <!-- Footer -->
         <footer class="footer">
-            © 2025 PLM Web — Pro System
+            © 2026 PLM Web — Pro System s.r.l. — Powered by: Luca Rende
         </footer>
     </div>
 

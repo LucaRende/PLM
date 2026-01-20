@@ -1,0 +1,215 @@
+/* =============================================
+   PLM Web - Loader CSS
+   Priorità: Mobile First
+   ============================================= */
+
+/* Overlay base */
+.loader-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.loader-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* =============================================
+   TIPO: Pagina (fullscreen, cambio pagina)
+   ============================================= */
+.loader-overlay.tipo-pagina {
+    background: #ffffff;
+}
+
+.loader-pagina {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.loader-pagina .spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid #e0e0e0;
+    border-top-color: #3498db;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+.loader-pagina .testo {
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    color: #666;
+}
+
+/* =============================================
+   TIPO: Funzione (piccolo, per operazioni)
+   ============================================= */
+.loader-overlay.tipo-funzione {
+    background: rgba(0, 0, 0, 0.4);
+}
+
+.loader-funzione {
+    background: #ffffff;
+    padding: 24px 32px;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.loader-funzione .dots {
+    display: flex;
+    gap: 8px;
+}
+
+.loader-funzione .dot {
+    width: 12px;
+    height: 12px;
+    background: #3498db;
+    border-radius: 50%;
+    animation: bounce 1.4s ease-in-out infinite;
+}
+
+.loader-funzione .dot:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.loader-funzione .dot:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+.loader-funzione .testo {
+    font-family: Arial, sans-serif;
+    font-size: 13px;
+    color: #666;
+}
+
+/* =============================================
+   TIPO: Invio (per submit form, salvataggi)
+   ============================================= */
+.loader-overlay.tipo-invio {
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.loader-invio {
+    background: #ffffff;
+    padding: 20px 28px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.loader-invio .bar-container {
+    width: 120px;
+    height: 6px;
+    background: #e0e0e0;
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.loader-invio .bar {
+    width: 40%;
+    height: 100%;
+    background: #27ae60;
+    border-radius: 3px;
+    animation: slide 1s ease-in-out infinite;
+}
+
+.loader-invio .testo {
+    font-family: Arial, sans-serif;
+    font-size: 13px;
+    color: #666;
+}
+
+/* =============================================
+   TIPO: Inline (dentro un elemento, non overlay)
+   ============================================= */
+.loader-inline {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.loader-inline .mini-spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid #e0e0e0;
+    border-top-color: #3498db;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+.loader-inline .testo {
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+    color: #888;
+}
+
+/* =============================================
+   ANIMAZIONI
+   ============================================= */
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes bounce {
+    0%, 80%, 100% {
+        transform: scale(0.6);
+        opacity: 0.5;
+    }
+    40% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes slide {
+    0% {
+        transform: translateX(-100%);
+    }
+    100% {
+        transform: translateX(400%);
+    }
+}
+
+/* =============================================
+   RESPONSIVE - Mobile First già applicato
+   Tablet/Desktop adjustments
+   ============================================= */
+@media (min-width: 768px) {
+    .loader-pagina .spinner {
+        width: 60px;
+        height: 60px;
+    }
+    
+    .loader-funzione {
+        padding: 28px 40px;
+    }
+    
+    .loader-funzione .dot {
+        width: 14px;
+        height: 14px;
+    }
+    
+    .loader-invio .bar-container {
+        width: 150px;
+    }
+}

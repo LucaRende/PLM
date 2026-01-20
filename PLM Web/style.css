@@ -488,21 +488,13 @@ a:hover {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: var(--surface-3);
+    background: rgba(220, 38, 38, 0.15);
 }
 
 .stat-box-icon svg {
     width: 20px;
     height: 20px;
     color: var(--primary);
-}
-
-.stat-box-icon.success svg {
-    color: var(--success);
-}
-
-.stat-box-icon.warning svg {
-    color: var(--warning);
 }
 
 .stat-box-title {
@@ -534,17 +526,9 @@ a:hover {
 .stat-number {
     font-size: 2.5rem;
     font-weight: 700;
-    color: var(--text-primary);
+    color: var(--primary);
     line-height: 1;
     margin-bottom: var(--space-1);
-}
-
-.stat-number.primary {
-    color: var(--primary);
-}
-
-.stat-number.success {
-    color: var(--success);
 }
 
 .stat-label {
@@ -584,14 +568,7 @@ a:hover {
     display: flex;
     align-items: center;
     gap: 2px;
-}
-
-.stat-list-time.in {
-    color: var(--success);
-}
-
-.stat-list-time.out {
-    color: var(--error);
+    color: var(--primary);
 }
 
 .stat-list-status {
@@ -600,21 +577,8 @@ a:hover {
     font-size: 10px;
     font-weight: 600;
     text-transform: uppercase;
-}
-
-.stat-list-status.approved {
-    background: rgba(16, 185, 129, 0.2);
-    color: var(--success);
-}
-
-.stat-list-status.pending {
-    background: rgba(245, 158, 11, 0.2);
-    color: var(--warning);
-}
-
-.stat-list-status.rejected {
-    background: rgba(239, 68, 68, 0.2);
-    color: var(--error);
+    background: rgba(220, 38, 38, 0.2);
+    color: var(--primary);
 }
 
 /* Indicatori pallini */

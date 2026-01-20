@@ -1,0 +1,1027 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Amministrazione - PLM Web</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/PLM/favicon.ico">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Supabase JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <!-- Stili -->
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="Load/loader.css">
+    
+    <!-- CONTROLLO AUTENTICAZIONE -->
+    <script>
+        (function() {
+            const isLogged = sessionStorage.getItem('plm_logged_in') || localStorage.getItem('plm_logged_in');
+            if (isLogged !== 'true') {
+                window.location.replace('login.html');
+            }
+        })();
+    </script>
+    
+    <!-- Nascondi contenuto finché loader non è attivo -->
+    <style id="preload-style">
+        body { background: #030305; }
+        .page { visibility: hidden; }
+    </style>
+    
+    <style>
+        /* =============================================
+           AMMINISTRAZIONE - PANORAMICA CASTELLETTI
+           ============================================= */
+        
+        /* Header Fisso Premium */
+        .page-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: var(--space-3) var(--space-4);
+            background: rgba(3, 3, 5, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .page-user-info {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .page-user-surname {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+            line-height: 1.2;
+        }
+        
+        .page-user-name {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-weight: 400;
+            line-height: 1.3;
+        }
+        
+        .page-logo {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        
+        .page-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .btn-logout {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            border-radius: 10px;
+            color: var(--error);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+        
+        .btn-logout:hover {
+            background: rgba(239, 68, 68, 0.2);
+        }
+        
+        .btn-logout svg {
+            width: 18px;
+            height: 18px;
+        }
+        
+        /* Barra Titolo */
+        .page-title-bar {
+            position: fixed;
+            top: 62px;
+            left: 0;
+            right: 0;
+            z-index: 999;
+            padding: var(--space-3) var(--space-4);
+            background: rgba(3, 3, 5, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+        }
+        
+        .btn-back {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--surface-2);
+            border: 1px solid var(--border-default);
+            border-radius: 10px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+        
+        .btn-back:hover {
+            background: var(--surface-3);
+            color: var(--primary);
+        }
+        
+        .btn-back svg {
+            width: 20px;
+            height: 20px;
+        }
+        
+        .page-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        /* Content */
+        .page-content {
+            padding: 130px var(--space-4) var(--space-4);
+            min-height: 100vh;
+            background: var(--surface-0);
+        }
+        
+        /* Section Box - Panoramica Castelletti */
+        .section-box {
+            background: var(--surface-2);
+            border: 1px solid var(--border-default);
+            border-radius: 16px;
+            margin-bottom: var(--space-4);
+            overflow: hidden;
+        }
+        
+        .section-box.expanded {
+            border-color: var(--primary);
+        }
+        
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            padding: var(--space-4);
+            cursor: pointer;
+            transition: background var(--transition-fast);
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        .section-header:active {
+            background: var(--surface-3);
+        }
+        
+        .section-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(220, 38, 38, 0.15);
+            border-radius: 12px;
+            flex-shrink: 0;
+        }
+        
+        .section-icon svg {
+            width: 20px;
+            height: 20px;
+            color: var(--primary);
+        }
+        
+        .section-info {
+            flex: 1;
+        }
+        
+        .section-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 2px;
+        }
+        
+        .section-subtitle {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+        
+        .section-arrow {
+            width: 24px;
+            height: 24px;
+            color: var(--text-muted);
+            transition: transform var(--transition-fast);
+        }
+        
+        .section-box.expanded .section-arrow {
+            transform: rotate(180deg);
+            color: var(--primary);
+        }
+        
+        .section-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+        
+        .section-box.expanded .section-content {
+            max-height: 10000px;
+        }
+        
+        .section-inner {
+            padding: 0 var(--space-4) var(--space-4);
+        }
+        
+        /* Banca Card */
+        .banca-box {
+            background: var(--surface-3);
+            border: 1px solid var(--border-default);
+            border-radius: 12px;
+            margin-bottom: var(--space-3);
+            overflow: hidden;
+        }
+        
+        .banca-box.expanded {
+            border-color: var(--primary);
+        }
+        
+        .banca-header {
+            display: flex;
+            align-items: center;
+            padding: var(--space-3);
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        .banca-header:active {
+            background: var(--surface-4);
+        }
+        
+        .banca-icon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--primary) 0%, #b91c1c 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: var(--space-3);
+            flex-shrink: 0;
+        }
+        
+        .banca-icon svg {
+            width: 18px;
+            height: 18px;
+            color: white;
+        }
+        
+        .banca-info {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .banca-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-primary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .banca-castelletto {
+            font-size: 11px;
+            color: var(--success);
+            font-weight: 600;
+        }
+        
+        .banca-arrow {
+            width: 20px;
+            height: 20px;
+            color: var(--text-muted);
+            transition: transform var(--transition-fast);
+            flex-shrink: 0;
+        }
+        
+        .banca-box.expanded .banca-arrow {
+            transform: rotate(180deg);
+            color: var(--primary);
+        }
+        
+        .banca-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+        
+        .banca-box.expanded .banca-content {
+            max-height: 5000px;
+        }
+        
+        .banca-inner {
+            padding: 0 var(--space-3) var(--space-3);
+        }
+        
+        /* Mesi Grid */
+        .mesi-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--space-2);
+        }
+        
+        @media (min-width: 400px) {
+            .mesi-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+        
+        .mese-card {
+            background: var(--surface-2);
+            border: 1px solid var(--border-default);
+            border-radius: 10px;
+            padding: var(--space-3);
+            cursor: pointer;
+            text-align: center;
+            transition: all var(--transition-fast);
+        }
+        
+        .mese-card:active {
+            transform: scale(0.98);
+        }
+        
+        .mese-card.selected {
+            border-color: var(--primary);
+            background: rgba(220, 38, 38, 0.1);
+        }
+        
+        .mese-nome {
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: var(--space-2);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        /* Progress Circle */
+        .mese-progress {
+            width: 50px;
+            height: 50px;
+            margin: 0 auto var(--space-2);
+        }
+        
+        .mese-perc {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        
+        .mese-badge {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 8px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .mese-badge.green {
+            background: rgba(34, 197, 94, 0.2);
+            color: #22c55e;
+        }
+        
+        .mese-badge.yellow {
+            background: rgba(245, 158, 11, 0.2);
+            color: #f59e0b;
+        }
+        
+        .mese-badge.red {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+        
+        /* Fatture Container */
+        .fatture-container {
+            margin-top: var(--space-3);
+            padding-top: var(--space-3);
+            border-top: 1px solid var(--border-default);
+        }
+        
+        .fatture-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-3);
+        }
+        
+        .fatture-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .fatture-close {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--surface-3);
+            border: none;
+            border-radius: 6px;
+            color: var(--text-muted);
+            cursor: pointer;
+        }
+        
+        .fattura-card {
+            background: var(--surface-3);
+            border-radius: 10px;
+            padding: var(--space-3);
+            margin-bottom: var(--space-2);
+        }
+        
+        .fattura-card:last-child {
+            margin-bottom: 0;
+        }
+        
+        .fattura-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: var(--space-1);
+        }
+        
+        .fattura-row:last-child {
+            margin-bottom: 0;
+        }
+        
+        .fattura-label {
+            font-size: 10px;
+            color: var(--text-muted);
+        }
+        
+        .fattura-value {
+            font-size: 11px;
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+        
+        .fattura-value.positive {
+            color: var(--success);
+        }
+        
+        .fattura-value.negative {
+            color: var(--error);
+        }
+        
+        /* Stats Summary */
+        .stats-summary {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--space-2);
+            margin-bottom: var(--space-3);
+            padding: var(--space-3);
+            background: var(--surface-3);
+            border-radius: 12px;
+        }
+        
+        .stat-box {
+            text-align: center;
+            padding: var(--space-2);
+        }
+        
+        .stat-box-value {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        
+        .stat-box-value.green {
+            color: var(--success);
+        }
+        
+        .stat-box-label {
+            font-size: 10px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+        
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: var(--space-6);
+            color: var(--text-muted);
+        }
+        
+        .empty-state-icon {
+            font-size: 32px;
+            margin-bottom: var(--space-2);
+        }
+        
+        .empty-state-text {
+            font-size: 13px;
+        }
+        
+        /* Footer */
+        .footer {
+            padding: var(--space-6) var(--space-4);
+            text-align: center;
+            font-size: 11px;
+            color: var(--text-muted);
+            border-top: 1px solid var(--border-subtle);
+            margin-top: var(--space-4);
+        }
+        
+        /* Safe area per iPhone */
+        @supports (padding-bottom: env(safe-area-inset-bottom)) {
+            .footer {
+                padding-bottom: calc(var(--space-6) + env(safe-area-inset-bottom));
+            }
+            
+            .page-header {
+                padding-top: calc(var(--space-3) + env(safe-area-inset-top));
+            }
+            
+            .page-title-bar {
+                top: calc(62px + env(safe-area-inset-top));
+            }
+            
+            .page-content {
+                padding-top: calc(130px + env(safe-area-inset-top));
+            }
+        }
+    </style>
+    
+    <script src="Load/loader.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            Loader.show('pagina', 'Caricamento...');
+            document.querySelector('.page').style.visibility = 'visible';
+        });
+    </script>
+</head>
+<body>
+    <div class="page">
+        <!-- Header Fisso -->
+        <header class="page-header">
+            <div class="page-user-info">
+                <div class="page-user-surname" id="userSurname">Cognome</div>
+                <div class="page-user-name" id="userFirstName">Nome</div>
+            </div>
+            
+            <div class="page-logo">
+                <img src="/PLM/logo-tondo.png" alt="PLM">
+            </div>
+            
+            <button class="btn-logout" onclick="logout()" title="Esci">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                    <polyline points="16 17 21 12 16 7"/>
+                    <line x1="21" y1="12" x2="9" y2="12"/>
+                </svg>
+            </button>
+        </header>
+        
+        <!-- Barra Titolo -->
+        <div class="page-title-bar">
+            <button class="btn-back" onclick="window.location.href='home.html'">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="15 18 9 12 15 6"/>
+                </svg>
+            </button>
+            <h1 class="page-title">Amministrazione</h1>
+        </div>
+        
+        <!-- Content -->
+        <main class="page-content">
+            <!-- Sezione Panoramica Castelletti -->
+            <div class="section-box" id="section-castelletti">
+                <div class="section-header" onclick="toggleSection('section-castelletti')">
+                    <div class="section-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="4" width="18" height="16" rx="2"/>
+                            <line x1="3" y1="10" x2="21" y2="10"/>
+                            <line x1="9" y1="10" x2="9" y2="20"/>
+                            <line x1="15" y1="10" x2="15" y2="20"/>
+                        </svg>
+                    </div>
+                    <div class="section-info">
+                        <div class="section-title">Panoramica Castelletti</div>
+                        <div class="section-subtitle" id="castelletti-subtitle">Caricamento...</div>
+                    </div>
+                    <svg class="section-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="6 9 12 15 18 9"/>
+                    </svg>
+                </div>
+                <div class="section-content">
+                    <div class="section-inner">
+                        <!-- Lista Banche -->
+                        <div id="banche-list">
+                            <div class="empty-state">
+                                <div class="empty-state-icon">⏳</div>
+                                <div class="empty-state-text">Caricamento castelletti...</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+        
+        <!-- Footer -->
+        <footer class="footer">
+            © 2026 PLM Web — Pro System s.r.l. — Powered by: Luca Rende
+        </footer>
+    </div>
+
+    <script>
+        // =============================================
+        // AMMINISTRAZIONE - PANORAMICA CASTELLETTI
+        // =============================================
+        
+        let supabaseClient = null;
+        let currentUser = null;
+        
+        const MESI = ['Gen', 'Feb', 'Mar', 'Apr', 'Mag', 'Giu', 'Lug', 'Ago', 'Set', 'Ott', 'Nov', 'Dic'];
+        const MESI_FULL = ['Gennaio', 'Febbraio', 'Marzo', 'Aprile', 'Maggio', 'Giugno', 
+                          'Luglio', 'Agosto', 'Settembre', 'Ottobre', 'Novembre', 'Dicembre'];
+        
+        let allFatture = [];
+        let fatturePerBanca = {};
+        let castellettiPerBanca = {};
+        
+        // Init Supabase
+        async function initSupabase() {
+            try {
+                const response = await fetch('/PLM/autenticazione.json');
+                const config = await response.json();
+                supabaseClient = supabase.createClient(config.supabase.url, config.supabase.anonKey);
+                return true;
+            } catch (error) {
+                console.error('Errore Supabase:', error);
+                return false;
+            }
+        }
+        
+        // Carica dati utente
+        function loadUserData() {
+            currentUser = JSON.parse(localStorage.getItem('plm_user') || sessionStorage.getItem('plm_user') || '{}');
+            
+            if (currentUser.cognome) {
+                document.getElementById('userSurname').textContent = currentUser.cognome;
+            }
+            if (currentUser.nome) {
+                document.getElementById('userFirstName').textContent = currentUser.nome;
+            }
+        }
+        
+        // Toggle Section
+        function toggleSection(sectionId) {
+            const section = document.getElementById(sectionId);
+            section.classList.toggle('expanded');
+        }
+        
+        // Toggle Banca
+        function toggleBanca(bancaIdx) {
+            const box = document.querySelector(`[data-banca="${bancaIdx}"]`);
+            if (box) {
+                // Chiudi tutte le altre
+                document.querySelectorAll('.banca-box.expanded').forEach(b => {
+                    if (b !== box) b.classList.remove('expanded');
+                });
+                box.classList.toggle('expanded');
+            }
+        }
+        
+        // Format Euro
+        function formatEuro(value) {
+            return new Intl.NumberFormat('it-IT', { 
+                style: 'currency', 
+                currency: 'EUR',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            }).format(Math.abs(value));
+        }
+        
+        // Format Euro Short
+        function formatEuroShort(value) {
+            const abs = Math.abs(value);
+            if (abs >= 1000000) {
+                return (abs / 1000000).toFixed(1) + 'M€';
+            }
+            if (abs >= 1000) {
+                return (abs / 1000).toFixed(0) + 'K€';
+            }
+            return abs.toFixed(0) + '€';
+        }
+        
+        // Organizza dati per banca e mese
+        function organizzaDatiPerBanca(fatture) {
+            fatturePerBanca = {};
+            
+            fatture.forEach(f => {
+                const banca = f.bancaAssociata || 'Banca non specificata';
+                
+                if (!fatturePerBanca[banca]) {
+                    fatturePerBanca[banca] = {};
+                    MESI.forEach((_, idx) => {
+                        fatturePerBanca[banca][idx] = [];
+                    });
+                }
+                
+                // Estrai mese dalla data scadenza
+                if (f.dataScadenza) {
+                    const date = new Date(f.dataScadenza);
+                    const meseIdx = date.getMonth();
+                    fatturePerBanca[banca][meseIdx].push(f);
+                }
+            });
+        }
+        
+        // Toggle Mese (mostra fatture)
+        function toggleMese(bancaIdx, meseIdx, banca) {
+            const container = document.getElementById(`fatture-${bancaIdx}`);
+            const currentMese = container.dataset.currentMese;
+            const newMese = `${bancaIdx}-${meseIdx}`;
+            
+            // Deseleziona tutti i mesi
+            document.querySelectorAll(`[data-banca="${bancaIdx}"] .mese-card`).forEach(c => {
+                c.classList.remove('selected');
+            });
+            
+            if (currentMese === newMese) {
+                // Chiudi
+                container.innerHTML = '';
+                container.dataset.currentMese = '';
+                return;
+            }
+            
+            // Seleziona questo mese
+            document.getElementById(`mese-${bancaIdx}-${meseIdx}`).classList.add('selected');
+            container.dataset.currentMese = newMese;
+            
+            const fatture = fatturePerBanca[banca][meseIdx] || [];
+            
+            if (fatture.length === 0) {
+                container.innerHTML = `
+                    <div class="fatture-container">
+                        <div class="fatture-header">
+                            <span class="fatture-title">Fatture ${MESI_FULL[meseIdx]}</span>
+                            <button class="fatture-close" onclick="closeFatture(${bancaIdx})">✕</button>
+                        </div>
+                        <div class="empty-state" style="padding: var(--space-4);">
+                            <div class="empty-state-text">Nessuna fattura in questo mese</div>
+                        </div>
+                    </div>
+                `;
+            } else {
+                container.innerHTML = `
+                    <div class="fatture-container">
+                        <div class="fatture-header">
+                            <span class="fatture-title">Fatture ${MESI_FULL[meseIdx]} (${fatture.length})</span>
+                            <button class="fatture-close" onclick="closeFatture(${bancaIdx})">✕</button>
+                        </div>
+                        ${fatture.map(f => `
+                            <div class="fattura-card">
+                                <div class="fattura-row">
+                                    <span class="fattura-label">Cliente</span>
+                                    <span class="fattura-value">${f.cliente || '-'}</span>
+                                </div>
+                                <div class="fattura-row">
+                                    <span class="fattura-label">N° Fattura</span>
+                                    <span class="fattura-value">${f.numeroFattura || '-'}</span>
+                                </div>
+                                <div class="fattura-row">
+                                    <span class="fattura-label">Scadenza</span>
+                                    <span class="fattura-value">${f.dataScadenzaFormattato || '-'}</span>
+                                </div>
+                                <div class="fattura-row">
+                                    <span class="fattura-label">Da Pagare</span>
+                                    <span class="fattura-value ${f.importoDaPagare < 0 ? 'positive' : 'negative'}">${f.importoDaPagare_Formattato || formatEuro(f.importoDaPagare || 0)}</span>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+            
+            // Scroll alle fatture
+            setTimeout(() => {
+                container.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }, 100);
+        }
+        
+        // Chiudi fatture
+        function closeFatture(bancaIdx) {
+            const container = document.getElementById(`fatture-${bancaIdx}`);
+            container.innerHTML = '';
+            container.dataset.currentMese = '';
+            document.querySelectorAll(`[data-banca="${bancaIdx}"] .mese-card`).forEach(c => {
+                c.classList.remove('selected');
+            });
+        }
+        
+        // Render Banche
+        function renderBanche() {
+            const list = document.getElementById('banche-list');
+            const banche = Object.keys(fatturePerBanca).sort();
+            
+            if (banche.length === 0) {
+                list.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📊</div>
+                        <div class="empty-state-text">Nessuna banca trovata</div>
+                    </div>
+                `;
+                return;
+            }
+            
+            document.getElementById('castelletti-subtitle').textContent = `${banche.length} banche · ${allFatture.length} fatture`;
+            
+            list.innerHTML = banche.map((banca, idx) => {
+                const castelletto = castellettiPerBanca[banca] || 0;
+                
+                // Calcola totale da pagare
+                const tutteFatture = Object.values(fatturePerBanca[banca]).flat();
+                const totaleDaPagare = tutteFatture.reduce((sum, f) => sum + (f.importoDaPagare || 0), 0);
+                
+                // Render mesi
+                const mesiHtml = MESI.map((mese, meseIdx) => {
+                    const fatture = fatturePerBanca[banca][meseIdx] || [];
+                    const daPagareMese = fatture.reduce((sum, f) => sum + (f.importoDaPagare || 0), 0);
+                    const occupato = totaleDaPagare - daPagareMese;
+                    const rimanente = castelletto + occupato;
+                    
+                    const percentuale = castelletto > 0 
+                        ? Math.min(100, Math.max(0, ((castelletto - rimanente) / castelletto) * 100))
+                        : 0;
+                    
+                    let badgeClass = 'green';
+                    let badgeText = 'OK';
+                    if (percentuale > 80) {
+                        badgeClass = 'red';
+                        badgeText = 'Critico';
+                    } else if (percentuale > 50) {
+                        badgeClass = 'yellow';
+                        badgeText = 'Attenz.';
+                    }
+                    
+                    const strokeColor = percentuale > 80 ? '#ef4444' : percentuale > 50 ? '#f59e0b' : '#22c55e';
+                    const circumference = Math.PI * 36; // 2 * PI * r (r=18)
+                    const offset = circumference * (1 - percentuale / 100);
+                    
+                    return `
+                        <div class="mese-card" id="mese-${idx}-${meseIdx}" onclick="toggleMese(${idx}, ${meseIdx}, '${banca.replace(/'/g, "\\'")}')">
+                            <div class="mese-nome">${mese}</div>
+                            <svg class="mese-progress" viewBox="0 0 50 50">
+                                <circle cx="25" cy="25" r="18" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="4"/>
+                                <circle cx="25" cy="25" r="18" fill="none" 
+                                    stroke="${strokeColor}"
+                                    stroke-width="4" stroke-linecap="round"
+                                    stroke-dasharray="${circumference}" 
+                                    stroke-dashoffset="${offset}"
+                                    transform="rotate(-90 25 25)"/>
+                            </svg>
+                            <div class="mese-perc">${percentuale.toFixed(0)}%</div>
+                            <div class="mese-badge ${badgeClass}">${badgeText}</div>
+                        </div>
+                    `;
+                }).join('');
+                
+                return `
+                    <div class="banca-box" data-banca="${idx}">
+                        <div class="banca-header" onclick="toggleBanca(${idx})">
+                            <div class="banca-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M3 9L12 2L21 9V20C21 20.5304 20.7893 21.0391 20.4142 21.4142C20.0391 21.7893 19.5304 22 19 22H5C4.46957 22 3.96086 21.7893 3.58579 21.4142C3.21071 21.0391 3 20.5304 3 20V9Z"/>
+                                    <path d="M9 22V12H15V22"/>
+                                </svg>
+                            </div>
+                            <div class="banca-info">
+                                <div class="banca-name">${banca}</div>
+                                <div class="banca-castelletto">Castelletto: ${formatEuro(castelletto)}</div>
+                            </div>
+                            <svg class="banca-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="6 9 12 15 18 9"/>
+                            </svg>
+                        </div>
+                        <div class="banca-content">
+                            <div class="banca-inner">
+                                <div class="stats-summary">
+                                    <div class="stat-box">
+                                        <div class="stat-box-value green">${formatEuroShort(castelletto)}</div>
+                                        <div class="stat-box-label">Castelletto</div>
+                                    </div>
+                                    <div class="stat-box">
+                                        <div class="stat-box-value">${tutteFatture.length}</div>
+                                        <div class="stat-box-label">Fatture</div>
+                                    </div>
+                                </div>
+                                <div class="mesi-grid">
+                                    ${mesiHtml}
+                                </div>
+                                <div id="fatture-${idx}" data-current-mese=""></div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        // Carica Castelletti
+        async function loadCastelletti() {
+            if (!supabaseClient) {
+                // Demo data
+                document.getElementById('castelletti-subtitle').textContent = 'Connessione non disponibile';
+                return;
+            }
+            
+            try {
+                // Carica castelletti
+                const { data: bancheData, error: bancheError } = await supabaseClient
+                    .from('ImportiCastelletti')
+                    .select('*');
+                    
+                if (bancheError) throw bancheError;
+                
+                // Mappa castelletti per nome
+                if (bancheData) {
+                    bancheData.forEach(b => {
+                        castellettiPerBanca[b.nome] = b.totaleCastelletto || 0;
+                    });
+                }
+                
+                // Carica fatture
+                const { data, error } = await supabaseClient
+                    .from('FattureCastelletti')
+                    .select('*');
+                    
+                if (error) throw error;
+                
+                if (data && data.length > 0) {
+                    allFatture = data;
+                    organizzaDatiPerBanca(data);
+                    renderBanche();
+                } else {
+                    document.getElementById('banche-list').innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-state-icon">📊</div>
+                            <div class="empty-state-text">Nessuna fattura trovata</div>
+                        </div>
+                    `;
+                    document.getElementById('castelletti-subtitle').textContent = 'Nessun dato';
+                }
+                
+            } catch (error) {
+                console.error('Errore caricamento castelletti:', error);
+                document.getElementById('castelletti-subtitle').textContent = 'Errore caricamento';
+                document.getElementById('banche-list').innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">⚠️</div>
+                        <div class="empty-state-text">Errore: ${error.message}</div>
+                    </div>
+                `;
+            }
+        }
+        
+        // Logout
+        function logout() {
+            sessionStorage.removeItem('plm_logged_in');
+            sessionStorage.removeItem('plm_user');
+            localStorage.removeItem('plm_logged_in');
+            localStorage.removeItem('plm_user');
+            window.location.href = 'login.html';
+        }
+        
+        // Init
+        window.addEventListener('load', async function() {
+            loadUserData();
+            await initSupabase();
+            await loadCastelletti();
+            Loader.hide();
+        });
+    </script>
+</body>
+</html>

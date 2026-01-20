@@ -233,7 +233,7 @@
             left: 0;
             right: 0;
             height: 3px;
-            background: linear-gradient(90deg, var(--primary), #f59e0b, var(--primary));
+            background: var(--primary);
         }
         
         .codici-header {
@@ -270,8 +270,6 @@
         
         .codici-list {
             padding: var(--space-3);
-            max-height: 280px;
-            overflow-y: auto;
         }
         
         .codici-empty {
@@ -290,6 +288,18 @@
             display: flex;
             align-items: center;
             gap: var(--space-3);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        .codice-card:active {
+            transform: scale(0.98);
+        }
+        
+        .codice-card.selected {
+            border-color: var(--primary);
+            background: rgba(220, 38, 38, 0.08);
         }
         
         .codice-card:last-child {
@@ -795,6 +805,81 @@
             padding: var(--space-3);
             color: var(--text-muted);
             font-size: 12px;
+        }
+        
+        /* Barra Ricerca Gantt */
+        .gantt-search-box {
+            display: flex;
+            align-items: center;
+            background: var(--surface-2);
+            border: 1.5px solid var(--border-default);
+            border-radius: 14px;
+            margin-bottom: var(--space-3);
+            overflow: hidden;
+            transition: border-color var(--transition-fast);
+        }
+        
+        .gantt-search-box:focus-within {
+            border-color: var(--primary);
+        }
+        
+        .gantt-search-icon {
+            width: 18px;
+            height: 18px;
+            margin-left: 14px;
+            color: var(--text-muted);
+            flex-shrink: 0;
+        }
+        
+        .gantt-search-input {
+            flex: 1;
+            padding: 14px 12px;
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
+            font-size: 14px;
+            font-family: 'Inter', sans-serif;
+            outline: none;
+            min-width: 0;
+        }
+        
+        .gantt-search-input::placeholder {
+            color: var(--text-muted);
+        }
+        
+        .gantt-search-clear {
+            width: 32px;
+            height: 32px;
+            margin-right: 8px;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            background: var(--surface-4);
+            border: none;
+            border-radius: 50%;
+            color: var(--text-muted);
+            font-size: 14px;
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        .gantt-search-clear.show {
+            display: flex;
+        }
+        
+        /* Highlight per ricerca */
+        .gantt-person-box.highlight {
+            border: 2px solid var(--primary);
+            background: rgba(220, 38, 38, 0.05);
+        }
+        
+        .gantt-person-box.dimmed {
+            opacity: 0.4;
+        }
+        
+        .gantt-task-card.highlight {
+            border: 2px solid var(--primary);
+            background: rgba(220, 38, 38, 0.1);
         }
         
         /* Filtri compatti */
@@ -1522,7 +1607,7 @@
                         </svg>
                     </div>
                     <div class="section-info">
-                        <div class="section-title">Gantt Giornaliero</div>
+                        <div class="section-title">Pianificazione Giornaliera</div>
                         <div class="section-subtitle" id="gantt-subtitle">Caricamento...</div>
                     </div>
                     <svg class="section-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -1531,6 +1616,21 @@
                 </div>
                 <div class="section-content">
                     <div class="section-inner">
+                        <!-- Barra Ricerca Codice -->
+                        <div class="gantt-search-box">
+                            <svg class="gantt-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="11" cy="11" r="8"/>
+                                <path d="m21 21-4.35-4.35"/>
+                            </svg>
+                            <input type="text" 
+                                   class="gantt-search-input" 
+                                   id="gantt-search" 
+                                   placeholder="Cerca codice PS..."
+                                   autocomplete="off"
+                                   oninput="filterGanttByCode(this.value)">
+                            <button class="gantt-search-clear" id="gantt-search-clear" onclick="clearGanttSearch()">✕</button>
+                        </div>
+                        
                         <!-- Lista operatori con task -->
                         <div id="gantt-operators">
                             <!-- Generato da JS -->
@@ -2059,6 +2159,181 @@
             }
         }
         
+        // =============================================
+        // RICERCA CODICE NEL GANTT
+        // =============================================
+        
+        let ganttSearchTimeout = null;
+        
+        function filterGanttByCode(searchValue) {
+            const clearBtn = document.getElementById('gantt-search-clear');
+            const search = searchValue.toLowerCase().trim();
+            
+            // Mostra/nascondi pulsante clear
+            if (search.length > 0) {
+                clearBtn.classList.add('show');
+            } else {
+                clearBtn.classList.remove('show');
+            }
+            
+            // Debounce
+            clearTimeout(ganttSearchTimeout);
+            ganttSearchTimeout = setTimeout(() => {
+                applyGanttFilter(search);
+            }, 150);
+        }
+        
+        function applyGanttFilter(search) {
+            const personBoxes = document.querySelectorAll('.gantt-person-box');
+            const taskCards = document.querySelectorAll('.gantt-task-card');
+            
+            if (!search) {
+                // Reset: rimuovi tutti gli highlight e dimmed
+                personBoxes.forEach(box => {
+                    box.classList.remove('highlight', 'dimmed', 'expanded');
+                });
+                taskCards.forEach(card => {
+                    card.classList.remove('highlight');
+                });
+                return;
+            }
+            
+            // Cerca nei task
+            let foundAny = false;
+            const personsWithMatches = new Set();
+            
+            taskCards.forEach(card => {
+                const taskId = card.querySelector('.gantt-task-id')?.textContent || '';
+                const taskDesc = card.querySelector('.gantt-task-desc')?.textContent || '';
+                const combined = (taskId + ' ' + taskDesc).toLowerCase();
+                
+                if (combined.includes(search)) {
+                    card.classList.add('highlight');
+                    foundAny = true;
+                    
+                    // Trova il box persona parent
+                    const parentBox = card.closest('.gantt-person-box');
+                    if (parentBox) {
+                        const personIdx = parentBox.dataset.person;
+                        personsWithMatches.add(personIdx);
+                    }
+                } else {
+                    card.classList.remove('highlight');
+                }
+            });
+            
+            // Aggiorna stile box operatori
+            personBoxes.forEach(box => {
+                const personIdx = box.dataset.person;
+                if (personsWithMatches.has(personIdx)) {
+                    box.classList.add('highlight', 'expanded');
+                    box.classList.remove('dimmed');
+                } else {
+                    box.classList.remove('highlight', 'expanded');
+                    box.classList.add('dimmed');
+                }
+            });
+            
+            // Se non trovato nulla, togli i dimmed
+            if (!foundAny) {
+                personBoxes.forEach(box => {
+                    box.classList.remove('dimmed');
+                });
+            }
+        }
+        
+        function clearGanttSearch() {
+            const input = document.getElementById('gantt-search');
+            const clearBtn = document.getElementById('gantt-search-clear');
+            
+            input.value = '';
+            clearBtn.classList.remove('show');
+            applyGanttFilter('');
+        }
+        
+        // =============================================
+        // HIGHLIGHT OPERATORI PER CODICE PS
+        // =============================================
+        
+        let selectedCodice = null;
+        
+        function highlightOperatorsForCode(codice) {
+            const codiceCards = document.querySelectorAll('.codice-card');
+            const personBoxes = document.querySelectorAll('.gantt-person-box');
+            const taskCards = document.querySelectorAll('.gantt-task-card');
+            
+            // Se stesso codice già selezionato, deseleziona tutto
+            if (selectedCodice === codice) {
+                selectedCodice = null;
+                codiceCards.forEach(card => card.classList.remove('selected'));
+                personBoxes.forEach(box => {
+                    box.classList.remove('highlight', 'dimmed', 'expanded');
+                });
+                taskCards.forEach(card => card.classList.remove('highlight'));
+                return;
+            }
+            
+            selectedCodice = codice;
+            
+            // Deseleziona tutte le card e seleziona quella cliccata
+            codiceCards.forEach(card => {
+                const cardCodice = card.querySelector('.codice-nome')?.textContent;
+                if (cardCodice === codice) {
+                    card.classList.add('selected');
+                } else {
+                    card.classList.remove('selected');
+                }
+            });
+            
+            // Espandi la sezione Gantt se non è già espansa
+            const ganttSection = document.getElementById('section-gantt');
+            if (ganttSection && !ganttSection.classList.contains('expanded')) {
+                ganttSection.classList.add('expanded');
+            }
+            
+            // Cerca task con questo codice
+            const personsWithCode = new Set();
+            
+            taskCards.forEach(card => {
+                const taskDesc = card.querySelector('.gantt-task-desc')?.textContent || '';
+                
+                if (taskDesc.includes(codice)) {
+                    card.classList.add('highlight');
+                    
+                    // Trova il box persona parent
+                    const parentBox = card.closest('.gantt-person-box');
+                    if (parentBox) {
+                        const personIdx = parentBox.dataset.person;
+                        personsWithCode.add(personIdx);
+                    }
+                } else {
+                    card.classList.remove('highlight');
+                }
+            });
+            
+            // Aggiorna stile box operatori
+            personBoxes.forEach(box => {
+                const personIdx = box.dataset.person;
+                if (personsWithCode.has(personIdx)) {
+                    box.classList.add('highlight', 'expanded');
+                    box.classList.remove('dimmed');
+                } else {
+                    box.classList.remove('highlight', 'expanded');
+                    box.classList.add('dimmed');
+                }
+            });
+            
+            // Se nessun match, togli i dimmed
+            if (personsWithCode.size === 0) {
+                personBoxes.forEach(box => box.classList.remove('dimmed'));
+            }
+            
+            // Scroll alla sezione Gantt
+            setTimeout(() => {
+                ganttSection?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 100);
+        }
+        
         function renderGantt(tasks) {
             const container = document.getElementById('gantt-operators');
             
@@ -2255,6 +2530,7 @@
                     codiciMap[codice] = {
                         codice: codice,
                         fasi: [],
+                        operatori: new Set(),
                         totaleFasi: 0,
                         fasiCompletate: 0,
                         fasiInCorso: 0,
@@ -2263,18 +2539,23 @@
                     };
                 }
                 
-                // Aggiungi fasi
+                // Aggiungi fasi e operatori
                 const fasiDaControllare = [
-                    { nome: '2D', assegnato: record.Disegno_2D_Assegnato, fatto: record.Disegno_2D_Fatto, oraInizio: record.Ora_Disegno_2D_Inizio, oraFine: record.Ora_Disegno_2D_Fine },
-                    { nome: '3D', assegnato: record.Disegno_3D_Assegnato, fatto: record.Disegno_3D_Fatto, oraInizio: record.Ora_Disegno_3D_Inizio, oraFine: record.Ora_Disegno_3D_Fine },
-                    { nome: 'Distinta', assegnato: record.Distinta_Assegnato, fatto: record.Distinta_Fatto, oraInizio: record.Ora_Distinta_Inizio, oraFine: record.Ora_Distinta_Fine },
-                    { nome: 'Prog', assegnato: record.Programmazione_Assegnato, fatto: record.Programmazione_Fatto, oraInizio: record.Ora_Programmazione_Inizio, oraFine: record.Ora_Programmazione_Fine }
+                    { nome: '2D', assegnato: record.Disegno_2D_Assegnato, fatto: record.Disegno_2D_Fatto, oraInizio: record.Ora_Disegno_2D_Inizio, oraFine: record.Ora_Disegno_2D_Fine, operatore: record.Operatore_Disegno_2D_Assegnato },
+                    { nome: '3D', assegnato: record.Disegno_3D_Assegnato, fatto: record.Disegno_3D_Fatto, oraInizio: record.Ora_Disegno_3D_Inizio, oraFine: record.Ora_Disegno_3D_Fine, operatore: record.Operatore_Disegno_3D_Assegnato },
+                    { nome: 'Distinta', assegnato: record.Distinta_Assegnato, fatto: record.Distinta_Fatto, oraInizio: record.Ora_Distinta_Inizio, oraFine: record.Ora_Distinta_Fine, operatore: record.Operatore_Distinta_Assegnato },
+                    { nome: 'Prog', assegnato: record.Programmazione_Assegnato, fatto: record.Programmazione_Fatto, oraInizio: record.Ora_Programmazione_Inizio, oraFine: record.Ora_Programmazione_Fine, operatore: record.Operatore_Programmazione_Assegnato }
                 ];
                 
                 fasiDaControllare.forEach(fase => {
                     if (fase.assegnato && fase.oraInizio && fase.oraFine) {
                         codiciMap[codice].totaleFasi++;
                         codiciMap[codice].inLavorazioneOggi = true;
+                        
+                        // Traccia operatore
+                        if (fase.operatore) {
+                            codiciMap[codice].operatori.add(fase.operatore);
+                        }
                         
                         const oraFineDecimal = parseTimeToDecimal(fase.oraFine);
                         const oraInizioDecimal = parseTimeToDecimal(fase.oraInizio);
@@ -2345,8 +2626,12 @@
                 // Dettaglio fasi
                 const fasiStr = codice.fasi.map(f => f.nome).join(', ');
                 
+                // Lista operatori
+                const operatoriArr = Array.from(codice.operatori);
+                const operatoriStr = operatoriArr.length > 0 ? operatoriArr.map(o => o.split(' ')[0]).join(', ') : '';
+                
                 return `
-                    <div class="codice-card">
+                    <div class="codice-card" onclick="highlightOperatorsForCode('${codice.codice.replace(/'/g, "\\'")}')">
                         <svg class="codice-progress-ring" viewBox="0 0 50 50">
                             <circle class="bg" cx="25" cy="25" r="18"/>
                             <circle class="progress ${stato}" cx="25" cy="25" r="18"
@@ -2361,6 +2646,7 @@
                                 <span>${codice.fasiCompletate}/${codice.totaleFasi} fasi</span>
                                 <span>·</span>
                                 <span>${fasiStr}</span>
+                                ${operatoriStr ? `<span>·</span><span>👤 ${operatoriStr}</span>` : ''}
                             </div>
                         </div>
                         <div class="codice-status">

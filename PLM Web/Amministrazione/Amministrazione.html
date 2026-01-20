@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>PLM 2 - Amministrazione</title>
+    
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="../StileBase/StileBase.css">
+    <link rel="stylesheet" href="../Funzioni/Loader.css">
+    <link rel="stylesheet" href="../Login/Login.css">
+    <link rel="stylesheet" href="Amministrazione.css">
+</head>
+<body>
+    <div id="login-container"></div>
+    <div class="main-container">
+        <div id="header-container"></div>
+        <div id="content-container"></div>
+        <div id="footer-container"></div>
+    </div>
+    <div id="menu-container"></div>
+
+    <!-- JS Modules -->
+    <script src="../Funzioni/Loader.js"></script>
+    <script src="../StileBase/StileBase.js"></script>
+    <script src="../Login/Login.js"></script>
+    <script src="Amministrazione.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => initApp('admin', '..'));
+    </script>
+</body>
+</html>

@@ -1,0 +1,167 @@
+<!-- ========================================
+     ADMIN CONTENT - PLM 2
+     Template per Dashboard Amministrazione
+     ======================================== -->
+
+<template id="plm-admin">
+    <div class="dashboards-grid">
+        <!-- Badge Admin -->
+        <div style="text-align: center; margin-bottom: 20px;">
+            <span class="admin-badge">🔐 Pannello Amministrazione</span>
+        </div>
+
+        <!-- Dashboard Pannello Admin -->
+        <div class="dashboard admin-dashboard">
+            <div class="admin-dashboard-header" id="adminDashHeader" onclick="toggleAdminDash()">
+                <div class="dashboard-top">
+                    <div class="dashboard-title">
+                        <span class="dashboard-icon">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+                                <path d="M12 15a3 3 0 100-6 3 3 0 000 6z" fill="white" opacity="0.9"/>
+                                <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </span>
+                        <h2>Pannello Admin</h2>
+                    </div>
+                    <span class="toggle-arrow" id="adminDashArrow">▼</span>
+                </div>
+            </div>
+
+            <div class="dashboard-content" id="adminDashContent">
+                <div class="content-wrapper">
+                    <!-- Statistiche Admin -->
+                    <div class="admin-stats">
+                        <div class="admin-stat-card">
+                            <div class="admin-stat-value" id="adminTotalUsers">5</div>
+                            <div class="admin-stat-label">Utenti Totali</div>
+                        </div>
+                        <div class="admin-stat-card">
+                            <div class="admin-stat-value" id="adminActiveUsers">5</div>
+                            <div class="admin-stat-label">Utenti Attivi</div>
+                        </div>
+                        <div class="admin-stat-card">
+                            <div class="admin-stat-value" id="adminTotalActivities">-</div>
+                            <div class="admin-stat-label">Attività CRM</div>
+                        </div>
+                        <div class="admin-stat-card">
+                            <div class="admin-stat-value" id="adminTotalTasks">-</div>
+                            <div class="admin-stat-label">Lavori Uff. Tecnico</div>
+                        </div>
+                    </div>
+
+                    <!-- Azioni Rapide -->
+                    <div style="margin-top: 20px;">
+                        <div class="settings-group-title">Azioni Rapide</div>
+                        <div class="quick-actions">
+                            <button class="quick-action-btn" onclick="refreshAllData()">
+                                <div class="quick-action-icon">🔄</div>
+                                <span class="quick-action-label">Aggiorna Dati</span>
+                            </button>
+                            <button class="quick-action-btn" onclick="exportData()">
+                                <div class="quick-action-icon">📊</div>
+                                <span class="quick-action-label">Esporta Report</span>
+                            </button>
+                            <button class="quick-action-btn" onclick="clearCache()">
+                                <div class="quick-action-icon">🗑️</div>
+                                <span class="quick-action-label">Pulisci Cache</span>
+                            </button>
+                            <button class="quick-action-btn" onclick="showSettings()">
+                                <div class="quick-action-icon">⚙️</div>
+                                <span class="quick-action-label">Impostazioni</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Impostazioni -->
+                    <div class="settings-section" style="margin-top: 20px;">
+                        <div class="settings-group-title">Impostazioni Sistema</div>
+                        
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <div class="setting-label">Notifiche Push</div>
+                                <div class="setting-description">Ricevi notifiche per nuove attività</div>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="settingNotifications" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <div class="setting-label">Auto-refresh</div>
+                                <div class="setting-description">Aggiorna automaticamente ogni 5 minuti</div>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="settingAutoRefresh" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Log -->
+                    <div style="margin-top: 20px;">
+                        <div class="settings-group-title">Log Attività Recenti</div>
+                        <div class="activity-log" id="activityLog"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Gestione Password -->
+        <div class="dashboard admin-dashboard">
+            <div class="admin-dashboard-header" id="passwordDashHeader" onclick="togglePasswordDash()">
+                <div class="dashboard-top">
+                    <div class="dashboard-title">
+                        <span class="dashboard-icon">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+                                <rect x="3" y="11" width="18" height="11" rx="2" fill="white" opacity="0.9"/>
+                                <path d="M7 11V7a5 5 0 0110 0v4" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                                <circle cx="12" cy="16" r="1" fill="#1a2332"/>
+                            </svg>
+                        </span>
+                        <h2>Gestione Password</h2>
+                    </div>
+                    <span class="toggle-arrow" id="passwordDashArrow">▼</span>
+                </div>
+            </div>
+
+            <div class="dashboard-content" id="passwordDashContent">
+                <div class="content-wrapper">
+                    <div class="settings-section">
+                        <div class="admin-input-group">
+                            <label class="admin-input-label">Password Utente</label>
+                            <input type="password" class="admin-input" id="userPasswordInput" placeholder="Nuova password utente">
+                        </div>
+                        
+                        <div class="admin-input-group">
+                            <label class="admin-input-label">Password Admin</label>
+                            <input type="password" class="admin-input" id="adminPasswordInput" placeholder="Nuova password admin">
+                        </div>
+                        
+                        <div style="display: flex; gap: 12px; margin-top: 16px;">
+                            <button class="admin-btn admin-btn-primary" onclick="savePasswords()">Salva Password</button>
+                            <button class="admin-btn admin-btn-secondary" onclick="resetPasswordFields()">Annulla</button>
+                        </div>
+                        
+                        <div class="setting-info" style="margin-top: 16px; padding: 12px; background: rgba(234, 179, 8, 0.1); border-radius: 12px; border: 1px solid rgba(234, 179, 8, 0.2);">
+                            <div class="setting-label" style="color: #eab308;">⚠️ Attenzione</div>
+                            <div class="setting-description">Le password sono salvate localmente. In produzione usare autenticazione sicura.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="admin-modal" id="adminModal">
+        <div class="admin-modal-content">
+            <div class="admin-modal-header">
+                <h3 class="admin-modal-title" id="modalTitle">Titolo</h3>
+                <button class="admin-modal-close" onclick="closeAdminModal()">✕</button>
+            </div>
+            <div class="admin-modal-body" id="modalBody"></div>
+        </div>
+    </div>
+</template>

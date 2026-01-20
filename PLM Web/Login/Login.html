@@ -1,0 +1,67 @@
+<!-- ========================================
+     LOGIN - PLM 2
+     Template per schermata di login
+     ======================================== -->
+
+<template id="plm-login">
+    <div class="login-overlay" id="loginOverlay">
+        <!-- Particles -->
+        <div class="login-particles">
+            <div class="login-particle"></div>
+            <div class="login-particle"></div>
+            <div class="login-particle"></div>
+            <div class="login-particle"></div>
+            <div class="login-particle"></div>
+        </div>
+
+        <!-- Loading iniziale -->
+        <div class="loading-overlay" id="loginLoader">
+            <div class="loading-logo">
+                <img src="" alt="Logo" id="loaderLogo">
+            </div>
+            <div class="loading-spinner"></div>
+            <div class="loading-text">Inizializzazione sistema...</div>
+        </div>
+
+        <!-- Form Login -->
+        <div class="login-form-container" id="loginFormContainer" style="opacity: 0;">
+            <div class="login-card">
+                <div class="login-header">
+                    <div class="login-icon" id="loginIcon">
+                        <img src="" alt="Logo" id="formLogo">
+                    </div>
+                    <h1 class="login-title">PLM 2</h1>
+                    <p class="login-subtitle" id="loginSubtitle">Accedi al sistema</p>
+                </div>
+                
+                <form id="loginForm">
+                    <div class="login-input-group">
+                        <input 
+                            type="password" 
+                            id="passwordInput" 
+                            class="login-input" 
+                            placeholder="Inserisci la password"
+                            autocomplete="off"
+                            required
+                        >
+                    </div>
+                    
+                    <div class="remember-password">
+                        <input type="checkbox" id="rememberPassword">
+                        <label for="rememberPassword">Ricorda password</label>
+                    </div>
+                    
+                    <button type="submit" class="login-button" id="loginButton">
+                        Accedi
+                    </button>
+                    
+                    <div class="login-error" id="loginError">
+                        ❌ Password non corretta
+                    </div>
+                </form>
+
+                <div class="success-check" id="successCheck"></div>
+            </div>
+        </div>
+    </div>
+</template>

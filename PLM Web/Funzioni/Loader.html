@@ -1,0 +1,52 @@
+<!-- ========================================
+     LOADER - PLM 2
+     Template HTML per i loader
+     ======================================== -->
+
+<!-- LOADER PRINCIPALE (Inizializzazione) -->
+<div id="plm-main-loader" class="loading-overlay">
+    <div class="loading-logo">
+        <img src="logo-tondo.png" alt="Logo" style="width: 100%; height: 100%; object-fit: contain;">
+    </div>
+    <div class="loading-spinner"></div>
+    <div class="loading-text">Inizializzazione sistema...</div>
+</div>
+
+<!-- LOADER INLINE (Per caricamento dati) -->
+<template id="plm-inline-loader">
+    <div class="loading-state">
+        <div class="loading-spinner"></div>
+        <div>Caricamento dati...</div>
+    </div>
+</template>
+
+<!-- EMPTY STATE -->
+<template id="plm-empty-state">
+    <div class="empty-state">
+        <div class="empty-icon">📋</div>
+        <div class="empty-text">Nessun dato disponibile</div>
+    </div>
+</template>
+
+<!-- ERROR STATE -->
+<template id="plm-error-state">
+    <div class="error-state">
+        <div class="error-icon">⚠️</div>
+        <div class="error-text">Errore nel caricamento dei dati</div>
+        <button class="retry-button" onclick="location.reload()">Riprova</button>
+    </div>
+</template>
+
+<!-- SKELETON LOADER -->
+<template id="plm-skeleton-card">
+    <div class="skeleton skeleton-card"></div>
+</template>
+
+<!-- DOTS LOADER -->
+<template id="plm-dots-loader">
+    <div class="dots-loader">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+</template>

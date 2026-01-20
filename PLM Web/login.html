@@ -165,7 +165,7 @@
 
     <script>
         // Variabili globali
-        let supabase = null;
+        let supabaseClient = null;
         
         // Inizializza Supabase
         async function initSupabase() {
@@ -173,7 +173,7 @@
                 const response = await fetch('../autenticazione.json');
                 const config = await response.json();
                 
-                supabase = window.supabase.createClient(
+                supabaseClient = supabase.createClient(
                     config.supabase.url,
                     config.supabase.anonKey
                 );
@@ -215,7 +215,7 @@
         // Verifica login
         async function verifyLogin(username, password) {
             try {
-                const { data, error } = await supabase.rpc('verify_login', {
+                const { data, error } = await supabaseClient.rpc('verify_login', {
                     p_username: username,
                     p_password: password
                 });
@@ -243,7 +243,7 @@
                 return;
             }
             
-            if (!supabase) {
+            if (!supabaseClient) {
                 showAlert('Errore connessione al server');
                 return;
             }

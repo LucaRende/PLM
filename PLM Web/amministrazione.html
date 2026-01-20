@@ -38,7 +38,7 @@
     
     <style>
         /* =============================================
-           AMMINISTRAZIONE - PANORAMICA CASTELLETTI
+           AMMINISTRAZIONE - OTTIMIZZATO IPHONE
            ============================================= */
         
         /* Header Fisso Premium */
@@ -105,10 +105,12 @@
             color: var(--error);
             cursor: pointer;
             transition: all var(--transition-fast);
+            -webkit-tap-highlight-color: transparent;
         }
         
-        .btn-logout:hover {
+        .btn-logout:active {
             background: rgba(239, 68, 68, 0.2);
+            transform: scale(0.95);
         }
         
         .btn-logout svg {
@@ -134,27 +136,29 @@
         }
         
         .btn-back {
-            width: 36px;
-            height: 36px;
+            width: 40px;
+            height: 40px;
             display: flex;
             align-items: center;
             justify-content: center;
             background: var(--surface-2);
             border: 1px solid var(--border-default);
-            border-radius: 10px;
+            border-radius: 12px;
             color: var(--text-secondary);
             cursor: pointer;
             transition: all var(--transition-fast);
+            -webkit-tap-highlight-color: transparent;
         }
         
-        .btn-back:hover {
+        .btn-back:active {
             background: var(--surface-3);
             color: var(--primary);
+            transform: scale(0.95);
         }
         
         .btn-back svg {
-            width: 20px;
-            height: 20px;
+            width: 22px;
+            height: 22px;
         }
         
         .page-title {
@@ -173,8 +177,8 @@
         /* Section Box - Panoramica Castelletti */
         .section-box {
             background: var(--surface-2);
-            border: 1px solid var(--border-default);
-            border-radius: 16px;
+            border: 1.5px solid var(--border-default);
+            border-radius: 20px;
             margin-bottom: var(--space-4);
             overflow: hidden;
         }
@@ -198,19 +202,19 @@
         }
         
         .section-icon {
-            width: 40px;
-            height: 40px;
+            width: 44px;
+            height: 44px;
             display: flex;
             align-items: center;
             justify-content: center;
             background: rgba(220, 38, 38, 0.15);
-            border-radius: 12px;
+            border-radius: 14px;
             flex-shrink: 0;
         }
         
         .section-icon svg {
-            width: 20px;
-            height: 20px;
+            width: 22px;
+            height: 22px;
             color: var(--primary);
         }
         
@@ -219,7 +223,7 @@
         }
         
         .section-title {
-            font-size: 14px;
+            font-size: 15px;
             font-weight: 600;
             color: var(--text-primary);
             margin-bottom: 2px;
@@ -256,13 +260,20 @@
             padding: 0 var(--space-4) var(--space-4);
         }
         
-        /* Banca Card */
+        /* =============================================
+           BANCA CARD - OTTIMIZZATO MOBILE
+           ============================================= */
+        
         .banca-box {
             background: var(--surface-3);
-            border: 1px solid var(--border-default);
-            border-radius: 12px;
+            border: 1.5px solid var(--border-default);
+            border-radius: 16px;
             margin-bottom: var(--space-3);
             overflow: hidden;
+        }
+        
+        .banca-box:last-child {
+            margin-bottom: 0;
         }
         
         .banca-box.expanded {
@@ -272,7 +283,7 @@
         .banca-header {
             display: flex;
             align-items: center;
-            padding: var(--space-3);
+            padding: var(--space-4);
             cursor: pointer;
             -webkit-tap-highlight-color: transparent;
         }
@@ -282,10 +293,10 @@
         }
         
         .banca-icon {
-            width: 36px;
-            height: 36px;
+            width: 44px;
+            height: 44px;
             background: linear-gradient(135deg, var(--primary) 0%, #b91c1c 100%);
-            border-radius: 10px;
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -294,8 +305,8 @@
         }
         
         .banca-icon svg {
-            width: 18px;
-            height: 18px;
+            width: 22px;
+            height: 22px;
             color: white;
         }
         
@@ -305,23 +316,24 @@
         }
         
         .banca-name {
-            font-size: 13px;
+            font-size: 15px;
             font-weight: 600;
             color: var(--text-primary);
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            margin-bottom: 2px;
         }
         
         .banca-castelletto {
-            font-size: 11px;
+            font-size: 13px;
             color: var(--success);
             font-weight: 600;
         }
         
         .banca-arrow {
-            width: 20px;
-            height: 20px;
+            width: 24px;
+            height: 24px;
             color: var(--text-muted);
             transition: transform var(--transition-fast);
             flex-shrink: 0;
@@ -343,14 +355,66 @@
         }
         
         .banca-inner {
-            padding: 0 var(--space-3) var(--space-3);
+            padding: 0 var(--space-4) var(--space-4);
         }
         
-        /* Mesi Grid */
+        /* =============================================
+           STATS SUMMARY - BOX GRANDI
+           ============================================= */
+        
+        .stats-summary {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--space-3);
+            margin-bottom: var(--space-4);
+        }
+        
+        .stat-box {
+            background: var(--surface-2);
+            border: 1px solid var(--border-default);
+            border-radius: 14px;
+            padding: var(--space-4);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stat-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--primary), transparent);
+        }
+        
+        .stat-box-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+        
+        .stat-box-value.green {
+            color: var(--success);
+        }
+        
+        .stat-box-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        /* =============================================
+           MESI GRID - CARD PIÙ GRANDI E LEGGIBILI
+           ============================================= */
+        
         .mesi-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: var(--space-2);
+            gap: var(--space-3);
         }
         
         @media (min-width: 400px) {
@@ -361,16 +425,17 @@
         
         .mese-card {
             background: var(--surface-2);
-            border: 1px solid var(--border-default);
-            border-radius: 10px;
+            border: 1.5px solid var(--border-default);
+            border-radius: 14px;
             padding: var(--space-3);
             cursor: pointer;
             text-align: center;
-            transition: all var(--transition-fast);
+            transition: all 0.2s ease;
+            -webkit-tap-highlight-color: transparent;
         }
         
         .mese-card:active {
-            transform: scale(0.98);
+            transform: scale(0.95);
         }
         
         .mese-card.selected {
@@ -379,33 +444,34 @@
         }
         
         .mese-nome {
-            font-size: 10px;
-            font-weight: 600;
+            font-size: 11px;
+            font-weight: 700;
             color: var(--text-primary);
             margin-bottom: var(--space-2);
             text-transform: uppercase;
             letter-spacing: 0.05em;
         }
         
-        /* Progress Circle */
+        /* Progress Circle - Più grande */
         .mese-progress {
-            width: 50px;
-            height: 50px;
+            width: 56px;
+            height: 56px;
             margin: 0 auto var(--space-2);
         }
         
         .mese-perc {
-            font-size: 11px;
+            font-size: 13px;
             font-weight: 700;
             color: var(--text-primary);
+            margin-bottom: var(--space-2);
         }
         
         .mese-badge {
             display: inline-block;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-size: 8px;
-            font-weight: 600;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 9px;
+            font-weight: 700;
             text-transform: uppercase;
         }
         
@@ -424,11 +490,14 @@
             color: #ef4444;
         }
         
-        /* Fatture Container */
+        /* =============================================
+           FATTURE - CARD MIGLIORATE
+           ============================================= */
+        
         .fatture-container {
-            margin-top: var(--space-3);
-            padding-top: var(--space-3);
-            border-top: 1px solid var(--border-default);
+            margin-top: var(--space-4);
+            padding-top: var(--space-4);
+            border-top: 1px dashed var(--border-default);
         }
         
         .fatture-header {
@@ -439,29 +508,48 @@
         }
         
         .fatture-title {
-            font-size: 12px;
+            font-size: 14px;
             font-weight: 600;
             color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+        
+        .fatture-count {
+            background: var(--primary);
+            color: white;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 10px;
         }
         
         .fatture-close {
-            width: 24px;
-            height: 24px;
+            width: 32px;
+            height: 32px;
             display: flex;
             align-items: center;
             justify-content: center;
             background: var(--surface-3);
-            border: none;
-            border-radius: 6px;
+            border: 1px solid var(--border-default);
+            border-radius: 8px;
             color: var(--text-muted);
             cursor: pointer;
+            font-size: 16px;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        .fatture-close:active {
+            background: var(--surface-4);
         }
         
         .fattura-card {
-            background: var(--surface-3);
-            border-radius: 10px;
-            padding: var(--space-3);
-            margin-bottom: var(--space-2);
+            background: var(--surface-2);
+            border: 1px solid var(--border-default);
+            border-radius: 12px;
+            padding: var(--space-4);
+            margin-bottom: var(--space-3);
         }
         
         .fattura-card:last-child {
@@ -471,7 +559,8 @@
         .fattura-row {
             display: flex;
             justify-content: space-between;
-            margin-bottom: var(--space-1);
+            align-items: center;
+            margin-bottom: var(--space-2);
         }
         
         .fattura-row:last-child {
@@ -479,14 +568,16 @@
         }
         
         .fattura-label {
-            font-size: 10px;
+            font-size: 11px;
             color: var(--text-muted);
+            text-transform: uppercase;
         }
         
         .fattura-value {
-            font-size: 11px;
+            font-size: 13px;
             color: var(--text-primary);
-            font-weight: 500;
+            font-weight: 600;
+            text-align: right;
         }
         
         .fattura-value.positive {
@@ -497,36 +588,13 @@
             color: var(--error);
         }
         
-        /* Stats Summary */
-        .stats-summary {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: var(--space-2);
-            margin-bottom: var(--space-3);
-            padding: var(--space-3);
-            background: var(--surface-3);
-            border-radius: 12px;
-        }
-        
-        .stat-box {
-            text-align: center;
-            padding: var(--space-2);
-        }
-        
-        .stat-box-value {
-            font-size: 1.2rem;
-            font-weight: 700;
+        .fattura-cliente {
+            font-size: 14px;
+            font-weight: 600;
             color: var(--text-primary);
-        }
-        
-        .stat-box-value.green {
-            color: var(--success);
-        }
-        
-        .stat-box-label {
-            font-size: 10px;
-            color: var(--text-muted);
-            text-transform: uppercase;
+            margin-bottom: var(--space-2);
+            padding-bottom: var(--space-2);
+            border-bottom: 1px solid var(--border-subtle);
         }
         
         /* Empty State */
@@ -537,12 +605,12 @@
         }
         
         .empty-state-icon {
-            font-size: 32px;
-            margin-bottom: var(--space-2);
+            font-size: 40px;
+            margin-bottom: var(--space-3);
         }
         
         .empty-state-text {
-            font-size: 13px;
+            font-size: 14px;
         }
         
         /* Footer */
@@ -788,10 +856,13 @@
                 container.innerHTML = `
                     <div class="fatture-container">
                         <div class="fatture-header">
-                            <span class="fatture-title">Fatture ${MESI_FULL[meseIdx]}</span>
+                            <span class="fatture-title">
+                                📄 Fatture ${MESI_FULL[meseIdx]}
+                            </span>
                             <button class="fatture-close" onclick="closeFatture(${bancaIdx})">✕</button>
                         </div>
                         <div class="empty-state" style="padding: var(--space-4);">
+                            <div class="empty-state-icon">📭</div>
                             <div class="empty-state-text">Nessuna fattura in questo mese</div>
                         </div>
                     </div>
@@ -800,15 +871,15 @@
                 container.innerHTML = `
                     <div class="fatture-container">
                         <div class="fatture-header">
-                            <span class="fatture-title">Fatture ${MESI_FULL[meseIdx]} (${fatture.length})</span>
+                            <span class="fatture-title">
+                                📄 Fatture ${MESI_FULL[meseIdx]}
+                                <span class="fatture-count">${fatture.length}</span>
+                            </span>
                             <button class="fatture-close" onclick="closeFatture(${bancaIdx})">✕</button>
                         </div>
                         ${fatture.map(f => `
                             <div class="fattura-card">
-                                <div class="fattura-row">
-                                    <span class="fattura-label">Cliente</span>
-                                    <span class="fattura-value">${f.cliente || '-'}</span>
-                                </div>
+                                <div class="fattura-cliente">${f.cliente || 'Cliente non specificato'}</div>
                                 <div class="fattura-row">
                                     <span class="fattura-label">N° Fattura</span>
                                     <span class="fattura-value">${f.numeroFattura || '-'}</span>
@@ -818,7 +889,7 @@
                                     <span class="fattura-value">${f.dataScadenzaFormattato || '-'}</span>
                                 </div>
                                 <div class="fattura-row">
-                                    <span class="fattura-label">Da Pagare</span>
+                                    <span class="fattura-label">Importo</span>
                                     <span class="fattura-value ${f.importoDaPagare < 0 ? 'positive' : 'negative'}">${f.importoDaPagare_Formattato || formatEuro(f.importoDaPagare || 0)}</span>
                                 </div>
                             </div>
@@ -921,7 +992,7 @@
                             </div>
                             <div class="banca-info">
                                 <div class="banca-name">${banca}</div>
-                                <div class="banca-castelletto">Castelletto: ${formatEuro(castelletto)}</div>
+                                <div class="banca-castelletto">💰 Castelletto: ${formatEuro(castelletto)}</div>
                             </div>
                             <svg class="banca-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <polyline points="6 9 12 15 18 9"/>
@@ -936,7 +1007,7 @@
                                     </div>
                                     <div class="stat-box">
                                         <div class="stat-box-value">${tutteFatture.length}</div>
-                                        <div class="stat-box-label">Fatture</div>
+                                        <div class="stat-box-label">Fatture Totali</div>
                                     </div>
                                 </div>
                                 <div class="mesi-grid">

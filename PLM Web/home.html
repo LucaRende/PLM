@@ -13,6 +13,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     
+    <!-- Supabase JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
     <!-- Stili -->
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="Load/loader.css">
@@ -27,6 +30,69 @@
         })();
     </script>
     
+    <style>
+        .home-header {
+            padding: var(--space-4);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+        
+        .home-logo {
+            width: 40px;
+            height: 40px;
+        }
+        
+        .home-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+        
+        .home-user {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+        }
+        
+        .home-user-name {
+            font-size: var(--text-sm);
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+        
+        .home-user-role {
+            font-size: var(--text-xs);
+            color: var(--text-muted);
+        }
+        
+        .btn-logout {
+            padding: var(--space-2) var(--space-3);
+            font-size: var(--text-xs);
+        }
+        
+        .home-content {
+            padding: var(--space-4);
+            min-height: calc(100vh - 70px);
+        }
+        
+        .home-welcome {
+            margin-bottom: var(--space-6);
+        }
+        
+        .home-welcome h1 {
+            font-size: var(--text-xl);
+            margin-bottom: var(--space-1);
+        }
+        
+        .home-welcome p {
+            font-size: var(--text-sm);
+            color: var(--text-muted);
+            margin: 0;
+        }
+    </style>
+    
     <script src="Load/loader.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -35,21 +101,232 @@
     </script>
 </head>
 <body>
-    <!-- Contenuto pagina home (da sviluppare) -->
-    <div style="min-height: 100vh; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 20px;">
-        <h1 class="text-gradient">Home Page</h1>
-        <p style="color: var(--text-muted);" id="welcomeMsg"></p>
-        <button class="btn btn-secondary" onclick="logout()">Logout</button>
+    <div class="page">
+        <!-- Header -->
+        <header class="home-header">
+            <div class="home-logo">
+                <img src="/PLM/logo-tondo.png" alt="PLM">
+            </div>
+            <div class="home-user">
+                <div>
+                    <div class="home-user-name" id="userName">Utente</div>
+                    <div class="home-user-role" id="userRole">Ruolo</div>
+                </div>
+                <button class="btn btn-secondary btn-logout" onclick="logout()">Esci</button>
+            </div>
+        </header>
+        
+        <!-- Content -->
+        <main class="home-content">
+            <div class="home-welcome">
+                <h1>Benvenuto, <span id="welcomeName">Utente</span></h1>
+                <p id="currentDate"></p>
+            </div>
+            
+            <!-- Stat Boxes Grid -->
+            <div class="stat-grid">
+                <!-- Box Presenze -->
+                <div class="stat-box" id="boxPresenze">
+                    <div class="stat-box-header">
+                        <div class="stat-box-icon success">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                                <circle cx="8.5" cy="7" r="4"/>
+                                <polyline points="17 11 19 13 23 9"/>
+                            </svg>
+                        </div>
+                        <span class="stat-box-title">Presenze</span>
+                    </div>
+                    <div class="stat-slider" data-slides="2" data-current="0">
+                        <div class="stat-slider-track">
+                            <!-- Slide 1: Numero -->
+                            <div class="stat-slide">
+                                <div class="stat-number success" id="presenzeCount">0</div>
+                                <div class="stat-label">presenze registrate</div>
+                            </div>
+                            <!-- Slide 2: Lista -->
+                            <div class="stat-slide">
+                                <div class="stat-list" id="presenzeList">
+                                    <div class="stat-empty">Nessuna presenza</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="stat-dots">
+                        <div class="stat-dot active" data-slide="0"></div>
+                        <div class="stat-dot" data-slide="1"></div>
+                    </div>
+                </div>
+                
+                <!-- Box Permessi -->
+                <div class="stat-box" id="boxPermessi">
+                    <div class="stat-box-header">
+                        <div class="stat-box-icon warning">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                                <line x1="16" y1="2" x2="16" y2="6"/>
+                                <line x1="8" y1="2" x2="8" y2="6"/>
+                                <line x1="3" y1="10" x2="21" y2="10"/>
+                            </svg>
+                        </div>
+                        <span class="stat-box-title">Permessi</span>
+                    </div>
+                    <div class="stat-slider" data-slides="3" data-current="0">
+                        <div class="stat-slider-track">
+                            <!-- Slide 1: Numero -->
+                            <div class="stat-slide">
+                                <div class="stat-number primary" id="permessiCount">0</div>
+                                <div class="stat-label">permessi approvati</div>
+                            </div>
+                            <!-- Slide 2: Ultimi approvati -->
+                            <div class="stat-slide">
+                                <div class="stat-list" id="permessiApprovati">
+                                    <div class="stat-empty">Nessun permesso</div>
+                                </div>
+                            </div>
+                            <!-- Slide 3: Da visualizzare -->
+                            <div class="stat-slide">
+                                <div class="stat-list" id="permessiPending">
+                                    <div class="stat-empty">Nessuna notifica</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="stat-dots">
+                        <div class="stat-dot active" data-slide="0"></div>
+                        <div class="stat-dot" data-slide="1"></div>
+                        <div class="stat-dot" data-slide="2"></div>
+                    </div>
+                </div>
+            </div>
+        </main>
+        
+        <!-- Footer -->
+        <footer class="footer">
+            © 2026 PLM Web — Pro System s.r.l. — Powered by: Luca Rende
+        </footer>
     </div>
 
     <script>
-        // Mostra messaggio benvenuto
-        const user = JSON.parse(localStorage.getItem('plm_user') || sessionStorage.getItem('plm_user') || '{}');
-        if (user.nome) {
-            document.getElementById('welcomeMsg').textContent = 'Benvenuto, ' + user.nome + ' ' + (user.cognome || '');
+        // Variabili globali
+        let supabaseClient = null;
+        let currentUser = null;
+        
+        // Init Supabase
+        async function initSupabase() {
+            try {
+                const response = await fetch('/PLM/autenticazione.json');
+                const config = await response.json();
+                supabaseClient = supabase.createClient(config.supabase.url, config.supabase.anonKey);
+                return true;
+            } catch (error) {
+                console.error('Errore Supabase:', error);
+                return false;
+            }
         }
         
-        // Funzione logout
+        // Carica dati utente
+        function loadUserData() {
+            currentUser = JSON.parse(localStorage.getItem('plm_user') || sessionStorage.getItem('plm_user') || '{}');
+            
+            if (currentUser.nome) {
+                document.getElementById('userName').textContent = currentUser.nome + ' ' + (currentUser.cognome || '');
+                document.getElementById('welcomeName').textContent = currentUser.nome;
+            }
+            if (currentUser.ruolo) {
+                document.getElementById('userRole').textContent = currentUser.ruolo.charAt(0).toUpperCase() + currentUser.ruolo.slice(1);
+            }
+            
+            // Data corrente
+            const oggi = new Date();
+            const opzioni = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
+            document.getElementById('currentDate').textContent = oggi.toLocaleDateString('it-IT', opzioni);
+        }
+        
+        // Carica presenze
+        async function loadPresenze() {
+            if (!supabaseClient || !currentUser.id) return;
+            
+            try {
+                const { data, error } = await supabaseClient.rpc('get_presenze', {
+                    p_user_id: currentUser.id,
+                    p_limit: 5
+                });
+                
+                if (error) throw error;
+                
+                document.getElementById('presenzeCount').textContent = data.totale || 0;
+                
+                if (data.lista && data.lista.length > 0) {
+                    document.getElementById('presenzeList').innerHTML = data.lista.map(p => `
+                        <div class="stat-list-item">
+                            <span class="stat-list-date">${formatDate(p.data)}</span>
+                            <div class="stat-list-times">
+                                ${p.entrata1 ? `<span class="stat-list-time in">↓${p.entrata1}</span>` : ''}
+                                ${p.uscita1 ? `<span class="stat-list-time out">↑${p.uscita1}</span>` : ''}
+                                ${p.entrata2 ? `<span class="stat-list-time in">↓${p.entrata2}</span>` : ''}
+                                ${p.uscita2 ? `<span class="stat-list-time out">↑${p.uscita2}</span>` : ''}
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Errore caricamento presenze:', error);
+            }
+        }
+        
+        // Carica permessi
+        async function loadPermessi() {
+            if (!supabaseClient || !currentUser.id) return;
+            
+            try {
+                const { data, error } = await supabaseClient.rpc('get_permessi', {
+                    p_user_id: currentUser.id,
+                    p_limit: 5
+                });
+                
+                if (error) throw error;
+                
+                document.getElementById('permessiCount').textContent = data.totale || 0;
+                
+                if (data.approvati && data.approvati.length > 0) {
+                    document.getElementById('permessiApprovati').innerHTML = data.approvati.map(p => `
+                        <div class="stat-list-item">
+                            <span class="stat-list-date">${formatDate(p.data_permesso)}</span>
+                            <div class="stat-list-times">
+                                <span>${p.ora_inizio || ''} - ${p.ora_fine || ''}</span>
+                            </div>
+                            <span class="stat-list-status approved">✓</span>
+                        </div>
+                    `).join('');
+                }
+                
+                if (data.da_visualizzare && data.da_visualizzare.length > 0) {
+                    document.getElementById('permessiPending').innerHTML = data.da_visualizzare.map(p => `
+                        <div class="stat-list-item">
+                            <span class="stat-list-date">${formatDate(p.data_permesso)}</span>
+                            <div class="stat-list-times">
+                                <span>${p.ora_inizio || ''} - ${p.ora_fine || ''}</span>
+                            </div>
+                            <span class="stat-list-status ${p.stato === 'approvato' ? 'approved' : p.stato === 'rifiutato' ? 'rejected' : 'pending'}">
+                                ${p.stato === 'approvato' ? '✓' : p.stato === 'rifiutato' ? '✗' : '...'}
+                            </span>
+                        </div>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Errore caricamento permessi:', error);
+            }
+        }
+        
+        // Formatta data
+        function formatDate(dateStr) {
+            if (!dateStr) return '';
+            const d = new Date(dateStr);
+            return d.toLocaleDateString('it-IT', { day: '2-digit', month: '2-digit' });
+        }
+        
+        // Logout
         function logout() {
             sessionStorage.removeItem('plm_logged_in');
             sessionStorage.removeItem('plm_user');
@@ -58,7 +335,67 @@
             window.location.href = 'login.html';
         }
         
-        window.addEventListener('load', function() {
+        // =============================================
+        // SWIPE LOGIC
+        // =============================================
+        function initSwipeBoxes() {
+            document.querySelectorAll('.stat-slider').forEach(slider => {
+                const track = slider.querySelector('.stat-slider-track');
+                const box = slider.closest('.stat-box');
+                const dots = box.querySelectorAll('.stat-dot');
+                const slidesCount = parseInt(slider.dataset.slides) || 2;
+                let current = 0;
+                let startX = 0;
+                let isDragging = false;
+                
+                function goToSlide(index) {
+                    current = Math.max(0, Math.min(index, slidesCount - 1));
+                    track.style.transform = `translateX(-${current * 100}%)`;
+                    slider.dataset.current = current;
+                    
+                    dots.forEach((dot, i) => {
+                        dot.classList.toggle('active', i === current);
+                    });
+                }
+                
+                // Touch events
+                slider.addEventListener('touchstart', (e) => {
+                    startX = e.touches[0].clientX;
+                    isDragging = true;
+                }, { passive: true });
+                
+                slider.addEventListener('touchend', (e) => {
+                    if (!isDragging) return;
+                    isDragging = false;
+                    const endX = e.changedTouches[0].clientX;
+                    const diff = startX - endX;
+                    
+                    if (Math.abs(diff) > 50) {
+                        if (diff > 0 && current < slidesCount - 1) {
+                            goToSlide(current + 1);
+                        } else if (diff < 0 && current > 0) {
+                            goToSlide(current - 1);
+                        }
+                    }
+                }, { passive: true });
+                
+                // Click sui dots
+                dots.forEach((dot, i) => {
+                    dot.addEventListener('click', () => goToSlide(i));
+                });
+            });
+        }
+        
+        // Init
+        window.addEventListener('load', async function() {
+            loadUserData();
+            await initSupabase();
+            initSwipeBoxes();
+            
+            // Carica dati (commenta se non hai ancora le tabelle)
+            // await loadPresenze();
+            // await loadPermessi();
+            
             Loader.hide();
         });
     </script>

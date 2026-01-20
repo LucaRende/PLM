@@ -30,6 +30,11 @@
         })();
     </script>
     
+    <!-- Nascondi body finché loader non è attivo -->
+    <style id="preload-style">
+        body { opacity: 0; }
+    </style>
+    
     <style>
         .home-header {
             padding: var(--space-4);
@@ -97,6 +102,10 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             Loader.show('pagina', 'Caricamento...');
+            // Rimuovi style che nasconde body
+            var preloadStyle = document.getElementById('preload-style');
+            if (preloadStyle) preloadStyle.remove();
+            document.body.style.opacity = '1';
         });
     </script>
 </head>

@@ -1,58 +1,491 @@
--- =============================================
--- PLM Web - Creazione Utente Admin
--- Esegui questo script nel SQL Editor di Supabase
--- =============================================
+/* =============================================
+   PLM Web - Style Globale
+   DARK THEME - Mobile First
+   ============================================= */
 
--- Abilita estensione per hashing password (se non già attiva)
-CREATE EXTENSION IF NOT EXISTS pgcrypto;
+/* =============================================
+   VARIABILI CSS - DARK THEME
+   ============================================= */
+:root {
+    /* Colori Primari */
+    --primary: #6366f1;
+    --primary-dark: #4f46e5;
+    --primary-light: #818cf8;
+    --primary-glow: rgba(99, 102, 241, 0.4);
+    
+    /* Colori Accento */
+    --accent: #22d3ee;
+    --accent-dark: #06b6d4;
+    --accent-glow: rgba(34, 211, 238, 0.3);
+    
+    /* Colori Stato */
+    --success: #10b981;
+    --success-glow: rgba(16, 185, 129, 0.3);
+    --warning: #f59e0b;
+    --error: #ef4444;
+    --error-glow: rgba(239, 68, 68, 0.3);
+    --info: #3b82f6;
+    
+    /* Superfici Dark */
+    --surface-0: #030305;
+    --surface-1: #0a0a0f;
+    --surface-2: #12121a;
+    --surface-3: #1a1a24;
+    --surface-4: #24242f;
+    --surface-5: #2f2f3a;
+    
+    /* Bordi */
+    --border-subtle: rgba(255, 255, 255, 0.04);
+    --border-default: rgba(255, 255, 255, 0.08);
+    --border-strong: rgba(255, 255, 255, 0.12);
+    
+    /* Testo */
+    --text-primary: #f4f4f5;
+    --text-secondary: #a1a1aa;
+    --text-muted: #52525b;
+    --text-inverse: #09090b;
+    
+    /* Font */
+    --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    
+    /* Dimensioni Font */
+    --text-xs: 0.75rem;
+    --text-sm: 0.875rem;
+    --text-base: 1rem;
+    --text-lg: 1.125rem;
+    --text-xl: 1.25rem;
+    --text-2xl: 1.5rem;
+    --text-3xl: 2rem;
+    
+    /* Spacing */
+    --space-1: 0.25rem;
+    --space-2: 0.5rem;
+    --space-3: 0.75rem;
+    --space-4: 1rem;
+    --space-5: 1.25rem;
+    --space-6: 1.5rem;
+    --space-8: 2rem;
+    --space-10: 2.5rem;
+    --space-12: 3rem;
+    
+    /* Border Radius */
+    --radius-sm: 0.375rem;
+    --radius-md: 0.5rem;
+    --radius-lg: 0.75rem;
+    --radius-xl: 1rem;
+    --radius-2xl: 1.25rem;
+    --radius-full: 9999px;
+    
+    /* Shadows */
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.5);
+    --shadow-xl: 0 20px 50px rgba(0, 0, 0, 0.6);
+    
+    /* Transizioni */
+    --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-base: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-slow: 400ms cubic-bezier(0.4, 0, 0.2, 1);
+}
 
--- =============================================
--- INSERIMENTO UTENTE ADMIN
--- IMPORTANTE: Cambia la password prima di eseguire!
--- =============================================
+/* =============================================
+   RESET & BASE
+   ============================================= */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
 
-INSERT INTO accounts (
-    username,
-    password_hash,
-    nome,
-    cognome,
-    email,
-    ruolo,
-    attivo
-) VALUES (
-    'admin',                                          -- Username
-    crypt('CambiaQuestaPassword123!', gen_salt('bf', 10)),  -- Password (CAMBIALA!)
-    'Amministratore',                                 -- Nome
-    'Sistema',                                        -- Cognome
-    'admin@prosystem.it',                            -- Email
-    'admin',                                          -- Ruolo (admin = accesso totale)
-    true                                              -- Attivo
-);
+html {
+    font-size: 16px;
+    -webkit-text-size-adjust: 100%;
+}
 
--- =============================================
--- VERIFICA INSERIMENTO
--- =============================================
-SELECT 
-    id,
-    username,
-    nome,
-    cognome,
-    email,
-    ruolo,
-    attivo,
-    created_at
-FROM accounts 
-WHERE username = 'admin';
+body {
+    font-family: var(--font-sans);
+    font-size: var(--text-base);
+    line-height: 1.6;
+    color: var(--text-primary);
+    background-color: var(--surface-0);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
 
--- =============================================
--- NOTE:
--- 
--- Per verificare la password in fase di login usa:
--- SELECT * FROM accounts 
--- WHERE username = 'tuousername' 
--- AND password_hash = crypt('passwordinserita', password_hash);
---
--- Ruoli disponibili:
--- - 'admin'   → Accesso completo a tutto
--- - 'utente'  → Accesso limitato (da definire)
--- =============================================
+::selection {
+    background: var(--primary);
+    color: white;
+}
+
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--surface-1);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--surface-4);
+    border-radius: var(--radius-full);
+}
+
+/* =============================================
+   TYPOGRAPHY
+   ============================================= */
+h1, h2, h3, h4 {
+    font-weight: 600;
+    line-height: 1.2;
+    color: var(--text-primary);
+    letter-spacing: -0.025em;
+}
+
+h1 { font-size: var(--text-3xl); }
+h2 { font-size: var(--text-2xl); }
+h3 { font-size: var(--text-xl); }
+
+p {
+    color: var(--text-secondary);
+}
+
+a {
+    color: var(--primary-light);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+}
+
+a:hover {
+    color: var(--accent);
+}
+
+.text-gradient {
+    background: linear-gradient(135deg, var(--primary-light) 0%, var(--accent) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* =============================================
+   FORM CONTROLS
+   ============================================= */
+.form-label {
+    display: block;
+    font-size: var(--text-sm);
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin-bottom: var(--space-2);
+}
+
+.form-group {
+    margin-bottom: var(--space-5);
+}
+
+.form-input {
+    width: 100%;
+    padding: var(--space-4);
+    font-family: var(--font-sans);
+    font-size: var(--text-base);
+    color: var(--text-primary);
+    background-color: var(--surface-2);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-xl);
+    transition: all var(--transition-fast);
+    outline: none;
+}
+
+.form-input::placeholder {
+    color: var(--text-muted);
+}
+
+.form-input:hover {
+    border-color: var(--border-strong);
+}
+
+.form-input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px var(--primary-glow);
+}
+
+.form-input.error {
+    border-color: var(--error);
+}
+
+.form-input.error:focus {
+    box-shadow: 0 0 0 3px var(--error-glow);
+}
+
+.form-check {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    cursor: pointer;
+}
+
+.form-check input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--primary);
+    cursor: pointer;
+}
+
+.form-check-label {
+    font-size: var(--text-sm);
+    color: var(--text-muted);
+    user-select: none;
+}
+
+/* =============================================
+   BUTTONS
+   ============================================= */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    padding: var(--space-4) var(--space-6);
+    font-family: var(--font-sans);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    border: none;
+    border-radius: var(--radius-xl);
+    cursor: pointer;
+    transition: all var(--transition-base);
+    outline: none;
+}
+
+.btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.btn-primary {
+    color: white;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    box-shadow: 0 4px 15px var(--primary-glow);
+}
+
+.btn-primary:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px var(--primary-glow);
+}
+
+.btn-primary:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.btn-secondary {
+    color: var(--text-primary);
+    background-color: var(--surface-3);
+    border: 1px solid var(--border-default);
+}
+
+.btn-secondary:hover:not(:disabled) {
+    background-color: var(--surface-4);
+}
+
+.btn-ghost {
+    color: var(--text-secondary);
+    background-color: transparent;
+}
+
+.btn-ghost:hover:not(:disabled) {
+    color: var(--text-primary);
+    background-color: var(--surface-3);
+}
+
+.btn-full {
+    width: 100%;
+}
+
+/* =============================================
+   ALERTS
+   ============================================= */
+.alert {
+    padding: var(--space-4);
+    border-radius: var(--radius-lg);
+    font-size: var(--text-sm);
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    border: 1px solid;
+}
+
+.alert-error {
+    background-color: rgba(239, 68, 68, 0.1);
+    color: var(--error);
+    border-color: rgba(239, 68, 68, 0.2);
+}
+
+.alert-success {
+    background-color: rgba(16, 185, 129, 0.1);
+    color: var(--success);
+    border-color: rgba(16, 185, 129, 0.2);
+}
+
+/* =============================================
+   INPUT CON ICONA
+   ============================================= */
+.input-wrapper {
+    position: relative;
+}
+
+.input-wrapper .form-input {
+    padding-left: 50px;
+}
+
+.input-wrapper .input-icon {
+    position: absolute;
+    left: var(--space-4);
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+    pointer-events: none;
+    transition: color var(--transition-fast);
+}
+
+.input-wrapper .form-input:focus ~ .input-icon {
+    color: var(--primary);
+}
+
+.input-wrapper.has-toggle .form-input {
+    padding-right: 50px;
+}
+
+.toggle-btn {
+    position: absolute;
+    right: var(--space-3);
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: var(--space-2);
+    border-radius: var(--radius-md);
+    transition: all var(--transition-fast);
+}
+
+.toggle-btn:hover {
+    color: var(--text-secondary);
+    background: var(--surface-3);
+}
+
+/* =============================================
+   CARDS & BOXES
+   ============================================= */
+.card {
+    background: var(--surface-1);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-2xl);
+    padding: var(--space-8);
+    box-shadow: var(--shadow-xl);
+}
+
+.card-glass {
+    background: rgba(10, 10, 15, 0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+}
+
+/* =============================================
+   LAYOUT
+   ============================================= */
+.page {
+    min-height: 100vh;
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.page-center {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: var(--space-5);
+    position: relative;
+    z-index: 1;
+}
+
+/* =============================================
+   BACKGROUNDS
+   ============================================= */
+.bg-gradient {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 0;
+    background: 
+        radial-gradient(ellipse at 20% 20%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 80%, rgba(34, 211, 238, 0.1) 0%, transparent 50%);
+    pointer-events: none;
+}
+
+/* =============================================
+   LOGO
+   ============================================= */
+.logo {
+    width: 70px;
+    height: 70px;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+    border-radius: var(--radius-2xl);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 10px 30px var(--primary-glow);
+}
+
+.logo svg {
+    width: 36px;
+    height: 36px;
+    color: white;
+}
+
+/* =============================================
+   FOOTER
+   ============================================= */
+.footer {
+    text-align: center;
+    padding: var(--space-5);
+    color: var(--text-muted);
+    font-size: var(--text-xs);
+    position: relative;
+    z-index: 1;
+}
+
+/* =============================================
+   UTILITIES
+   ============================================= */
+.hidden { display: none !important; }
+.text-center { text-align: center; }
+.text-muted { color: var(--text-muted); }
+.text-sm { font-size: var(--text-sm); }
+.mb-2 { margin-bottom: var(--space-2); }
+.mb-4 { margin-bottom: var(--space-4); }
+.mb-5 { margin-bottom: var(--space-5); }
+.mb-6 { margin-bottom: var(--space-6); }
+.mb-8 { margin-bottom: var(--space-8); }
+
+/* =============================================
+   RESPONSIVE
+   ============================================= */
+@media (min-width: 480px) {
+    .card {
+        padding: var(--space-10);
+    }
+    
+    .logo {
+        width: 80px;
+        height: 80px;
+    }
+    
+    .logo svg {
+        width: 40px;
+        height: 40px;
+    }
+}

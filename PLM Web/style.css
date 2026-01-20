@@ -411,22 +411,6 @@ a:hover {
 }
 
 /* =============================================
-   BACKGROUNDS
-   ============================================= */
-.bg-gradient {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 0;
-    background: 
-        radial-gradient(ellipse at 20% 20%, rgba(220, 38, 38, 0.15) 0%, transparent 50%),
-        radial-gradient(ellipse at 80% 80%, rgba(248, 113, 113, 0.1) 0%, transparent 50%);
-    pointer-events: none;
-}
-
-/* =============================================
    LOGO
    ============================================= */
 .logo {

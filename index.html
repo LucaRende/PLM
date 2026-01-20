@@ -4,28 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PLM Web</title>
-    <style>
-        body {
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            font-family: Arial, sans-serif;
-            background: #f5f5f5;
-        }
-        .loading {
-            text-align: center;
-            color: #666;
-        }
-    </style>
+    <link rel="stylesheet" href="PLM Web/Load/loader.css">
 </head>
 <body>
-    <div class="loading">
-        <p>Caricamento...</p>
-    </div>
-
+    <script src="PLM Web/Load/loader.js"></script>
     <script>
+        // Mostra loader subito
+        Loader.show('pagina', 'Caricamento...');
+        
         async function init() {
             try {
                 // Carica configurazione
@@ -46,7 +32,8 @@
                 
             } catch (error) {
                 console.error('Errore caricamento configurazione:', error);
-                document.querySelector('.loading').innerHTML = '<p>Errore di caricamento</p>';
+                Loader.hide();
+                document.body.innerHTML = '<p style="text-align:center;margin-top:50px;font-family:Arial;">Errore di caricamento</p>';
             }
         }
         

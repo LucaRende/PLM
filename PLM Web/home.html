@@ -4,8 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home - PLM Web</title>
+    <link rel="stylesheet" href="Load/loader.css">
+    <script src="Load/loader.js"></script>
+    <script>
+        // Mostra loader SUBITO prima di tutto
+        document.addEventListener('DOMContentLoaded', function() {
+            Loader.show('pagina', 'Caricamento...');
+        });
+    </script>
 </head>
 <body>
-    
+    <!-- Contenuto pagina home (da sviluppare) -->
+
+    <script>
+        // Nasconde loader quando TUTTO è caricato (immagini, font, css, ecc.)
+        window.addEventListener('load', function() {
+            Loader.hide();
+        });
+    </script>
 </body>
 </html>

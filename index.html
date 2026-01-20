@@ -7,32 +7,1199 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>PLM 2</title>
     
-    <!-- Supabase -->
+    <!-- Supabase SDK -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
-    <!-- CSS -->
+    <!-- CSS Modules -->
     <link rel="stylesheet" href="PLM Web/StileBase/StileBase.css">
     <link rel="stylesheet" href="PLM Web/Funzioni/Loader.css">
     <link rel="stylesheet" href="PLM Web/Login/Login.css">
     <link rel="stylesheet" href="PLM Web/Home/Home.css">
 </head>
 <body>
-    <div id="login-container"></div>
-    <div class="main-container">
-        <div id="header-container"></div>
-        <div id="content-container"></div>
-        <div id="footer-container"></div>
-    </div>
-    <div id="menu-container"></div>
+    <!-- Login Screen Overlay -->
+    <div class="login-overlay" id="loginOverlay">
+        <!-- Animated Background -->
+        <div class="login-bg">
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+        </div>
 
-    <!-- JS Modules -->
+        <!-- Loading Animation -->
+        <div class="loading-container" id="loadingContainer">
+            <div class="loading-logo">
+                <img src="logo-tondo.png" alt="Logo" style="width: 100%; height: 100%; object-fit: contain;">
+            </div>
+            <div class="loading-spinner"></div>
+            <div class="loading-text">Inizializzazione sistema...</div>
+        </div>
+
+        <!-- Login Form -->
+        <div class="login-form-container" id="loginFormContainer">
+            <div class="login-card">
+                <div class="login-header">
+                    <div class="login-icon">
+                        <img src="logo-tondo.png" alt="Logo">
+                    </div>
+                    <h1 class="login-title">PLM 2</h1>
+                    <p class="login-subtitle">Accedi al sistema</p>
+                </div>
+                
+                <form id="loginForm" onsubmit="return handleLogin(event)">
+                    <div class="login-input-group">
+                        <input 
+                            type="password" 
+                            id="passwordInput" 
+                            class="login-input" 
+                            placeholder="Inserisci la password"
+                            autocomplete="off"
+                            required
+                        >
+                    </div>
+                    
+                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 20px;">
+                        <input 
+                            type="checkbox" 
+                            id="rememberPassword" 
+                            style="width: 18px; height: 18px; cursor: pointer; accent-color: #c51d34;"
+                        >
+                        <label 
+                            for="rememberPassword" 
+                            style="color: rgba(255, 255, 255, 0.7); font-size: 0.9em; cursor: pointer; user-select: none;"
+                        >
+                            Ricorda password
+                        </label>
+                    </div>
+                    
+                    <button type="submit" class="login-button">
+                        Accedi
+                    </button>
+                    <div class="login-error" id="loginError">
+                        ❌ Password non corretta
+                    </div>
+                </form>
+
+                <div class="success-check" id="successCheck"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <!-- Animated Background Particles -->
+        <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; overflow: hidden;">
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+        </div>
+        
+        <div class="title-section" style="position: relative; z-index: 1;">
+            <div class="logo-container">
+                <img src="logo-tondo.png" alt="Logo CRM" class="logo">
+            </div>
+            <div class="signature-text">Pro System<sup style="font-size: 0.5em; margin-left: 3px; color: white;">®</sup></div>
+        </div>
+
+        <div class="dashboards-grid">
+            <!-- Dashboard Attività -->
+            <div class="dashboard">
+            <div class="dashboard-header" id="dashHeader">
+                <div class="dashboard-top">
+                    <div class="dashboard-title">
+                        <span class="dashboard-icon">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <rect x="4" y="2" width="16" height="20" rx="2" fill="white" opacity="0.9"/>
+                                <path d="M8 7h8M8 11h8M8 15h5" stroke="#1a2332" stroke-width="1.5" stroke-linecap="round"/>
+                                <circle cx="17" cy="17" r="5" fill="white"/>
+                                <path d="M15 17l1.5 1.5L19 16" stroke="#1a2332" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </span>
+                        <h2>Attività CRM</h2>
+                    </div>
+                    <span class="toggle-arrow" id="dashArrow">▼</span>
+                </div>
+                
+                <div class="progress-container">
+                    <div class="progress-item">
+                        <div class="progress-label">Ritardi Preventivi</div>
+                        <div class="circular-progress">
+                            <svg class="progress-ring" viewBox="0 0 110 110">
+                                <defs>
+                                    <linearGradient id="gradient-preventivi" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" style="stop-color:#ef4444;stop-opacity:1" />
+                                        <stop offset="100%" style="stop-color:#dc2626;stop-opacity:1" />
+                                    </linearGradient>
+                                </defs>
+                                <circle class="progress-ring-bg" cx="55" cy="55" r="48"></circle>
+                                <circle class="progress-ring-fill preventivi" id="progressPreventivi" cx="55" cy="55" r="48"
+                                    stroke-dasharray="301.59" stroke-dashoffset="301.59"></circle>
+                            </svg>
+                            <div class="progress-content">
+                                <div class="progress-value" id="percentPreventivi">0</div>
+                                <div class="progress-unit">ritardo</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="progress-item">
+                        <div class="progress-label">Ritardi Ordini</div>
+                        <div class="circular-progress">
+                            <svg class="progress-ring" viewBox="0 0 110 110">
+                                <defs>
+                                    <linearGradient id="gradient-ordini" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" style="stop-color:#f97316;stop-opacity:1" />
+                                        <stop offset="100%" style="stop-color:#ea580c;stop-opacity:1" />
+                                    </linearGradient>
+                                </defs>
+                                <circle class="progress-ring-bg" cx="55" cy="55" r="48"></circle>
+                                <circle class="progress-ring-fill ordini" id="progressOrdini" cx="55" cy="55" r="48"
+                                    stroke-dasharray="301.59" stroke-dashoffset="301.59"></circle>
+                            </svg>
+                            <div class="progress-content">
+                                <div class="progress-value" id="percentOrdini">0</div>
+                                <div class="progress-unit">ritardo</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard-content" id="dashContent">
+                <div class="content-wrapper" id="contentWrapper">
+                    <div class="filters-box" id="filtersBox">
+                        <div class="filters-header" onclick="toggleFilters()">
+                            <div class="filters-title">
+                                <span>🔍</span>
+                                <span>Filtri</span>
+                            </div>
+                            <span class="filters-arrow">▼</span>
+                        </div>
+                        <div class="filters-content">
+                            <div class="filters-wrapper">
+                                <div class="filter-group">
+                                    <div class="filter-label">Cliente</div>
+                                    <select class="filter-select" id="filterCliente">
+                                        <option value="">Tutti i clienti</option>
+                                    </select>
+                                </div>
+                                <div class="filter-group">
+                                    <div class="filter-label">Tipologia</div>
+                                    <select class="filter-select" id="filterTipologia">
+                                        <option value="">Tutte le tipologie</option>
+                                    </select>
+                                </div>
+                                <div class="filter-group">
+                                    <div class="filter-label">Stato</div>
+                                    <select class="filter-select" id="filterStato">
+                                        <option value="">Tutti gli stati</option>
+                                    </select>
+                                </div>
+                                <div class="filter-group">
+                                    <div class="filter-label">Scadenza</div>
+                                    <select class="filter-select" id="filterScadenza">
+                                        <option value="">Tutte</option>
+                                        <option value="scaduto">Scadute</option>
+                                        <option value="oggi">Scadono oggi</option>
+                                        <option value="futuro">Future</option>
+                                    </select>
+                                </div>
+                                <div class="filter-buttons">
+                                    <button class="filter-btn filter-btn-apply" onclick="applyFilters()">Applica</button>
+                                    <button class="filter-btn filter-btn-reset" onclick="resetFilters()">Reset</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="activitiesList">
+                        <div class="loading-state">Caricamento...</div>
+                    </div>
+                    
+                    <!-- Paginazione -->
+                    <div class="pagination-controls" id="paginationControls" style="display: none;">
+                        <button class="pagination-btn" id="prevPage" onclick="window.changePage(-1)">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M15 18l-6-6 6-6"/>
+                            </svg>
+                        </button>
+                        <div class="pagination-info">
+                            <span id="currentPage">1</span> / <span id="totalPages">1</span>
+                        </div>
+                        <button class="pagination-btn" id="nextPage" onclick="window.changePage(1)">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M9 18l6-6-6-6"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+
+        <!-- Dashboard Ufficio Tecnico con Gantt (Full Width) -->
+        <div class="gantt-dashboard-wrapper">
+        <div class="dashboard">
+            <div class="dashboard-header gantt" id="ganttHeader">
+                <div class="dashboard-top">
+                    <div class="dashboard-title">
+                        <span class="dashboard-icon">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <!-- Schermo computer -->
+                                <rect x="3" y="3" width="18" height="13" rx="1" stroke="white" stroke-width="1.5" fill="none" opacity="0.9"/>
+                                <line x1="7" y1="19" x2="17" y2="19" stroke="white" stroke-width="1.5" stroke-linecap="round" opacity="0.9"/>
+                                <line x1="12" y1="16" x2="12" y2="19" stroke="white" stroke-width="1.5" opacity="0.9"/>
+                                <!-- Disegno CAD sullo schermo -->
+                                <path d="M7 7L10 10L13 7L16 10" stroke="white" stroke-width="1.2" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="0.9"/>
+                                <circle cx="8" cy="11" r="1.5" fill="white" opacity="0.9"/>
+                                <rect x="13" y="9" width="3" height="3" fill="white" opacity="0.8"/>
+                                <line x1="6" y1="13" x2="18" y2="13" stroke="white" stroke-width="0.8" stroke-dasharray="1 1" opacity="0.7"/>
+                            </svg>
+                        </span>
+                        <h2>Ufficio Tecnico</h2>
+                    </div>
+                    <span class="toggle-arrow">▼</span>
+                </div>
+                <div class="date-label" id="currentDate">Oggi</div>
+                <div class="stats-summary" id="statsSummary">
+                    <div class="stat-item">
+                        <div class="stat-icon">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="9" cy="7" r="3" fill="white" opacity="0.9"/>
+                                <circle cx="15" cy="9" r="2.5" fill="white" opacity="0.8"/>
+                                <path d="M3 18c0-2.5 2.5-4.5 6-4.5s6 2 6 4.5" fill="white" opacity="0.9"/>
+                                <path d="M15 18c0-1.8 1.5-3.5 4-3.5s4 1.7 4 3.5" fill="white" opacity="0.8"/>
+                            </svg>
+                        </div>
+                        <div class="stat-value" id="totalPersons">-</div>
+                        <div class="stat-label">Persone</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-icon">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <rect x="4" y="6" width="16" height="14" rx="2" fill="white" opacity="0.9"/>
+                                <path d="M8 11l2 2 4-4" stroke="#1a2332" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <rect x="8" y="3" width="8" height="3" rx="1" fill="white" opacity="0.7"/>
+                            </svg>
+                        </div>
+                        <div class="stat-value" id="totalTasks">-</div>
+                        <div class="stat-label">Lavori</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-icon">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="12" cy="12" r="9" fill="white" opacity="0.9"/>
+                                <path d="M8 12l3 3 5-6" stroke="#1a2332" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                        <div class="stat-value" id="avgOccupation">-</div>
+                        <div class="stat-label">Occupati</div>
+                    </div>
+                </div>
+                
+                <!-- Gantt Summary (visible when collapsed) -->
+                <div class="gantt-summary" id="ganttSummary">
+                    <div class="gantt-grid">
+                        <div class="gantt-header-row">
+                            <div class="gantt-person-header"></div>
+                            <div class="gantt-timeline-header" id="ganttTimelineHeader"></div>
+                        </div>
+                        <div id="ganttSummaryRows"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="gantt-container collapsed" id="ganttContainer">
+                <div id="ganttDetailsRows"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        // ===== ATTIVITA CRM DASHBOARD =====
+        (function() {
+            const sb = window.supabase.createClient(
+                'https://uoykvjxerdrthnmnfmgc.supabase.co',
+                'sb_publishable_iGVhzkLqAktDZmpccXl7OA_PZ2nUYSY'
+            );
+
+            let loaded = false;
+            let allActivities = [];
+            let filteredActivities = [];
+
+            window.toggleDash = function() {
+                const header = document.getElementById('dashHeader');
+                const content = document.getElementById('dashContent');
+                
+                // Forza reflow per iOS - fix animazioni ripetute
+                void header.offsetHeight;
+                void content.offsetHeight;
+                
+                header.classList.toggle('active');
+                content.classList.toggle('show');
+                
+                // Forza re-render dopo transizione
+                setTimeout(() => {
+                    void content.offsetHeight;
+                }, 350);
+            };
+
+            window.toggleFilters = function() {
+                const filtersBox = document.getElementById('filtersBox');
+                filtersBox.classList.toggle('active');
+            };
+
+            window.toggleAct = function(id) {
+                const card = document.querySelector(`[data-id="${id}"]`);
+                card.classList.toggle('active');
+            };
+
+            window.applyFilters = function() {
+                const cliente = document.getElementById('filterCliente').value;
+                const tipologia = document.getElementById('filterTipologia').value;
+                const stato = document.getElementById('filterStato').value;
+                const scadenza = document.getElementById('filterScadenza').value;
+
+                filteredActivities = allActivities.filter(a => {
+                    if (cliente && a.clienteApplicato !== cliente) return false;
+                    if (tipologia && a.tipologiaFormattata !== tipologia) return false;
+                    if (stato && a.stato !== stato) return false;
+                    if (scadenza) {
+                        const urgenza = getUrgencyStatus(a._dataConsegna);
+                        if (scadenza !== urgenza) return false;
+                    }
+                    return true;
+                });
+
+                currentPage = 1; // Reset alla prima pagina
+                renderActivities(filteredActivities);
+            };
+
+            window.resetFilters = function() {
+                document.getElementById('filterCliente').value = '';
+                document.getElementById('filterTipologia').value = '';
+                document.getElementById('filterStato').value = '';
+                document.getElementById('filterScadenza').value = '';
+                filteredActivities = allActivities;
+                currentPage = 1; // Reset alla prima pagina
+                renderActivities(filteredActivities);
+            };
+
+            function populateFilters(data) {
+                const clienti = [...new Set(data.map(a => a.clienteApplicato).filter(Boolean))].sort();
+                const tipologie = [...new Set(data.map(a => a.tipologiaFormattata).filter(Boolean))].sort();
+                const stati = [...new Set(data.map(a => a.stato).filter(Boolean))].sort();
+
+                const filterCliente = document.getElementById('filterCliente');
+                const filterTipologia = document.getElementById('filterTipologia');
+                const filterStato = document.getElementById('filterStato');
+
+                clienti.forEach(c => {
+                    const option = document.createElement('option');
+                    option.value = c;
+                    option.textContent = c;
+                    filterCliente.appendChild(option);
+                });
+
+                tipologie.forEach(t => {
+                    const option = document.createElement('option');
+                    option.value = t;
+                    option.textContent = t;
+                    filterTipologia.appendChild(option);
+                });
+
+                stati.forEach(s => {
+                    const option = document.createElement('option');
+                    option.value = s;
+                    option.textContent = s;
+                    filterStato.appendChild(option);
+                });
+            }
+
+            function setCircularProgress(elementId, percentId, percentage) {
+                const circle = document.getElementById(elementId);
+                const percentText = document.getElementById(percentId);
+                const circumference = 301.59;
+                const offset = circumference - (percentage / 100) * circumference;
+                
+                setTimeout(() => {
+                    circle.style.strokeDashoffset = offset;
+                    percentText.textContent = Math.round(percentage) + '%';
+                }, 200);
+            }
+
+            function calculateDelayPercentages(data) {
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+
+                let preventiviTotal = 0;
+                let preventiviRitardo = 0;
+                let ordiniTotal = 0;
+                let ordiniRitardo = 0;
+
+                data.forEach(a => {
+                    const consegna = a._dataConsegna ? new Date(a._dataConsegna) : null;
+                    if (!consegna) return;
+
+                    const tipo = (a.tipologiaFormattata || '').toLowerCase();
+                    const stato = (a.stato || '').toLowerCase();
+                    
+                    if (stato.includes('completato') || stato.includes('chiuso')) return;
+
+                    const isRitardo = consegna < today;
+
+                    if (tipo.includes('preventivo')) {
+                        preventiviTotal++;
+                        if (isRitardo) preventiviRitardo++;
+                    } else if (tipo.includes('ordine') || tipo.includes('ordini')) {
+                        ordiniTotal++;
+                        if (isRitardo) ordiniRitardo++;
+                    }
+                });
+
+                const preventiviPerc = preventiviTotal > 0 ? (preventiviRitardo / preventiviTotal) * 100 : 0;
+                const ordiniPerc = ordiniTotal > 0 ? (ordiniRitardo / ordiniTotal) * 100 : 0;
+
+                return { preventiviPerc, ordiniPerc };
+            }
+
+            function getUrgencyStatus(dataConsegna) {
+                if (!dataConsegna) return 'futuro';
+                
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                
+                const consegna = new Date(dataConsegna);
+                consegna.setHours(0, 0, 0, 0);
+                
+                if (consegna < today) return 'scaduto';
+                if (consegna.getTime() === today.getTime()) return 'oggi';
+                return 'futuro';
+            }
+
+            function getStatus(s) {
+                if (!s) return 'status-aperto';
+                const l = s.toLowerCase();
+                if (l.includes('completato') || l.includes('chiuso')) return 'status-completato';
+                if (l.includes('corso')) return 'status-in-corso';
+                if (l.includes('annullato')) return 'status-annullato';
+                return 'status-aperto';
+            }
+
+            function fmtDate(d) {
+                if (!d) return 'N/D';
+                return new Date(d).toLocaleDateString('it-IT', { 
+                    day: '2-digit', 
+                    month: '2-digit', 
+                    year: 'numeric' 
+                });
+            }
+
+            let currentPage = 1;
+            const itemsPerPage = 5;
+            let animationDirection = 'right';
+            
+            function renderActivities(data) {
+                const list = document.getElementById('activitiesList');
+                const paginationControls = document.getElementById('paginationControls');
+                
+                if (!data || !data.length) {
+                    list.innerHTML = '<div class="empty-state"><div class="empty-icon">📭</div>Nessuna attività trovata</div>';
+                    paginationControls.style.display = 'none';
+                    return;
+                }
+                
+                const totalPages = Math.ceil(data.length / itemsPerPage);
+                const startIndex = (currentPage - 1) * itemsPerPage;
+                const endIndex = startIndex + itemsPerPage;
+                const currentData = data.slice(startIndex, endIndex);
+                
+                // Aggiorna info paginazione
+                document.getElementById('currentPage').textContent = currentPage;
+                document.getElementById('totalPages').textContent = totalPages;
+                document.getElementById('prevPage').disabled = currentPage === 1;
+                document.getElementById('nextPage').disabled = currentPage === totalPages;
+                
+                // Mostra controlli se ci sono più pagine
+                paginationControls.style.display = totalPages > 1 ? 'flex' : 'none';
+
+                list.innerHTML = currentData.map((a, index) => {
+                    const urgencyClass = getUrgencyStatus(a._dataConsegna);
+                    const animClass = animationDirection === 'right' ? 'slide-in-right' : 'slide-in-left';
+                    const delay = index * 0.05;
+                    
+                    return `
+                    <div class="activity-card ${animClass}" data-id="${a.ID_Attivita}" style="animation-delay: ${delay}s;">
+                        <div class="activity-card-header ${urgencyClass}" onclick="toggleAct(${a.ID_Attivita})">
+                            <div class="activity-info">
+                                <div class="activity-title">
+                                    #${a.ID_Attivita} · ${a.clienteApplicato || 'Cliente non specificato'}
+                                </div>
+                                <div class="activity-meta">
+                                    <div class="meta-item">
+                                        <span class="meta-label">📅</span>
+                                        <span>${a.dataCreazioneFormattata || fmtDate(a._dataCreazione)}</span>
+                                    </div>
+                                    <div class="meta-item">
+                                        <span class="meta-label">🎯</span>
+                                        <span>${a.dataConsegnaFormattata || fmtDate(a._dataConsegna)}</span>
+                                    </div>
+                                    <div class="meta-item">
+                                        <span class="meta-label">📦</span>
+                                        <span>${a.tipologiaFormattata || 'Non specificato'}</span>
+                                    </div>
+                                </div>
+                                <div class="activity-footer">
+                                    <span class="status-badge ${getStatus(a.stato)}">${a.stato || 'Aperto'}</span>
+                                    <span class="activity-arrow">▼</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="activity-details">
+                            <div class="details-wrapper">
+                                <div class="details-grid">
+                                    <div class="detail-box">
+                                        <div class="detail-label">Cliente</div>
+                                        <div class="detail-value">${a.clienteApplicato || 'Non specificato'}</div>
+                                    </div>
+                                    <div class="detail-box">
+                                        <div class="detail-label">Tipologia</div>
+                                        <div class="detail-value">${a.tipologiaFormattata || 'Non specificato'}</div>
+                                    </div>
+                                    <div class="detail-box">
+                                        <div class="detail-label">Data Creazione</div>
+                                        <div class="detail-value">${a.dataCreazioneFormattata || fmtDate(a._dataCreazione)}</div>
+                                    </div>
+                                    <div class="detail-box">
+                                        <div class="detail-label">Data Consegna</div>
+                                        <div class="detail-value">${a.dataConsegnaFormattata || fmtDate(a._dataConsegna)}</div>
+                                    </div>
+                                    <div class="detail-box">
+                                        <div class="detail-label">Trasferimento</div>
+                                        <div class="detail-value">${a.trasferimento || 'Non specificato'}</div>
+                                    </div>
+                                    <div class="detail-box">
+                                        <div class="detail-label">Stato</div>
+                                        <div class="detail-value">${a.stato || 'Aperto'}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `}).join('');
+            }
+            
+            window.changePage = function(direction) {
+                const totalPages = Math.ceil(filteredActivities.length / itemsPerPage);
+                const newPage = currentPage + direction;
+                
+                if (newPage < 1 || newPage > totalPages) return;
+                
+                // Imposta direzione animazione
+                animationDirection = direction > 0 ? 'right' : 'left';
+                
+                // Animazione uscita
+                const cards = document.querySelectorAll('.activity-card');
+                const outClass = direction > 0 ? 'slide-out-left' : 'slide-out-right';
+                cards.forEach((card, index) => {
+                    card.style.animationDelay = `${index * 0.03}s`;
+                    card.classList.add(outClass);
+                });
+                
+                // Dopo animazione uscita, cambia pagina
+                setTimeout(() => {
+                    currentPage = newPage;
+                    renderActivities(filteredActivities);
+                    
+                    // Scroll alla prima attività della nuova pagina
+                    setTimeout(() => {
+                        const firstCard = document.querySelector('.activity-card');
+                        if (firstCard) {
+                            firstCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                        }
+                    }, 50);
+                }, 300);
+            };
+
+            async function loadData() {
+                const list = document.getElementById('activitiesList');
+                list.innerHTML = '<div class="loading-state">Caricamento...</div>';
+
+                try {
+                    const { data, error } = await sb.from('Attivita').select('*');
+
+                    if (error) throw error;
+
+                    if (data && data.length > 0) {
+                        const { preventiviPerc, ordiniPerc } = calculateDelayPercentages(data);
+                        setCircularProgress('progressPreventivi', 'percentPreventivi', preventiviPerc);
+                        setCircularProgress('progressOrdini', 'percentOrdini', ordiniPerc);
+                        
+                        const today = new Date();
+                        today.setHours(0, 0, 0, 0);
+                        
+                        data.sort((a, b) => {
+                            const dataA = a._dataConsegna ? new Date(a._dataConsegna) : new Date('9999-12-31');
+                            const dataB = b._dataConsegna ? new Date(b._dataConsegna) : new Date('9999-12-31');
+                            return dataA - dataB;
+                        });
+
+                        allActivities = data;
+                        filteredActivities = data;
+                        
+                        populateFilters(data);
+                        renderActivities(data);
+                    } else {
+                        list.innerHTML = '<div class="empty-state"><div class="empty-icon">📭</div>Nessuna attività</div>';
+                    }
+
+                } catch (e) {
+                    list.innerHTML = `<div class="empty-state"><div class="empty-icon">⚠️</div>Errore: ${e.message}</div>`;
+                }
+            }
+
+            // Event listener semplice che funziona sia su desktop che iPhone
+            const dashHeader = document.getElementById('dashHeader');
+            dashHeader.addEventListener('click', window.toggleDash);
+            
+            loadData(); // Load data immediately on page load
+        })();
+
+        // ===== UFFICIO TECNICO GANTT DASHBOARD =====
+        (function() {
+            const SUPABASE_URL = 'https://uoykvjxerdrthnmnfmgc.supabase.co';
+            const SUPABASE_KEY = 'sb_publishable_iGVhzkLqAktDZmpccXl7OA_PZ2nUYSY';
+            const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+            let allTasks = [];
+
+            function toggleGanttDashboard() {
+                const header = document.getElementById('ganttHeader');
+                const container = document.getElementById('ganttContainer');
+                
+                // Forza reflow per iOS - fix animazioni ripetute
+                void header.offsetHeight;
+                void container.offsetHeight;
+                
+                header.classList.toggle('active');
+                container.classList.toggle('collapsed');
+                
+                // Forza re-render dopo transizione
+                setTimeout(() => {
+                    void container.offsetHeight;
+                }, 350);
+            }
+
+            function generateTimeline() {
+                const timelineHeader = document.getElementById('ganttTimelineHeader');
+                const hours = ['08', '09', '10', '11', '12', '13', '14', '15', '16', '17'];
+                
+                timelineHeader.innerHTML = hours.map(h => 
+                    `<div class="gantt-hour-header">${h}</div>`
+                ).join('');
+            }
+
+            function calculateTaskPosition(oraInizio, oraFine) {
+                const startHour = 8;
+                const endHour = 18;
+                const totalHours = endHour - startHour;
+                
+                // Parse time format: "11.00.00" or "11:00:00" (dots or colons)
+                const parseTime = (timeStr) => {
+                    if (!timeStr) return 0;
+                    
+                    const str = String(timeStr).trim();
+                    // Split by dots OR colons
+                    const parts = str.split(/[.:]/).map(Number);
+                    const hours = parts[0] || 0;
+                    const minutes = parts[1] || 0;
+                    
+                    return hours + (minutes / 60);
+                };
+                
+                const startDecimal = parseTime(oraInizio);
+                const endDecimal = parseTime(oraFine);
+                
+                const left = ((startDecimal - startHour) / totalHours) * 100;
+                const width = ((endDecimal - startDecimal) / totalHours) * 100;
+                
+                return { left: Math.max(0, left), width: Math.max(0, width) };
+            }
+
+            function isUrgent(dataConsegna) {
+                if (!dataConsegna) return false;
+                const today = new Date();
+                const delivery = new Date(dataConsegna);
+                return today.toDateString() === delivery.toDateString();
+            }
+
+            function formatTime(time) {
+                if (!time) return 'N/D';
+                // Convert dots to colons for display: 11.00.00 → 11:00
+                const cleaned = String(time).replace(/\./g, ':');
+                return cleaned.substring(0, 5); // HH:MM
+            }
+
+            function renderGantt(data) {
+                const ganttSummaryRows = document.getElementById('ganttSummaryRows');
+                const ganttDetailsRows = document.getElementById('ganttDetailsRows');
+                
+                // Fixed list of operators
+                const operators = [
+                    "Alessandro Colio",
+                    "Caterina Dello Stritto",
+                    "Christian D'Angelo",
+                    "Federico Cavazza",
+                    "Marco Garzesi"
+                ];
+                
+                if (!data || data.length === 0) {
+                    // Show all operators even with no tasks
+                    renderEmptyGantt(operators);
+                    ganttDetailsRows.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-icon">📋</div>
+                            <div class="empty-text">Nessun lavoro programmato</div>
+                        </div>
+                    `;
+                    return;
+                }
+
+                // Group tasks by person - CORRECTLY
+                const byPerson = {};
+                operators.forEach(op => {
+                    byPerson[op] = [];
+                });
+                
+                // Add each task to its assigned operator
+                data.forEach(task => {
+                    const person = task.Persona;
+                    console.log('Task:', task.Descrizione, 'assigned to:', person); // Debug
+                    
+                    // Check if this operator exists in our list
+                    if (person && byPerson[person] !== undefined) {
+                        byPerson[person].push(task);
+                    } else {
+                        console.warn('Operator not found in list:', person); // Debug
+                    }
+                });
+
+                // Debug: show what each operator has
+                console.log('Tasks by person:', byPerson);
+
+                // Update stats
+                // Persone = numero totale di operatori
+                document.getElementById('totalPersons').textContent = operators.length;
+                document.getElementById('totalTasks').textContent = data.length;
+                
+                // Occupati = numero di operatori che hanno almeno una lavorazione
+                const operatorsWithTasks = operators.filter(op => byPerson[op].length > 0).length;
+                document.getElementById('avgOccupation').textContent = operatorsWithTasks;
+
+                // Calculate current time position for the indicator
+                const now = new Date();
+                const currentHour = now.getHours() + (now.getMinutes() / 60);
+                const startHour = 8;
+                const endHour = 18;
+                let currentTimePercent = null;
+                
+                if (currentHour >= startHour && currentHour < endHour) {
+                    currentTimePercent = ((currentHour - startHour) / (endHour - startHour)) * 100;
+                }
+
+                // Render Summary View (collapsed state)
+                ganttSummaryRows.innerHTML = operators.map(person => {
+                    const tasks = byPerson[person] || [];
+                    
+                    // Create 10 hour slots (8-17)
+                    const slots = Array(10).fill(null).map((_, i) => 
+                        `<div class="gantt-hour-slot"></div>`
+                    ).join('');
+
+                    // Create task bars for THIS person's tasks - NO OVERLAP
+                    const taskBars = tasks.map(task => {
+                        const { left, width } = calculateTaskPosition(task.OraInizio, task.OraFine);
+                        const urgent = isUrgent(task.DataConsegna);
+                        
+                        return `
+                            <div class="gantt-task-bar ${urgent ? 'urgente' : ''}" 
+                                 style="left: ${left}%; width: ${width}%;"
+                                 title="${task.Descrizione} (${formatTime(task.OraInizio)} - ${formatTime(task.OraFine)})"></div>
+                        `;
+                    }).join('');
+                    // Add current time line if within working hours
+                    const currentTimeLine = currentTimePercent !== null 
+                        ? `<div class="current-time-line" style="left: ${currentTimePercent}%;"></div>` 
+                        : '';
+
+                    return `
+                        <div class="gantt-summary-row">
+                            <div class="gantt-row-header">
+                                <div class="gantt-person-cell">${person}</div>
+                            </div>
+                            <div class="gantt-row-timeline">
+                                <div class="gantt-timeline-wrapper">
+                                    ${slots}
+                                    ${taskBars}
+                                    ${currentTimeLine}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+                // Render Detail View (expanded state)
+                ganttDetailsRows.innerHTML = operators.map(person => {
+                    const tasks = byPerson[person] || [];
+                    
+                    if (tasks.length === 0) {
+                        return `
+                            <div class="person-section">
+                                <div class="person-section-header">
+                                    <h3>${person}</h3>
+                                    <span class="task-count">0 lavori</span>
+                                </div>
+                                <div class="task-list">
+                                    <div class="empty-state" style="padding: 20px;">
+                                        <div class="empty-text" style="font-size: 0.85em;">Nessun lavoro assegnato</div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }
+                    
+                    // Sort tasks by start time
+                    tasks.sort((a, b) => {
+                        const timeA = a.OraInizio || '00:00:00';
+                        const timeB = b.OraInizio || '00:00:00';
+                        return timeA.localeCompare(timeB);
+                    });
+                    
+                    const taskList = tasks.map(task => {
+                        const urgent = isUrgent(task.DataConsegna);
+                        return `
+                            <div class="task-card">
+                                <div class="task-header">
+                                    <div class="task-id">#${task.ID || '?'}</div>
+                                    <div class="task-time">${formatTime(task.OraInizio)} - ${formatTime(task.OraFine)}</div>
+                                </div>
+                                <div class="task-description">${task.Descrizione || 'Nessuna descrizione'}</div>
+                                <div class="task-footer">
+                                    <div class="task-badge ${urgent ? 'priority-high' : 'priority-normal'}">
+                                        ${urgent ? '🔥 Urgente' : '📅 Normale'}
+                                    </div>
+                                    <div class="task-badge status">
+                                        ✓ ${task.Stato || 'In corso'}
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+
+                    return `
+                        <div class="person-section">
+                            <div class="person-section-header">
+                                <h3>${person}</h3>
+                                <span class="task-count">${tasks.length} ${tasks.length === 1 ? 'lavoro' : 'lavori'}</span>
+                            </div>
+                            <div class="task-list">
+                                ${taskList}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            function renderEmptyGantt(operators) {
+                const ganttSummaryRows = document.getElementById('ganttSummaryRows');
+                
+                // Calculate current time position
+                const now = new Date();
+                const currentHour = now.getHours() + (now.getMinutes() / 60);
+                const startHour = 8;
+                const endHour = 18;
+                let currentTimePercent = null;
+                
+                if (currentHour >= startHour && currentHour < endHour) {
+                    currentTimePercent = ((currentHour - startHour) / (endHour - startHour)) * 100;
+                }
+                
+                document.getElementById('totalPersons').textContent = '0';
+                document.getElementById('totalTasks').textContent = '0';
+                document.getElementById('avgOccupation').textContent = '0';
+
+                ganttSummaryRows.innerHTML = operators.map(person => {
+                    const slots = Array(10).fill(null).map((_, i) => 
+                        `<div class="gantt-hour-slot"></div>`
+                    ).join('');
+
+                    const currentTimeLine = currentTimePercent !== null 
+                        ? `<div class="current-time-line" style="left: ${currentTimePercent}%;"></div>` 
+                        : '';
+
+                    return `
+                        <div class="gantt-summary-row">
+                            <div class="gantt-row-header">
+                                <div class="gantt-person-cell">${person}</div>
+                            </div>
+                            <div class="gantt-row-timeline">
+                                <div class="gantt-timeline-wrapper">
+                                    ${slots}
+                                    ${currentTimeLine}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            async function loadGanttData() {
+                const container = document.getElementById('ganttSummaryRows');
+                container.innerHTML = `
+                    <div class="loading-state">
+                        <div class="loading-spinner"></div>
+                        <div>Caricamento dati...</div>
+                    </div>
+                `;
+
+                try {
+                    const today = new Date();
+                    const todayStr = today.toISOString().split('T')[0];
+
+                    // Get all records from UfficioTecnico
+                    const { data, error } = await sb
+                        .from('UfficioTecnico')
+                        .select('*');
+
+                    if (error) throw error;
+
+                    // Transform the data into individual tasks with REAL times
+                    const tasks = [];
+                    
+                    if (data && data.length > 0) {
+                        data.forEach(record => {
+                            // Disegno 2D - if it has time slots, show it
+                            if (record.Disegno_2D_Assegnato && 
+                                record.Operatore_Disegno_2D_Assegnato && 
+                                record.Ora_Disegno_2D_Inizio && 
+                                record.Ora_Disegno_2D_Fine) {
+                                
+                                tasks.push({
+                                    ID: record.id,
+                                    Persona: record.Operatore_Disegno_2D_Assegnato,
+                                    Descrizione: `Disegno 2D - ${record.codiceProgetto || 'Progetto'}`,
+                                    OraInizio: record.Ora_Disegno_2D_Inizio,
+                                    OraFine: record.Ora_Disegno_2D_Fine,
+                                    DataConsegna: record.Data_Disegno_2D_Assegnato_FinePrevista,
+                                    Stato: record.Disegno_2D_Fatto ? 'Completato' : 'In corso',
+                                    Tipo: 'Disegno 2D'
+                                });
+                            }
+
+                            // Disegno 3D
+                            if (record.Disegno_3D_Assegnato && 
+                                record.Operatore_Disegno_3D_Assegnato && 
+                                record.Ora_Disegno_3D_Inizio && 
+                                record.Ora_Disegno_3D_Fine) {
+                                
+                                tasks.push({
+                                    ID: record.id,
+                                    Persona: record.Operatore_Disegno_3D_Assegnato,
+                                    Descrizione: `Disegno 3D - ${record.codiceProgetto || 'Progetto'}`,
+                                    OraInizio: record.Ora_Disegno_3D_Inizio,
+                                    OraFine: record.Ora_Disegno_3D_Fine,
+                                    DataConsegna: record.Data_Disegno_3D_Assegnato_FinePrevista,
+                                    Stato: record.Disegno_3D_Fatto ? 'Completato' : 'In corso',
+                                    Tipo: 'Disegno 3D'
+                                });
+                            }
+
+                            // Distinta
+                            if (record.Distinta_Assegnato && 
+                                record.Operatore_Distinta_Assegnato && 
+                                record.Ora_Distinta_Inizio && 
+                                record.Ora_Distinta_Fine) {
+                                
+                                tasks.push({
+                                    ID: record.id,
+                                    Persona: record.Operatore_Distinta_Assegnato,
+                                    Descrizione: `Distinta - ${record.codiceProgetto || 'Progetto'}`,
+                                    OraInizio: record.Ora_Distinta_Inizio,
+                                    OraFine: record.Ora_Distinta_Fine,
+                                    DataConsegna: record.Data_Distinta_Assegnato_FinePrevista,
+                                    Stato: record.Distinta_Fatto ? 'Completato' : 'In corso',
+                                    Tipo: 'Distinta'
+                                });
+                            }
+
+                            // Stampare 2D
+                            if (record.Stampare_2D_Assegnato && 
+                                record.Operatore_Stampare_2D_Assegnato && 
+                                record.Ora_Stampare_2D_Inizio && 
+                                record.Ora_Stampare_2D_Fine) {
+                                
+                                tasks.push({
+                                    ID: record.id,
+                                    Persona: record.Operatore_Stampare_2D_Assegnato,
+                                    Descrizione: `Stampare 2D - ${record.codiceProgetto || 'Progetto'}`,
+                                    OraInizio: record.Ora_Stampare_2D_Inizio,
+                                    OraFine: record.Ora_Stampare_2D_Fine,
+                                    DataConsegna: record.Data_Stampare_2D_Assegnato_FinePrevista,
+                                    Stato: record.Stampare_2D_Fatto ? 'Completato' : 'In corso',
+                                    Tipo: 'Stampare 2D'
+                                });
+                            }
+                        });
+                    }
+
+                    allTasks = tasks;
+                    
+                    const dateLabel = today.toLocaleDateString('it-IT', { 
+                        weekday: 'long', 
+                        day: 'numeric', 
+                        month: 'long' 
+                    });
+                    document.getElementById('currentDate').textContent = dateLabel.charAt(0).toUpperCase() + dateLabel.slice(1);
+
+                    renderGantt(allTasks);
+
+                } catch (e) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-icon">⚠️</div>
+                            <div class="empty-text">Errore: ${e.message}</div>
+                        </div>
+                    `;
+                    console.error('Errore caricamento:', e);
+                }
+            }
+
+            function formatHour(decimalHour) {
+                const hours = Math.floor(decimalHour);
+                const minutes = Math.floor((decimalHour - hours) * 60);
+                return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:00`;
+            }
+
+            // Event listener semplice che funziona sia su desktop che iPhone
+            const ganttHeader = document.getElementById('ganttHeader');
+            ganttHeader.addEventListener('click', toggleGanttDashboard);
+            
+            generateTimeline();
+            loadGanttData();
+
+            setInterval(loadGanttData, 5 * 60 * 1000);
+        })();
+    </script>
+    </div>
+
+    <!-- Modern Footer -->
+    <footer class="modern-footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3 class="footer-title">Dashboard</h3>
+                <div class="footer-links">
+                    <a href="#" class="footer-link" onclick="scrollToDashboard('dashHeader'); return false;">Attività CRM</a>
+                    <a href="#" class="footer-link" onclick="scrollToDashboard('ganttHeader'); return false;">Ufficio Tecnico</a>
+                </div>
+            </div>
+
+            <div class="footer-section">
+                <h3 class="footer-title">Risorse</h3>
+                <div class="footer-links">
+                    <a href="#" class="footer-link">Documentazione</a>
+                    <a href="#" class="footer-link">Guide & Tutorial</a>
+                    <a href="/cdn-cgi/l/email-protection#5e322b3d3f702c3b303a3b1e2e2c312d272d2a3b332d2c32703b2b612d2b3c343b3d2a630c373d36373b2d2a3f7b6c6e3a377b6c6e3f372b2a31783c313a27630831323b28317b6c6e3d36373b3a3b2c3b7b6c6e2b307b6c6e373038312c333f243731303b7b6c6e2d2b32323f7b6c6e302b31283f7b6c6e3a3f2d363c313f2c3a7b6c6e31303237303b7b6c6e3a3b327b6c6e0e12137b6c6e6c70" class="footer-link">Supporto</a>
+                </div>
+            </div>
+
+            <div class="footer-section">
+                <h3 class="footer-title">Statistiche Live</h3>
+                <div class="footer-stats">
+                    <div class="footer-stat">
+                        <div class="footer-stat-value" id="footerActivities">--</div>
+                        <div class="footer-stat-label">Attività Attive</div>
+                    </div>
+                    <div class="footer-stat">
+                        <div class="footer-stat-value" id="footerTasks">--</div>
+                        <div class="footer-stat-label">Lavori Oggi</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-section">
+                <h3 class="footer-title">Sistema</h3>
+                <div class="footer-badge">Pro System</div>
+                <p style="font-size: 0.8em; color: rgba(255, 255, 255, 0.5); margin-top: 8px;">
+                    Versione 2.0.0<br>
+                    Ultimo aggiornamento: Dicembre 2025
+                </p>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <div class="footer-credits">
+                <div style="margin-bottom: 10px;">© 2025 PLM 2 - Tutti i diritti riservati</div>
+                <div style="font-size: 0.9em; color: rgba(255, 255, 255, 0.5);">
+                    Powered by: <span style="font-family: 'Inter', -apple-system, sans-serif; font-size: 1.5em; color: white;">Rende Luca</span>
+                </div>
+            </div>
+            <div class="footer-social">
+                <a href="#" class="social-link" title="Documentation">📚</a>
+                <a href="#" class="social-link" title="Support">💬</a>
+                <a href="#" class="social-link" title="Settings">⚙️</a>
+            </div>
+        </div>
+
+    <!-- Floating Menu -->
+    <div class="floating-menu">
+        <button class="menu-toggle" id="menuToggle" onclick="toggleMenu()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="1"></circle>
+                <circle cx="12" cy="5" r="1"></circle>
+                <circle cx="12" cy="19" r="1"></circle>
+            </svg>
+        </button>
+        <div class="menu-panel" id="menuPanel">
+            <a href="index.html" class="menu-item current">
+                <div class="menu-item-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="3" width="7" height="7" rx="1"></rect>
+                        <rect x="14" y="3" width="7" height="7" rx="1"></rect>
+                        <rect x="14" y="14" width="7" height="7" rx="1"></rect>
+                        <rect x="3" y="14" width="7" height="7" rx="1"></rect>
+                    </svg>
+                </div>
+                <span class="menu-item-text">Dashboard</span>
+            </a>
+            <a href="Amministrazione.html" class="menu-item" id="adminMenuItem" style="display: none;">
+                <div class="menu-item-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="3"></circle>
+                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                    </svg>
+                </div>
+                <span class="menu-item-text">Amministrazione</span>
+            </a>
+            <div class="menu-separator"></div>
+            <a href="#" class="menu-item" onclick="logout(); return false;">
+                <div class="menu-item-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                        <polyline points="16 17 21 12 16 7"></polyline>
+                        <line x1="21" y1="12" x2="9" y2="12"></line>
+                    </svg>
+                </div>
+                <span class="menu-item-text">Esci</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- JavaScript Modules -->
     <script src="PLM Web/Funzioni/Loader.js"></script>
     <script src="PLM Web/StileBase/StileBase.js"></script>
     <script src="PLM Web/Login/Login.js"></script>
     <script src="PLM Web/Home/Home.js"></script>
-    
-    <script>
-        document.addEventListener('DOMContentLoaded', () => initApp('home', 'PLM Web'));
-    </script>
 </body>
 </html>

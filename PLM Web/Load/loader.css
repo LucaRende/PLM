@@ -1,6 +1,6 @@
 /* =============================================
    PLM Web - Loader CSS
-   Priorità: Mobile First
+   DARK THEME - Mobile First
    ============================================= */
 
 /* Overlay base */
@@ -25,140 +25,152 @@
 }
 
 /* =============================================
-   TIPO: Pagina (fullscreen, cambio pagina)
+   TIPO: Pagina (fullscreen)
    ============================================= */
 .loader-overlay.tipo-pagina {
-    background: #ffffff;
+    background: #030305;
 }
 
 .loader-pagina {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 20px;
+    gap: 24px;
 }
 
 .loader-pagina .spinner {
-    width: 50px;
-    height: 50px;
-    border: 4px solid #e0e0e0;
-    border-top-color: #3498db;
+    width: 48px;
+    height: 48px;
+    border: 3px solid rgba(99, 102, 241, 0.2);
+    border-top-color: #6366f1;
     border-radius: 50%;
     animation: spin 0.8s linear infinite;
 }
 
 .loader-pagina .testo {
-    font-family: Arial, sans-serif;
+    font-family: 'Inter', -apple-system, sans-serif;
     font-size: 14px;
-    color: #666;
+    color: #71717a;
+    letter-spacing: 0.02em;
 }
 
 /* =============================================
-   TIPO: Funzione (piccolo, per operazioni)
+   TIPO: Funzione (operazioni)
    ============================================= */
 .loader-overlay.tipo-funzione {
-    background: rgba(0, 0, 0, 0.4);
+    background: rgba(3, 3, 5, 0.85);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
 }
 
 .loader-funzione {
-    background: #ffffff;
-    padding: 24px 32px;
-    border-radius: 12px;
+    background: linear-gradient(145deg, rgba(18, 18, 26, 0.95) 0%, rgba(10, 10, 15, 0.98) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    padding: 28px 36px;
+    border-radius: 16px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 16px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    gap: 20px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
 }
 
 .loader-funzione .dots {
     display: flex;
-    gap: 8px;
+    gap: 10px;
 }
 
 .loader-funzione .dot {
     width: 12px;
     height: 12px;
-    background: #3498db;
+    background: #6366f1;
     border-radius: 50%;
     animation: bounce 1.4s ease-in-out infinite;
+    box-shadow: 0 0 15px rgba(99, 102, 241, 0.5);
 }
 
 .loader-funzione .dot:nth-child(2) {
     animation-delay: 0.2s;
+    background: #818cf8;
 }
 
 .loader-funzione .dot:nth-child(3) {
     animation-delay: 0.4s;
+    background: #22d3ee;
+    box-shadow: 0 0 15px rgba(34, 211, 238, 0.5);
 }
 
 .loader-funzione .testo {
-    font-family: Arial, sans-serif;
+    font-family: 'Inter', -apple-system, sans-serif;
     font-size: 13px;
-    color: #666;
+    color: #a1a1aa;
 }
 
 /* =============================================
-   TIPO: Invio (per submit form, salvataggi)
+   TIPO: Invio (submit, salvataggi)
    ============================================= */
 .loader-overlay.tipo-invio {
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(3, 3, 5, 0.85);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
 }
 
 .loader-invio {
-    background: #ffffff;
-    padding: 20px 28px;
-    border-radius: 10px;
+    background: linear-gradient(145deg, rgba(18, 18, 26, 0.95) 0%, rgba(10, 10, 15, 0.98) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    padding: 24px 32px;
+    border-radius: 16px;
     display: flex;
     align-items: center;
-    gap: 16px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    gap: 20px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
 }
 
 .loader-invio .bar-container {
     width: 120px;
-    height: 6px;
-    background: #e0e0e0;
-    border-radius: 3px;
+    height: 4px;
+    background: rgba(99, 102, 241, 0.2);
+    border-radius: 4px;
     overflow: hidden;
 }
 
 .loader-invio .bar {
     width: 40%;
     height: 100%;
-    background: #27ae60;
-    border-radius: 3px;
+    background: linear-gradient(90deg, #6366f1 0%, #22d3ee 100%);
+    border-radius: 4px;
     animation: slide 1s ease-in-out infinite;
+    box-shadow: 0 0 10px rgba(99, 102, 241, 0.5);
 }
 
 .loader-invio .testo {
-    font-family: Arial, sans-serif;
+    font-family: 'Inter', -apple-system, sans-serif;
     font-size: 13px;
-    color: #666;
+    color: #a1a1aa;
 }
 
 /* =============================================
-   TIPO: Inline (dentro un elemento, non overlay)
+   TIPO: Inline (dentro elementi)
    ============================================= */
 .loader-inline {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
 }
 
 .loader-inline .mini-spinner {
     width: 16px;
     height: 16px;
-    border: 2px solid #e0e0e0;
-    border-top-color: #3498db;
+    border: 2px solid rgba(99, 102, 241, 0.2);
+    border-top-color: #6366f1;
     border-radius: 50%;
     animation: spin 0.8s linear infinite;
 }
 
 .loader-inline .testo {
-    font-family: Arial, sans-serif;
+    font-family: 'Inter', -apple-system, sans-serif;
     font-size: 12px;
-    color: #888;
+    color: #a1a1aa;
 }
 
 /* =============================================
@@ -191,17 +203,16 @@
 }
 
 /* =============================================
-   RESPONSIVE - Mobile First già applicato
-   Tablet/Desktop adjustments
+   RESPONSIVE
    ============================================= */
 @media (min-width: 768px) {
     .loader-pagina .spinner {
-        width: 60px;
-        height: 60px;
+        width: 56px;
+        height: 56px;
     }
     
     .loader-funzione {
-        padding: 28px 40px;
+        padding: 32px 44px;
     }
     
     .loader-funzione .dot {

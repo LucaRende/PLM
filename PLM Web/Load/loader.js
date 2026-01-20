@@ -71,16 +71,25 @@ const Loader = {
         // Blocca scroll
         document.body.style.overflow = 'hidden';
         
-        // Attiva con piccolo delay per animazione
-        requestAnimationFrame(() => {
+        // Per tipo "pagina" attiva subito, per altri usa animazione
+        if (tipo === 'pagina') {
             this.overlay.classList.add('active');
-        });
+        } else {
+            requestAnimationFrame(() => {
+                this.overlay.classList.add('active');
+            });
+        }
     },
     
     // Nasconde loader overlay
     hide() {
         if (this.overlay) {
-            this.overlay.classList.remove('active');
+            // Per tipo pagina usa classe hiding per fade out
+            if (this.overlay.classList.contains('tipo-pagina')) {
+                this.overlay.classList.add('hiding');
+            } else {
+                this.overlay.classList.remove('active');
+            }
             
             // Rimuovi dopo animazione
             setTimeout(() => {

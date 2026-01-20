@@ -8,7 +8,7 @@
     "homeAfterLogin": "home"
   },
   "styles": {
-    "global": ["PLM Web/Load/loader.css"]
+    "global": ["PLM Web/style.css", "PLM Web/Load/loader.css"]
   },
   "scripts": {
     "global": ["PLM Web/Load/loader.js"]

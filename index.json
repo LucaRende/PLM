@@ -1,0 +1,27 @@
+{
+  "config": {
+    "basePath": "PLM Web/",
+    "siteName": "PLM Web",
+    "version": "1.0.0"
+  },
+  "styles": {
+    "global": []
+  },
+  "scripts": {
+    "global": []
+  },
+  "pages": {
+    "login": {
+      "path": "login.html",
+      "title": "Login",
+      "styles": [],
+      "scripts": []
+    },
+    "home": {
+      "path": "home.html",
+      "title": "Home",
+      "styles": [],
+      "scripts": []
+    }
+  }
+}

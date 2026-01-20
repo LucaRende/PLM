@@ -13,6 +13,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     
+    <!-- Supabase JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
     <!-- Stili globali -->
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="Load/loader.css">
@@ -47,7 +50,7 @@
         
         .login-form .form-input {
             height: 54px;
-            font-size: 16px; /* Previene zoom iOS */
+            font-size: 16px;
         }
         
         .login-options {
@@ -161,6 +164,28 @@
     </div>
 
     <script>
+        // Variabili globali
+        let supabase = null;
+        
+        // Inizializza Supabase
+        async function initSupabase() {
+            try {
+                const response = await fetch('../autenticazione.json');
+                const config = await response.json();
+                
+                supabase = window.supabase.createClient(
+                    config.supabase.url,
+                    config.supabase.anonKey
+                );
+                
+                console.log('Supabase inizializzato');
+                return true;
+            } catch (error) {
+                console.error('Errore inizializzazione Supabase:', error);
+                return false;
+            }
+        }
+        
         // Toggle password
         function togglePassword() {
             const input = document.getElementById('password');
@@ -187,6 +212,23 @@
             document.getElementById('loginAlert').classList.add('hidden');
         }
         
+        // Verifica login
+        async function verifyLogin(username, password) {
+            try {
+                const { data, error } = await supabase.rpc('verify_login', {
+                    p_username: username,
+                    p_password: password
+                });
+                
+                if (error) throw error;
+                
+                return data;
+            } catch (error) {
+                console.error('Errore verifica login:', error);
+                return { success: false, error: error.message };
+            }
+        }
+        
         // Form submit
         document.getElementById('loginForm').addEventListener('submit', async function(e) {
             e.preventDefault();
@@ -194,24 +236,55 @@
             
             const username = document.getElementById('username').value.trim();
             const password = document.getElementById('password').value;
+            const remember = document.getElementById('remember').checked;
             
             if (!username || !password) {
                 showAlert('Inserisci username e password');
                 return;
             }
             
+            if (!supabase) {
+                showAlert('Errore connessione al server');
+                return;
+            }
+            
             Loader.show('invio', 'Accesso in corso...');
             
-            // TODO: Autenticazione Supabase
-            setTimeout(() => {
+            try {
+                const result = await verifyLogin(username, password);
+                
+                if (result.success) {
+                    // Salva sessione
+                    const storage = remember ? localStorage : sessionStorage;
+                    storage.setItem('plm_logged_in', 'true');
+                    storage.setItem('plm_user', JSON.stringify(result.user));
+                    
+                    // Anche sessionStorage per il check in index.html
+                    sessionStorage.setItem('plm_logged_in', 'true');
+                    
+                    // Redirect a home
+                    Loader.show('pagina', 'Benvenuto ' + result.user.nome + '...');
+                    setTimeout(() => {
+                        window.location.href = 'home.html';
+                    }, 800);
+                } else {
+                    Loader.hide();
+                    showAlert(result.error || 'Credenziali non valide');
+                }
+            } catch (error) {
                 Loader.hide();
-                showAlert('Configurare autenticazione Supabase');
-            }, 1500);
+                showAlert('Errore di connessione');
+                console.error(error);
+            }
         });
         
-        // Hide loader on full load
-        window.addEventListener('load', function() {
+        // Init
+        window.addEventListener('load', async function() {
+            await initSupabase();
             Loader.hide();
+            
+            // Focus su username
+            document.getElementById('username').focus();
         });
     </script>
 </body>

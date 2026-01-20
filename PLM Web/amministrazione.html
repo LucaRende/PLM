@@ -169,7 +169,7 @@
         
         /* Content */
         .page-content {
-            padding: 130px var(--space-4) var(--space-4);
+            padding: 120px var(--space-4) var(--space-4);
             min-height: 100vh;
             background: var(--surface-0);
         }
@@ -363,20 +363,22 @@
            ============================================= */
         
         .stats-summary {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
+            display: flex;
             gap: var(--space-3);
             margin-bottom: var(--space-4);
+            width: 100%;
         }
         
         .stat-box {
+            flex: 1;
             background: var(--surface-2);
             border: 1px solid var(--border-default);
             border-radius: 14px;
-            padding: var(--space-4);
+            padding: var(--space-3);
             text-align: center;
             position: relative;
             overflow: hidden;
+            min-width: 0;
         }
         
         .stat-box::before {
@@ -390,10 +392,11 @@
         }
         
         .stat-box-value {
-            font-size: 1.5rem;
+            font-size: 1.3rem;
             font-weight: 700;
             color: var(--text-primary);
-            margin-bottom: 4px;
+            margin-bottom: 2px;
+            white-space: nowrap;
         }
         
         .stat-box-value.green {
@@ -401,76 +404,105 @@
         }
         
         .stat-box-label {
-            font-size: 11px;
+            font-size: 9px;
             color: var(--text-muted);
             text-transform: uppercase;
-            letter-spacing: 0.05em;
+            letter-spacing: 0.03em;
+            white-space: nowrap;
         }
         
         /* =============================================
-           MESI GRID - CARD PIÙ GRANDI E LEGGIBILI
+           MESI - DESIGN MOBILE OTTIMIZZATO
            ============================================= */
         
-        .mesi-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
+        .mesi-list {
+            display: flex;
+            flex-direction: column;
             gap: var(--space-3);
         }
         
-        @media (min-width: 400px) {
-            .mesi-grid {
-                grid-template-columns: repeat(4, 1fr);
-            }
-        }
-        
-        .mese-card {
+        .mese-box {
             background: var(--surface-2);
             border: 1.5px solid var(--border-default);
-            border-radius: 14px;
-            padding: var(--space-3);
-            cursor: pointer;
-            text-align: center;
+            border-radius: 16px;
+            overflow: hidden;
             transition: all 0.2s ease;
-            -webkit-tap-highlight-color: transparent;
         }
         
-        .mese-card:active {
-            transform: scale(0.95);
-        }
-        
-        .mese-card.selected {
+        .mese-box.expanded {
             border-color: var(--primary);
-            background: rgba(220, 38, 38, 0.1);
+        }
+        
+        .mese-header {
+            display: flex;
+            align-items: center;
+            padding: var(--space-4);
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+            gap: var(--space-3);
+        }
+        
+        .mese-header:active {
+            background: var(--surface-3);
+        }
+        
+        .mese-indicator {
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            position: relative;
+        }
+        
+        .mese-indicator.green {
+            background: rgba(34, 197, 94, 0.15);
+        }
+        
+        .mese-indicator.yellow {
+            background: rgba(245, 158, 11, 0.15);
+        }
+        
+        .mese-indicator.red {
+            background: rgba(239, 68, 68, 0.15);
+        }
+        
+        .mese-indicator-perc {
+            font-size: 14px;
+            font-weight: 700;
+        }
+        
+        .mese-indicator.green .mese-indicator-perc { color: #22c55e; }
+        .mese-indicator.yellow .mese-indicator-perc { color: #f59e0b; }
+        .mese-indicator.red .mese-indicator-perc { color: #ef4444; }
+        
+        .mese-info {
+            flex: 1;
+            min-width: 0;
         }
         
         .mese-nome {
-            font-size: 11px;
-            font-weight: 700;
+            font-size: 15px;
+            font-weight: 600;
             color: var(--text-primary);
-            margin-bottom: var(--space-2);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
+            margin-bottom: 2px;
         }
         
-        /* Progress Circle - Più grande */
-        .mese-progress {
-            width: 56px;
-            height: 56px;
-            margin: 0 auto var(--space-2);
-        }
-        
-        .mese-perc {
-            font-size: 13px;
-            font-weight: 700;
-            color: var(--text-primary);
-            margin-bottom: var(--space-2);
+        .mese-subtitle {
+            font-size: 12px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
         }
         
         .mese-badge {
             display: inline-block;
-            padding: 4px 8px;
+            padding: 3px 8px;
             border-radius: 6px;
-            font-size: 9px;
+            font-size: 10px;
             font-weight: 700;
             text-transform: uppercase;
         }
@@ -490,111 +522,289 @@
             color: #ef4444;
         }
         
-        /* =============================================
-           FATTURE - CARD MIGLIORATE
-           ============================================= */
-        
-        .fatture-container {
-            margin-top: var(--space-4);
-            padding-top: var(--space-4);
-            border-top: 1px dashed var(--border-default);
+        .mese-arrow {
+            width: 24px;
+            height: 24px;
+            color: var(--text-muted);
+            transition: transform 0.2s ease;
+            flex-shrink: 0;
         }
         
-        .fatture-header {
+        .mese-box.expanded .mese-arrow {
+            transform: rotate(180deg);
+            color: var(--primary);
+        }
+        
+        .mese-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+        
+        .mese-box.expanded .mese-content {
+            max-height: 2000px;
+        }
+        
+        .mese-inner {
+            padding: 0 var(--space-4) var(--space-4);
+        }
+        
+        /* Slider Giorni */
+        .slider-container {
+            background: var(--surface-3);
+            border-radius: 14px;
+            padding: var(--space-4);
+            margin-bottom: var(--space-4);
+        }
+        
+        .slider-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: var(--space-3);
         }
         
-        .fatture-title {
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--text-primary);
-            display: flex;
-            align-items: center;
-            gap: var(--space-2);
+        .slider-label {
+            font-size: 12px;
+            color: var(--text-muted);
         }
         
-        .fatture-count {
-            background: var(--primary);
-            color: white;
-            font-size: 11px;
+        .slider-day {
+            font-size: 16px;
             font-weight: 700;
-            padding: 2px 8px;
-            border-radius: 10px;
+            color: var(--primary);
         }
         
-        .fatture-close {
-            width: 32px;
-            height: 32px;
+        .slider-track {
+            position: relative;
+            height: 44px;
+            background: var(--surface-2);
+            border-radius: 12px;
+            margin-bottom: var(--space-3);
+            overflow: hidden;
+        }
+        
+        .slider-fill {
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, var(--primary), #f59e0b);
+            border-radius: 12px;
+            transition: width 0.15s ease;
+        }
+        
+        .slider-input {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+            -webkit-appearance: none;
+            z-index: 10;
+        }
+        
+        .slider-thumb {
+            position: absolute;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 36px;
+            height: 36px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
             display: flex;
             align-items: center;
             justify-content: center;
-            background: var(--surface-3);
-            border: 1px solid var(--border-default);
-            border-radius: 8px;
-            color: var(--text-muted);
-            cursor: pointer;
-            font-size: 16px;
-            -webkit-tap-highlight-color: transparent;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--surface-0);
+            pointer-events: none;
+            transition: left 0.15s ease;
         }
         
-        .fatture-close:active {
-            background: var(--surface-4);
-        }
-        
-        .fattura-card {
-            background: var(--surface-2);
-            border: 1px solid var(--border-default);
-            border-radius: 12px;
-            padding: var(--space-4);
-            margin-bottom: var(--space-3);
-        }
-        
-        .fattura-card:last-child {
-            margin-bottom: 0;
-        }
-        
-        .fattura-row {
+        .slider-totale {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: var(--space-2);
+            padding: var(--space-3);
+            background: var(--surface-2);
+            border-radius: 12px;
         }
         
-        .fattura-row:last-child {
-            margin-bottom: 0;
-        }
-        
-        .fattura-label {
-            font-size: 11px;
+        .slider-totale-label {
+            font-size: 12px;
             color: var(--text-muted);
-            text-transform: uppercase;
         }
         
-        .fattura-value {
-            font-size: 13px;
-            color: var(--text-primary);
-            font-weight: 600;
-            text-align: right;
-        }
-        
-        .fattura-value.positive {
-            color: var(--success);
-        }
-        
-        .fattura-value.negative {
+        .slider-totale-value {
+            font-size: 18px;
+            font-weight: 700;
             color: var(--error);
         }
         
-        .fattura-cliente {
+        /* Ricerca Fatture */
+        .fatture-search-box {
+            display: flex;
+            align-items: center;
+            background: var(--surface-2);
+            border: 1.5px solid var(--border-default);
+            border-radius: 12px;
+            margin-bottom: var(--space-3);
+            overflow: hidden;
+            transition: border-color 0.2s ease;
+        }
+        
+        .fatture-search-box:focus-within {
+            border-color: var(--primary);
+        }
+        
+        .fatture-search-icon {
+            width: 16px;
+            height: 16px;
+            margin-left: 12px;
+            color: var(--text-muted);
+            flex-shrink: 0;
+        }
+        
+        .fatture-search-input {
+            flex: 1;
+            padding: 12px;
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
             font-size: 14px;
+            font-family: 'Inter', sans-serif;
+            outline: none;
+            min-width: 0;
+        }
+        
+        .fatture-search-input::placeholder {
+            color: var(--text-muted);
+        }
+        
+        .fatture-search-clear {
+            width: 28px;
+            height: 28px;
+            margin-right: 8px;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            background: var(--surface-4);
+            border: none;
+            border-radius: 50%;
+            color: var(--text-muted);
+            font-size: 12px;
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        .fatture-search-clear.show {
+            display: flex;
+        }
+        
+        /* Fatture List */
+        .fatture-list {
+            margin-top: var(--space-3);
+        }
+        
+        .fatture-list-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-3);
+        }
+        
+        .fatture-list-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .fatture-count-label {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+        
+        .fattura-item {
+            background: var(--surface-3);
+            border-radius: 12px;
+            padding: var(--space-3);
+            margin-bottom: var(--space-2);
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+        }
+        
+        .fattura-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        .fattura-giorno {
+            width: 40px;
+            height: 40px;
+            background: var(--surface-2);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-primary);
+            flex-shrink: 0;
+        }
+        
+        .fattura-giorno.past {
+            background: rgba(34, 197, 94, 0.15);
+            color: #22c55e;
+        }
+        
+        .fattura-giorno.future {
+            background: rgba(245, 158, 11, 0.15);
+            color: #f59e0b;
+        }
+        
+        .fattura-info {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .fattura-cliente {
+            font-size: 13px;
             font-weight: 600;
             color: var(--text-primary);
-            margin-bottom: var(--space-2);
-            padding-bottom: var(--space-2);
-            border-bottom: 1px solid var(--border-subtle);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .fattura-numero {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+        
+        .fattura-importo {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--error);
+            text-align: right;
+            flex-shrink: 0;
+        }
+        
+        .fattura-importo.paid {
+            color: var(--success);
+            text-decoration: line-through;
+            opacity: 0.7;
+        }
+        
+        /* No fatture */
+        .no-fatture {
+            text-align: center;
+            padding: var(--space-4);
+            color: var(--text-muted);
+            font-size: 13px;
         }
         
         /* Empty State */
@@ -1401,92 +1611,111 @@
         }
         
         // Toggle Mese (mostra fatture)
-        function toggleMese(bancaIdx, meseIdx, banca) {
-            const container = document.getElementById(`fatture-${bancaIdx}`);
-            const currentMese = container.dataset.currentMese;
-            const newMese = `${bancaIdx}-${meseIdx}`;
+        // Toggle Mese (espandi/comprimi)
+        function toggleMeseBox(bancaIdx, meseIdx) {
+            const box = document.getElementById(`mese-box-${bancaIdx}-${meseIdx}`);
+            if (box) {
+                // Chiudi altri mesi aperti nella stessa banca
+                document.querySelectorAll(`[data-banca="${bancaIdx}"] .mese-box.expanded`).forEach(b => {
+                    if (b !== box) b.classList.remove('expanded');
+                });
+                box.classList.toggle('expanded');
+            }
+        }
+        
+        // Aggiorna slider giorno
+        function updateSlider(bancaIdx, meseIdx, banca, value) {
+            const slider = document.getElementById(`slider-${bancaIdx}-${meseIdx}`);
+            const fill = document.getElementById(`slider-fill-${bancaIdx}-${meseIdx}`);
+            const thumb = document.getElementById(`slider-thumb-${bancaIdx}-${meseIdx}`);
+            const dayLabel = document.getElementById(`slider-day-${bancaIdx}-${meseIdx}`);
+            const totaleEl = document.getElementById(`slider-totale-${bancaIdx}-${meseIdx}`);
             
-            // Deseleziona tutti i mesi
-            document.querySelectorAll(`[data-banca="${bancaIdx}"] .mese-card`).forEach(c => {
-                c.classList.remove('selected');
+            const maxDay = parseInt(slider.max);
+            const day = parseInt(value);
+            const percent = ((day - 1) / (maxDay - 1)) * 100;
+            
+            fill.style.width = `${percent}%`;
+            thumb.style.left = `${percent}%`;
+            thumb.textContent = day;
+            dayLabel.textContent = `${day} ${MESI_FULL[meseIdx]}`;
+            
+            // Calcola totale fino a quel giorno
+            const fatture = fatturePerBanca[banca]?.[meseIdx] || [];
+            let totaleFino = 0;
+            
+            fatture.forEach(f => {
+                if (f.dataScadenza) {
+                    const fDate = new Date(f.dataScadenza);
+                    if (fDate.getDate() <= day) {
+                        totaleFino += (f.importoDaPagare || 0);
+                    }
+                }
             });
             
-            if (currentMese === newMese) {
-                // Chiudi
-                container.innerHTML = '';
-                container.dataset.currentMese = '';
-                return;
-            }
+            totaleEl.textContent = formatEuro(totaleFino);
             
-            // Seleziona questo mese
-            document.getElementById(`mese-${bancaIdx}-${meseIdx}`).classList.add('selected');
-            container.dataset.currentMese = newMese;
+            // Aggiorna visual fatture (evidenzia quelle fino a quel giorno)
+            document.querySelectorAll(`#fatture-list-${bancaIdx}-${meseIdx} .fattura-item`).forEach(item => {
+                const itemDay = parseInt(item.dataset.day || 0);
+                const dayEl = item.querySelector('.fattura-giorno');
+                if (itemDay <= day) {
+                    dayEl.classList.add('past');
+                    dayEl.classList.remove('future');
+                } else {
+                    dayEl.classList.remove('past');
+                    dayEl.classList.add('future');
+                }
+            });
+        }
+        
+        // Filtra fatture per numero
+        function filterFattureByNumero(bancaIdx, meseIdx, searchValue) {
+            const search = searchValue.toLowerCase().trim();
+            const clearBtn = document.getElementById(`search-clear-${bancaIdx}-${meseIdx}`);
+            const countLabel = document.getElementById(`fatture-count-${bancaIdx}-${meseIdx}`);
+            const items = document.querySelectorAll(`#fatture-list-${bancaIdx}-${meseIdx} .fattura-item`);
             
-            const fatture = fatturePerBanca[banca][meseIdx] || [];
-            
-            if (fatture.length === 0) {
-                container.innerHTML = `
-                    <div class="fatture-container">
-                        <div class="fatture-header">
-                            <span class="fatture-title">
-                                📄 Fatture ${MESI_FULL[meseIdx]}
-                            </span>
-                            <button class="fatture-close" onclick="closeFatture(${bancaIdx})">✕</button>
-                        </div>
-                        <div class="empty-state" style="padding: var(--space-4);">
-                            <div class="empty-state-icon">📭</div>
-                            <div class="empty-state-text">Nessuna fattura in questo mese</div>
-                        </div>
-                    </div>
-                `;
+            // Mostra/nascondi bottone clear
+            if (search.length > 0) {
+                clearBtn.classList.add('show');
             } else {
-                container.innerHTML = `
-                    <div class="fatture-container">
-                        <div class="fatture-header">
-                            <span class="fatture-title">
-                                📄 Fatture ${MESI_FULL[meseIdx]}
-                                <span class="fatture-count">${fatture.length}</span>
-                            </span>
-                            <button class="fatture-close" onclick="closeFatture(${bancaIdx})">✕</button>
-                        </div>
-                        ${fatture.map(f => `
-                            <div class="fattura-card">
-                                <div class="fattura-cliente">${f.cliente || 'Cliente non specificato'}</div>
-                                <div class="fattura-row">
-                                    <span class="fattura-label">N° Fattura</span>
-                                    <span class="fattura-value">${f.numeroFattura || '-'}</span>
-                                </div>
-                                <div class="fattura-row">
-                                    <span class="fattura-label">Scadenza</span>
-                                    <span class="fattura-value">${f.dataScadenzaFormattato || '-'}</span>
-                                </div>
-                                <div class="fattura-row">
-                                    <span class="fattura-label">Importo</span>
-                                    <span class="fattura-value ${f.importoDaPagare < 0 ? 'positive' : 'negative'}">${f.importoDaPagare_Formattato || formatEuro(f.importoDaPagare || 0)}</span>
-                                </div>
-                            </div>
-                        `).join('')}
-                    </div>
-                `;
+                clearBtn.classList.remove('show');
             }
             
-            // Scroll alle fatture
-            setTimeout(() => {
-                container.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-            }, 100);
-        }
-        
-        // Chiudi fatture
-        function closeFatture(bancaIdx) {
-            const container = document.getElementById(`fatture-${bancaIdx}`);
-            container.innerHTML = '';
-            container.dataset.currentMese = '';
-            document.querySelectorAll(`[data-banca="${bancaIdx}"] .mese-card`).forEach(c => {
-                c.classList.remove('selected');
+            let visibili = 0;
+            items.forEach(item => {
+                const numero = item.dataset.numero || '';
+                const cliente = item.querySelector('.fattura-cliente')?.textContent?.toLowerCase() || '';
+                
+                if (!search || numero.includes(search) || cliente.includes(search)) {
+                    item.style.display = '';
+                    visibili++;
+                } else {
+                    item.style.display = 'none';
+                }
             });
+            
+            if (countLabel) {
+                countLabel.textContent = `${visibili} fattur${visibili === 1 ? 'a' : 'e'}`;
+            }
         }
         
-        // Render Banche
+        // Clear filtro fatture
+        function clearFattureFilter(bancaIdx, meseIdx) {
+            const input = document.getElementById(`search-fatture-${bancaIdx}-${meseIdx}`);
+            if (input) {
+                input.value = '';
+                filterFattureByNumero(bancaIdx, meseIdx, '');
+            }
+        }
+        
+        // Helper: giorni nel mese
+        function getDaysInMonth(month, year = 2026) {
+            return new Date(year, month + 1, 0).getDate();
+        }
+        
+        // Render Banche con nuovo design
         function renderBanche() {
             const list = document.getElementById('banche-list');
             const banche = Object.keys(fatturePerBanca).sort();
@@ -1505,18 +1734,18 @@
             
             list.innerHTML = banche.map((banca, idx) => {
                 const castelletto = castellettiPerBanca[banca] || 0;
-                
-                // Calcola totale da pagare
                 const tutteFatture = Object.values(fatturePerBanca[banca]).flat();
                 const totaleDaPagare = tutteFatture.reduce((sum, f) => sum + (f.importoDaPagare || 0), 0);
                 
-                // Render mesi
+                // Render mesi come lista verticale
                 const mesiHtml = MESI.map((mese, meseIdx) => {
                     const fatture = fatturePerBanca[banca][meseIdx] || [];
                     const daPagareMese = fatture.reduce((sum, f) => sum + (f.importoDaPagare || 0), 0);
+                    const numFatture = fatture.length;
+                    
+                    // Calcola percentuale occupazione
                     const occupato = totaleDaPagare - daPagareMese;
                     const rimanente = castelletto + occupato;
-                    
                     const percentuale = castelletto > 0 
                         ? Math.min(100, Math.max(0, ((castelletto - rimanente) / castelletto) * 100))
                         : 0;
@@ -1528,27 +1757,101 @@
                         badgeText = 'Critico';
                     } else if (percentuale > 50) {
                         badgeClass = 'yellow';
-                        badgeText = 'Attenz.';
+                        badgeText = 'Attenzione';
                     }
                     
-                    const strokeColor = percentuale > 80 ? '#ef4444' : percentuale > 50 ? '#f59e0b' : '#22c55e';
-                    const circumference = Math.PI * 36; // 2 * PI * r (r=18)
-                    const offset = circumference * (1 - percentuale / 100);
+                    const daysInMonth = getDaysInMonth(meseIdx);
+                    const today = new Date();
+                    const currentDay = (today.getMonth() === meseIdx) ? today.getDate() : 1;
+                    
+                    // Ordina fatture per giorno
+                    const fattureSorted = [...fatture].sort((a, b) => {
+                        const dayA = a.dataScadenza ? new Date(a.dataScadenza).getDate() : 0;
+                        const dayB = b.dataScadenza ? new Date(b.dataScadenza).getDate() : 0;
+                        return dayA - dayB;
+                    });
+                    
+                    // Render lista fatture
+                    const fattureHtml = fattureSorted.length > 0 ? fattureSorted.map(f => {
+                        const fDate = f.dataScadenza ? new Date(f.dataScadenza) : null;
+                        const day = fDate ? fDate.getDate() : '?';
+                        const numero = (f.numeroFattura || '').toLowerCase();
+                        return `
+                            <div class="fattura-item" data-day="${day}" data-numero="${numero}">
+                                <div class="fattura-giorno future">${day}</div>
+                                <div class="fattura-info">
+                                    <div class="fattura-cliente">${f.cliente || 'N/D'}</div>
+                                    <div class="fattura-numero">Fatt. ${f.numeroFattura || '-'}</div>
+                                </div>
+                                <div class="fattura-importo">${formatEuro(f.importoDaPagare || 0)}</div>
+                            </div>
+                        `;
+                    }).join('') : '<div class="no-fatture">📭 Nessuna fattura in scadenza</div>';
                     
                     return `
-                        <div class="mese-card" id="mese-${idx}-${meseIdx}" onclick="toggleMese(${idx}, ${meseIdx}, '${banca.replace(/'/g, "\\'")}')">
-                            <div class="mese-nome">${mese}</div>
-                            <svg class="mese-progress" viewBox="0 0 50 50">
-                                <circle cx="25" cy="25" r="18" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="4"/>
-                                <circle cx="25" cy="25" r="18" fill="none" 
-                                    stroke="${strokeColor}"
-                                    stroke-width="4" stroke-linecap="round"
-                                    stroke-dasharray="${circumference}" 
-                                    stroke-dashoffset="${offset}"
-                                    transform="rotate(-90 25 25)"/>
-                            </svg>
-                            <div class="mese-perc">${percentuale.toFixed(0)}%</div>
-                            <div class="mese-badge ${badgeClass}">${badgeText}</div>
+                        <div class="mese-box" id="mese-box-${idx}-${meseIdx}" data-banca="${idx}">
+                            <div class="mese-header" onclick="toggleMeseBox(${idx}, ${meseIdx})">
+                                <div class="mese-indicator ${badgeClass}">
+                                    <span class="mese-indicator-perc">${percentuale.toFixed(0)}%</span>
+                                </div>
+                                <div class="mese-info">
+                                    <div class="mese-nome">${MESI_FULL[meseIdx]}</div>
+                                    <div class="mese-subtitle">
+                                        <span>${numFatture} fatture</span>
+                                        <span>·</span>
+                                        <span>${formatEuroShort(daPagareMese)}</span>
+                                    </div>
+                                </div>
+                                <span class="mese-badge ${badgeClass}">${badgeText}</span>
+                                <svg class="mese-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="6 9 12 15 18 9"/>
+                                </svg>
+                            </div>
+                            <div class="mese-content">
+                                <div class="mese-inner">
+                                    <!-- Slider Giorni -->
+                                    <div class="slider-container">
+                                        <div class="slider-header">
+                                            <span class="slider-label">Scorri per vedere il totale al:</span>
+                                            <span class="slider-day" id="slider-day-${idx}-${meseIdx}">${currentDay} ${MESI_FULL[meseIdx]}</span>
+                                        </div>
+                                        <div class="slider-track">
+                                            <div class="slider-fill" id="slider-fill-${idx}-${meseIdx}" style="width: 0%;"></div>
+                                            <input type="range" class="slider-input" 
+                                                id="slider-${idx}-${meseIdx}"
+                                                min="1" max="${daysInMonth}" value="${currentDay}"
+                                                oninput="updateSlider(${idx}, ${meseIdx}, '${banca.replace(/'/g, "\\'")}', this.value)">
+                                            <div class="slider-thumb" id="slider-thumb-${idx}-${meseIdx}" style="left: 0%;">${currentDay}</div>
+                                        </div>
+                                        <div class="slider-totale">
+                                            <span class="slider-totale-label">Totale da pagare entro questa data:</span>
+                                            <span class="slider-totale-value" id="slider-totale-${idx}-${meseIdx}">€ 0</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Ricerca Fatture -->
+                                    <div class="fatture-search-box">
+                                        <svg class="fatture-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <circle cx="11" cy="11" r="8"/>
+                                            <path d="m21 21-4.35-4.35"/>
+                                        </svg>
+                                        <input type="text" class="fatture-search-input" 
+                                            placeholder="Cerca n° fattura..." 
+                                            id="search-fatture-${idx}-${meseIdx}"
+                                            oninput="filterFattureByNumero(${idx}, ${meseIdx}, this.value)">
+                                        <button class="fatture-search-clear" id="search-clear-${idx}-${meseIdx}" onclick="clearFattureFilter(${idx}, ${meseIdx})">✕</button>
+                                    </div>
+                                    
+                                    <!-- Lista Fatture -->
+                                    <div class="fatture-list" id="fatture-list-${idx}-${meseIdx}">
+                                        <div class="fatture-list-header">
+                                            <span class="fatture-list-title">📋 Scadenze del mese</span>
+                                            <span class="fatture-count-label" id="fatture-count-${idx}-${meseIdx}">${numFatture} fatture</span>
+                                        </div>
+                                        ${fattureHtml}
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     `;
                 }).join('');
@@ -1564,7 +1867,7 @@
                             </div>
                             <div class="banca-info">
                                 <div class="banca-name">${banca}</div>
-                                <div class="banca-castelletto">💰 Castelletto: ${formatEuro(castelletto)}</div>
+                                <div class="banca-castelletto">💰 ${formatEuro(castelletto)}</div>
                             </div>
                             <svg class="banca-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <polyline points="6 9 12 15 18 9"/>
@@ -1578,19 +1881,30 @@
                                         <div class="stat-box-label">Castelletto</div>
                                     </div>
                                     <div class="stat-box">
-                                        <div class="stat-box-value">${tutteFatture.length}</div>
-                                        <div class="stat-box-label">Fatture Totali</div>
+                                        <div class="stat-box-value" style="color: var(--error);">${formatEuroShort(totaleDaPagare)}</div>
+                                        <div class="stat-box-label">Tot. da Pagare</div>
                                     </div>
                                 </div>
-                                <div class="mesi-grid">
+                                <div class="mesi-list">
                                     ${mesiHtml}
                                 </div>
-                                <div id="fatture-${idx}" data-current-mese=""></div>
                             </div>
                         </div>
                     </div>
                 `;
             }).join('');
+            
+            // Inizializza gli slider dopo il render
+            setTimeout(() => {
+                banche.forEach((banca, idx) => {
+                    MESI.forEach((_, meseIdx) => {
+                        const slider = document.getElementById(`slider-${idx}-${meseIdx}`);
+                        if (slider) {
+                            updateSlider(idx, meseIdx, banca, slider.value);
+                        }
+                    });
+                });
+            }, 100);
         }
         
         // Carica Castelletti

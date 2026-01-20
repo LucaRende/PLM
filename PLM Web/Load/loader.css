@@ -13,7 +13,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 9999;
+    z-index: 2147483647; /* Max z-index possibile */
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.3s ease, visibility 0.3s ease;
@@ -25,10 +25,19 @@
 }
 
 /* =============================================
-   TIPO: Pagina (fullscreen)
+   TIPO: Pagina (fullscreen) - Istantaneo, copre TUTTO
    ============================================= */
 .loader-overlay.tipo-pagina {
     background: #030305;
+    opacity: 1;
+    visibility: visible;
+    transition: none;
+}
+
+.loader-overlay.tipo-pagina.hiding {
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
 }
 
 .loader-pagina {

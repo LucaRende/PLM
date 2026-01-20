@@ -1,102 +1,40 @@
 /* ========================================
    LOADER - PLM 2
-   Funzioni utility per caricamento componenti
+   Funzioni per gestione stati di caricamento
    ======================================== */
 
-// Variabili globali
-window.BASE_PATH = '';
-window.PAGE_TYPE = '';
-window.userAccessLevel = null;
-
-/**
- * Carica un componente HTML da file
- */
-async function loadComponent(filePath, containerId) {
+function showLoader(containerId, message = 'Caricamento...') {
     const container = document.getElementById(containerId);
-    if (!container) return null;
-    
-    try {
-        const response = await fetch(filePath);
-        if (!response.ok) throw new Error('Errore caricamento: ' + filePath);
-        const html = await response.text();
-        container.innerHTML = html;
-        return container;
-    } catch (error) {
-        console.error('Errore loadComponent:', error);
-        return null;
+    if (container) {
+        container.innerHTML = `<div class="loading-state">${message}</div>`;
     }
 }
 
-/**
- * Estrae una sezione specifica da un file HTML
- */
-async function loadSection(filePath, sectionId, containerId) {
+function showEmptyState(containerId, message = 'Nessun dato disponibile', icon = '📋') {
     const container = document.getElementById(containerId);
-    if (!container) return null;
-    
-    try {
-        const response = await fetch(filePath);
-        if (!response.ok) throw new Error('Errore caricamento: ' + filePath);
-        const html = await response.text();
-        
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(html, 'text/html');
-        const section = doc.getElementById(sectionId);
-        
-        if (section) {
-            container.innerHTML = section.innerHTML;
-            return container;
-        }
-        return null;
-    } catch (error) {
-        console.error('Errore loadSection:', error);
-        return null;
-    }
-}
-
-/**
- * Mostra loader principale
- */
-function showLoader(message = 'Caricamento...') {
-    let loader = document.getElementById('main-loader');
-    if (!loader) {
-        loader = document.createElement('div');
-        loader.id = 'main-loader';
-        loader.className = 'loading-overlay';
-        loader.innerHTML = `
-            <div class="loading-spinner"></div>
-            <div class="loading-text">${message}</div>
+    if (container) {
+        container.innerHTML = `
+            <div class="empty-state">
+                <div class="empty-icon">${icon}</div>
+                <div class="empty-text">${message}</div>
+            </div>
         `;
-        document.body.appendChild(loader);
-    }
-    loader.style.display = 'flex';
-}
-
-/**
- * Nascondi loader principale
- */
-function hideLoader() {
-    const loader = document.getElementById('main-loader');
-    if (loader) {
-        loader.classList.add('fade-out');
-        setTimeout(() => loader.remove(), 500);
     }
 }
 
-/**
- * Inizializza l'applicazione
- */
-async function initApp(pageType, basePath) {
-    window.PAGE_TYPE = pageType;
-    window.BASE_PATH = basePath;
-    
-    // 1. Carica Login
-    await loadLogin();
+function showErrorState(containerId, message) {
+    const container = document.getElementById(containerId);
+    if (container) {
+        container.innerHTML = `
+            <div class="empty-state">
+                <div class="empty-icon">⚠️</div>
+                <div class="empty-text">Errore: ${message}</div>
+            </div>
+        `;
+    }
 }
 
 // Esponi globalmente
-window.loadComponent = loadComponent;
-window.loadSection = loadSection;
 window.showLoader = showLoader;
-window.hideLoader = hideLoader;
-window.initApp = initApp;
+window.showEmptyState = showEmptyState;
+window.showErrorState = showErrorState;

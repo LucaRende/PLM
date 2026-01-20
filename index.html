@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PLM Web</title>
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+        }
+        .loading {
+            text-align: center;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="loading">
+        <p>Caricamento...</p>
+    </div>
+
+    <script>
+        async function init() {
+            try {
+                // Carica configurazione
+                const configResponse = await fetch('index.json');
+                const config = await configResponse.json();
+                
+                // Controlla se utente è già loggato (session storage)
+                const isLoggedIn = sessionStorage.getItem('plm_logged_in');
+                
+                // Redirige alla pagina corretta
+                const basePath = config.config.basePath;
+                
+                if (isLoggedIn === 'true') {
+                    window.location.href = basePath + config.pages.home.path;
+                } else {
+                    window.location.href = basePath + config.pages.login.path;
+                }
+                
+            } catch (error) {
+                console.error('Errore caricamento configurazione:', error);
+                document.querySelector('.loading').innerHTML = '<p>Errore di caricamento</p>';
+            }
+        }
+        
+        init();
+    </script>
+</body>
+</html>

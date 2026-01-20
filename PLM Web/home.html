@@ -58,7 +58,7 @@
             align-items: center;
         }
         
-        /* Logo centrato con glow */
+        /* Logo centrato senza effetti */
         .home-logo {
             position: absolute;
             left: 50%;
@@ -67,13 +67,6 @@
             height: 44px;
             border-radius: 12px;
             overflow: hidden;
-            box-shadow: 0 0 20px rgba(220, 38, 38, 0.3);
-            animation: logoGlow 3s ease-in-out infinite;
-        }
-        
-        @keyframes logoGlow {
-            0%, 100% { box-shadow: 0 0 20px rgba(220, 38, 38, 0.3); }
-            50% { box-shadow: 0 0 30px rgba(220, 38, 38, 0.5); }
         }
         
         .home-logo img {
@@ -151,10 +144,7 @@
         .welcome-name {
             font-size: 26px;
             font-weight: 700;
-            background: linear-gradient(135deg, var(--text-primary) 0%, var(--primary) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            color: var(--text-primary);
             margin-bottom: var(--space-2);
         }
         
@@ -228,19 +218,13 @@
             display: flex;
             align-items: center;
             justify-content: center;
-        }
-        
-        .stat-box-icon.success {
-            background: rgba(16, 185, 129, 0.15);
-        }
-        
-        .stat-box-icon.warning {
-            background: rgba(245, 158, 11, 0.15);
+            background: rgba(220, 38, 38, 0.15);
         }
         
         .stat-box-icon svg {
             width: 16px;
             height: 16px;
+            color: var(--primary);
         }
         
         .stat-box-title {
@@ -260,6 +244,7 @@
             font-weight: 700;
             line-height: 1;
             margin-bottom: var(--space-1);
+            color: var(--primary);
         }
         
         .stat-label {
@@ -438,7 +423,7 @@
                 <!-- Box Presenze -->
                 <div class="stat-box" id="boxPresenze">
                     <div class="stat-box-header">
-                        <div class="stat-box-icon success">
+                        <div class="stat-box-icon">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
                                 <circle cx="8.5" cy="7" r="4"/>
@@ -451,7 +436,7 @@
                         <div class="stat-slider-track">
                             <!-- Slide 1: Numero -->
                             <div class="stat-slide">
-                                <div class="stat-number success" id="presenzeCount">0</div>
+                                <div class="stat-number" id="presenzeCount">0</div>
                                 <div class="stat-label">presenze registrate</div>
                             </div>
                             <!-- Slide 2: Lista -->
@@ -471,7 +456,7 @@
                 <!-- Box Permessi -->
                 <div class="stat-box" id="boxPermessi">
                     <div class="stat-box-header">
-                        <div class="stat-box-icon warning">
+                        <div class="stat-box-icon">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
                                 <line x1="16" y1="2" x2="16" y2="6"/>
@@ -485,7 +470,7 @@
                         <div class="stat-slider-track">
                             <!-- Slide 1: Numero -->
                             <div class="stat-slide">
-                                <div class="stat-number primary" id="permessiCount">0</div>
+                                <div class="stat-number" id="permessiCount">0</div>
                                 <div class="stat-label">permessi approvati</div>
                             </div>
                             <!-- Slide 2: Ultimi approvati -->

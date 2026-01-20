@@ -9,12 +9,20 @@
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     
     <link rel="stylesheet" href="PLM Web/Load/loader.css">
+    
+    <!-- Nascondi body finché loader non è attivo -->
+    <style id="preload-style">
+        body { background: #030305; }
+    </style>
 </head>
 <body>
     <script src="PLM Web/Load/loader.js"></script>
     <script>
         // Mostra loader subito
         Loader.show('pagina', 'Caricamento...');
+        // Rimuovi preload style
+        var preloadStyle = document.getElementById('preload-style');
+        if (preloadStyle) preloadStyle.remove();
         
         async function init() {
             try {

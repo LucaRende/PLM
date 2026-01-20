@@ -10,7 +10,7 @@
     
     <link rel="stylesheet" href="PLM Web/Load/loader.css">
     
-    <!-- Nascondi body finché loader non è attivo -->
+    <!-- Nascondi contenuto, mostra solo loader -->
     <style id="preload-style">
         body { background: #030305; }
     </style>
@@ -20,9 +20,6 @@
     <script>
         // Mostra loader subito
         Loader.show('pagina', 'Caricamento...');
-        // Rimuovi preload style
-        var preloadStyle = document.getElementById('preload-style');
-        if (preloadStyle) preloadStyle.remove();
         
         async function init() {
             try {
@@ -37,9 +34,9 @@
                 const basePath = config.config.basePath;
                 
                 if (isLoggedIn === 'true') {
-                    window.location.href = basePath + config.pages.home.path;
+                    window.location.replace(basePath + config.pages.home.path);
                 } else {
-                    window.location.href = basePath + config.pages.login.path;
+                    window.location.replace(basePath + config.pages.login.path);
                 }
                 
             } catch (error) {

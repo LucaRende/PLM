@@ -1,535 +1,787 @@
-/* ========================================
+    /* ========================================
    HOME - PLM 2
-   Carica e gestisce le dashboard Home
+   Logica dashboard CRM e Gantt
    ======================================== */
+        // ===== ATTIVITA CRM DASHBOARD =====
+        (function() {
+            const sb = window.supabase.createClient(
+                'https://uoykvjxerdrthnmnfmgc.supabase.co',
+                'sb_publishable_iGVhzkLqAktDZmpccXl7OA_PZ2nUYSY'
+            );
 
-// Supabase config
-const SUPABASE_URL = 'https://uoykvjxerdrthnmnfmgc.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVveWt2anhldXJydGhubW5mbWdjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzEyNTI5NTUsImV4cCI6MjA0NjgyODk1NX0.dOhVPaOLEolHKV0Wf76QSgp8M75BC4yzrlCVfj7oP2E';
+            let loaded = false;
+            let allActivities = [];
+            let filteredActivities = [];
 
-let supabaseClient = null;
-let allData = [];
-let filteredData = [];
-let currentPage = 1;
-const itemsPerPage = 5;
+            window.toggleDash = function() {
+                const header = document.getElementById('dashHeader');
+                const content = document.getElementById('dashContent');
+                
+                // Forza reflow per iOS - fix animazioni ripetute
+                void header.offsetHeight;
+                void content.offsetHeight;
+                
+                header.classList.toggle('active');
+                content.classList.toggle('show');
+                
+                // Forza re-render dopo transizione
+                setTimeout(() => {
+                    void content.offsetHeight;
+                }, 350);
+            };
 
-/**
- * Inizializza Supabase
- */
-function initSupabase() {
-    if (!supabaseClient) {
-        supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    }
-    return supabaseClient;
-}
+            window.toggleFilters = function() {
+                const filtersBox = document.getElementById('filtersBox');
+                filtersBox.classList.toggle('active');
+            };
 
-/**
- * Carica contenuto Home
- */
-async function loadHomeContent() {
-    const container = document.getElementById('content-container');
-    if (!container) return;
-    
-    const basePath = window.BASE_PATH;
-    const filePath = basePath + '/Home/Home.html';
-    
-    try {
-        const response = await fetch(filePath);
-        const html = await response.text();
-        
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(html, 'text/html');
-        
-        const template = doc.getElementById('plm-home');
-        if (template) {
-            container.innerHTML = template.innerHTML;
+            window.toggleAct = function(id) {
+                const card = document.querySelector(`[data-id="${id}"]`);
+                card.classList.toggle('active');
+            };
+
+            window.applyFilters = function() {
+                const cliente = document.getElementById('filterCliente').value;
+                const tipologia = document.getElementById('filterTipologia').value;
+                const stato = document.getElementById('filterStato').value;
+                const scadenza = document.getElementById('filterScadenza').value;
+
+                filteredActivities = allActivities.filter(a => {
+                    if (cliente && a.clienteApplicato !== cliente) return false;
+                    if (tipologia && a.tipologiaFormattata !== tipologia) return false;
+                    if (stato && a.stato !== stato) return false;
+                    if (scadenza) {
+                        const urgenza = getUrgencyStatus(a._dataConsegna);
+                        if (scadenza !== urgenza) return false;
+                    }
+                    return true;
+                });
+
+                currentPage = 1; // Reset alla prima pagina
+                renderActivities(filteredActivities);
+            };
+
+            window.resetFilters = function() {
+                document.getElementById('filterCliente').value = '';
+                document.getElementById('filterTipologia').value = '';
+                document.getElementById('filterStato').value = '';
+                document.getElementById('filterScadenza').value = '';
+                filteredActivities = allActivities;
+                currentPage = 1; // Reset alla prima pagina
+                renderActivities(filteredActivities);
+            };
+
+            function populateFilters(data) {
+                const clienti = [...new Set(data.map(a => a.clienteApplicato).filter(Boolean))].sort();
+                const tipologie = [...new Set(data.map(a => a.tipologiaFormattata).filter(Boolean))].sort();
+                const stati = [...new Set(data.map(a => a.stato).filter(Boolean))].sort();
+
+                const filterCliente = document.getElementById('filterCliente');
+                const filterTipologia = document.getElementById('filterTipologia');
+                const filterStato = document.getElementById('filterStato');
+
+                clienti.forEach(c => {
+                    const option = document.createElement('option');
+                    option.value = c;
+                    option.textContent = c;
+                    filterCliente.appendChild(option);
+                });
+
+                tipologie.forEach(t => {
+                    const option = document.createElement('option');
+                    option.value = t;
+                    option.textContent = t;
+                    filterTipologia.appendChild(option);
+                });
+
+                stati.forEach(s => {
+                    const option = document.createElement('option');
+                    option.value = s;
+                    option.textContent = s;
+                    filterStato.appendChild(option);
+                });
+            }
+
+            function setCircularProgress(elementId, percentId, percentage) {
+                const circle = document.getElementById(elementId);
+                const percentText = document.getElementById(percentId);
+                const circumference = 301.59;
+                const offset = circumference - (percentage / 100) * circumference;
+                
+                setTimeout(() => {
+                    circle.style.strokeDashoffset = offset;
+                    percentText.textContent = Math.round(percentage) + '%';
+                }, 200);
+            }
+
+            function calculateDelayPercentages(data) {
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+
+                let preventiviTotal = 0;
+                let preventiviRitardo = 0;
+                let ordiniTotal = 0;
+                let ordiniRitardo = 0;
+
+                data.forEach(a => {
+                    const consegna = a._dataConsegna ? new Date(a._dataConsegna) : null;
+                    if (!consegna) return;
+
+                    const tipo = (a.tipologiaFormattata || '').toLowerCase();
+                    const stato = (a.stato || '').toLowerCase();
+                    
+                    if (stato.includes('completato') || stato.includes('chiuso')) return;
+
+                    const isRitardo = consegna < today;
+
+                    if (tipo.includes('preventivo')) {
+                        preventiviTotal++;
+                        if (isRitardo) preventiviRitardo++;
+                    } else if (tipo.includes('ordine') || tipo.includes('ordini')) {
+                        ordiniTotal++;
+                        if (isRitardo) ordiniRitardo++;
+                    }
+                });
+
+                const preventiviPerc = preventiviTotal > 0 ? (preventiviRitardo / preventiviTotal) * 100 : 0;
+                const ordiniPerc = ordiniTotal > 0 ? (ordiniRitardo / ordiniTotal) * 100 : 0;
+
+                return { preventiviPerc, ordiniPerc };
+            }
+
+            function getUrgencyStatus(dataConsegna) {
+                if (!dataConsegna) return 'futuro';
+                
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                
+                const consegna = new Date(dataConsegna);
+                consegna.setHours(0, 0, 0, 0);
+                
+                if (consegna < today) return 'scaduto';
+                if (consegna.getTime() === today.getTime()) return 'oggi';
+                return 'futuro';
+            }
+
+            function getStatus(s) {
+                if (!s) return 'status-aperto';
+                const l = s.toLowerCase();
+                if (l.includes('completato') || l.includes('chiuso')) return 'status-completato';
+                if (l.includes('corso')) return 'status-in-corso';
+                if (l.includes('annullato')) return 'status-annullato';
+                return 'status-aperto';
+            }
+
+            function fmtDate(d) {
+                if (!d) return 'N/D';
+                return new Date(d).toLocaleDateString('it-IT', { 
+                    day: '2-digit', 
+                    month: '2-digit', 
+                    year: 'numeric' 
+                });
+            }
+
+            let currentPage = 1;
+            const itemsPerPage = 5;
+            let animationDirection = 'right';
             
-            // Inizializza dashboard
-            initSupabase();
-            renderGanttTimelineHeader();
-            loadData();
-            loadGanttData();
-        }
-    } catch (error) {
-        console.error('Errore caricamento home:', error);
-    }
-}
+            function renderActivities(data) {
+                const list = document.getElementById('activitiesList');
+                const paginationControls = document.getElementById('paginationControls');
+                
+                if (!data || !data.length) {
+                    list.innerHTML = '<div class="empty-state"><div class="empty-icon">📭</div>Nessuna attività trovata</div>';
+                    paginationControls.style.display = 'none';
+                    return;
+                }
+                
+                const totalPages = Math.ceil(data.length / itemsPerPage);
+                const startIndex = (currentPage - 1) * itemsPerPage;
+                const endIndex = startIndex + itemsPerPage;
+                const currentData = data.slice(startIndex, endIndex);
+                
+                // Aggiorna info paginazione
+                document.getElementById('currentPage').textContent = currentPage;
+                document.getElementById('totalPages').textContent = totalPages;
+                document.getElementById('prevPage').disabled = currentPage === 1;
+                document.getElementById('nextPage').disabled = currentPage === totalPages;
+                
+                // Mostra controlli se ci sono più pagine
+                paginationControls.style.display = totalPages > 1 ? 'flex' : 'none';
 
-/* ========================================
-   DASHBOARD CRM
-   ======================================== */
-
-/**
- * Toggle dashboard CRM
- */
-function toggleDash() {
-    const header = document.getElementById('dashHeader');
-    const content = document.getElementById('dashContent');
-    
-    if (header && content) {
-        header.classList.toggle('active');
-        content.classList.toggle('show');
-    }
-}
-
-/**
- * Toggle filtri
- */
-function toggleFilters() {
-    const filtersBox = document.getElementById('filtersBox');
-    if (filtersBox) {
-        filtersBox.classList.toggle('active');
-    }
-}
-
-/**
- * Carica dati CRM da Supabase
- */
-async function loadData() {
-    try {
-        const sb = initSupabase();
-        const { data, error } = await sb.from('CRM').select('*');
-        
-        if (error) throw error;
-        
-        allData = data || [];
-        filteredData = [...allData];
-        
-        populateFilters();
-        updateProgressBars();
-        renderActivities();
-    } catch (error) {
-        console.error('Errore caricamento CRM:', error);
-    }
-}
-
-/**
- * Popola i filtri con valori unici
- */
-function populateFilters() {
-    const clienti = [...new Set(allData.map(d => d.cliente_applicato).filter(Boolean))];
-    const tipologie = [...new Set(allData.map(d => d.tipologia_formattata).filter(Boolean))];
-    const stati = [...new Set(allData.map(d => d.stato).filter(Boolean))];
-    
-    const filterCliente = document.getElementById('filterCliente');
-    const filterTipologia = document.getElementById('filterTipologia');
-    const filterStato = document.getElementById('filterStato');
-    
-    if (filterCliente) {
-        filterCliente.innerHTML = '<option value="">Tutti i clienti</option>' + 
-            clienti.map(c => `<option value="${c}">${c}</option>`).join('');
-    }
-    if (filterTipologia) {
-        filterTipologia.innerHTML = '<option value="">Tutte le tipologie</option>' + 
-            tipologie.map(t => `<option value="${t}">${t}</option>`).join('');
-    }
-    if (filterStato) {
-        filterStato.innerHTML = '<option value="">Tutti gli stati</option>' + 
-            stati.map(s => `<option value="${s}">${s}</option>`).join('');
-    }
-}
-
-/**
- * Applica filtri
- */
-function applyFilters() {
-    const cliente = document.getElementById('filterCliente')?.value || '';
-    const tipologia = document.getElementById('filterTipologia')?.value || '';
-    const stato = document.getElementById('filterStato')?.value || '';
-    const scadenza = document.getElementById('filterScadenza')?.value || '';
-    
-    filteredData = allData.filter(item => {
-        if (cliente && item.cliente_applicato !== cliente) return false;
-        if (tipologia && item.tipologia_formattata !== tipologia) return false;
-        if (stato && item.stato !== stato) return false;
-        
-        if (scadenza) {
-            const urgency = getUrgency(item.DataConsegna);
-            if (scadenza !== urgency) return false;
-        }
-        
-        return true;
-    });
-    
-    currentPage = 1;
-    renderActivities();
-    
-    // Chiudi filtri
-    const filtersBox = document.getElementById('filtersBox');
-    if (filtersBox) filtersBox.classList.remove('active');
-}
-
-/**
- * Reset filtri
- */
-function resetFilters() {
-    document.getElementById('filterCliente').value = '';
-    document.getElementById('filterTipologia').value = '';
-    document.getElementById('filterStato').value = '';
-    document.getElementById('filterScadenza').value = '';
-    
-    filteredData = [...allData];
-    currentPage = 1;
-    renderActivities();
-}
-
-/**
- * Calcola urgenza
- */
-function getUrgency(dateStr) {
-    if (!dateStr) return 'futuro';
-    
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    
-    const date = new Date(dateStr);
-    date.setHours(0, 0, 0, 0);
-    
-    if (date < today) return 'scaduto';
-    if (date.getTime() === today.getTime()) return 'oggi';
-    return 'futuro';
-}
-
-/**
- * Aggiorna progress bars
- */
-function updateProgressBars() {
-    const preventivi = allData.filter(d => d.tipologia_formattata?.toLowerCase().includes('preventiv'));
-    const ordini = allData.filter(d => d.tipologia_formattata?.toLowerCase().includes('ordin'));
-    
-    const prevScaduti = preventivi.filter(d => getUrgency(d.DataConsegna) === 'scaduto').length;
-    const ordScaduti = ordini.filter(d => getUrgency(d.DataConsegna) === 'scaduto').length;
-    
-    const prevPercent = preventivi.length ? Math.round((prevScaduti / preventivi.length) * 100) : 0;
-    const ordPercent = ordini.length ? Math.round((ordScaduti / ordini.length) * 100) : 0;
-    
-    animateProgress('progressPreventivi', 'percentPreventivi', prevPercent);
-    animateProgress('progressOrdini', 'percentOrdini', ordPercent);
-}
-
-/**
- * Anima progress ring
- */
-function animateProgress(ringId, valueId, percent) {
-    const ring = document.getElementById(ringId);
-    const value = document.getElementById(valueId);
-    
-    if (ring && value) {
-        const circumference = 301.59;
-        const offset = circumference - (percent / 100) * circumference;
-        
-        setTimeout(() => {
-            ring.style.strokeDashoffset = offset;
-            value.textContent = percent;
-        }, 300);
-    }
-}
-
-/**
- * Renderizza lista attività
- */
-function renderActivities() {
-    const container = document.getElementById('activitiesList');
-    if (!container) return;
-    
-    const start = (currentPage - 1) * itemsPerPage;
-    const end = start + itemsPerPage;
-    const pageData = filteredData.slice(start, end);
-    
-    if (pageData.length === 0) {
-        container.innerHTML = '<div class="empty-state">Nessuna attività trovata</div>';
-        return;
-    }
-    
-    container.innerHTML = pageData.map(item => {
-        const urgency = getUrgency(item.DataConsegna);
-        const statusClass = (item.stato || '').toLowerCase().replace(/\s+/g, '-');
-        
-        return `
-            <div class="activity-card">
-                <div class="activity-card-header ${urgency}" onclick="toggleActivity(this)">
-                    <div class="activity-info">
-                        <div class="activity-title">${item.cliente_applicato || 'N/D'}</div>
-                        <div class="activity-meta">
-                            <div class="meta-item">
-                                <span class="meta-label">Tipo:</span> ${item.tipologia_formattata || 'N/D'}
-                            </div>
-                            <div class="meta-item">
-                                <span class="meta-label">Scadenza:</span> ${formatDate(item.DataConsegna)}
+                list.innerHTML = currentData.map((a, index) => {
+                    const urgencyClass = getUrgencyStatus(a._dataConsegna);
+                    const animClass = animationDirection === 'right' ? 'slide-in-right' : 'slide-in-left';
+                    const delay = index * 0.05;
+                    
+                    return `
+                    <div class="activity-card ${animClass}" data-id="${a.ID_Attivita}" style="animation-delay: ${delay}s;">
+                        <div class="activity-card-header ${urgencyClass}" onclick="toggleAct(${a.ID_Attivita})">
+                            <div class="activity-info">
+                                <div class="activity-title">
+                                    #${a.ID_Attivita} · ${a.clienteApplicato || 'Cliente non specificato'}
+                                </div>
+                                <div class="activity-meta">
+                                    <div class="meta-item">
+                                        <span class="meta-label">📅</span>
+                                        <span>${a.dataCreazioneFormattata || fmtDate(a._dataCreazione)}</span>
+                                    </div>
+                                    <div class="meta-item">
+                                        <span class="meta-label">🎯</span>
+                                        <span>${a.dataConsegnaFormattata || fmtDate(a._dataConsegna)}</span>
+                                    </div>
+                                    <div class="meta-item">
+                                        <span class="meta-label">📦</span>
+                                        <span>${a.tipologiaFormattata || 'Non specificato'}</span>
+                                    </div>
+                                </div>
+                                <div class="activity-footer">
+                                    <span class="status-badge ${getStatus(a.stato)}">${a.stato || 'Aperto'}</span>
+                                    <span class="activity-arrow">▼</span>
+                                </div>
                             </div>
                         </div>
-                        <div class="activity-footer">
-                            <span class="status-badge status-${statusClass}">${item.stato || 'N/D'}</span>
-                            <span class="activity-arrow">▼</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="activity-details">
-                    <div class="details-wrapper">
-                        <div class="details-grid">
-                            <div class="detail-item">
-                                <div class="detail-label">Referente</div>
-                                <div class="detail-value">${item.referente || '-'}</div>
-                            </div>
-                            <div class="detail-item">
-                                <div class="detail-label">Note</div>
-                                <div class="detail-value">${item.note || '-'}</div>
+                        <div class="activity-details">
+                            <div class="details-wrapper">
+                                <div class="details-grid">
+                                    <div class="detail-box">
+                                        <div class="detail-label">Cliente</div>
+                                        <div class="detail-value">${a.clienteApplicato || 'Non specificato'}</div>
+                                    </div>
+                                    <div class="detail-box">
+                                        <div class="detail-label">Tipologia</div>
+                                        <div class="detail-value">${a.tipologiaFormattata || 'Non specificato'}</div>
+                                    </div>
+                                    <div class="detail-box">
+                                        <div class="detail-label">Data Creazione</div>
+                                        <div class="detail-value">${a.dataCreazioneFormattata || fmtDate(a._dataCreazione)}</div>
+                                    </div>
+                                    <div class="detail-box">
+                                        <div class="detail-label">Data Consegna</div>
+                                        <div class="detail-value">${a.dataConsegnaFormattata || fmtDate(a._dataConsegna)}</div>
+                                    </div>
+                                    <div class="detail-box">
+                                        <div class="detail-label">Trasferimento</div>
+                                        <div class="detail-value">${a.trasferimento || 'Non specificato'}</div>
+                                    </div>
+                                    <div class="detail-box">
+                                        <div class="detail-label">Stato</div>
+                                        <div class="detail-value">${a.stato || 'Aperto'}</div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
-        `;
-    }).join('');
-    
-    renderPagination();
-}
-
-/**
- * Toggle dettagli attività
- */
-function toggleActivity(element) {
-    const card = element.closest('.activity-card');
-    if (card) {
-        card.classList.toggle('active');
-    }
-}
-
-/**
- * Formatta data
- */
-function formatDate(dateStr) {
-    if (!dateStr) return 'N/D';
-    const date = new Date(dateStr);
-    return date.toLocaleDateString('it-IT', { day: '2-digit', month: '2-digit', year: 'numeric' });
-}
-
-/**
- * Renderizza paginazione
- */
-function renderPagination() {
-    const container = document.getElementById('pagination');
-    if (!container) return;
-    
-    const totalPages = Math.ceil(filteredData.length / itemsPerPage);
-    if (totalPages <= 1) {
-        container.innerHTML = '';
-        return;
-    }
-    
-    let html = '';
-    for (let i = 1; i <= totalPages; i++) {
-        html += `<button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="goToPage(${i})">${i}</button>`;
-    }
-    
-    container.innerHTML = html;
-}
-
-/**
- * Vai a pagina
- */
-function goToPage(page) {
-    currentPage = page;
-    renderActivities();
-}
-
-/* ========================================
-   DASHBOARD GANTT
-   ======================================== */
-
-const OPERATORS = [
-    'Alessandro Colio',
-    'Caterina Dello Stritto',
-    'Christian D\'Angelo',
-    'Federico Cavazza',
-    'Marco Garzesi'
-];
-
-const TIME_SLOTS = [];
-for (let h = 8; h < 18; h++) {
-    TIME_SLOTS.push(`${h.toString().padStart(2, '0')}:00`);
-    TIME_SLOTS.push(`${h.toString().padStart(2, '0')}:30`);
-}
-
-/**
- * Toggle Gantt
- */
-function toggleGantt() {
-    const header = document.getElementById('ganttHeader');
-    const container = document.getElementById('ganttContainer');
-    
-    if (header && container) {
-        header.classList.toggle('active');
-        container.classList.toggle('collapsed');
-    }
-}
-
-/**
- * Renderizza header timeline Gantt
- */
-function renderGanttTimelineHeader() {
-    const container = document.getElementById('ganttTimelineHeader');
-    if (!container) return;
-    
-    container.innerHTML = TIME_SLOTS.filter((_, i) => i % 2 === 0).map(time => 
-        `<div class="gantt-time-slot">${time}</div>`
-    ).join('');
-}
-
-/**
- * Carica dati Gantt
- */
-async function loadGanttData() {
-    try {
-        const sb = initSupabase();
-        const { data, error } = await sb.from('UfficioTecnico').select('*');
-        
-        if (error) throw error;
-        
-        const tasksByOperator = groupTasksByOperator(data || []);
-        renderGanttSummary(tasksByOperator);
-        renderGanttDetails(tasksByOperator);
-        updateGanttStats(tasksByOperator);
-        
-    } catch (error) {
-        console.error('Errore caricamento Gantt:', error);
-    }
-}
-
-/**
- * Raggruppa task per operatore
- */
-function groupTasksByOperator(data) {
-    const grouped = {};
-    
-    OPERATORS.forEach(op => {
-        grouped[op] = [];
-    });
-    
-    data.forEach(task => {
-        OPERATORS.forEach(op => {
-            const field2D = task.Disegno_2D;
-            const field3D = task.Disegno_3D;
-            const fieldDist = task.Distinta;
+                `}).join('');
+            }
             
-            if (field2D && field2D.includes(op)) {
-                grouped[op].push({ ...task, tipo: '2D' });
-            }
-            if (field3D && field3D.includes(op)) {
-                grouped[op].push({ ...task, tipo: '3D' });
-            }
-            if (fieldDist && fieldDist.includes(op)) {
-                grouped[op].push({ ...task, tipo: 'Distinta' });
-            }
-        });
-    });
-    
-    return grouped;
-}
+            window.changePage = function(direction) {
+                const totalPages = Math.ceil(filteredActivities.length / itemsPerPage);
+                const newPage = currentPage + direction;
+                
+                if (newPage < 1 || newPage > totalPages) return;
+                
+                // Imposta direzione animazione
+                animationDirection = direction > 0 ? 'right' : 'left';
+                
+                // Animazione uscita
+                const cards = document.querySelectorAll('.activity-card');
+                const outClass = direction > 0 ? 'slide-out-left' : 'slide-out-right';
+                cards.forEach((card, index) => {
+                    card.style.animationDelay = `${index * 0.03}s`;
+                    card.classList.add(outClass);
+                });
+                
+                // Dopo animazione uscita, cambia pagina
+                setTimeout(() => {
+                    currentPage = newPage;
+                    renderActivities(filteredActivities);
+                    
+                    // Scroll alla prima attività della nuova pagina
+                    setTimeout(() => {
+                        const firstCard = document.querySelector('.activity-card');
+                        if (firstCard) {
+                            firstCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                        }
+                    }, 50);
+                }, 300);
+            };
 
-/**
- * Renderizza summary Gantt
- */
-function renderGanttSummary(tasksByOperator) {
-    const container = document.getElementById('ganttSummaryRows');
-    if (!container) return;
-    
-    container.innerHTML = OPERATORS.map(op => {
-        const tasks = tasksByOperator[op] || [];
-        const initials = op.split(' ').map(n => n[0]).join('');
-        
-        return `
-            <div class="gantt-summary-row">
-                <div class="gantt-person-cell">
-                    <div class="person-avatar">${initials}</div>
-                </div>
-                <div class="gantt-timeline-cell">
-                    ${tasks.slice(0, 3).map(t => `
-                        <div class="gantt-task-bar mini" style="background: ${getTaskColor(t.tipo)}">
-                            ${t.Cliente || 'Task'}
+            async function loadData() {
+                const list = document.getElementById('activitiesList');
+                list.innerHTML = '<div class="loading-state">Caricamento...</div>';
+
+                try {
+                    const { data, error } = await sb.from('Attivita').select('*');
+
+                    if (error) throw error;
+
+                    if (data && data.length > 0) {
+                        const { preventiviPerc, ordiniPerc } = calculateDelayPercentages(data);
+                        setCircularProgress('progressPreventivi', 'percentPreventivi', preventiviPerc);
+                        setCircularProgress('progressOrdini', 'percentOrdini', ordiniPerc);
+                        
+                        const today = new Date();
+                        today.setHours(0, 0, 0, 0);
+                        
+                        data.sort((a, b) => {
+                            const dataA = a._dataConsegna ? new Date(a._dataConsegna) : new Date('9999-12-31');
+                            const dataB = b._dataConsegna ? new Date(b._dataConsegna) : new Date('9999-12-31');
+                            return dataA - dataB;
+                        });
+
+                        allActivities = data;
+                        filteredActivities = data;
+                        
+                        populateFilters(data);
+                        renderActivities(data);
+                    } else {
+                        list.innerHTML = '<div class="empty-state"><div class="empty-icon">📭</div>Nessuna attività</div>';
+                    }
+
+                } catch (e) {
+                    list.innerHTML = `<div class="empty-state"><div class="empty-icon">⚠️</div>Errore: ${e.message}</div>`;
+                }
+            }
+
+            // Event listener semplice che funziona sia su desktop che iPhone
+            const dashHeader = document.getElementById('dashHeader');
+            dashHeader.addEventListener('click', window.toggleDash);
+            
+            window.loadCRMData = loadData; // Esposto per initializeDashboard
+        })();
+
+        // ===== UFFICIO TECNICO GANTT DASHBOARD =====
+        (function() {
+            const SUPABASE_URL = 'https://uoykvjxerdrthnmnfmgc.supabase.co';
+            const SUPABASE_KEY = 'sb_publishable_iGVhzkLqAktDZmpccXl7OA_PZ2nUYSY';
+            const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+            let allTasks = [];
+
+            function toggleGanttDashboard() {
+                const header = document.getElementById('ganttHeader');
+                const container = document.getElementById('ganttContainer');
+                
+                // Forza reflow per iOS - fix animazioni ripetute
+                void header.offsetHeight;
+                void container.offsetHeight;
+                
+                header.classList.toggle('active');
+                container.classList.toggle('collapsed');
+                
+                // Forza re-render dopo transizione
+                setTimeout(() => {
+                    void container.offsetHeight;
+                }, 350);
+            }
+
+            function generateTimeline() {
+                const timelineHeader = document.getElementById('ganttTimelineHeader');
+                const hours = ['08', '09', '10', '11', '12', '13', '14', '15', '16', '17'];
+                
+                timelineHeader.innerHTML = hours.map(h => 
+                    `<div class="gantt-hour-header">${h}</div>`
+                ).join('');
+            }
+
+            function calculateTaskPosition(oraInizio, oraFine) {
+                const startHour = 8;
+                const endHour = 18;
+                const totalHours = endHour - startHour;
+                
+                // Parse time format: "11.00.00" or "11:00:00" (dots or colons)
+                const parseTime = (timeStr) => {
+                    if (!timeStr) return 0;
+                    
+                    const str = String(timeStr).trim();
+                    // Split by dots OR colons
+                    const parts = str.split(/[.:]/).map(Number);
+                    const hours = parts[0] || 0;
+                    const minutes = parts[1] || 0;
+                    
+                    return hours + (minutes / 60);
+                };
+                
+                const startDecimal = parseTime(oraInizio);
+                const endDecimal = parseTime(oraFine);
+                
+                const left = ((startDecimal - startHour) / totalHours) * 100;
+                const width = ((endDecimal - startDecimal) / totalHours) * 100;
+                
+                return { left: Math.max(0, left), width: Math.max(0, width) };
+            }
+
+            function isUrgent(dataConsegna) {
+                if (!dataConsegna) return false;
+                const today = new Date();
+                const delivery = new Date(dataConsegna);
+                return today.toDateString() === delivery.toDateString();
+            }
+
+            function formatTime(time) {
+                if (!time) return 'N/D';
+                // Convert dots to colons for display: 11.00.00 → 11:00
+                const cleaned = String(time).replace(/\./g, ':');
+                return cleaned.substring(0, 5); // HH:MM
+            }
+
+            function renderGantt(data) {
+                const ganttSummaryRows = document.getElementById('ganttSummaryRows');
+                const ganttDetailsRows = document.getElementById('ganttDetailsRows');
+                
+                // Fixed list of operators
+                const operators = [
+                    "Alessandro Colio",
+                    "Caterina Dello Stritto",
+                    "Christian D'Angelo",
+                    "Federico Cavazza",
+                    "Marco Garzesi"
+                ];
+                
+                if (!data || data.length === 0) {
+                    // Show all operators even with no tasks
+                    renderEmptyGantt(operators);
+                    ganttDetailsRows.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-icon">📋</div>
+                            <div class="empty-text">Nessun lavoro programmato</div>
                         </div>
-                    `).join('')}
-                    ${tasks.length > 3 ? `<span class="more-tasks">+${tasks.length - 3}</span>` : ''}
-                </div>
-            </div>
-        `;
-    }).join('');
-}
+                    `;
+                    return;
+                }
 
-/**
- * Renderizza dettagli Gantt
- */
-function renderGanttDetails(tasksByOperator) {
-    const container = document.getElementById('ganttDetailsRows');
-    if (!container) return;
-    
-    container.innerHTML = OPERATORS.map(op => {
-        const tasks = tasksByOperator[op] || [];
-        
-        return `
-            <div class="gantt-person-section">
-                <div class="person-header">
-                    <div class="person-avatar">${op.split(' ').map(n => n[0]).join('')}</div>
-                    <div class="person-name">${op}</div>
-                    <div class="person-tasks-count">${tasks.length} lavori</div>
-                </div>
-                <div class="person-tasks">
-                    ${tasks.map(t => `
-                        <div class="task-card">
-                            <div class="task-type" style="background: ${getTaskColor(t.tipo)}">${t.tipo}</div>
-                            <div class="task-info">
-                                <div class="task-title">${t.Cliente || 'N/D'}</div>
-                                <div class="task-desc">${t.Commessa || ''}</div>
+                // Group tasks by person - CORRECTLY
+                const byPerson = {};
+                operators.forEach(op => {
+                    byPerson[op] = [];
+                });
+                
+                // Add each task to its assigned operator
+                data.forEach(task => {
+                    const person = task.Persona;
+                    console.log('Task:', task.Descrizione, 'assigned to:', person); // Debug
+                    
+                    // Check if this operator exists in our list
+                    if (person && byPerson[person] !== undefined) {
+                        byPerson[person].push(task);
+                    } else {
+                        console.warn('Operator not found in list:', person); // Debug
+                    }
+                });
+
+                // Debug: show what each operator has
+                console.log('Tasks by person:', byPerson);
+
+                // Update stats
+                // Persone = numero totale di operatori
+                document.getElementById('totalPersons').textContent = operators.length;
+                document.getElementById('totalTasks').textContent = data.length;
+                
+                // Occupati = numero di operatori che hanno almeno una lavorazione
+                const operatorsWithTasks = operators.filter(op => byPerson[op].length > 0).length;
+                document.getElementById('avgOccupation').textContent = operatorsWithTasks;
+
+                // Calculate current time position for the indicator
+                const now = new Date();
+                const currentHour = now.getHours() + (now.getMinutes() / 60);
+                const startHour = 8;
+                const endHour = 18;
+                let currentTimePercent = null;
+                
+                if (currentHour >= startHour && currentHour < endHour) {
+                    currentTimePercent = ((currentHour - startHour) / (endHour - startHour)) * 100;
+                }
+
+                // Render Summary View (collapsed state)
+                ganttSummaryRows.innerHTML = operators.map(person => {
+                    const tasks = byPerson[person] || [];
+                    
+                    // Create 10 hour slots (8-17)
+                    const slots = Array(10).fill(null).map((_, i) => 
+                        `<div class="gantt-hour-slot"></div>`
+                    ).join('');
+
+                    // Create task bars for THIS person's tasks - NO OVERLAP
+                    const taskBars = tasks.map(task => {
+                        const { left, width } = calculateTaskPosition(task.OraInizio, task.OraFine);
+                        const urgent = isUrgent(task.DataConsegna);
+                        
+                        return `
+                            <div class="gantt-task-bar ${urgent ? 'urgente' : ''}" 
+                                 style="left: ${left}%; width: ${width}%;"
+                                 title="${task.Descrizione} (${formatTime(task.OraInizio)} - ${formatTime(task.OraFine)})"></div>
+                        `;
+                    }).join('');
+                    // Add current time line if within working hours
+                    const currentTimeLine = currentTimePercent !== null 
+                        ? `<div class="current-time-line" style="left: ${currentTimePercent}%;"></div>` 
+                        : '';
+
+                    return `
+                        <div class="gantt-summary-row">
+                            <div class="gantt-row-header">
+                                <div class="gantt-person-cell">${person}</div>
+                            </div>
+                            <div class="gantt-row-timeline">
+                                <div class="gantt-timeline-wrapper">
+                                    ${slots}
+                                    ${taskBars}
+                                    ${currentTimeLine}
+                                </div>
                             </div>
                         </div>
-                    `).join('') || '<div class="no-tasks">Nessun lavoro assegnato</div>'}
-                </div>
-            </div>
-        `;
-    }).join('');
-}
+                    `;
+                }).join('');
 
-/**
- * Colore per tipo task
- */
-function getTaskColor(tipo) {
-    const colors = {
-        '2D': '#3b82f6',
-        '3D': '#10b981',
-        'Distinta': '#f59e0b'
-    };
-    return colors[tipo] || '#6b7280';
-}
+                // Render Detail View (expanded state)
+                ganttDetailsRows.innerHTML = operators.map(person => {
+                    const tasks = byPerson[person] || [];
+                    
+                    if (tasks.length === 0) {
+                        return `
+                            <div class="person-section">
+                                <div class="person-section-header">
+                                    <h3>${person}</h3>
+                                    <span class="task-count">0 lavori</span>
+                                </div>
+                                <div class="task-list">
+                                    <div class="empty-state" style="padding: 20px;">
+                                        <div class="empty-text" style="font-size: 0.85em;">Nessun lavoro assegnato</div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }
+                    
+                    // Sort tasks by start time
+                    tasks.sort((a, b) => {
+                        const timeA = a.OraInizio || '00:00:00';
+                        const timeB = b.OraInizio || '00:00:00';
+                        return timeA.localeCompare(timeB);
+                    });
+                    
+                    const taskList = tasks.map(task => {
+                        const urgent = isUrgent(task.DataConsegna);
+                        return `
+                            <div class="task-card">
+                                <div class="task-header">
+                                    <div class="task-id">#${task.ID || '?'}</div>
+                                    <div class="task-time">${formatTime(task.OraInizio)} - ${formatTime(task.OraFine)}</div>
+                                </div>
+                                <div class="task-description">${task.Descrizione || 'Nessuna descrizione'}</div>
+                                <div class="task-footer">
+                                    <div class="task-badge ${urgent ? 'priority-high' : 'priority-normal'}">
+                                        ${urgent ? '🔥 Urgente' : '📅 Normale'}
+                                    </div>
+                                    <div class="task-badge status">
+                                        ✓ ${task.Stato || 'In corso'}
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
 
-/**
- * Aggiorna stats Gantt
- */
-function updateGanttStats(tasksByOperator) {
-    const totalPersons = document.getElementById('totalPersons');
-    const totalTasks = document.getElementById('totalTasks');
-    const avgOccupation = document.getElementById('avgOccupation');
-    
-    let total = 0;
-    let occupied = 0;
-    
-    OPERATORS.forEach(op => {
-        const tasks = tasksByOperator[op] || [];
-        total += tasks.length;
-        if (tasks.length > 0) occupied++;
-    });
-    
-    if (totalPersons) totalPersons.textContent = OPERATORS.length;
-    if (totalTasks) totalTasks.textContent = total;
-    if (avgOccupation) avgOccupation.textContent = occupied;
-}
+                    return `
+                        <div class="person-section">
+                            <div class="person-section-header">
+                                <h3>${person}</h3>
+                                <span class="task-count">${tasks.length} ${tasks.length === 1 ? 'lavoro' : 'lavori'}</span>
+                            </div>
+                            <div class="task-list">
+                                ${taskList}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
 
-// Esponi globalmente
-window.loadHomeContent = loadHomeContent;
-window.toggleDash = toggleDash;
-window.toggleFilters = toggleFilters;
-window.applyFilters = applyFilters;
-window.resetFilters = resetFilters;
-window.toggleActivity = toggleActivity;
-window.goToPage = goToPage;
-window.toggleGantt = toggleGantt;
-window.renderGanttTimelineHeader = renderGanttTimelineHeader;
+            function renderEmptyGantt(operators) {
+                const ganttSummaryRows = document.getElementById('ganttSummaryRows');
+                
+                // Calculate current time position
+                const now = new Date();
+                const currentHour = now.getHours() + (now.getMinutes() / 60);
+                const startHour = 8;
+                const endHour = 18;
+                let currentTimePercent = null;
+                
+                if (currentHour >= startHour && currentHour < endHour) {
+                    currentTimePercent = ((currentHour - startHour) / (endHour - startHour)) * 100;
+                }
+                
+                document.getElementById('totalPersons').textContent = '0';
+                document.getElementById('totalTasks').textContent = '0';
+                document.getElementById('avgOccupation').textContent = '0';
+
+                ganttSummaryRows.innerHTML = operators.map(person => {
+                    const slots = Array(10).fill(null).map((_, i) => 
+                        `<div class="gantt-hour-slot"></div>`
+                    ).join('');
+
+                    const currentTimeLine = currentTimePercent !== null 
+                        ? `<div class="current-time-line" style="left: ${currentTimePercent}%;"></div>` 
+                        : '';
+
+                    return `
+                        <div class="gantt-summary-row">
+                            <div class="gantt-row-header">
+                                <div class="gantt-person-cell">${person}</div>
+                            </div>
+                            <div class="gantt-row-timeline">
+                                <div class="gantt-timeline-wrapper">
+                                    ${slots}
+                                    ${currentTimeLine}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            async function loadGanttData() {
+                const container = document.getElementById('ganttSummaryRows');
+                container.innerHTML = `
+                    <div class="loading-state">
+                        <div class="loading-spinner"></div>
+                        <div>Caricamento dati...</div>
+                    </div>
+                `;
+
+                try {
+                    const today = new Date();
+                    const todayStr = today.toISOString().split('T')[0];
+
+                    // Get all records from UfficioTecnico
+                    const { data, error } = await sb
+                        .from('UfficioTecnico')
+                        .select('*');
+
+                    if (error) throw error;
+
+                    // Transform the data into individual tasks with REAL times
+                    const tasks = [];
+                    
+                    if (data && data.length > 0) {
+                        data.forEach(record => {
+                            // Disegno 2D - if it has time slots, show it
+                            if (record.Disegno_2D_Assegnato && 
+                                record.Operatore_Disegno_2D_Assegnato && 
+                                record.Ora_Disegno_2D_Inizio && 
+                                record.Ora_Disegno_2D_Fine) {
+                                
+                                tasks.push({
+                                    ID: record.id,
+                                    Persona: record.Operatore_Disegno_2D_Assegnato,
+                                    Descrizione: `Disegno 2D - ${record.codiceProgetto || 'Progetto'}`,
+                                    OraInizio: record.Ora_Disegno_2D_Inizio,
+                                    OraFine: record.Ora_Disegno_2D_Fine,
+                                    DataConsegna: record.Data_Disegno_2D_Assegnato_FinePrevista,
+                                    Stato: record.Disegno_2D_Fatto ? 'Completato' : 'In corso',
+                                    Tipo: 'Disegno 2D'
+                                });
+                            }
+
+                            // Disegno 3D
+                            if (record.Disegno_3D_Assegnato && 
+                                record.Operatore_Disegno_3D_Assegnato && 
+                                record.Ora_Disegno_3D_Inizio && 
+                                record.Ora_Disegno_3D_Fine) {
+                                
+                                tasks.push({
+                                    ID: record.id,
+                                    Persona: record.Operatore_Disegno_3D_Assegnato,
+                                    Descrizione: `Disegno 3D - ${record.codiceProgetto || 'Progetto'}`,
+                                    OraInizio: record.Ora_Disegno_3D_Inizio,
+                                    OraFine: record.Ora_Disegno_3D_Fine,
+                                    DataConsegna: record.Data_Disegno_3D_Assegnato_FinePrevista,
+                                    Stato: record.Disegno_3D_Fatto ? 'Completato' : 'In corso',
+                                    Tipo: 'Disegno 3D'
+                                });
+                            }
+
+                            // Distinta
+                            if (record.Distinta_Assegnato && 
+                                record.Operatore_Distinta_Assegnato && 
+                                record.Ora_Distinta_Inizio && 
+                                record.Ora_Distinta_Fine) {
+                                
+                                tasks.push({
+                                    ID: record.id,
+                                    Persona: record.Operatore_Distinta_Assegnato,
+                                    Descrizione: `Distinta - ${record.codiceProgetto || 'Progetto'}`,
+                                    OraInizio: record.Ora_Distinta_Inizio,
+                                    OraFine: record.Ora_Distinta_Fine,
+                                    DataConsegna: record.Data_Distinta_Assegnato_FinePrevista,
+                                    Stato: record.Distinta_Fatto ? 'Completato' : 'In corso',
+                                    Tipo: 'Distinta'
+                                });
+                            }
+
+                            // Stampare 2D
+                            if (record.Stampare_2D_Assegnato && 
+                                record.Operatore_Stampare_2D_Assegnato && 
+                                record.Ora_Stampare_2D_Inizio && 
+                                record.Ora_Stampare_2D_Fine) {
+                                
+                                tasks.push({
+                                    ID: record.id,
+                                    Persona: record.Operatore_Stampare_2D_Assegnato,
+                                    Descrizione: `Stampare 2D - ${record.codiceProgetto || 'Progetto'}`,
+                                    OraInizio: record.Ora_Stampare_2D_Inizio,
+                                    OraFine: record.Ora_Stampare_2D_Fine,
+                                    DataConsegna: record.Data_Stampare_2D_Assegnato_FinePrevista,
+                                    Stato: record.Stampare_2D_Fatto ? 'Completato' : 'In corso',
+                                    Tipo: 'Stampare 2D'
+                                });
+                            }
+                        });
+                    }
+
+                    allTasks = tasks;
+                    
+                    const dateLabel = today.toLocaleDateString('it-IT', { 
+                        weekday: 'long', 
+                        day: 'numeric', 
+                        month: 'long' 
+                    });
+                    document.getElementById('currentDate').textContent = dateLabel.charAt(0).toUpperCase() + dateLabel.slice(1);
+
+                    renderGantt(allTasks);
+
+                } catch (e) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-icon">⚠️</div>
+                            <div class="empty-text">Errore: ${e.message}</div>
+                        </div>
+                    `;
+                    console.error('Errore caricamento:', e);
+                }
+            }
+
+            function formatHour(decimalHour) {
+                const hours = Math.floor(decimalHour);
+                const minutes = Math.floor((decimalHour - hours) * 60);
+                return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:00`;
+            }
+
+            // Event listener semplice che funziona sia su desktop che iPhone
+            const ganttHeader = document.getElementById('ganttHeader');
+            ganttHeader.addEventListener('click', toggleGanttDashboard);
+            
+            generateTimeline();
+            window.loadGanttData = loadGanttData; // Esposto per initializeDashboard
+
+            setInterval(loadGanttData, 5 * 60 * 1000);
+
+// Esponi funzioni globalmente per initializeDashboard
+window.loadData = function() {
+    // Trigger il caricamento CRM
+    const dashHeader = document.getElementById('dashHeader');
+    if (dashHeader) {
+        const event = new Event('load');
+        document.dispatchEvent(event);
+    }
+};
+

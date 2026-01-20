@@ -505,7 +505,7 @@
                 <div class="fatturato-box highlight">
                     <div class="fatturato-label">Fatturato Totale</div>
                     <div class="fatturato-value" id="fatturato-totale">€ 0</div>
-                    <div class="fatturato-period">ad oggi</div>
+                    <div class="fatturato-period" id="fatturato-totale-label">Anno 2026</div>
                 </div>
             </div>
             
@@ -652,11 +652,7 @@
             document.getElementById('current-month').textContent = mesi[currentMonth];
             document.getElementById('current-year').textContent = currentYear;
             document.getElementById('fatturato-mese-label').textContent = mesi[currentMonth] + ' ' + currentYear;
-            
-            // Disabilita next se siamo nel mese corrente
-            const oggi = new Date();
-            const isCurrentMonth = currentMonth === oggi.getMonth() && currentYear === oggi.getFullYear();
-            document.getElementById('next-month').disabled = isCurrentMonth;
+            document.getElementById('fatturato-totale-label').textContent = 'Anno ' + currentYear;
             
             // Ricarica dati
             loadMonthData();
@@ -688,23 +684,102 @@
             return '€ ' + (value || 0).toLocaleString('it-IT', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
         }
         
-        // Carica dati del mese
+        // Render lista items
+        function renderList(containerId, items, emptyText) {
+            const container = document.getElementById(containerId);
+            
+            if (!items || items.length === 0) {
+                container.innerHTML = `<div class="list-empty">${emptyText}</div>`;
+                return;
+            }
+            
+            container.innerHTML = items.map(item => `
+                <div class="list-item">
+                    <div class="list-item-info">
+                        <div class="list-item-title">${item.cliente || item.nome || 'N/D'}</div>
+                        <div class="list-item-subtitle">${item.numero || ''} ${item.data ? '— ' + item.data : ''}</div>
+                    </div>
+                    <div class="list-item-value">${formatCurrency(item.importo)}</div>
+                </div>
+            `).join('');
+        }
+        
+        // Carica dati del mese da Supabase
         async function loadMonthData() {
-            // TODO: Implementare chiamate Supabase
-            // Per ora mostra dati demo
+            if (!supabaseClient) {
+                // Dati demo se Supabase non è connesso
+                loadDemoData();
+                return;
+            }
             
-            // Dati demo
-            document.getElementById('fatturato-mese').textContent = formatCurrency(12500);
-            document.getElementById('fatturato-totale').textContent = formatCurrency(89200);
+            try {
+                const { data, error } = await supabaseClient.rpc('get_commerciale_stats', {
+                    p_mese: currentMonth + 1,
+                    p_anno: currentYear
+                });
+                
+                if (error) throw error;
+                
+                // Fatturato
+                document.getElementById('fatturato-mese').textContent = formatCurrency(data.fatturato_mese);
+                document.getElementById('fatturato-totale').textContent = formatCurrency(data.fatturato_totale);
+                
+                // Preventivi
+                document.getElementById('preventivi-count').textContent = data.preventivi.count;
+                document.getElementById('preventivi-value').textContent = formatCurrency(data.preventivi.value);
+                renderList('preventivi-list', data.preventivi.list, 'Nessun preventivo non ordinato');
+                
+                // Ordini da fatturare
+                document.getElementById('ordini-fatturare-count').textContent = data.ordini.count;
+                document.getElementById('ordini-fatturare-value').textContent = formatCurrency(data.ordini.value);
+                renderList('ordini-fatturare-list', data.ordini.list, 'Nessun ordine da fatturare');
+                
+                // Ordini prodotti
+                document.getElementById('ordini-prodotti-count').textContent = data.prodotti.count;
+                document.getElementById('ordini-prodotti-value').textContent = formatCurrency(data.prodotti.value);
+                renderList('ordini-prodotti-list', data.prodotti.list, 'Nessun ordine prodotto');
+                
+            } catch (error) {
+                console.error('Errore caricamento dati:', error);
+                loadDemoData();
+            }
+        }
+        
+        // Dati demo per test
+        function loadDemoData() {
+            // Simula dati diversi per mese
+            const baseFatturato = 10000 + (currentMonth * 2000);
+            const baseTotale = baseFatturato * (currentMonth + 1);
             
-            document.getElementById('preventivi-count').textContent = '12';
-            document.getElementById('preventivi-value').textContent = formatCurrency(45000);
+            document.getElementById('fatturato-mese').textContent = formatCurrency(baseFatturato);
+            document.getElementById('fatturato-totale').textContent = formatCurrency(baseTotale);
             
-            document.getElementById('ordini-fatturare-count').textContent = '8';
-            document.getElementById('ordini-fatturare-value').textContent = formatCurrency(23400);
+            // Preventivi demo
+            const preventiviDemo = [
+                { cliente: 'Azienda Test Srl', numero: 'PREV-001', data: '05/' + String(currentMonth + 1).padStart(2, '0'), importo: 15000 },
+                { cliente: 'Cliente Demo SpA', numero: 'PREV-002', data: '10/' + String(currentMonth + 1).padStart(2, '0'), importo: 8500 },
+                { cliente: 'Fornitore Esempio', numero: 'PREV-003', data: '15/' + String(currentMonth + 1).padStart(2, '0'), importo: 22000 },
+            ];
+            document.getElementById('preventivi-count').textContent = preventiviDemo.length;
+            document.getElementById('preventivi-value').textContent = formatCurrency(preventiviDemo.reduce((a, b) => a + b.importo, 0));
+            renderList('preventivi-list', preventiviDemo, 'Nessun preventivo non ordinato');
             
-            document.getElementById('ordini-prodotti-count').textContent = '15';
-            document.getElementById('ordini-prodotti-value').textContent = formatCurrency(38900);
+            // Ordini da fatturare demo
+            const ordiniDemo = [
+                { cliente: 'Cliente Demo SpA', numero: 'ORD-002', data: '08/' + String(currentMonth + 1).padStart(2, '0'), importo: 5500 },
+                { cliente: 'Fornitore Esempio', numero: 'ORD-003', data: '12/' + String(currentMonth + 1).padStart(2, '0'), importo: 3200 },
+            ];
+            document.getElementById('ordini-fatturare-count').textContent = ordiniDemo.length;
+            document.getElementById('ordini-fatturare-value').textContent = formatCurrency(ordiniDemo.reduce((a, b) => a + b.importo, 0));
+            renderList('ordini-fatturare-list', ordiniDemo, 'Nessun ordine da fatturare');
+            
+            // Ordini prodotti demo
+            const prodottiDemo = [
+                { cliente: 'Azienda Test Srl', numero: 'ORD-001', data: '18/' + String(currentMonth + 1).padStart(2, '0'), importo: 12000 },
+            ];
+            document.getElementById('ordini-prodotti-count').textContent = prodottiDemo.length;
+            document.getElementById('ordini-prodotti-value').textContent = formatCurrency(prodottiDemo.reduce((a, b) => a + b.importo, 0));
+            renderList('ordini-prodotti-list', prodottiDemo, 'Nessun ordine prodotto');
         }
         
         // Logout
@@ -735,9 +810,7 @@
             if (Math.abs(diff) > 50) {
                 if (diff > 0) {
                     // Swipe left = mese successivo
-                    const oggi = new Date();
-                    const isCurrentMonth = currentMonth === oggi.getMonth() && currentYear === oggi.getFullYear();
-                    if (!isCurrentMonth) changeMonth(1);
+                    changeMonth(1);
                 } else {
                     // Swipe right = mese precedente
                     changeMonth(-1);

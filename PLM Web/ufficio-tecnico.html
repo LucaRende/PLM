@@ -431,193 +431,226 @@
             font-weight: 500;
         }
         
-        /* Gantt Timeline */
-        .gantt-container {
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
+        /* Gantt Mobile - Card Based */
+        .gantt-person-box {
+            background: var(--surface-3);
+            border-radius: 12px;
+            margin-bottom: var(--space-3);
+            overflow: hidden;
         }
         
-        .gantt-timeline-header {
-            display: flex;
-            border-bottom: 1px solid var(--border-default);
-            margin-bottom: var(--space-2);
-            padding-left: 80px;
+        .gantt-person-box.expanded {
+            border: 1px solid var(--primary);
         }
         
-        .gantt-hour {
-            flex: 1;
-            min-width: 40px;
-            text-align: center;
-            font-size: 10px;
-            color: var(--text-muted);
-            padding: var(--space-1) 0;
-        }
-        
-        .gantt-row {
+        .gantt-person-header {
             display: flex;
             align-items: center;
-            margin-bottom: var(--space-2);
-            min-height: 36px;
+            padding: var(--space-3);
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
         }
         
-        .gantt-person {
-            width: 80px;
-            font-size: 10px;
-            color: var(--text-primary);
-            font-weight: 500;
-            padding-right: var(--space-2);
-            flex-shrink: 0;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        
-        .gantt-timeline {
-            flex: 1;
-            position: relative;
-            height: 28px;
-            background: var(--surface-3);
-            border-radius: 6px;
-            overflow: hidden;
-        }
-        
-        .gantt-slots {
-            display: flex;
-            height: 100%;
-        }
-        
-        .gantt-slot {
-            flex: 1;
-            border-right: 1px solid var(--border-subtle);
-        }
-        
-        .gantt-slot:last-child {
-            border-right: none;
-        }
-        
-        .gantt-task {
-            position: absolute;
-            top: 4px;
-            height: 20px;
+        .gantt-person-avatar {
+            width: 36px;
+            height: 36px;
             background: linear-gradient(135deg, var(--primary) 0%, #b91c1c 100%);
-            border-radius: 4px;
-            font-size: 9px;
-            color: white;
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            padding: 0 4px;
+            font-size: 14px;
+            font-weight: 700;
+            color: white;
+            margin-right: var(--space-3);
+            flex-shrink: 0;
         }
         
-        .gantt-task.urgente {
-            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-            animation: pulse-urgent 1.5s ease-in-out infinite;
+        .gantt-person-info {
+            flex: 1;
+            min-width: 0;
         }
         
-        @keyframes pulse-urgent {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
-        }
-        
-        .gantt-current-time {
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            width: 2px;
-            background: #22c55e;
-            z-index: 10;
-        }
-        
-        .gantt-current-time::before {
-            content: '';
-            position: absolute;
-            top: -4px;
-            left: -3px;
-            width: 8px;
-            height: 8px;
-            background: #22c55e;
-            border-radius: 50%;
-        }
-        
-        /* Person Task List */
-        .person-tasks {
-            margin-bottom: var(--space-3);
-        }
-        
-        .person-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: var(--space-2) 0;
-            border-bottom: 1px solid var(--border-subtle);
-            margin-bottom: var(--space-2);
-        }
-        
-        .person-name {
+        .gantt-person-name {
             font-size: 13px;
             font-weight: 600;
             color: var(--text-primary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         
-        .person-count {
+        .gantt-person-status {
             font-size: 11px;
             color: var(--text-muted);
-        }
-        
-        .task-item {
-            background: var(--surface-3);
-            border-radius: 10px;
-            padding: var(--space-3);
-            margin-bottom: var(--space-2);
-        }
-        
-        .task-item-header {
             display: flex;
-            justify-content: space-between;
-            margin-bottom: var(--space-1);
-        }
-        
-        .task-item-id {
-            font-size: 10px;
-            color: var(--primary);
-            font-weight: 600;
-        }
-        
-        .task-item-time {
-            font-size: 10px;
-            color: var(--text-muted);
-        }
-        
-        .task-item-desc {
-            font-size: 12px;
-            color: var(--text-primary);
-            font-weight: 500;
-            margin-bottom: var(--space-2);
-        }
-        
-        .task-item-badges {
-            display: flex;
+            align-items: center;
             gap: var(--space-2);
         }
         
-        .task-badge {
+        .gantt-person-status .count {
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+        
+        .gantt-person-arrow {
+            width: 20px;
+            height: 20px;
+            color: var(--text-muted);
+            transition: transform var(--transition-fast);
+            flex-shrink: 0;
+        }
+        
+        .gantt-person-box.expanded .gantt-person-arrow {
+            transform: rotate(180deg);
+            color: var(--primary);
+        }
+        
+        /* Mini Timeline in header */
+        .gantt-mini-timeline {
+            height: 4px;
+            background: var(--surface-2);
+            border-radius: 2px;
+            margin-top: var(--space-2);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .gantt-mini-bar {
+            position: absolute;
+            top: 0;
+            height: 100%;
+            background: var(--primary);
+            border-radius: 2px;
+        }
+        
+        .gantt-mini-bar.urgente {
+            background: #ef4444;
+        }
+        
+        /* Task List dentro persona */
+        .gantt-person-tasks {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+        
+        .gantt-person-box.expanded .gantt-person-tasks {
+            max-height: 1000px;
+        }
+        
+        .gantt-tasks-inner {
+            padding: 0 var(--space-3) var(--space-3);
+        }
+        
+        .gantt-task-card {
+            background: var(--surface-2);
+            border-radius: 10px;
+            padding: var(--space-3);
+            margin-bottom: var(--space-2);
+            border-left: 3px solid var(--primary);
+        }
+        
+        .gantt-task-card.urgente {
+            border-left-color: #ef4444;
+            background: rgba(239, 68, 68, 0.1);
+        }
+        
+        .gantt-task-card:last-child {
+            margin-bottom: 0;
+        }
+        
+        .gantt-task-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: var(--space-2);
+        }
+        
+        .gantt-task-time {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .gantt-task-time svg {
+            width: 14px;
+            height: 14px;
+            color: var(--primary);
+        }
+        
+        .gantt-task-badge {
             padding: 2px 8px;
             border-radius: 20px;
             font-size: 9px;
             font-weight: 600;
+            text-transform: uppercase;
         }
         
-        .task-badge.urgente {
+        .gantt-task-badge.urgente {
             background: rgba(239, 68, 68, 0.2);
             color: #ef4444;
         }
         
-        .task-badge.normale {
+        .gantt-task-badge.normale {
             background: rgba(59, 130, 246, 0.2);
             color: #3b82f6;
+        }
+        
+        .gantt-task-desc {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.4;
+        }
+        
+        .gantt-task-id {
+            font-size: 10px;
+            color: var(--text-muted);
+            margin-top: var(--space-1);
+        }
+        
+        /* Empty state persona */
+        .gantt-person-empty {
+            text-align: center;
+            padding: var(--space-3);
+            color: var(--text-muted);
+            font-size: 12px;
+        }
+        
+        /* Filtri compatti */
+        .filters-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--space-2);
+            margin-bottom: var(--space-3);
+        }
+        
+        .filter-chip {
+            padding: var(--space-2) var(--space-3);
+            background: var(--surface-3);
+            border: 1px solid var(--border-default);
+            border-radius: 20px;
+            font-size: 11px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            display: flex;
+            align-items: center;
+            gap: var(--space-1);
+        }
+        
+        .filter-chip.active {
+            background: rgba(220, 38, 38, 0.15);
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+        
+        .filter-chip svg {
+            width: 12px;
+            height: 12px;
         }
         
         /* Pagination */
@@ -679,10 +712,13 @@
             font-size: 13px;
         }
         
-        /* Filters */
+        /* =============================================
+           FILTRI - DESIGN MOBILE OTTIMIZZATO IPHONE
+           ============================================= */
+        
         .filters-box {
             background: var(--surface-3);
-            border-radius: 12px;
+            border-radius: 16px;
             margin-bottom: var(--space-3);
             overflow: hidden;
         }
@@ -691,12 +727,13 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: var(--space-3);
+            padding: var(--space-3) var(--space-4);
             cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
         }
         
         .filters-title {
-            font-size: 12px;
+            font-size: 14px;
             font-weight: 600;
             color: var(--text-primary);
             display: flex;
@@ -704,8 +741,26 @@
             gap: var(--space-2);
         }
         
+        .filters-count {
+            min-width: 20px;
+            height: 20px;
+            padding: 0 6px;
+            background: var(--primary);
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 700;
+            color: white;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .filters-count.show {
+            display: flex;
+        }
+        
         .filters-arrow {
-            font-size: 10px;
+            font-size: 12px;
             color: var(--text-muted);
             transition: transform var(--transition-fast);
         }
@@ -721,58 +776,307 @@
         }
         
         .filters-box.active .filters-content {
-            max-height: 400px;
+            max-height: 700px;
         }
         
         .filters-inner {
-            padding: 0 var(--space-3) var(--space-3);
+            padding: 0 var(--space-4) var(--space-4);
+        }
+        
+        /* Sezione Filtro */
+        .filter-group {
+            margin-bottom: var(--space-4);
+        }
+        
+        .filter-group:last-of-type {
+            margin-bottom: var(--space-3);
+        }
+        
+        .filter-group-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 10px;
+            display: block;
+        }
+        
+        /* Cliente Input con Dropdown */
+        .cliente-input-container {
+            position: relative;
+        }
+        
+        .cliente-input-wrapper {
             display: flex;
-            flex-direction: column;
-            gap: var(--space-2);
-        }
-        
-        .filter-select {
-            width: 100%;
-            padding: var(--space-2) var(--space-3);
+            align-items: center;
             background: var(--surface-2);
-            border: 1px solid var(--border-default);
-            border-radius: 8px;
-            color: var(--text-primary);
-            font-size: 12px;
-            font-family: 'Inter', sans-serif;
+            border: 1.5px solid var(--border-default);
+            border-radius: 14px;
+            overflow: hidden;
+            transition: border-color var(--transition-fast);
         }
         
-        .filter-select:focus {
-            outline: none;
+        .cliente-input-wrapper:focus-within {
             border-color: var(--primary);
         }
         
-        .filter-buttons {
-            display: flex;
-            gap: var(--space-2);
-            margin-top: var(--space-2);
+        .cliente-search-icon {
+            width: 18px;
+            height: 18px;
+            margin-left: 14px;
+            color: var(--text-muted);
+            flex-shrink: 0;
         }
         
-        .filter-btn {
+        .cliente-input {
             flex: 1;
-            padding: var(--space-2);
+            padding: 14px 12px;
+            background: transparent;
             border: none;
-            border-radius: 8px;
-            font-size: 12px;
-            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 15px;
+            font-family: 'Inter', sans-serif;
+            outline: none;
+            min-width: 0;
+        }
+        
+        .cliente-input::placeholder {
+            color: var(--text-muted);
+        }
+        
+        .cliente-dropdown-btn {
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--surface-3);
+            border: none;
+            border-left: 1px solid var(--border-default);
+            color: var(--text-secondary);
             cursor: pointer;
             transition: all var(--transition-fast);
+            -webkit-tap-highlight-color: transparent;
         }
         
-        .filter-btn-apply {
-            background: var(--primary);
-            color: white;
+        .cliente-dropdown-btn:active {
+            background: var(--surface-4);
         }
         
-        .filter-btn-reset {
+        .cliente-dropdown-btn svg {
+            width: 20px;
+            height: 20px;
+            transition: transform var(--transition-fast);
+        }
+        
+        .cliente-dropdown-btn.open svg {
+            transform: rotate(180deg);
+        }
+        
+        .cliente-clear-btn {
+            width: 28px;
+            height: 28px;
+            margin-right: 8px;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            background: var(--surface-4);
+            border: none;
+            border-radius: 50%;
+            color: var(--text-muted);
+            font-size: 14px;
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        .cliente-clear-btn.show {
+            display: flex;
+        }
+        
+        /* Dropdown Lista Clienti */
+        .cliente-dropdown {
+            position: absolute;
+            top: calc(100% + 6px);
+            left: 0;
+            right: 0;
             background: var(--surface-2);
+            border: 1.5px solid var(--border-default);
+            border-radius: 14px;
+            max-height: 220px;
+            overflow-y: auto;
+            z-index: 100;
+            display: none;
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+        }
+        
+        .cliente-dropdown.show {
+            display: block;
+        }
+        
+        .cliente-option {
+            padding: 14px 16px;
+            font-size: 14px;
+            color: var(--text-primary);
+            cursor: pointer;
+            border-bottom: 1px solid var(--border-subtle);
+            transition: background var(--transition-fast);
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        .cliente-option:last-child {
+            border-bottom: none;
+        }
+        
+        .cliente-option:active {
+            background: var(--surface-3);
+        }
+        
+        .cliente-option.selected {
+            background: rgba(220, 38, 38, 0.1);
+            color: var(--primary);
+        }
+        
+        /* Toggle Pills - Tipologia & Stato */
+        .filter-pills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .filter-pill {
+            padding: 12px 18px;
+            background: var(--surface-2);
+            border: 1.5px solid var(--border-default);
+            border-radius: 25px;
             color: var(--text-secondary);
-            border: 1px solid var(--border-default);
+            font-size: 13px;
+            font-weight: 500;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            -webkit-tap-highlight-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .filter-pill:active {
+            transform: scale(0.95);
+        }
+        
+        .filter-pill.active {
+            background: rgba(220, 38, 38, 0.15);
+            border-color: var(--primary);
+            color: var(--primary);
+            font-weight: 600;
+        }
+        
+        .filter-pill .pill-icon {
+            font-size: 15px;
+        }
+        
+        /* Scadenza Pills con indicatori colorati */
+        .scadenza-pills {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+        
+        .scadenza-pill {
+            padding: 14px 10px;
+            background: var(--surface-2);
+            border: 1.5px solid var(--border-default);
+            border-radius: 14px;
+            color: var(--text-secondary);
+            font-size: 12px;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            -webkit-tap-highlight-color: transparent;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            text-align: center;
+        }
+        
+        .scadenza-pill:active {
+            transform: scale(0.95);
+        }
+        
+        .scadenza-indicator {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+        }
+        
+        /* Scaduto - Rosso */
+        .scadenza-pill[data-value="scaduto"] .scadenza-indicator {
+            background: #ef4444;
+            box-shadow: 0 0 10px rgba(239, 68, 68, 0.6);
+        }
+        
+        .scadenza-pill[data-value="scaduto"].active {
+            background: rgba(239, 68, 68, 0.15);
+            border-color: #ef4444;
+            color: #ef4444;
+        }
+        
+        /* Oggi - Giallo/Arancio */
+        .scadenza-pill[data-value="oggi"] .scadenza-indicator {
+            background: #f59e0b;
+            box-shadow: 0 0 10px rgba(245, 158, 11, 0.6);
+        }
+        
+        .scadenza-pill[data-value="oggi"].active {
+            background: rgba(245, 158, 11, 0.15);
+            border-color: #f59e0b;
+            color: #f59e0b;
+        }
+        
+        /* Futuro - Verde */
+        .scadenza-pill[data-value="futuro"] .scadenza-indicator {
+            background: #22c55e;
+            box-shadow: 0 0 10px rgba(34, 197, 94, 0.6);
+        }
+        
+        .scadenza-pill[data-value="futuro"].active {
+            background: rgba(34, 197, 94, 0.15);
+            border-color: #22c55e;
+            color: #22c55e;
+        }
+        
+        /* Reset Button */
+        .filter-reset-btn {
+            width: 100%;
+            padding: 14px;
+            margin-top: var(--space-2);
+            background: transparent;
+            border: 1.5px dashed var(--border-default);
+            border-radius: 14px;
+            color: var(--text-muted);
+            font-size: 13px;
+            font-weight: 500;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-2);
+            transition: all var(--transition-fast);
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        .filter-reset-btn:active {
+            background: var(--surface-2);
+            transform: scale(0.98);
+        }
+        
+        .filter-reset-btn svg {
+            width: 16px;
+            height: 16px;
         }
         
         /* Footer */
@@ -882,36 +1186,106 @@
                 </div>
                 <div class="section-content">
                     <div class="section-inner">
-                        <!-- Filtri -->
+                        <!-- Filtri Ottimizzati Mobile -->
                         <div class="filters-box" id="filters-box">
                             <div class="filters-header" onclick="toggleFilters()">
                                 <div class="filters-title">
                                     <span>🔍</span>
                                     <span>Filtri</span>
+                                    <span class="filters-count" id="filters-count"></span>
                                 </div>
                                 <span class="filters-arrow">▼</span>
                             </div>
                             <div class="filters-content">
                                 <div class="filters-inner">
-                                    <select class="filter-select" id="filter-cliente">
-                                        <option value="">Tutti i clienti</option>
-                                    </select>
-                                    <select class="filter-select" id="filter-tipologia">
-                                        <option value="">Tutte le tipologie</option>
-                                    </select>
-                                    <select class="filter-select" id="filter-stato">
-                                        <option value="">Tutti gli stati</option>
-                                    </select>
-                                    <select class="filter-select" id="filter-scadenza">
-                                        <option value="">Tutte le scadenze</option>
-                                        <option value="scaduto">Scaduti</option>
-                                        <option value="oggi">Oggi</option>
-                                        <option value="futuro">Futuri</option>
-                                    </select>
-                                    <div class="filter-buttons">
-                                        <button class="filter-btn filter-btn-apply" onclick="applyFilters()">Applica</button>
-                                        <button class="filter-btn filter-btn-reset" onclick="resetFilters()">Reset</button>
+                                    <!-- Cliente - Input con Dropdown -->
+                                    <div class="filter-group">
+                                        <label class="filter-group-label">Cliente</label>
+                                        <div class="cliente-input-container">
+                                            <div class="cliente-input-wrapper">
+                                                <svg class="cliente-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                    <circle cx="11" cy="11" r="8"/>
+                                                    <path d="m21 21-4.35-4.35"/>
+                                                </svg>
+                                                <input type="text" 
+                                                       class="cliente-input" 
+                                                       id="filter-cliente" 
+                                                       placeholder="Cerca o seleziona..."
+                                                       autocomplete="off">
+                                                <button class="cliente-clear-btn" id="cliente-clear" onclick="clearCliente()">✕</button>
+                                                <button class="cliente-dropdown-btn" id="cliente-dropdown-btn" onclick="toggleClienteDropdown()">
+                                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                        <polyline points="6 9 12 15 18 9"/>
+                                                    </svg>
+                                                </button>
+                                            </div>
+                                            <div class="cliente-dropdown" id="cliente-dropdown">
+                                                <!-- Populated by JS -->
+                                            </div>
+                                        </div>
                                     </div>
+                                    
+                                    <!-- Tipologia - Pills -->
+                                    <div class="filter-group">
+                                        <label class="filter-group-label">Tipologia</label>
+                                        <div class="filter-pills">
+                                            <button class="filter-pill" data-filter="tipologia" data-value="ordine" onclick="toggleFilterPill(this)">
+                                                <span class="pill-icon">📦</span>
+                                                Ordini
+                                            </button>
+                                            <button class="filter-pill" data-filter="tipologia" data-value="preventivo" onclick="toggleFilterPill(this)">
+                                                <span class="pill-icon">📋</span>
+                                                Preventivi
+                                            </button>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Stato - Pills -->
+                                    <div class="filter-group">
+                                        <label class="filter-group-label">Stato</label>
+                                        <div class="filter-pills">
+                                            <button class="filter-pill" data-filter="stato" data-value="da aprire" onclick="toggleFilterPill(this)">
+                                                <span class="pill-icon">🆕</span>
+                                                Da aprire
+                                            </button>
+                                            <button class="filter-pill" data-filter="stato" data-value="in evidenza" onclick="toggleFilterPill(this)">
+                                                <span class="pill-icon">⭐</span>
+                                                In evidenza
+                                            </button>
+                                            <button class="filter-pill" data-filter="stato" data-value="in corso" onclick="toggleFilterPill(this)">
+                                                <span class="pill-icon">🔄</span>
+                                                In corso
+                                            </button>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Scadenza - Pills con indicatori colorati -->
+                                    <div class="filter-group">
+                                        <label class="filter-group-label">Scadenza</label>
+                                        <div class="scadenza-pills">
+                                            <button class="scadenza-pill" data-filter="scadenza" data-value="scaduto" onclick="toggleScadenzaPill(this)">
+                                                <span class="scadenza-indicator"></span>
+                                                Scaduti
+                                            </button>
+                                            <button class="scadenza-pill" data-filter="scadenza" data-value="oggi" onclick="toggleScadenzaPill(this)">
+                                                <span class="scadenza-indicator"></span>
+                                                Oggi
+                                            </button>
+                                            <button class="scadenza-pill" data-filter="scadenza" data-value="futuro" onclick="toggleScadenzaPill(this)">
+                                                <span class="scadenza-indicator"></span>
+                                                Futuri
+                                            </button>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Reset -->
+                                    <button class="filter-reset-btn" onclick="resetFilters()">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+                                            <path d="M3 3v5h5"/>
+                                        </svg>
+                                        Reset filtri
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -964,18 +1338,8 @@
                 </div>
                 <div class="section-content">
                     <div class="section-inner">
-                        <!-- Gantt Timeline -->
-                        <div class="gantt-container">
-                            <div class="gantt-timeline-header" id="gantt-header">
-                                <!-- Ore 8-17 generate da JS -->
-                            </div>
-                            <div id="gantt-rows">
-                                <!-- Righe generate da JS -->
-                            </div>
-                        </div>
-                        
-                        <!-- Lista dettagliata per persona -->
-                        <div id="gantt-details" style="margin-top: var(--space-4);">
+                        <!-- Lista operatori con task -->
+                        <div id="gantt-operators">
                             <!-- Generato da JS -->
                         </div>
                     </div>
@@ -1083,53 +1447,247 @@
         }
         
         function populateFilters(data) {
-            const clienti = [...new Set(data.map(a => a.clienteApplicato).filter(Boolean))].sort();
-            const tipologie = [...new Set(data.map(a => a.tipologiaFormattata).filter(Boolean))].sort();
-            const stati = [...new Set(data.map(a => a.stato).filter(Boolean))].sort();
-            
-            const filterCliente = document.getElementById('filter-cliente');
-            const filterTipologia = document.getElementById('filter-tipologia');
-            const filterStato = document.getElementById('filter-stato');
-            
-            clienti.forEach(c => {
-                filterCliente.innerHTML += `<option value="${c}">${c}</option>`;
-            });
-            
-            tipologie.forEach(t => {
-                filterTipologia.innerHTML += `<option value="${t}">${t}</option>`;
-            });
-            
-            stati.forEach(s => {
-                filterStato.innerHTML += `<option value="${s}">${s}</option>`;
-            });
+            // Popola array clienti per dropdown
+            clientiList = [...new Set(data.map(a => a.clienteApplicato).filter(Boolean))].sort();
         }
         
-        function applyFilters() {
-            const cliente = document.getElementById('filter-cliente').value;
-            const tipologia = document.getElementById('filter-tipologia').value;
-            const stato = document.getElementById('filter-stato').value;
-            const scadenza = document.getElementById('filter-scadenza').value;
+        // Filtri attivi
+        let activeFilters = {
+            cliente: '',
+            tipologia: [],  // può contenere 'ordine', 'preventivo'
+            stato: [],      // può contenere 'da aprire', 'in evidenza', 'in corso'
+            scadenza: []    // può contenere 'scaduto', 'oggi', 'futuro'
+        };
+        
+        let clientiList = [];
+        let isDropdownOpen = false;
+        
+        // Toggle Dropdown Clienti
+        function toggleClienteDropdown() {
+            const dropdown = document.getElementById('cliente-dropdown');
+            const btn = document.getElementById('cliente-dropdown-btn');
+            isDropdownOpen = !isDropdownOpen;
+            
+            if (isDropdownOpen) {
+                dropdown.classList.add('show');
+                btn.classList.add('open');
+                renderClienteOptions();
+            } else {
+                dropdown.classList.remove('show');
+                btn.classList.remove('open');
+            }
+        }
+        
+        // Render opzioni clienti nel dropdown
+        function renderClienteOptions(filter = '') {
+            const dropdown = document.getElementById('cliente-dropdown');
+            const filtered = filter 
+                ? clientiList.filter(c => c.toLowerCase().includes(filter.toLowerCase()))
+                : clientiList;
+            
+            if (filtered.length === 0) {
+                dropdown.innerHTML = '<div class="cliente-option" style="color: var(--text-muted); pointer-events: none;">Nessun cliente trovato</div>';
+                return;
+            }
+            
+            dropdown.innerHTML = filtered.slice(0, 20).map(cliente => {
+                const isSelected = activeFilters.cliente.toLowerCase() === cliente.toLowerCase();
+                return `<div class="cliente-option ${isSelected ? 'selected' : ''}" onclick="selectCliente('${cliente.replace(/'/g, "\\'")}')">${cliente}</div>`;
+            }).join('');
+        }
+        
+        // Seleziona cliente dal dropdown
+        function selectCliente(cliente) {
+            document.getElementById('filter-cliente').value = cliente;
+            activeFilters.cliente = cliente.toLowerCase();
+            toggleClienteDropdown();
+            updateClearButton();
+            applyFiltersRealtime();
+        }
+        
+        // Toggle per pills (tipologia e stato - multi-select)
+        function toggleFilterPill(pill) {
+            const filter = pill.dataset.filter;
+            const value = pill.dataset.value;
+            
+            pill.classList.toggle('active');
+            
+            if (pill.classList.contains('active')) {
+                if (!activeFilters[filter].includes(value)) {
+                    activeFilters[filter].push(value);
+                }
+            } else {
+                activeFilters[filter] = activeFilters[filter].filter(v => v !== value);
+            }
+            
+            applyFiltersRealtime();
+        }
+        
+        // Toggle per scadenza pills
+        function toggleScadenzaPill(pill) {
+            const value = pill.dataset.value;
+            
+            pill.classList.toggle('active');
+            
+            if (pill.classList.contains('active')) {
+                if (!activeFilters.scadenza.includes(value)) {
+                    activeFilters.scadenza.push(value);
+                }
+            } else {
+                activeFilters.scadenza = activeFilters.scadenza.filter(v => v !== value);
+            }
+            
+            applyFiltersRealtime();
+        }
+        
+        // Clear cliente
+        function clearCliente() {
+            document.getElementById('filter-cliente').value = '';
+            activeFilters.cliente = '';
+            updateClearButton();
+            applyFiltersRealtime();
+        }
+        
+        // Update clear button visibility
+        function updateClearButton() {
+            const input = document.getElementById('filter-cliente');
+            const clearBtn = document.getElementById('cliente-clear');
+            if (input.value.length > 0) {
+                clearBtn.classList.add('show');
+            } else {
+                clearBtn.classList.remove('show');
+            }
+        }
+        
+        // Applica filtri in tempo reale
+        function applyFiltersRealtime() {
+            const clienteInput = document.getElementById('filter-cliente').value.toLowerCase().trim();
+            activeFilters.cliente = clienteInput;
             
             filteredActivities = allActivities.filter(a => {
-                if (cliente && a.clienteApplicato !== cliente) return false;
-                if (tipologia && a.tipologiaFormattata !== tipologia) return false;
-                if (stato && a.stato !== stato) return false;
-                if (scadenza && getUrgencyStatus(a._dataConsegna) !== scadenza) return false;
+                // Filtro cliente (ricerca parziale)
+                if (activeFilters.cliente) {
+                    const clienteMatch = (a.clienteApplicato || '').toLowerCase().includes(activeFilters.cliente);
+                    if (!clienteMatch) return false;
+                }
+                
+                // Filtro tipologia
+                if (activeFilters.tipologia.length > 0) {
+                    const tipo = (a.tipologiaFormattata || '').toLowerCase();
+                    const matchTipo = activeFilters.tipologia.some(t => tipo.includes(t));
+                    if (!matchTipo) return false;
+                }
+                
+                // Filtro stato
+                if (activeFilters.stato.length > 0) {
+                    const stato = (a.stato || '').toLowerCase();
+                    
+                    let matchStato = false;
+                    
+                    activeFilters.stato.forEach(s => {
+                        if (s === 'da aprire' && stato.includes('aperto')) matchStato = true;
+                        if (s === 'in evidenza' && stato.includes('evidenza')) matchStato = true;
+                        if (s === 'in corso' && stato.includes('corso')) matchStato = true;
+                    });
+                    
+                    if (!matchStato) return false;
+                }
+                
+                // Filtro scadenza
+                if (activeFilters.scadenza.length > 0) {
+                    const urgency = getUrgencyStatus(a._dataConsegna);
+                    if (!activeFilters.scadenza.includes(urgency)) return false;
+                }
+                
                 return true;
             });
             
+            // Aggiorna contatore filtri attivi
+            updateFiltersCount();
+            
             currentPage = 1;
             renderActivities();
         }
         
+        // Aggiorna badge contatore filtri
+        function updateFiltersCount() {
+            let count = 0;
+            if (activeFilters.cliente) count++;
+            count += activeFilters.tipologia.length;
+            count += activeFilters.stato.length;
+            count += activeFilters.scadenza.length;
+            
+            const badge = document.getElementById('filters-count');
+            if (count > 0) {
+                badge.textContent = count;
+                badge.classList.add('show');
+            } else {
+                badge.classList.remove('show');
+            }
+        }
+        
         function resetFilters() {
+            // Reset input
             document.getElementById('filter-cliente').value = '';
-            document.getElementById('filter-tipologia').value = '';
-            document.getElementById('filter-stato').value = '';
-            document.getElementById('filter-scadenza').value = '';
+            updateClearButton();
+            
+            // Reset pills
+            document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.scadenza-pill').forEach(p => p.classList.remove('active'));
+            
+            // Chiudi dropdown
+            if (isDropdownOpen) {
+                toggleClienteDropdown();
+            }
+            
+            // Reset state
+            activeFilters = {
+                cliente: '',
+                tipologia: [],
+                stato: [],
+                scadenza: []
+            };
+            
             filteredActivities = allActivities;
             currentPage = 1;
+            updateFiltersCount();
             renderActivities();
+        }
+        
+        // Setup event listeners per filtri
+        function setupFilterListeners() {
+            const clienteInput = document.getElementById('filter-cliente');
+            
+            // Debounce per input cliente
+            let debounceTimer;
+            clienteInput.addEventListener('input', function() {
+                clearTimeout(debounceTimer);
+                updateClearButton();
+                
+                // Aggiorna dropdown se aperto
+                if (isDropdownOpen) {
+                    renderClienteOptions(this.value);
+                }
+                
+                debounceTimer = setTimeout(() => {
+                    applyFiltersRealtime();
+                }, 150);
+            });
+            
+            // Focus input - apri dropdown
+            clienteInput.addEventListener('focus', function() {
+                if (!isDropdownOpen && clientiList.length > 0) {
+                    toggleClienteDropdown();
+                }
+            });
+            
+            // Click fuori - chiudi dropdown
+            document.addEventListener('click', function(e) {
+                const container = document.querySelector('.cliente-input-container');
+                if (container && !container.contains(e.target) && isDropdownOpen) {
+                    toggleClienteDropdown();
+                }
+            });
         }
         
         function toggleActivity(id) {
@@ -1244,6 +1802,7 @@
                     document.getElementById('attivita-subtitle').textContent = `${data.length} attività totali`;
                     
                     populateFilters(data);
+                    setupFilterListeners();
                     renderActivities();
                 } else {
                     document.getElementById('attivita-subtitle').textContent = 'Nessuna attività';
@@ -1261,14 +1820,8 @@
         }
         
         // =============================================
-        // GANTT
+        // GANTT - NUOVO DESIGN MOBILE
         // =============================================
-        
-        function generateGanttHeader() {
-            const header = document.getElementById('gantt-header');
-            const hours = ['08', '09', '10', '11', '12', '13', '14', '15', '16', '17'];
-            header.innerHTML = hours.map(h => `<div class="gantt-hour">${h}</div>`).join('');
-        }
         
         function calculateTaskPosition(oraInizio, oraFine) {
             const startHour = 8;
@@ -1302,22 +1855,19 @@
             return String(time).replace(/\./g, ':').substring(0, 5);
         }
         
-        function getCurrentTimePosition() {
-            const now = new Date();
-            const currentHour = now.getHours() + (now.getMinutes() / 60);
-            const startHour = 8;
-            const endHour = 18;
-            
-            if (currentHour >= startHour && currentHour < endHour) {
-                return ((currentHour - startHour) / (endHour - startHour)) * 100;
+        function getInitials(name) {
+            return name.split(' ').map(n => n[0]).join('').substring(0, 2);
+        }
+        
+        function togglePerson(personId) {
+            const box = document.querySelector(`[data-person="${personId}"]`);
+            if (box) {
+                box.classList.toggle('expanded');
             }
-            return null;
         }
         
         function renderGantt(tasks) {
-            const ganttRows = document.getElementById('gantt-rows');
-            const ganttDetails = document.getElementById('gantt-details');
-            const currentTimePos = getCurrentTimePosition();
+            const container = document.getElementById('gantt-operators');
             
             // Raggruppa per persona
             const byPerson = {};
@@ -1333,83 +1883,74 @@
             const operatorsWithTasks = operators.filter(op => byPerson[op].length > 0).length;
             document.getElementById('stat-operatori').textContent = operatorsWithTasks;
             
-            // Render Gantt rows
-            ganttRows.innerHTML = operators.map(person => {
+            // Render operatori
+            container.innerHTML = operators.map((person, idx) => {
                 const personTasks = byPerson[person] || [];
-                const slots = Array(10).fill(0).map(() => '<div class="gantt-slot"></div>').join('');
-                
-                const taskBars = personTasks.map(task => {
-                    const { left, width } = calculateTaskPosition(task.OraInizio, task.OraFine);
-                    const urgent = isUrgent(task.DataConsegna);
-                    return `<div class="gantt-task ${urgent ? 'urgente' : ''}" style="left: ${left}%; width: ${width}%;" title="${task.Descrizione}"></div>`;
-                }).join('');
-                
-                const currentTimeLine = currentTimePos !== null 
-                    ? `<div class="gantt-current-time" style="left: ${currentTimePos}%;"></div>` 
-                    : '';
-                
-                return `
-                    <div class="gantt-row">
-                        <div class="gantt-person">${person.split(' ')[0]}</div>
-                        <div class="gantt-timeline">
-                            <div class="gantt-slots">${slots}</div>
-                            ${taskBars}
-                            ${currentTimeLine}
-                        </div>
-                    </div>
-                `;
-            }).join('');
-            
-            // Render dettagli per persona
-            ganttDetails.innerHTML = operators.map(person => {
-                const personTasks = byPerson[person] || [];
-                
-                if (personTasks.length === 0) {
-                    return `
-                        <div class="person-tasks">
-                            <div class="person-header">
-                                <span class="person-name">${person}</span>
-                                <span class="person-count">0 lavori</span>
-                            </div>
-                        </div>
-                    `;
-                }
+                const hasWork = personTasks.length > 0;
                 
                 // Ordina per ora inizio
                 personTasks.sort((a, b) => (a.OraInizio || '').localeCompare(b.OraInizio || ''));
                 
-                const taskItems = personTasks.map(task => {
+                // Mini timeline bars
+                const miniBars = personTasks.map(task => {
+                    const { left, width } = calculateTaskPosition(task.OraInizio, task.OraFine);
                     const urgent = isUrgent(task.DataConsegna);
-                    return `
-                        <div class="task-item">
-                            <div class="task-item-header">
-                                <span class="task-item-id">#${task.ID}</span>
-                                <span class="task-item-time">${formatTime(task.OraInizio)} - ${formatTime(task.OraFine)}</span>
-                            </div>
-                            <div class="task-item-desc">${task.Descrizione || 'Nessuna descrizione'}</div>
-                            <div class="task-item-badges">
-                                <span class="task-badge ${urgent ? 'urgente' : 'normale'}">${urgent ? '🔥 Urgente' : '📅 Normale'}</span>
-                            </div>
-                        </div>
-                    `;
+                    return `<div class="gantt-mini-bar ${urgent ? 'urgente' : ''}" style="left: ${left}%; width: ${width}%;"></div>`;
                 }).join('');
                 
-                return `
-                    <div class="person-tasks">
-                        <div class="person-header">
-                            <span class="person-name">${person}</span>
-                            <span class="person-count">${personTasks.length} ${personTasks.length === 1 ? 'lavoro' : 'lavori'}</span>
+                // Task cards
+                const taskCards = personTasks.length > 0 ? personTasks.map(task => {
+                    const urgent = isUrgent(task.DataConsegna);
+                    return `
+                        <div class="gantt-task-card ${urgent ? 'urgente' : ''}">
+                            <div class="gantt-task-top">
+                                <div class="gantt-task-time">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <circle cx="12" cy="12" r="10"/>
+                                        <polyline points="12 6 12 12 16 14"/>
+                                    </svg>
+                                    ${formatTime(task.OraInizio)} - ${formatTime(task.OraFine)}
+                                </div>
+                                <span class="gantt-task-badge ${urgent ? 'urgente' : 'normale'}">${urgent ? '🔥 Urgente' : 'Normale'}</span>
+                            </div>
+                            <div class="gantt-task-desc">${task.Descrizione || 'Nessuna descrizione'}</div>
+                            <div class="gantt-task-id">#${task.ID}</div>
                         </div>
-                        ${taskItems}
+                    `;
+                }).join('') : '<div class="gantt-person-empty">Nessun lavoro assegnato</div>';
+                
+                return `
+                    <div class="gantt-person-box" data-person="${idx}">
+                        <div class="gantt-person-header" onclick="togglePerson(${idx})">
+                            <div class="gantt-person-avatar">${getInitials(person)}</div>
+                            <div class="gantt-person-info">
+                                <div class="gantt-person-name">${person}</div>
+                                <div class="gantt-person-status">
+                                    <span class="count">${personTasks.length}</span> ${personTasks.length === 1 ? 'lavoro' : 'lavori'}
+                                    ${hasWork ? '· 08-18' : ''}
+                                </div>
+                                ${hasWork ? `<div class="gantt-mini-timeline">${miniBars}</div>` : ''}
+                            </div>
+                            <svg class="gantt-person-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="6 9 12 15 18 9"/>
+                            </svg>
+                        </div>
+                        <div class="gantt-person-tasks">
+                            <div class="gantt-tasks-inner">
+                                ${taskCards}
+                            </div>
+                        </div>
                     </div>
                 `;
             }).join('');
         }
         
         async function loadGantt() {
-            if (!supabaseClient) return;
-            
-            generateGanttHeader();
+            if (!supabaseClient) {
+                // Demo data
+                renderGantt([]);
+                return;
+            }
             
             try {
                 const { data, error } = await supabaseClient.from('UfficioTecnico').select('*');
@@ -1476,13 +2017,14 @@
                 
                 allTasks = tasks;
                 document.getElementById('stat-lavori').textContent = tasks.length;
-                document.getElementById('gantt-subtitle').textContent = `${tasks.length} lavori programmati oggi`;
+                document.getElementById('gantt-subtitle').textContent = `${tasks.length} lavori · ${operators.length} operatori`;
                 
                 renderGantt(tasks);
                 
             } catch (error) {
                 console.error('Errore caricamento Gantt:', error);
                 document.getElementById('gantt-subtitle').textContent = 'Errore caricamento';
+                renderGantt([]);
             }
         }
         

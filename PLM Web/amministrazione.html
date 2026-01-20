@@ -613,6 +613,429 @@
             font-size: 14px;
         }
         
+        /* =============================================
+           GESTIONE ACCOUNT
+           ============================================= */
+        
+        .btn-new-account {
+            width: 100%;
+            padding: var(--space-4);
+            background: linear-gradient(135deg, var(--primary) 0%, #b91c1c 100%);
+            border: none;
+            border-radius: 14px;
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-2);
+            cursor: pointer;
+            margin-bottom: var(--space-4);
+            -webkit-tap-highlight-color: transparent;
+            transition: all 0.2s ease;
+        }
+        
+        .btn-new-account:active {
+            transform: scale(0.98);
+            opacity: 0.9;
+        }
+        
+        .btn-new-account svg {
+            width: 20px;
+            height: 20px;
+        }
+        
+        /* Account Card */
+        .account-card {
+            background: var(--surface-2);
+            border: 1.5px solid var(--border-default);
+            border-radius: 14px;
+            margin-bottom: var(--space-3);
+            overflow: hidden;
+            transition: all 0.2s ease;
+        }
+        
+        .account-card:last-child {
+            margin-bottom: 0;
+        }
+        
+        .account-card.inactive {
+            opacity: 0.5;
+        }
+        
+        .account-header {
+            display: flex;
+            align-items: center;
+            padding: var(--space-4);
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        .account-header:active {
+            background: var(--surface-3);
+        }
+        
+        .account-avatar {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--primary) 0%, #b91c1c 100%);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: 700;
+            color: white;
+            margin-right: var(--space-3);
+            flex-shrink: 0;
+        }
+        
+        .account-avatar.inactive {
+            background: var(--surface-4);
+            color: var(--text-muted);
+        }
+        
+        .account-info {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .account-name {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 2px;
+        }
+        
+        .account-details {
+            font-size: 12px;
+            color: var(--text-muted);
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--space-2);
+        }
+        
+        .account-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .account-badge.admin {
+            background: rgba(220, 38, 38, 0.2);
+            color: var(--primary);
+        }
+        
+        .account-badge.manager {
+            background: rgba(245, 158, 11, 0.2);
+            color: #f59e0b;
+        }
+        
+        .account-badge.utente {
+            background: rgba(59, 130, 246, 0.2);
+            color: #3b82f6;
+        }
+        
+        .account-badge.inactive {
+            background: rgba(107, 114, 128, 0.2);
+            color: #6b7280;
+        }
+        
+        .account-edit-btn {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--surface-3);
+            border: 1px solid var(--border-default);
+            border-radius: 10px;
+            color: var(--text-muted);
+            flex-shrink: 0;
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        .account-edit-btn:active {
+            background: var(--surface-4);
+            color: var(--primary);
+        }
+        
+        .account-edit-btn svg {
+            width: 18px;
+            height: 18px;
+        }
+        
+        /* Permessi Tags */
+        .account-permessi {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            padding: 0 var(--space-4) var(--space-4);
+        }
+        
+        .permesso-tag {
+            padding: 4px 10px;
+            background: var(--surface-3);
+            border-radius: 8px;
+            font-size: 10px;
+            color: var(--text-secondary);
+        }
+        
+        .permesso-tag.active {
+            background: rgba(34, 197, 94, 0.15);
+            color: #22c55e;
+        }
+        
+        /* =============================================
+           MODAL
+           ============================================= */
+        
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 2000;
+            display: none;
+            align-items: flex-end;
+            justify-content: center;
+        }
+        
+        .modal-overlay.show {
+            display: flex;
+        }
+        
+        .modal-container {
+            width: 100%;
+            max-width: 500px;
+            max-height: 90vh;
+            background: var(--surface-1);
+            border-radius: 24px 24px 0 0;
+            display: flex;
+            flex-direction: column;
+            animation: slideUp 0.3s ease;
+        }
+        
+        @keyframes slideUp {
+            from {
+                transform: translateY(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--space-4);
+            border-bottom: 1px solid var(--border-default);
+            flex-shrink: 0;
+        }
+        
+        .modal-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .modal-close {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--surface-3);
+            border: none;
+            border-radius: 10px;
+            color: var(--text-muted);
+            font-size: 18px;
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        .modal-close:active {
+            background: var(--surface-4);
+        }
+        
+        .modal-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: var(--space-4);
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        .modal-footer {
+            display: flex;
+            gap: var(--space-3);
+            padding: var(--space-4);
+            border-top: 1px solid var(--border-default);
+            flex-shrink: 0;
+            padding-bottom: calc(var(--space-4) + env(safe-area-inset-bottom, 0));
+        }
+        
+        /* Form Styles */
+        .form-group {
+            margin-bottom: var(--space-4);
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-3);
+        }
+        
+        .form-label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: var(--space-2);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .form-label span {
+            font-weight: 400;
+            text-transform: none;
+            color: var(--text-muted);
+            font-size: 11px;
+        }
+        
+        .form-input,
+        .form-select,
+        .form-textarea {
+            width: 100%;
+            padding: 14px 16px;
+            background: var(--surface-2);
+            border: 1.5px solid var(--border-default);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-size: 15px;
+            font-family: 'Inter', sans-serif;
+            outline: none;
+            transition: border-color 0.2s ease;
+            -webkit-appearance: none;
+        }
+        
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            border-color: var(--primary);
+        }
+        
+        .form-input::placeholder {
+            color: var(--text-muted);
+        }
+        
+        .form-select {
+            cursor: pointer;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 16px;
+            padding-right: 40px;
+        }
+        
+        .form-textarea {
+            resize: none;
+            min-height: 80px;
+        }
+        
+        /* Permessi Grid */
+        .permessi-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-2);
+        }
+        
+        .permesso-checkbox {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            padding: 12px 14px;
+            background: var(--surface-2);
+            border: 1.5px solid var(--border-default);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        .permesso-checkbox:has(input:checked) {
+            border-color: var(--primary);
+            background: rgba(220, 38, 38, 0.1);
+        }
+        
+        .permesso-checkbox input {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--primary);
+            cursor: pointer;
+        }
+        
+        .permesso-label {
+            font-size: 13px;
+            color: var(--text-primary);
+        }
+        
+        .attivo-toggle {
+            background: var(--surface-3);
+            justify-content: center;
+        }
+        
+        .attivo-toggle:has(input:checked) {
+            background: rgba(34, 197, 94, 0.15);
+            border-color: #22c55e;
+        }
+        
+        /* Modal Buttons */
+        .btn-modal {
+            flex: 1;
+            padding: 14px 20px;
+            border: none;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        .btn-modal:active {
+            transform: scale(0.98);
+        }
+        
+        .btn-cancel {
+            background: var(--surface-3);
+            color: var(--text-secondary);
+        }
+        
+        .btn-save {
+            background: linear-gradient(135deg, var(--primary) 0%, #b91c1c 100%);
+            color: white;
+        }
+        
+        .btn-delete {
+            background: rgba(239, 68, 68, 0.15);
+            color: #ef4444;
+            flex: 0.5;
+        }
+        
         /* Footer */
         .footer {
             padding: var(--space-6) var(--space-4);
@@ -716,7 +1139,156 @@
                     </div>
                 </div>
             </div>
+            
+            <!-- Sezione Gestione Account -->
+            <div class="section-box" id="section-accounts">
+                <div class="section-header" onclick="toggleSection('section-accounts')">
+                    <div class="section-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                            <circle cx="9" cy="7" r="4"/>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                        </svg>
+                    </div>
+                    <div class="section-info">
+                        <div class="section-title">Gestione Account</div>
+                        <div class="section-subtitle" id="accounts-subtitle">Caricamento...</div>
+                    </div>
+                    <svg class="section-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="6 9 12 15 18 9"/>
+                    </svg>
+                </div>
+                <div class="section-content">
+                    <div class="section-inner">
+                        <!-- Pulsante Nuovo Account -->
+                        <button class="btn-new-account" onclick="openAccountModal()">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="12" y1="5" x2="12" y2="19"/>
+                                <line x1="5" y1="12" x2="19" y2="12"/>
+                            </svg>
+                            Nuovo Account
+                        </button>
+                        
+                        <!-- Lista Account -->
+                        <div id="accounts-list">
+                            <div class="empty-state">
+                                <div class="empty-state-icon">⏳</div>
+                                <div class="empty-state-text">Caricamento account...</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </main>
+        
+        <!-- Modal Account -->
+        <div class="modal-overlay" id="account-modal">
+            <div class="modal-container">
+                <div class="modal-header">
+                    <h2 class="modal-title" id="modal-title">Nuovo Account</h2>
+                    <button class="modal-close" onclick="closeAccountModal()">✕</button>
+                </div>
+                <div class="modal-body">
+                    <form id="account-form">
+                        <input type="hidden" id="account-id">
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Nome *</label>
+                                <input type="text" class="form-input" id="account-nome" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Cognome *</label>
+                                <input type="text" class="form-input" id="account-cognome" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Username *</label>
+                            <input type="text" class="form-input" id="account-username" required autocomplete="off">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Password <span id="password-hint">(lascia vuoto per non modificare)</span></label>
+                            <input type="password" class="form-input" id="account-password" autocomplete="new-password">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-input" id="account-email">
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Telefono</label>
+                                <input type="tel" class="form-input" id="account-telefono">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Reparto</label>
+                                <input type="text" class="form-input" id="account-reparto">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Ruolo</label>
+                            <select class="form-select" id="account-ruolo">
+                                <option value="utente">Utente</option>
+                                <option value="admin">Amministratore</option>
+                                <option value="manager">Manager</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Permessi Pagine</label>
+                            <div class="permessi-grid">
+                                <label class="permesso-checkbox">
+                                    <input type="checkbox" value="home" checked disabled>
+                                    <span class="permesso-label">🏠 Home</span>
+                                </label>
+                                <label class="permesso-checkbox">
+                                    <input type="checkbox" value="commerciale">
+                                    <span class="permesso-label">💼 Commerciale</span>
+                                </label>
+                                <label class="permesso-checkbox">
+                                    <input type="checkbox" value="ufficio-tecnico">
+                                    <span class="permesso-label">📐 Ufficio Tecnico</span>
+                                </label>
+                                <label class="permesso-checkbox">
+                                    <input type="checkbox" value="amministrazione">
+                                    <span class="permesso-label">📊 Amministrazione</span>
+                                </label>
+                                <label class="permesso-checkbox">
+                                    <input type="checkbox" value="bollettini">
+                                    <span class="permesso-label">📝 Bollettini</span>
+                                </label>
+                                <label class="permesso-checkbox">
+                                    <input type="checkbox" value="trasporti">
+                                    <span class="permesso-label">🚚 Trasporti</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Note</label>
+                            <textarea class="form-textarea" id="account-note" rows="2"></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="permesso-checkbox attivo-toggle">
+                                <input type="checkbox" id="account-attivo" checked>
+                                <span class="permesso-label">Account Attivo</span>
+                            </label>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn-modal btn-cancel" onclick="closeAccountModal()">Annulla</button>
+                    <button class="btn-modal btn-delete" id="btn-delete" onclick="deleteAccount()" style="display: none;">Elimina</button>
+                    <button class="btn-modal btn-save" onclick="saveAccount()">Salva</button>
+                </div>
+            </div>
+        </div>
         
         <!-- Footer -->
         <footer class="footer">
@@ -1077,6 +1649,292 @@
             }
         }
         
+        // =============================================
+        // GESTIONE ACCOUNT
+        // =============================================
+        
+        let allAccounts = [];
+        const PAGINE_DISPONIBILI = [
+            { id: 'home', nome: '🏠 Home', sempre: true },
+            { id: 'commerciale', nome: '💼 Commerciale' },
+            { id: 'ufficio-tecnico', nome: '📐 Ufficio Tecnico' },
+            { id: 'amministrazione', nome: '📊 Amministrazione' },
+            { id: 'bollettini', nome: '📝 Bollettini' },
+            { id: 'trasporti', nome: '🚚 Trasporti' }
+        ];
+        
+        // Carica Account
+        async function loadAccounts() {
+            if (!supabaseClient) {
+                document.getElementById('accounts-subtitle').textContent = 'Connessione non disponibile';
+                return;
+            }
+            
+            try {
+                const { data, error } = await supabaseClient
+                    .from('accounts')
+                    .select('*')
+                    .order('cognome', { ascending: true });
+                    
+                if (error) throw error;
+                
+                allAccounts = data || [];
+                document.getElementById('accounts-subtitle').textContent = `${allAccounts.length} account`;
+                renderAccounts();
+                
+            } catch (error) {
+                console.error('Errore caricamento account:', error);
+                document.getElementById('accounts-subtitle').textContent = 'Errore caricamento';
+                document.getElementById('accounts-list').innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">⚠️</div>
+                        <div class="empty-state-text">Errore: ${error.message}</div>
+                    </div>
+                `;
+            }
+        }
+        
+        // Render Account
+        function renderAccounts() {
+            const list = document.getElementById('accounts-list');
+            
+            if (allAccounts.length === 0) {
+                list.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">👤</div>
+                        <div class="empty-state-text">Nessun account trovato</div>
+                    </div>
+                `;
+                return;
+            }
+            
+            list.innerHTML = allAccounts.map(account => {
+                const initials = getAccountInitials(account);
+                const permessi = account.permessi_pagine || ['home'];
+                const permessiArray = Array.isArray(permessi) ? permessi : JSON.parse(permessi || '["home"]');
+                
+                return `
+                    <div class="account-card ${!account.attivo ? 'inactive' : ''}" data-id="${account.id}">
+                        <div class="account-header" onclick="editAccount('${account.id}')">
+                            <div class="account-avatar ${!account.attivo ? 'inactive' : ''}">${initials}</div>
+                            <div class="account-info">
+                                <div class="account-name">${account.cognome || ''} ${account.nome || ''}</div>
+                                <div class="account-details">
+                                    <span>@${account.username}</span>
+                                    ${account.email ? `<span>· ${account.email}</span>` : ''}
+                                </div>
+                            </div>
+                            <span class="account-badge ${account.ruolo || 'utente'}">${account.ruolo || 'utente'}</span>
+                        </div>
+                        <div class="account-permessi">
+                            ${PAGINE_DISPONIBILI.map(p => `
+                                <span class="permesso-tag ${permessiArray.includes(p.id) ? 'active' : ''}">${p.nome}</span>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        // Get Initials
+        function getAccountInitials(account) {
+            const nome = account.nome || '';
+            const cognome = account.cognome || '';
+            return (nome.charAt(0) + cognome.charAt(0)).toUpperCase() || '??';
+        }
+        
+        // Open Modal
+        function openAccountModal(isNew = true) {
+            const modal = document.getElementById('account-modal');
+            const title = document.getElementById('modal-title');
+            const deleteBtn = document.getElementById('btn-delete');
+            const passwordHint = document.getElementById('password-hint');
+            
+            if (isNew) {
+                title.textContent = 'Nuovo Account';
+                deleteBtn.style.display = 'none';
+                passwordHint.style.display = 'none';
+                resetAccountForm();
+            } else {
+                title.textContent = 'Modifica Account';
+                deleteBtn.style.display = 'block';
+                passwordHint.style.display = 'inline';
+            }
+            
+            modal.classList.add('show');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        // Close Modal
+        function closeAccountModal() {
+            const modal = document.getElementById('account-modal');
+            modal.classList.remove('show');
+            document.body.style.overflow = '';
+        }
+        
+        // Reset Form
+        function resetAccountForm() {
+            document.getElementById('account-id').value = '';
+            document.getElementById('account-nome').value = '';
+            document.getElementById('account-cognome').value = '';
+            document.getElementById('account-username').value = '';
+            document.getElementById('account-password').value = '';
+            document.getElementById('account-email').value = '';
+            document.getElementById('account-telefono').value = '';
+            document.getElementById('account-reparto').value = '';
+            document.getElementById('account-ruolo').value = 'utente';
+            document.getElementById('account-note').value = '';
+            document.getElementById('account-attivo').checked = true;
+            
+            // Reset permessi (solo home checked)
+            document.querySelectorAll('.permessi-grid input[type="checkbox"]').forEach(cb => {
+                cb.checked = cb.value === 'home';
+            });
+        }
+        
+        // Edit Account
+        function editAccount(accountId) {
+            const account = allAccounts.find(a => a.id === accountId);
+            if (!account) return;
+            
+            document.getElementById('account-id').value = account.id;
+            document.getElementById('account-nome').value = account.nome || '';
+            document.getElementById('account-cognome').value = account.cognome || '';
+            document.getElementById('account-username').value = account.username || '';
+            document.getElementById('account-password').value = '';
+            document.getElementById('account-email').value = account.email || '';
+            document.getElementById('account-telefono').value = account.telefono || '';
+            document.getElementById('account-reparto').value = account.reparto || '';
+            document.getElementById('account-ruolo').value = account.ruolo || 'utente';
+            document.getElementById('account-note').value = account.note || '';
+            document.getElementById('account-attivo').checked = account.attivo !== false;
+            
+            // Set permessi
+            const permessi = account.permessi_pagine || ['home'];
+            const permessiArray = Array.isArray(permessi) ? permessi : JSON.parse(permessi || '["home"]');
+            
+            document.querySelectorAll('.permessi-grid input[type="checkbox"]').forEach(cb => {
+                if (cb.value === 'home') {
+                    cb.checked = true;
+                } else {
+                    cb.checked = permessiArray.includes(cb.value);
+                }
+            });
+            
+            openAccountModal(false);
+        }
+        
+        // Save Account
+        async function saveAccount() {
+            const accountId = document.getElementById('account-id').value;
+            const nome = document.getElementById('account-nome').value.trim();
+            const cognome = document.getElementById('account-cognome').value.trim();
+            const username = document.getElementById('account-username').value.trim();
+            const password = document.getElementById('account-password').value;
+            const email = document.getElementById('account-email').value.trim();
+            const telefono = document.getElementById('account-telefono').value.trim();
+            const reparto = document.getElementById('account-reparto').value.trim();
+            const ruolo = document.getElementById('account-ruolo').value;
+            const note = document.getElementById('account-note').value.trim();
+            const attivo = document.getElementById('account-attivo').checked;
+            
+            // Raccogli permessi
+            const permessi = ['home']; // Home sempre incluso
+            document.querySelectorAll('.permessi-grid input[type="checkbox"]:checked').forEach(cb => {
+                if (cb.value !== 'home' && !permessi.includes(cb.value)) {
+                    permessi.push(cb.value);
+                }
+            });
+            
+            // Validazione
+            if (!nome || !cognome || !username) {
+                alert('Nome, Cognome e Username sono obbligatori');
+                return;
+            }
+            
+            if (!accountId && !password) {
+                alert('La password è obbligatoria per i nuovi account');
+                return;
+            }
+            
+            try {
+                let data, error;
+                
+                const accountData = {
+                    nome,
+                    cognome,
+                    username,
+                    email: email || null,
+                    telefono: telefono || null,
+                    reparto: reparto || null,
+                    ruolo,
+                    permessi_pagine: permessi,
+                    note: note || null,
+                    attivo
+                };
+                
+                // Se c'è password, aggiungila (in produzione dovresti hashare!)
+                if (password) {
+                    accountData.password_hash = password; // In produzione: usa bcrypt o simile
+                }
+                
+                if (accountId) {
+                    // Update
+                    ({ data, error } = await supabaseClient
+                        .from('accounts')
+                        .update(accountData)
+                        .eq('id', accountId)
+                        .select());
+                } else {
+                    // Insert
+                    if (!password) {
+                        alert('Password obbligatoria per nuovi account');
+                        return;
+                    }
+                    ({ data, error } = await supabaseClient
+                        .from('accounts')
+                        .insert(accountData)
+                        .select());
+                }
+                
+                if (error) throw error;
+                
+                closeAccountModal();
+                await loadAccounts();
+                
+            } catch (error) {
+                console.error('Errore salvataggio account:', error);
+                alert('Errore: ' + error.message);
+            }
+        }
+        
+        // Delete Account
+        async function deleteAccount() {
+            const accountId = document.getElementById('account-id').value;
+            if (!accountId) return;
+            
+            const account = allAccounts.find(a => a.id === accountId);
+            const conferma = confirm(`Sei sicuro di voler eliminare l'account di ${account?.cognome} ${account?.nome}?`);
+            
+            if (!conferma) return;
+            
+            try {
+                const { error } = await supabaseClient
+                    .from('accounts')
+                    .delete()
+                    .eq('id', accountId);
+                    
+                if (error) throw error;
+                
+                closeAccountModal();
+                await loadAccounts();
+                
+            } catch (error) {
+                console.error('Errore eliminazione account:', error);
+                alert('Errore: ' + error.message);
+            }
+        }
+        
         // Logout
         function logout() {
             sessionStorage.removeItem('plm_logged_in');
@@ -1090,7 +1948,7 @@
         window.addEventListener('load', async function() {
             loadUserData();
             await initSupabase();
-            await loadCastelletti();
+            await Promise.all([loadCastelletti(), loadAccounts()]);
             Loader.hide();
         });
     </script>

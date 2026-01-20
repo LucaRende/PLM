@@ -326,12 +326,14 @@
                 return;
             }
             
+            // Mostra loader SUBITO
+            Loader.show('invio', 'Accesso in corso...');
+            
             if (!supabaseClient) {
-                showAlert('Errore connessione al server');
+                Loader.hide();
+                showAlert('Errore connessione al server. Ricarica la pagina.');
                 return;
             }
-            
-            Loader.show('invio', 'Accesso in corso...');
             
             try {
                 const result = await verifyLogin(username, password);

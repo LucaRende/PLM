@@ -156,19 +156,18 @@
         }
     </style>
     
-    <!-- Nascondi body finché loader non è attivo -->
+    <!-- Nascondi contenuto finché loader non è attivo -->
     <style id="preload-style">
-        body { opacity: 0; }
+        body { background: #030305; }
+        .page { visibility: hidden; }
     </style>
     
     <script src="Load/loader.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             Loader.show('pagina', 'Caricamento...');
-            // Rimuovi style che nasconde body
-            var preloadStyle = document.getElementById('preload-style');
-            if (preloadStyle) preloadStyle.remove();
-            document.body.style.opacity = '1';
+            // Mostra contenuto
+            document.querySelector('.page').style.visibility = 'visible';
         });
     </script>
 </head>
@@ -356,11 +355,12 @@
                     // Anche sessionStorage per il check in index.html
                     sessionStorage.setItem('plm_logged_in', 'true');
                     
-                    // Redirect a home
+                    // Mostra loader e nascondi tutto il resto
                     Loader.show('pagina', 'Benvenuto ' + result.user.nome + '...');
-                    setTimeout(() => {
-                        window.location.href = 'home.html';
-                    }, 800);
+                    document.querySelector('.page').style.display = 'none';
+                    
+                    // Redirect immediato a home
+                    window.location.replace('home.html');
                 } else {
                     Loader.hide();
                     showAlert(result.error || 'Credenziali non valide');

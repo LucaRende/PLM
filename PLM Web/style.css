@@ -665,3 +665,62 @@ a:hover {
         font-size: 3rem;
     }
 }
+
+/* =============================================
+   MENU BUTTONS - Pulsanti navigazione
+   ============================================= */
+.menu-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    padding: var(--space-4);
+}
+
+.menu-btn {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    padding: var(--space-4) var(--space-5);
+    background: var(--surface-2);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-xl);
+    color: var(--text-primary);
+    text-decoration: none;
+    transition: all var(--transition-fast);
+}
+
+.menu-btn:hover {
+    background: var(--surface-3);
+    border-color: var(--primary);
+    transform: translateX(4px);
+    color: var(--text-primary);
+}
+
+.menu-btn:active {
+    transform: translateX(2px);
+}
+
+.menu-btn svg {
+    width: 24px;
+    height: 24px;
+    color: var(--primary);
+    flex-shrink: 0;
+}
+
+.menu-btn span {
+    flex: 1;
+    font-size: var(--text-base);
+    font-weight: 500;
+}
+
+.menu-btn .arrow {
+    width: 20px;
+    height: 20px;
+    color: var(--text-muted);
+    transition: transform var(--transition-fast);
+}
+
+.menu-btn:hover .arrow {
+    transform: translateX(4px);
+    color: var(--primary);
+}

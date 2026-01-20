@@ -1,21 +1,26 @@
 /* ========================================
    LOGIN - PLM 2
-   Stili per la schermata di login
+   Stili per schermata di login
    ======================================== */
 
-/* === LOGIN OVERLAY === */
+/* Login Screen Styles */
 .login-overlay {
     position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(135deg, #0a0e1a 0%, #1a2332 50%, #0f172a 100%);
+    right: 0;
+    bottom: 0;
+    width: 100vw;
+    height: 100vh;
+    background: linear-gradient(135deg, #1a2332 0%, #2d3748 50%, #1e2936 100%);
+    z-index: 10000;
     display: flex;
-    justify-content: center;
     align-items: center;
-    z-index: 9999;
+    justify-content: center;
+    opacity: 1;
     transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    margin: 0;
+    padding: 0;
 }
 
 .login-overlay.fade-out {
@@ -23,92 +28,184 @@
     pointer-events: none;
 }
 
-/* === BACKGROUND PARTICLES === */
-.login-particles {
+/* Animated background particles */
+.login-bg {
     position: absolute;
-    top: 0;
-    left: 0;
     width: 100%;
     height: 100%;
     overflow: hidden;
-    pointer-events: none;
 }
 
-.login-particle {
+.particle {
     position: absolute;
-    width: 6px;
-    height: 6px;
-    background: rgba(197, 29, 52, 0.4);
     border-radius: 50%;
-    animation: login-float 20s infinite ease-in-out;
+    background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, rgba(59, 130, 246, 0.05) 40%, transparent 70%);
+    animation: float 20s infinite ease-in-out;
 }
 
-.login-particle:nth-child(1) {
+.particle:nth-child(1) {
+    width: 120px;
+    height: 120px;
     top: 10%;
     left: 20%;
     animation-delay: 0s;
 }
 
-.login-particle:nth-child(2) {
-    top: 20%;
-    left: 80%;
-    animation-delay: 4s;
-}
-
-.login-particle:nth-child(3) {
+.particle:nth-child(2) {
+    width: 150px;
+    height: 150px;
     top: 60%;
-    left: 10%;
-    animation-delay: 8s;
+    left: 80%;
+    animation-delay: 5s;
+    background: radial-gradient(circle, rgba(197, 29, 52, 0.12) 0%, rgba(197, 29, 52, 0.04) 40%, transparent 70%);
 }
 
-.login-particle:nth-child(4) {
+.particle:nth-child(3) {
+    width: 130px;
+    height: 130px;
     top: 80%;
+    left: 10%;
+    animation-delay: 10s;
+}
+
+.particle:nth-child(4) {
+    width: 110px;
+    height: 110px;
+    top: 30%;
     left: 70%;
-    animation-delay: 12s;
+    animation-delay: 15s;
+    background: radial-gradient(circle, rgba(59, 130, 246, 0.14) 0%, rgba(59, 130, 246, 0.05) 40%, transparent 70%);
 }
 
-.login-particle:nth-child(5) {
-    top: 40%;
-    left: 50%;
-    animation-delay: 16s;
-}
-
-@keyframes login-float {
+@keyframes float {
     0%, 100% {
-        transform: translate(0, 0) scale(1);
-        opacity: 0.4;
+        transform: translate(0, 0) scale(1) rotate(0deg);
+        opacity: 0.5;
     }
     25% {
-        transform: translate(50px, -100px) scale(1.5);
-        opacity: 0.2;
+        transform: translate(40px, -40px) scale(1.2) rotate(90deg);
+        opacity: 0.8;
     }
     50% {
-        transform: translate(-50px, 50px) scale(1);
-        opacity: 0.4;
+        transform: translate(-30px, 30px) scale(0.95) rotate(180deg);
+        opacity: 0.6;
     }
     75% {
-        transform: translate(100px, 100px) scale(0.8);
-        opacity: 0.3;
+        transform: translate(50px, 15px) scale(1.1) rotate(270deg);
+        opacity: 0.7;
     }
 }
 
-/* === LOGIN FORM CONTAINER === */
+/* Loading animation */
+.loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 30px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.5s ease, visibility 0.5s ease;
+}
+
+.loading-container.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.loading-logo {
+    width: 100px;
+    height: 100px;
+    position: relative;
+    animation: pulse-logo 2s infinite;
+}
+
+@keyframes pulse-logo {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+.loading-spinner {
+    width: 60px;
+    height: 60px;
+    border: 4px solid rgba(255, 255, 255, 0.1);
+    border-top: 4px solid #c51d34;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.loading-text {
+    font-size: 1.2em;
+    color: rgba(255, 255, 255, 0.8);
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-align: center;
+    animation: fade-pulse 2s infinite;
+}
+
+@keyframes fade-pulse {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+}
+
+/* Login form */
 .login-form-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 30px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     width: 90%;
-    max-width: 400px;
-    z-index: 10;
+    max-width: 450px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.5s;
+}
+
+.login-form-container.active {
+    opacity: 1;
+    visibility: visible;
+    animation: slide-up 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes slide-up {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -40%);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+    }
 }
 
 .login-card {
-    background: rgba(255, 255, 255, 0.03);
+    background: rgba(255, 255, 255, 0.05);
     backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 24px;
-    padding: 40px 30px;
-    box-shadow: 
-        0 25px 50px rgba(0, 0, 0, 0.5),
-        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    padding: 50px 40px;
+    width: 100%;
+    box-sizing: border-box;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
     position: relative;
     overflow: hidden;
 }
@@ -117,15 +214,10 @@
     content: '';
     position: absolute;
     top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(
-        90deg,
-        transparent,
-        rgba(197, 29, 52, 0.1),
-        transparent
-    );
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent 0%, #c51d34 50%, transparent 100%);
     animation: shimmer-login 3s infinite;
 }
 
@@ -134,7 +226,6 @@
     50% { transform: translateX(100%); }
 }
 
-/* === LOGIN HEADER === */
 .login-header {
     text-align: center;
     margin-bottom: 30px;
@@ -150,7 +241,6 @@
     align-items: center;
     justify-content: center;
     overflow: hidden;
-    transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1), -webkit-transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .login-icon img {
@@ -172,7 +262,6 @@
     font-size: 0.9em;
 }
 
-/* === LOGIN INPUT === */
 .login-input-group {
     position: relative;
     margin-bottom: 20px;
@@ -205,29 +294,6 @@
     animation: shake 0.5s;
 }
 
-/* === REMEMBER PASSWORD === */
-.remember-password {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 20px;
-}
-
-.remember-password input[type="checkbox"] {
-    width: 18px;
-    height: 18px;
-    cursor: pointer;
-    accent-color: #c51d34;
-}
-
-.remember-password label {
-    color: rgba(255, 255, 255, 0.7);
-    font-size: 0.9em;
-    cursor: pointer;
-    user-select: none;
-}
-
-/* === LOGIN BUTTON === */
 .login-button {
     width: 100%;
     padding: 16px;
@@ -251,7 +317,6 @@
     transform: translateY(0);
 }
 
-/* === LOGIN ERROR === */
 .login-error {
     color: #ef4444;
     font-size: 0.85em;
@@ -272,7 +337,25 @@
     75% { transform: translateX(10px); }
 }
 
-/* === SUCCESS CHECK === */
+/* Remember password checkbox */
+.remember-password {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.9em;
+    cursor: pointer;
+}
+
+.remember-password input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: #c51d34;
+    cursor: pointer;
+}
+
+/* Success animation */
 .success-check {
     width: 80px;
     height: 80px;
@@ -310,7 +393,7 @@
     font-weight: bold;
 }
 
-/* === MEDIA QUERIES === */
+/* Media queries per login */
 @media (max-width: 768px) {
     .login-form-container {
         width: 85%;
@@ -341,7 +424,7 @@
         font-size: 1em;
     }
 
-    .login-particle {
+    .particle {
         display: none;
     }
 }

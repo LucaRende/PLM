@@ -213,6 +213,183 @@
             letter-spacing: 0.05em;
         }
         
+        /* =============================================
+           BOX CODICI IN LAVORAZIONE
+           ============================================= */
+        
+        .codici-box {
+            background: linear-gradient(145deg, var(--surface-2) 0%, var(--surface-1) 100%);
+            border: 1px solid var(--border-default);
+            border-radius: 16px;
+            margin-bottom: var(--space-4);
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .codici-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), #f59e0b, var(--primary));
+        }
+        
+        .codici-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--space-3) var(--space-4);
+            border-bottom: 1px solid var(--border-subtle);
+        }
+        
+        .codici-title {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .codici-title svg {
+            width: 18px;
+            height: 18px;
+            color: var(--primary);
+        }
+        
+        .codici-count {
+            background: var(--primary);
+            color: white;
+            font-size: 12px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 12px;
+        }
+        
+        .codici-list {
+            padding: var(--space-3);
+            max-height: 280px;
+            overflow-y: auto;
+        }
+        
+        .codici-empty {
+            text-align: center;
+            padding: var(--space-4);
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+        
+        .codice-card {
+            background: var(--surface-3);
+            border: 1px solid var(--border-default);
+            border-radius: 12px;
+            padding: var(--space-3);
+            margin-bottom: var(--space-2);
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+        }
+        
+        .codice-card:last-child {
+            margin-bottom: 0;
+        }
+        
+        .codice-progress-ring {
+            width: 50px;
+            height: 50px;
+            flex-shrink: 0;
+        }
+        
+        .codice-progress-ring circle {
+            fill: none;
+            stroke-width: 5;
+        }
+        
+        .codice-progress-ring .bg {
+            stroke: var(--surface-4);
+        }
+        
+        .codice-progress-ring .progress {
+            stroke-linecap: round;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+            transition: stroke-dashoffset 0.3s ease;
+        }
+        
+        .codice-progress-ring .progress.complete {
+            stroke: #22c55e;
+        }
+        
+        .codice-progress-ring .progress.in-progress {
+            stroke: #f59e0b;
+        }
+        
+        .codice-progress-ring .progress.pending {
+            stroke: var(--primary);
+        }
+        
+        .codice-info {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .codice-nome {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 2px;
+        }
+        
+        .codice-dettaglio {
+            font-size: 11px;
+            color: var(--text-muted);
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--space-2);
+        }
+        
+        .codice-status {
+            text-align: right;
+        }
+        
+        .codice-ora {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .codice-stato-label {
+            font-size: 10px;
+            color: var(--text-muted);
+        }
+        
+        .codice-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 9px;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-top: 4px;
+        }
+        
+        .codice-badge.completato {
+            background: rgba(34, 197, 94, 0.2);
+            color: #22c55e;
+        }
+        
+        .codice-badge.in-corso {
+            background: rgba(245, 158, 11, 0.2);
+            color: #f59e0b;
+        }
+        
+        .codice-badge.programmato {
+            background: rgba(220, 38, 38, 0.2);
+            color: var(--primary);
+        }
+        
         /* Section Box */
         .section-box {
             background: var(--surface-2);
@@ -1159,11 +1336,27 @@
                 </div>
                 <div class="stat-card">
                     <div class="stat-card-value" id="stat-lavori">0</div>
-                    <div class="stat-card-label">Lavori Oggi</div>
+                    <div class="stat-card-label">Lavori Programmati</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-card-value" id="stat-operatori">0</div>
-                    <div class="stat-card-label">Operatori</div>
+                    <div class="stat-card-label">Operatori Attivi</div>
+                </div>
+            </div>
+            
+            <!-- Box Codici in Lavorazione -->
+            <div class="codici-box" id="codici-box">
+                <div class="codici-header">
+                    <div class="codici-title">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                        </svg>
+                        <span>Codici in Lavorazione Oggi</span>
+                    </div>
+                    <span class="codici-count" id="codici-count">0</span>
+                </div>
+                <div class="codici-list" id="codici-list">
+                    <div class="codici-empty">Caricamento...</div>
                 </div>
             </div>
             
@@ -1949,6 +2142,7 @@
             if (!supabaseClient) {
                 // Demo data
                 renderGantt([]);
+                renderCodiciPS([]);
                 return;
             }
             
@@ -2021,11 +2215,173 @@
                 
                 renderGantt(tasks);
                 
+                // Calcola e renderizza codici PS
+                renderCodiciPS(data);
+                
             } catch (error) {
                 console.error('Errore caricamento Gantt:', error);
                 document.getElementById('gantt-subtitle').textContent = 'Errore caricamento';
                 renderGantt([]);
+                renderCodiciPS([]);
             }
+        }
+        
+        // =============================================
+        // CODICI PS IN LAVORAZIONE
+        // =============================================
+        
+        function renderCodiciPS(records) {
+            const container = document.getElementById('codici-list');
+            const countBadge = document.getElementById('codici-count');
+            
+            if (!records || records.length === 0) {
+                container.innerHTML = '<div class="codici-empty">Nessun codice in lavorazione oggi</div>';
+                countBadge.textContent = '0';
+                return;
+            }
+            
+            const now = new Date();
+            const currentHour = now.getHours() + (now.getMinutes() / 60);
+            const endOfDay = 17; // Fine giornata lavorativa
+            
+            // Raggruppa per codiceProgetto
+            const codiciMap = {};
+            
+            records.forEach(record => {
+                const codice = record.codiceProgetto;
+                if (!codice) return;
+                
+                if (!codiciMap[codice]) {
+                    codiciMap[codice] = {
+                        codice: codice,
+                        fasi: [],
+                        totaleFasi: 0,
+                        fasiCompletate: 0,
+                        fasiInCorso: 0,
+                        oraFineUltima: 0,
+                        inLavorazioneOggi: false
+                    };
+                }
+                
+                // Aggiungi fasi
+                const fasiDaControllare = [
+                    { nome: '2D', assegnato: record.Disegno_2D_Assegnato, fatto: record.Disegno_2D_Fatto, oraInizio: record.Ora_Disegno_2D_Inizio, oraFine: record.Ora_Disegno_2D_Fine },
+                    { nome: '3D', assegnato: record.Disegno_3D_Assegnato, fatto: record.Disegno_3D_Fatto, oraInizio: record.Ora_Disegno_3D_Inizio, oraFine: record.Ora_Disegno_3D_Fine },
+                    { nome: 'Distinta', assegnato: record.Distinta_Assegnato, fatto: record.Distinta_Fatto, oraInizio: record.Ora_Distinta_Inizio, oraFine: record.Ora_Distinta_Fine },
+                    { nome: 'Prog', assegnato: record.Programmazione_Assegnato, fatto: record.Programmazione_Fatto, oraInizio: record.Ora_Programmazione_Inizio, oraFine: record.Ora_Programmazione_Fine }
+                ];
+                
+                fasiDaControllare.forEach(fase => {
+                    if (fase.assegnato && fase.oraInizio && fase.oraFine) {
+                        codiciMap[codice].totaleFasi++;
+                        codiciMap[codice].inLavorazioneOggi = true;
+                        
+                        const oraFineDecimal = parseTimeToDecimal(fase.oraFine);
+                        const oraInizioDecimal = parseTimeToDecimal(fase.oraInizio);
+                        
+                        if (fase.fatto) {
+                            codiciMap[codice].fasiCompletate++;
+                        } else if (currentHour >= oraInizioDecimal && currentHour < oraFineDecimal) {
+                            codiciMap[codice].fasiInCorso++;
+                        }
+                        
+                        // Traccia l'ora di fine dell'ultima fase
+                        if (oraFineDecimal > codiciMap[codice].oraFineUltima) {
+                            codiciMap[codice].oraFineUltima = oraFineDecimal;
+                        }
+                        
+                        codiciMap[codice].fasi.push(fase);
+                    }
+                });
+            });
+            
+            // Filtra solo codici in lavorazione oggi
+            const codiciOggi = Object.values(codiciMap).filter(c => c.inLavorazioneOggi);
+            
+            countBadge.textContent = codiciOggi.length;
+            
+            if (codiciOggi.length === 0) {
+                container.innerHTML = '<div class="codici-empty">Nessun codice in lavorazione oggi</div>';
+                return;
+            }
+            
+            // Ordina per ora fine
+            codiciOggi.sort((a, b) => a.oraFineUltima - b.oraFineUltima);
+            
+            container.innerHTML = codiciOggi.map(codice => {
+                const percentuale = codice.totaleFasi > 0 
+                    ? Math.round((codice.fasiCompletate / codice.totaleFasi) * 100) 
+                    : 0;
+                
+                // Calcola stato
+                let stato, statoBadge, oraDisplay;
+                const circumference = 2 * Math.PI * 18;
+                const offset = circumference * (1 - percentuale / 100);
+                
+                if (percentuale === 100) {
+                    stato = 'complete';
+                    statoBadge = '<span class="codice-badge completato">✓ Completato</span>';
+                    oraDisplay = 'Finito';
+                } else if (codice.oraFineUltima <= endOfDay) {
+                    stato = 'in-progress';
+                    const oraFine = decimalToTime(codice.oraFineUltima);
+                    statoBadge = '<span class="codice-badge in-corso">In corso</span>';
+                    oraDisplay = `Pronto ${oraFine}`;
+                } else {
+                    stato = 'pending';
+                    // Calcola percentuale prevista alle 17
+                    let fasiPreviste = 0;
+                    codice.fasi.forEach(fase => {
+                        const oraFineDecimal = parseTimeToDecimal(fase.oraFine);
+                        if (oraFineDecimal <= endOfDay) {
+                            fasiPreviste++;
+                        }
+                    });
+                    const percAlle17 = Math.round((fasiPreviste / codice.totaleFasi) * 100);
+                    statoBadge = '<span class="codice-badge programmato">Programmato</span>';
+                    oraDisplay = `${percAlle17}% alle 17`;
+                }
+                
+                // Dettaglio fasi
+                const fasiStr = codice.fasi.map(f => f.nome).join(', ');
+                
+                return `
+                    <div class="codice-card">
+                        <svg class="codice-progress-ring" viewBox="0 0 50 50">
+                            <circle class="bg" cx="25" cy="25" r="18"/>
+                            <circle class="progress ${stato}" cx="25" cy="25" r="18"
+                                stroke-dasharray="${circumference}" 
+                                stroke-dashoffset="${offset}"/>
+                            <text x="25" y="25" text-anchor="middle" dy="0.35em" 
+                                fill="white" font-size="11" font-weight="700">${percentuale}%</text>
+                        </svg>
+                        <div class="codice-info">
+                            <div class="codice-nome">${codice.codice}</div>
+                            <div class="codice-dettaglio">
+                                <span>${codice.fasiCompletate}/${codice.totaleFasi} fasi</span>
+                                <span>·</span>
+                                <span>${fasiStr}</span>
+                            </div>
+                        </div>
+                        <div class="codice-status">
+                            <div class="codice-ora">${oraDisplay}</div>
+                            ${statoBadge}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        function parseTimeToDecimal(timeStr) {
+            if (!timeStr) return 0;
+            const parts = String(timeStr).split(/[.:]/).map(Number);
+            return (parts[0] || 0) + ((parts[1] || 0) / 60);
+        }
+        
+        function decimalToTime(decimal) {
+            const hours = Math.floor(decimal);
+            const minutes = Math.round((decimal - hours) * 60);
+            return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
         }
         
         // Logout

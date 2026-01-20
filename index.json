@@ -2,7 +2,10 @@
   "config": {
     "basePath": "PLM Web/",
     "siteName": "PLM Web",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "authConfig": "autenticazione.json",
+    "defaultPage": "login",
+    "homeAfterLogin": "home"
   },
   "styles": {
     "global": []

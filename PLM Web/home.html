@@ -17,6 +17,16 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="Load/loader.css">
     
+    <!-- CONTROLLO AUTENTICAZIONE - Blocca subito se non loggato -->
+    <script>
+        (function() {
+            const isLogged = sessionStorage.getItem('plm_logged_in') || localStorage.getItem('plm_logged_in');
+            if (isLogged !== 'true') {
+                window.location.replace('login.html');
+            }
+        })();
+    </script>
+    
     <script src="Load/loader.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -26,11 +36,28 @@
 </head>
 <body>
     <!-- Contenuto pagina home (da sviluppare) -->
-    <div style="min-height: 100vh; display: flex; align-items: center; justify-content: center;">
+    <div style="min-height: 100vh; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 20px;">
         <h1 class="text-gradient">Home Page</h1>
+        <p style="color: var(--text-muted);" id="welcomeMsg"></p>
+        <button class="btn btn-secondary" onclick="logout()">Logout</button>
     </div>
 
     <script>
+        // Mostra messaggio benvenuto
+        const user = JSON.parse(localStorage.getItem('plm_user') || sessionStorage.getItem('plm_user') || '{}');
+        if (user.nome) {
+            document.getElementById('welcomeMsg').textContent = 'Benvenuto, ' + user.nome + ' ' + (user.cognome || '');
+        }
+        
+        // Funzione logout
+        function logout() {
+            sessionStorage.removeItem('plm_logged_in');
+            sessionStorage.removeItem('plm_user');
+            localStorage.removeItem('plm_logged_in');
+            localStorage.removeItem('plm_user');
+            window.location.href = 'login.html';
+        }
+        
         window.addEventListener('load', function() {
             Loader.hide();
         });

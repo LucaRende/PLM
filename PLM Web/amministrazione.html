@@ -1436,6 +1436,7 @@
         let currentYear = new Date().getFullYear();
         let selectedMese = null;
         let currentDayFilter = 31;
+        let selectedBancaNome = null;
         
         async function initSupabase() {
             try {
@@ -1484,6 +1485,7 @@
         }
         
         function getFatturePerMese(meseIdx) {
+            if (!allFatture || !Array.isArray(allFatture)) return [];
             return allFatture.filter(f => {
                 if (!f.dataScadenza) return false;
                 const date = new Date(f.dataScadenza);
@@ -1539,6 +1541,7 @@
             if (selectedMese === meseIdx) { closeMeseExpanded(); return; }
             
             selectedMese = meseIdx;
+            selectedBancaNome = null; // Reset banca selezionata
             const daysInMonth = getDaysInMonth(meseIdx, currentYear);
             currentDayFilter = daysInMonth;
             
@@ -1567,6 +1570,7 @@
         
         function closeMeseExpanded() {
             selectedMese = null;
+            selectedBancaNome = null; // Reset banca selezionata
             document.getElementById('mese-expanded').classList.remove('show');
             renderMesiGrid();
         }
@@ -1576,6 +1580,7 @@
             document.getElementById('day-slider-value').textContent = day;
             applyDayFilter();
             updateStatsRiepilogo();
+            updateStatsForSelectedBanca(); // Aggiorna stats per banca selezionata
             
             // Aggiorna anche il numero fatture nella card del mese selezionato
             if (selectedMese !== null) {
@@ -1711,6 +1716,7 @@
         
         // Funzione helper: calcola totale da pagare di TUTTI i mesi per una banca (logica C#)
         function calcTotaleDaPagareTuttiMesi(nomeBanca) {
+            if (!allFatture || !Array.isArray(allFatture)) return 0;
             return allFatture
                 .filter(f => {
                     if (!f.dataScadenza) return false;
@@ -1724,6 +1730,7 @@
         
         // Funzione helper: calcola da pagare del mese specifico per una banca
         function calcDaPagareMese(meseIdx, nomeBanca) {
+            if (!allFatture || !Array.isArray(allFatture)) return 0;
             return allFatture
                 .filter(f => {
                     if (!f.dataScadenza) return false;
@@ -1763,14 +1770,20 @@
             const percentualeGlobal = castellettoTotaleGlobal > 0 ? (Math.abs(castellettoOccupatoGlobal) / castellettoTotaleGlobal) * 100 : 0;
             
             // Update stats globali
-            document.getElementById('stat-totale-fatture').textContent = `${fattureFilteredGlobal.length} su ${totale}`;
+            document.getElementById('stat-totale-fatture').textContent = `${fattureFilteredGlobal.length}/${totale}`;
             document.getElementById('stat-totale-importo').textContent = formatEuro(daPagareMeseCorrenteGlobal);
             document.getElementById('stat-castelletto-totale').textContent = formatEuro(castellettoTotaleGlobal);
             document.getElementById('stat-castelletto-rimanente').textContent = formatEuro(castellettoRimanenteGlobal);
             
-            // Update label dinamiche con mese e anno
-            document.getElementById('stat-label-fatture').textContent = `Fatture ${MESI_FULL[selectedMese].toUpperCase()}`;
-            document.getElementById('stat-label-dapagare').textContent = `Tot. da pagare ${currentYear}`;
+            // Update label dinamiche con mese (con controlli di sicurezza)
+            const labelFatture = document.getElementById('stat-label-fatture');
+            const labelDaPagare = document.getElementById('stat-label-dapagare');
+            if (labelFatture && selectedMese !== null && MESI_FULL[selectedMese]) {
+                labelFatture.textContent = `Fatture ${MESI_FULL[selectedMese].toUpperCase()}`;
+            }
+            if (labelDaPagare && selectedMese !== null && MESI_FULL[selectedMese]) {
+                labelDaPagare.textContent = `Tot. da pagare ${MESI_FULL[selectedMese].toUpperCase()}`;
+            }
             
             // Update progress bar globale
             const progressFill = document.getElementById('stat-progress-fill');
@@ -1890,8 +1903,43 @@
         function toggleBancaCard(idx) {
             const card = document.getElementById(`banca-${idx}`);
             if (card) {
+                const wasExpanded = card.classList.contains('expanded');
                 document.querySelectorAll('.banca-card.expanded').forEach(c => { if (c !== card) c.classList.remove('expanded'); });
                 card.classList.toggle('expanded');
+                
+                // Aggiorna la banca selezionata
+                if (card.classList.contains('expanded')) {
+                    selectedBancaNome = card.dataset.bancaName;
+                } else {
+                    selectedBancaNome = null;
+                }
+                
+                // Aggiorna le stats in base alla banca selezionata
+                updateStatsForSelectedBanca();
+            }
+        }
+        
+        function updateStatsForSelectedBanca() {
+            if (selectedMese === null) return;
+            
+            const fattureMese = getFatturePerMese(selectedMese);
+            const totale = fattureMese.length;
+            
+            if (selectedBancaNome) {
+                // Stats per la banca selezionata
+                const fattureBanca = fattureMese.filter(f => f.bancaAssociata === selectedBancaNome);
+                const fattureFiltered = fattureBanca.filter(f => f.dataScadenza && new Date(f.dataScadenza).getDate() <= currentDayFilter);
+                const daPagareMese = calcDaPagareMese(selectedMese, selectedBancaNome);
+                
+                document.getElementById('stat-totale-fatture').textContent = `${fattureFiltered.length}/${totale}`;
+                document.getElementById('stat-totale-importo').textContent = formatEuro(daPagareMese);
+            } else {
+                // Stats globali (tutte le banche)
+                const fattureFiltered = fattureMese.filter(f => f.dataScadenza && new Date(f.dataScadenza).getDate() <= currentDayFilter);
+                const daPagareMese = calcDaPagareMese(selectedMese, null);
+                
+                document.getElementById('stat-totale-fatture').textContent = `${fattureFiltered.length}/${totale}`;
+                document.getElementById('stat-totale-importo').textContent = formatEuro(daPagareMese);
             }
         }
         
@@ -2178,10 +2226,15 @@
         }
         
         window.addEventListener('load', async function() {
-            loadUserData();
-            await initSupabase();
-            await Promise.all([loadCastelletti(), loadAccounts()]);
-            Loader.hide();
+            try {
+                loadUserData();
+                await initSupabase();
+                await Promise.all([loadCastelletti(), loadAccounts()]);
+            } catch (error) {
+                console.error('Errore caricamento pagina:', error);
+            } finally {
+                Loader.hide();
+            }
         });
     </script>
 </body>

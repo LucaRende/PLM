@@ -1517,11 +1517,7 @@
                             <div class="fattura-detail-label">Importo Totale</div>
                             <div class="fattura-detail-value big" id="fd-totale">-</div>
                         </div>
-                        <div class="fattura-detail-item">
-                            <div class="fattura-detail-label">Importo Pagato</div>
-                            <div class="fattura-detail-value green" id="fd-pagato">-</div>
-                        </div>
-                        <div class="fattura-detail-item">
+                        <div class="fattura-detail-item full-width">
                             <div class="fattura-detail-label">Importo Da Pagare</div>
                             <div class="fattura-detail-value red" id="fd-dapagare">-</div>
                         </div>
@@ -2017,7 +2013,6 @@
             document.getElementById('fd-datacreazione').textContent = fattura.dataCreazione_Formattato || fattura.dataCreazione || '-';
             document.getElementById('fd-datascadenza').textContent = fattura.dataScadenzaFormattato || fattura.dataScadenza || '-';
             document.getElementById('fd-totale').textContent = fattura.importoTotale_Formattato || formatEuro(fattura.importoTotale || 0);
-            document.getElementById('fd-pagato').textContent = fattura.importoPagato_Formattato || formatEuro(fattura.importoPagato || 0);
             document.getElementById('fd-dapagare').textContent = fattura.importoDaPagare_Formattato || formatEuro(Math.abs(fattura.importoDaPagare || 0));
             
             // Mostra il modal

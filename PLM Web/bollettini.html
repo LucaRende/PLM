@@ -3802,6 +3802,49 @@
             });
         }
         
+        // Carica firma su Supabase Storage e restituisce URL pubblico
+        async function uploadFirmaToStorage(firmaBase64, bollettinoId) {
+            try {
+                // Converti base64 in blob
+                const base64Data = firmaBase64.replace(/^data:image\/\w+;base64,/, '');
+                const byteCharacters = atob(base64Data);
+                const byteNumbers = new Array(byteCharacters.length);
+                for (let i = 0; i < byteCharacters.length; i++) {
+                    byteNumbers[i] = byteCharacters.charCodeAt(i);
+                }
+                const byteArray = new Uint8Array(byteNumbers);
+                const blob = new Blob([byteArray], { type: 'image/png' });
+                
+                // Nome file unico
+                const fileName = `firme/firma_${bollettinoId}_${Date.now()}.png`;
+                
+                // Upload su Supabase Storage
+                const { data, error } = await supabaseClient.storage
+                    .from('bollettini')
+                    .upload(fileName, blob, {
+                        contentType: 'image/png',
+                        upsert: true
+                    });
+                
+                if (error) {
+                    console.error('Errore upload firma:', error);
+                    return null;
+                }
+                
+                // Ottieni URL pubblico
+                const { data: urlData } = supabaseClient.storage
+                    .from('bollettini')
+                    .getPublicUrl(fileName);
+                
+                console.log('Firma caricata:', urlData.publicUrl);
+                return urlData.publicUrl;
+                
+            } catch (error) {
+                console.error('Errore upload firma:', error);
+                return null;
+            }
+        }
+        
         // Invia email al cliente
         async function sendEmailToCliente(bollettinoData) {
             if (EMAILJS_CONFIG.publicKey === 'YOUR_PUBLIC_KEY') {
@@ -3814,10 +3857,21 @@
                     day: '2-digit', month: 'long', year: 'numeric'
                 });
                 
-                // Prepara firma (se presente)
-                const firmaBase64 = bollettinoData.firma_cliente && bollettinoData.firma_cliente.data 
-                    ? bollettinoData.firma_cliente.data 
-                    : '';
+                // Carica firma su Storage e ottieni URL pubblico
+                let firmaUrl = '';
+                if (bollettinoData.firma_cliente && bollettinoData.firma_cliente.data) {
+                    firmaUrl = await uploadFirmaToStorage(
+                        bollettinoData.firma_cliente.data, 
+                        bollettinoData.id_bollettino || Date.now()
+                    );
+                }
+                
+                // Prepara HTML firma
+                const firmaHtml = firmaUrl 
+                    ? `<img src="${firmaUrl}" alt="Firma Cliente" style="max-width:300px; border:1px solid #ccc; border-radius:8px; padding:10px; background:#fff;">`
+                    : '<em>Firma non disponibile</em>';
+                
+                console.log('Firma URL:', firmaUrl);
                 
                 const response = await emailjs.send(
                     EMAILJS_CONFIG.serviceId,
@@ -3833,7 +3887,7 @@
                         lavori_eseguiti: bollettinoData.lavori_eseguiti || '-',
                         note: bollettinoData.note || '-',
                         totale_speso: bollettinoData.totale_speso ? '€ ' + parseFloat(bollettinoData.totale_speso).toFixed(2) : '-',
-                        firma_cliente: firmaBase64
+                        firma_html: firmaHtml
                     }
                 );
                 

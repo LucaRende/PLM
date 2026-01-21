@@ -943,6 +943,74 @@
         .btn-save { background: linear-gradient(135deg, var(--primary) 0%, #b91c1c 100%); color: white; }
         .btn-delete { background: rgba(239, 68, 68, 0.15); color: #ef4444; flex: 0.5; }
         
+        /* Permessi Pagine Grid */
+        .permessi-section {
+            margin-top: var(--space-2);
+        }
+        
+        .permessi-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--space-2);
+        }
+        
+        .permesso-checkbox {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            padding: 12px 14px;
+            background: var(--surface-2);
+            border: 1.5px solid var(--border-default);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        .permesso-checkbox:has(input:checked) {
+            border-color: var(--primary);
+            background: rgba(220, 38, 38, 0.1);
+        }
+        
+        .permesso-checkbox:has(input:disabled) {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .permesso-checkbox input {
+            width: 16px;
+            height: 16px;
+            accent-color: var(--primary);
+            flex-shrink: 0;
+        }
+        
+        .permesso-label {
+            font-size: 12px;
+            color: var(--text-primary);
+        }
+        
+        /* Account Permessi Tags */
+        .account-permessi {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            padding: 0 var(--space-4) var(--space-3);
+        }
+        
+        .permesso-tag {
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 600;
+            background: var(--surface-4);
+            color: var(--text-muted);
+        }
+        
+        .permesso-tag.active {
+            background: rgba(34, 197, 94, 0.2);
+            color: #22c55e;
+        }
+        
         .empty-state {
             text-align: center;
             padding: var(--space-6);
@@ -1173,6 +1241,35 @@
                                 <option value="admin">Amministratore</option>
                                 <option value="manager">Manager</option>
                             </select>
+                        </div>
+                        <div class="form-group permessi-section">
+                            <label class="form-label">Pagine Visibili</label>
+                            <div class="permessi-grid" id="permessi-grid">
+                                <label class="permesso-checkbox">
+                                    <input type="checkbox" value="home" checked disabled>
+                                    <span class="permesso-label">🏠 Home</span>
+                                </label>
+                                <label class="permesso-checkbox">
+                                    <input type="checkbox" value="commerciale">
+                                    <span class="permesso-label">💼 Commerciale</span>
+                                </label>
+                                <label class="permesso-checkbox">
+                                    <input type="checkbox" value="ufficio-tecnico">
+                                    <span class="permesso-label">📐 Ufficio Tecnico</span>
+                                </label>
+                                <label class="permesso-checkbox">
+                                    <input type="checkbox" value="amministrazione">
+                                    <span class="permesso-label">📊 Amministrazione</span>
+                                </label>
+                                <label class="permesso-checkbox">
+                                    <input type="checkbox" value="bollettini">
+                                    <span class="permesso-label">📝 Bollettini</span>
+                                </label>
+                                <label class="permesso-checkbox">
+                                    <input type="checkbox" value="trasporti">
+                                    <span class="permesso-label">🚚 Trasporti</span>
+                                </label>
+                            </div>
                         </div>
                         <div class="form-group">
                             <label class="attivo-toggle">
@@ -1522,6 +1619,15 @@
         
         let allAccounts = [];
         
+        const PAGINE_DISPONIBILI = [
+            { id: 'home', nome: '🏠 Home', sempre: true },
+            { id: 'commerciale', nome: '💼 Commerciale' },
+            { id: 'ufficio-tecnico', nome: '📐 Uff.Tecnico' },
+            { id: 'amministrazione', nome: '📊 Amministr.' },
+            { id: 'bollettini', nome: '📝 Bollettini' },
+            { id: 'trasporti', nome: '🚚 Trasporti' }
+        ];
+        
         async function loadAccounts() {
             if (!supabaseClient) { 
                 document.getElementById('accounts-subtitle').textContent = 'Connessione non disponibile'; 
@@ -1533,7 +1639,7 @@
                 console.log('Caricamento accounts...');
                 const { data, error } = await supabaseClient
                     .from('accounts')
-                    .select('id, nome, cognome, username, email, password_hash, ruolo, attivo')
+                    .select('id, nome, cognome, username, email, password_hash, ruolo, attivo, permessi_pagine')
                     .order('cognome', { ascending: true });
                 
                 console.log('Risposta accounts:', { data, error });
@@ -1546,7 +1652,7 @@
             } catch (error) {
                 console.error('Errore caricamento account:', error);
                 document.getElementById('accounts-subtitle').textContent = 'Errore caricamento';
-                document.getElementById('accounts-list').innerHTML = `<div class="empty-state"><div class="empty-state-icon">⚠️</div><div class="empty-state-text">Errore: ${error.message}<br><small>Verifica che la tabella accounts abbia i campi: id, nome, cognome, username, email, ruolo, attivo</small></div></div>`;
+                document.getElementById('accounts-list').innerHTML = `<div class="empty-state"><div class="empty-state-icon">⚠️</div><div class="empty-state-text">Errore: ${error.message}<br><small>Verifica che la tabella accounts abbia i campi: id, nome, cognome, username, email, ruolo, attivo, permessi_pagine</small></div></div>`;
             }
         }
         
@@ -1559,6 +1665,9 @@
             
             list.innerHTML = allAccounts.map(account => {
                 const initials = ((account.nome || '').charAt(0) + (account.cognome || '').charAt(0)).toUpperCase() || '??';
+                const permessi = account.permessi_pagine || ['home'];
+                const permessiArray = Array.isArray(permessi) ? permessi : JSON.parse(permessi || '["home"]');
+                
                 return `
                     <div class="account-card ${!account.attivo ? 'inactive' : ''}" data-id="${account.id}">
                         <div class="account-header" onclick="editAccount('${account.id}')">
@@ -1568,6 +1677,11 @@
                                 <div class="account-details">@${account.username}${account.email ? ` · ${account.email}` : ''}</div>
                             </div>
                             <span class="account-badge ${account.ruolo || 'utente'}">${account.ruolo || 'utente'}</span>
+                        </div>
+                        <div class="account-permessi">
+                            ${PAGINE_DISPONIBILI.map(p => `
+                                <span class="permesso-tag ${permessiArray.includes(p.id) ? 'active' : ''}">${p.nome}</span>
+                            `).join('')}
                         </div>
                     </div>
                 `;
@@ -1593,6 +1707,11 @@
             ['account-id', 'account-nome', 'account-cognome', 'account-username', 'account-password', 'account-email'].forEach(id => document.getElementById(id).value = '');
             document.getElementById('account-ruolo').value = 'utente';
             document.getElementById('account-attivo').checked = true;
+            
+            // Reset permessi - solo home checked
+            document.querySelectorAll('#permessi-grid input[type="checkbox"]').forEach(cb => {
+                cb.checked = cb.value === 'home';
+            });
         }
         
         function editAccount(accountId) {
@@ -1608,6 +1727,18 @@
             document.getElementById('account-ruolo').value = account.ruolo || 'utente';
             document.getElementById('account-attivo').checked = account.attivo !== false;
             
+            // Carica permessi pagine
+            const permessi = account.permessi_pagine || ['home'];
+            const permessiArray = Array.isArray(permessi) ? permessi : JSON.parse(permessi || '["home"]');
+            
+            document.querySelectorAll('#permessi-grid input[type="checkbox"]').forEach(cb => {
+                if (cb.value === 'home') {
+                    cb.checked = true; // Home sempre attivo
+                } else {
+                    cb.checked = permessiArray.includes(cb.value);
+                }
+            });
+            
             openAccountModal(false);
         }
         
@@ -1621,6 +1752,14 @@
             const ruolo = document.getElementById('account-ruolo').value;
             const attivo = document.getElementById('account-attivo').checked;
             
+            // Raccogli permessi pagine
+            const permessi = ['home']; // Home sempre incluso
+            document.querySelectorAll('#permessi-grid input[type="checkbox"]:checked').forEach(cb => {
+                if (cb.value !== 'home' && !permessi.includes(cb.value)) {
+                    permessi.push(cb.value);
+                }
+            });
+            
             if (!nome || !cognome || !username) { alert('Nome, Cognome e Username sono obbligatori'); return; }
             if (!accountId && !password) { alert('La password è obbligatoria per i nuovi account'); return; }
             
@@ -1631,7 +1770,8 @@
                     username, 
                     email: email || null, 
                     ruolo: ruolo || 'utente', 
-                    attivo: attivo 
+                    attivo: attivo,
+                    permessi_pagine: permessi
                 };
                 if (password) accountData.password_hash = password;
                 

@@ -16,6 +16,9 @@
     <!-- Supabase JS -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
+    <!-- EmailJS per invio email in background -->
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    
     <!-- Stili Globali -->
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="Load/loader.css">
@@ -1760,6 +1763,11 @@
             color: #3b82f6;
         }
         
+        .confirm-icon.email {
+            background: rgba(16, 185, 129, 0.15);
+            color: #10b981;
+        }
+        
         .confirm-icon svg {
             width: 28px;
             height: 28px;
@@ -1811,8 +1819,88 @@
             color: white;
         }
         
+        .confirm-btn-email {
+            background: #10b981;
+            color: white;
+        }
+        
         .confirm-btn:active {
             transform: scale(0.98);
+        }
+        
+        /* Lista selezione admin */
+        .admin-select-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 20px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .admin-select-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 14px;
+            background: var(--surface-2);
+            border: 2px solid var(--border-default);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .admin-select-item:hover {
+            border-color: var(--primary);
+            background: var(--surface-3);
+        }
+        
+        .admin-select-item.selected {
+            border-color: #10b981;
+            background: rgba(16, 185, 129, 0.1);
+        }
+        
+        .admin-select-item input[type="radio"] {
+            display: none;
+        }
+        
+        .admin-select-radio {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--border-default);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+        
+        .admin-select-item.selected .admin-select-radio {
+            border-color: #10b981;
+            background: #10b981;
+        }
+        
+        .admin-select-item.selected .admin-select-radio::after {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background: white;
+            border-radius: 50%;
+        }
+        
+        .admin-select-info {
+            flex: 1;
+        }
+        
+        .admin-select-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .admin-select-email {
+            font-size: 12px;
+            color: var(--text-muted);
         }
         
         /* Photos preview in detail */
@@ -2147,6 +2235,11 @@
                             <input type="text" class="form-input" id="bollettino-cliente" placeholder="Nome cliente">
                         </div>
                         <div class="form-group">
+                            <label class="form-label">📧 Email Cliente</label>
+                            <input type="email" class="form-input" id="bollettino-email" placeholder="email@cliente.it">
+                            <p class="form-hint">Per inviare copia del bollettino firmato</p>
+                        </div>
+                        <div class="form-group">
                             <label class="form-label">Macchina</label>
                             <input type="text" class="form-input" id="bollettino-macchina" placeholder="Tipo macchina / modello">
                         </div>
@@ -2321,6 +2414,45 @@
         </div>
     </div>
     
+    <!-- Dialog Invio Email Cliente -->
+    <div class="confirm-dialog" id="confirm-email-cliente-dialog">
+        <div class="confirm-box">
+            <div class="confirm-icon email">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                    <polyline points="22,6 12,13 2,6"/>
+                </svg>
+            </div>
+            <h3 class="confirm-title">Invia Copia al Cliente</h3>
+            <p class="confirm-message">Vuoi inviare una copia del bollettino firmato a <strong id="email-destinatario"></strong>?</p>
+            <div class="confirm-actions">
+                <button class="confirm-btn confirm-btn-cancel" onclick="closeEmailDialog(false)">No, grazie</button>
+                <button class="confirm-btn confirm-btn-email" onclick="closeEmailDialog(true)">Sì, invia</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Dialog Selezione Admin per Notifica Validazione -->
+    <div class="confirm-dialog" id="select-admin-dialog">
+        <div class="confirm-box" style="max-width: 360px;">
+            <div class="confirm-icon email">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                    <polyline points="22,6 12,13 2,6"/>
+                </svg>
+            </div>
+            <h3 class="confirm-title">Notifica Validazione</h3>
+            <p class="confirm-message" style="margin-bottom: 16px;">Invia notifica email a:</p>
+            <div class="admin-select-list" id="admin-select-list">
+                <!-- Popolato dinamicamente -->
+            </div>
+            <div class="confirm-actions">
+                <button class="confirm-btn confirm-btn-cancel" onclick="closeAdminSelectDialog(false)">Annulla</button>
+                <button class="confirm-btn confirm-btn-email" onclick="closeAdminSelectDialog(true)">Valida e Invia</button>
+            </div>
+        </div>
+    </div>
+    
     <!-- Modal Visualizza Foto -->
     <div class="modal-overlay" id="modal-photo" onclick="closePhotoModal()">
         <div class="modal-container" style="display: flex; align-items: center; justify-content: center;">
@@ -2349,6 +2481,31 @@
         
         // Foto scontrini
         let uploadedPhotos = [];
+        
+        // Email
+        let pendingEmailData = null;
+        let emailResolve = null;
+        let selectedAdminEmail = null;
+        let adminList = [];
+        
+        // =============================================
+        // CONFIGURAZIONE EMAILJS
+        // =============================================
+        // IMPORTANTE: Sostituisci questi valori con i tuoi da emailjs.com
+        const EMAILJS_CONFIG = {
+            publicKey: 'YOUR_PUBLIC_KEY',        // La tua Public Key da EmailJS
+            serviceId: 'YOUR_SERVICE_ID',        // Il tuo Service ID
+            templateClienteId: 'YOUR_TEMPLATE_CLIENTE',  // Template per email al cliente
+            templateAdminId: 'YOUR_TEMPLATE_ADMIN'       // Template per notifica admin
+        };
+        
+        // Inizializza EmailJS
+        function initEmailJS() {
+            if (typeof emailjs !== 'undefined' && EMAILJS_CONFIG.publicKey !== 'YOUR_PUBLIC_KEY') {
+                emailjs.init(EMAILJS_CONFIG.publicKey);
+                console.log('EmailJS inizializzato');
+            }
+        }
         
         // =============================================
         // SISTEMA NOTIFICHE
@@ -2896,6 +3053,7 @@
                 document.getElementById('bollettino-lavori').value = '';
                 document.getElementById('bollettino-note').value = '';
                 document.getElementById('bollettino-totale-speso').value = '';
+                document.getElementById('bollettino-email').value = '';
                 
                 uploadedPhotos = [];
                 renderPhotosGrid();
@@ -3135,6 +3293,7 @@
                 firma_cliente: getFirmaData(),
                 foto_scontrini: uploadedPhotos.length > 0 ? uploadedPhotos : null,
                 totale_speso: parseFloat(document.getElementById('bollettino-totale-speso').value) || null,
+                email_cliente: document.getElementById('bollettino-email').value || null,
                 data_modifica: new Date().toISOString()
             };
             
@@ -3183,6 +3342,32 @@
                         requestAnimationFrame(resolve);
                     });
                 });
+                
+                // Nascondi loader prima di chiedere per email
+                Loader.hide();
+                
+                // Se c'è firma ed email, chiedi se inviare copia al cliente
+                const hasFirma = data.firma_cliente && data.firma_cliente.data;
+                const hasEmail = data.email_cliente && data.email_cliente.trim();
+                
+                if (hasFirma && hasEmail) {
+                    const shouldSend = await askSendEmailToCliente(data.email_cliente, data);
+                    
+                    if (shouldSend) {
+                        Loader.show('invio', 'Invio email...');
+                        const emailSent = await sendEmailToCliente(data);
+                        Loader.hide();
+                        
+                        if (emailSent) {
+                            // Mostra conferma breve
+                            alert('✅ Email inviata con successo!');
+                        } else {
+                            alert('⚠️ Impossibile inviare l\'email. EmailJS non configurato o errore di rete.');
+                        }
+                    }
+                }
+                
+                return; // Esce dalla funzione, già gestito tutto
                 
             } catch (error) {
                 console.error('Errore salvataggio:', error);
@@ -3465,6 +3650,7 @@
             document.getElementById('bollettino-lavori').value = bollettino.lavori_eseguiti || '';
             document.getElementById('bollettino-note').value = bollettino.note || '';
             document.getElementById('bollettino-totale-speso').value = bollettino.totale_speso || '';
+            document.getElementById('bollettino-email').value = bollettino.email_cliente || '';
             
             // Carica foto esistenti
             uploadedPhotos = bollettino.foto_scontrini || [];
@@ -3512,7 +3698,7 @@
             document.getElementById('confirm-delete-dialog').classList.add('show');
         }
         
-        function confirmValidate() {
+        async function confirmValidate() {
             const bollettino = allBollettini.find(b => b.id_bollettino === currentBollettinoId);
             if (!bollettino) return;
             
@@ -3522,7 +3708,67 @@
                 return;
             }
             
-            document.getElementById('confirm-validate-dialog').classList.add('show');
+            // Controlla firma
+            const hasFirma = bollettino.firma_cliente && bollettino.firma_cliente.data;
+            if (!hasFirma) {
+                alert('Non puoi validare un bollettino senza la firma del cliente.');
+                return;
+            }
+            
+            // Mostra selezione admin per notifica email
+            const adminEmail = await showAdminSelectDialog();
+            
+            if (adminEmail) {
+                // Procedi con validazione e invio notifica
+                await validateBollettinoWithNotification(bollettino, adminEmail);
+            }
+        }
+        
+        // Valida bollettino e invia notifica
+        async function validateBollettinoWithNotification(bollettino, adminEmail) {
+            try {
+                Loader.show('invio', 'Validazione...');
+                
+                const validatoDa = `${currentUser.nome || ''} ${currentUser.cognome || ''}`.trim();
+                
+                const { error } = await supabaseClient
+                    .from('BollettiniMontatori')
+                    .update({
+                        validato: true,
+                        data_validazione: new Date().toISOString(),
+                        validato_da: validatoDa
+                    })
+                    .eq('id_bollettino', bollettino.id_bollettino);
+                
+                if (error) throw error;
+                
+                // Invia notifica email
+                if (adminEmail && EMAILJS_CONFIG.publicKey !== 'YOUR_PUBLIC_KEY') {
+                    Loader.updateText('Invio notifica...');
+                    await sendValidationNotification(adminEmail, bollettino);
+                }
+                
+                // Aggiorna lista
+                Loader.updateText('Aggiornamento...');
+                await loadBollettini(false);
+                
+                // Aspetta rendering
+                await new Promise(resolve => {
+                    requestAnimationFrame(() => {
+                        requestAnimationFrame(resolve);
+                    });
+                });
+                
+                Loader.hide();
+                
+                // Riapri dettaglio aggiornato
+                openDettaglio(bollettino.id_bollettino);
+                
+            } catch (error) {
+                console.error('Errore validazione:', error);
+                alert('Errore durante la validazione: ' + error.message);
+                Loader.hide();
+            }
         }
         
         function closeConfirmDialog(type) {
@@ -3530,6 +3776,183 @@
                 document.getElementById('confirm-delete-dialog').classList.remove('show');
             } else if (type === 'validate') {
                 document.getElementById('confirm-validate-dialog').classList.remove('show');
+            }
+        }
+        
+        // =============================================
+        // GESTIONE EMAIL
+        // =============================================
+        
+        // Chiude dialog invio email cliente
+        function closeEmailDialog(sendEmail) {
+            document.getElementById('confirm-email-cliente-dialog').classList.remove('show');
+            if (emailResolve) {
+                emailResolve(sendEmail);
+                emailResolve = null;
+            }
+        }
+        
+        // Mostra dialog per chiedere se inviare email al cliente
+        function askSendEmailToCliente(email, bollettinoData) {
+            return new Promise((resolve) => {
+                emailResolve = resolve;
+                pendingEmailData = bollettinoData;
+                document.getElementById('email-destinatario').textContent = email;
+                document.getElementById('confirm-email-cliente-dialog').classList.add('show');
+            });
+        }
+        
+        // Invia email al cliente
+        async function sendEmailToCliente(bollettinoData) {
+            if (EMAILJS_CONFIG.publicKey === 'YOUR_PUBLIC_KEY') {
+                console.warn('EmailJS non configurato');
+                return false;
+            }
+            
+            try {
+                const dataFormatted = new Date(bollettinoData.data).toLocaleDateString('it-IT', {
+                    day: '2-digit', month: 'long', year: 'numeric'
+                });
+                
+                const response = await emailjs.send(
+                    EMAILJS_CONFIG.serviceId,
+                    EMAILJS_CONFIG.templateClienteId,
+                    {
+                        to_email: bollettinoData.email_cliente,
+                        to_name: bollettinoData.cliente,
+                        data_intervento: dataFormatted,
+                        tecnico: bollettinoData.tecnico_installatore,
+                        macchina: bollettinoData.montaggio_macchina || 'Non specificata',
+                        ore_lavorate: bollettinoData.ore_totali + ' ore',
+                        orario: `${bollettinoData.orario_inizio || ''} - ${bollettinoData.orario_fine || ''}`,
+                        lavori_eseguiti: bollettinoData.lavori_eseguiti || '-',
+                        note: bollettinoData.note || '-',
+                        totale_speso: bollettinoData.totale_speso ? '€ ' + parseFloat(bollettinoData.totale_speso).toFixed(2) : '-'
+                    }
+                );
+                
+                console.log('Email inviata:', response);
+                return true;
+            } catch (error) {
+                console.error('Errore invio email:', error);
+                return false;
+            }
+        }
+        
+        // Carica lista admin per selezione
+        async function loadAdminList() {
+            try {
+                const { data, error } = await supabaseClient
+                    .from('accounts')
+                    .select('id, nome, cognome, email, ruolo')
+                    .or('ruolo.ilike.%admin%,ruolo.ilike.%amministratore%,ruolo.ilike.%manager%,is_admin.eq.true');
+                
+                if (error) throw error;
+                
+                adminList = (data || []).filter(u => u.email); // Solo quelli con email
+                return adminList;
+            } catch (error) {
+                console.error('Errore caricamento admin:', error);
+                return [];
+            }
+        }
+        
+        // Mostra dialog selezione admin
+        async function showAdminSelectDialog() {
+            return new Promise(async (resolve) => {
+                emailResolve = resolve;
+                selectedAdminEmail = null;
+                
+                // Carica lista admin
+                const admins = await loadAdminList();
+                
+                const container = document.getElementById('admin-select-list');
+                
+                if (admins.length === 0) {
+                    container.innerHTML = `
+                        <p style="text-align: center; color: var(--text-muted); padding: 20px;">
+                            Nessun admin con email trovato
+                        </p>
+                    `;
+                } else {
+                    container.innerHTML = admins.map((admin, i) => `
+                        <label class="admin-select-item ${i === 0 ? 'selected' : ''}" onclick="selectAdmin('${admin.email}', this)">
+                            <input type="radio" name="admin-select" value="${admin.email}" ${i === 0 ? 'checked' : ''}>
+                            <span class="admin-select-radio"></span>
+                            <div class="admin-select-info">
+                                <div class="admin-select-name">${admin.nome || ''} ${admin.cognome || ''}</div>
+                                <div class="admin-select-email">${admin.email}</div>
+                            </div>
+                        </label>
+                    `).join('');
+                    
+                    // Seleziona primo admin di default
+                    if (admins.length > 0) {
+                        selectedAdminEmail = admins[0].email;
+                    }
+                }
+                
+                document.getElementById('select-admin-dialog').classList.add('show');
+            });
+        }
+        
+        // Seleziona admin dalla lista
+        function selectAdmin(email, element) {
+            selectedAdminEmail = email;
+            
+            // Rimuovi selezione da tutti
+            document.querySelectorAll('.admin-select-item').forEach(item => {
+                item.classList.remove('selected');
+            });
+            
+            // Aggiungi selezione a quello cliccato
+            element.classList.add('selected');
+            element.querySelector('input').checked = true;
+        }
+        
+        // Chiude dialog selezione admin
+        function closeAdminSelectDialog(proceed) {
+            document.getElementById('select-admin-dialog').classList.remove('show');
+            if (emailResolve) {
+                emailResolve(proceed ? selectedAdminEmail : null);
+                emailResolve = null;
+            }
+        }
+        
+        // Invia notifica validazione ad admin
+        async function sendValidationNotification(adminEmail, bollettinoData) {
+            if (EMAILJS_CONFIG.publicKey === 'YOUR_PUBLIC_KEY') {
+                console.warn('EmailJS non configurato');
+                return false;
+            }
+            
+            try {
+                const dataFormatted = new Date(bollettinoData.data).toLocaleDateString('it-IT', {
+                    day: '2-digit', month: 'long', year: 'numeric'
+                });
+                
+                const validatoDa = `${currentUser.nome || ''} ${currentUser.cognome || ''}`.trim();
+                
+                const response = await emailjs.send(
+                    EMAILJS_CONFIG.serviceId,
+                    EMAILJS_CONFIG.templateAdminId,
+                    {
+                        to_email: adminEmail,
+                        validato_da: validatoDa,
+                        cliente: bollettinoData.cliente,
+                        data_intervento: dataFormatted,
+                        tecnico: bollettinoData.tecnico_installatore,
+                        macchina: bollettinoData.montaggio_macchina || 'Non specificata',
+                        ore_lavorate: bollettinoData.ore_totali + ' ore',
+                        lavori_eseguiti: bollettinoData.lavori_eseguiti || '-'
+                    }
+                );
+                
+                console.log('Notifica admin inviata:', response);
+                return true;
+            } catch (error) {
+                console.error('Errore invio notifica:', error);
+                return false;
             }
         }
         
@@ -3679,6 +4102,7 @@
                 // Inizializza
                 loadUserData();
                 await initSupabase();
+                initEmailJS(); // Inizializza EmailJS
                 
                 // Carica bollettini SENZA loader interno (usa quello pagina)
                 await loadBollettini(false);

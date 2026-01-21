@@ -1346,7 +1346,35 @@
                 const numFiltered = fattureMese.filter(f => f.dataScadenza && new Date(f.dataScadenza).getDate() <= currentDayFilter).length;
                 const meseCard = document.getElementById(`mese-fatture-${selectedMese}`);
                 if (meseCard) meseCard.textContent = `${numFiltered} su ${totale}`;
+                
+                // Aggiorna anche le banche
+                updateBancheStats();
             }
+        }
+        
+        function updateBancheStats() {
+            if (selectedMese === null) return;
+            
+            const fattureMese = getFatturePerMese(selectedMese);
+            const bancheMap = {};
+            fattureMese.forEach(f => {
+                const banca = f.bancaAssociata || 'Banca non specificata';
+                if (!bancheMap[banca]) bancheMap[banca] = [];
+                bancheMap[banca].push(f);
+            });
+            
+            const banche = Object.keys(bancheMap).sort();
+            banche.forEach((banca, idx) => {
+                const fatture = bancheMap[banca];
+                const fattureFiltered = fatture.filter(f => f.dataScadenza && new Date(f.dataScadenza).getDate() <= currentDayFilter);
+                const importoFiltered = fattureFiltered.reduce((sum, f) => sum + (f.importoDaPagare || 0), 0);
+                
+                const countEl = document.getElementById(`banca-fatture-${idx}`);
+                const importoEl = document.getElementById(`banca-importo-${idx}`);
+                
+                if (countEl) countEl.textContent = `${fattureFiltered.length} su ${fatture.length}`;
+                if (importoEl) importoEl.textContent = formatEuroShort(importoFiltered);
+            });
         }
         
         function applyDayFilter() {
@@ -1424,8 +1452,12 @@
                     `;
                 }).join('');
                 
+                // Calcola fatture filtrate per questa banca
+                const fattureFiltered = fatture.filter(f => f.dataScadenza && new Date(f.dataScadenza).getDate() <= currentDayFilter);
+                const importoFiltered = fattureFiltered.reduce((sum, f) => sum + (f.importoDaPagare || 0), 0);
+                
                 return `
-                    <div class="banca-card" id="banca-${idx}">
+                    <div class="banca-card" id="banca-${idx}" data-banca-name="${banca.replace(/"/g, '&quot;')}">
                         <div class="banca-card-header" onclick="toggleBancaCard(${idx})">
                             <div class="banca-card-icon">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -1436,9 +1468,9 @@
                             <div class="banca-card-info">
                                 <div class="banca-card-name">${banca}</div>
                                 <div class="banca-card-stats">
-                                    <span>${fatture.length} fatture</span>
+                                    <span class="banca-fatture-count" id="banca-fatture-${idx}">${fattureFiltered.length} su ${fatture.length}</span>
                                     <span>·</span>
-                                    <span class="red">${formatEuroShort(totBanca)}</span>
+                                    <span class="red banca-importo" id="banca-importo-${idx}">${formatEuroShort(importoFiltered)}</span>
                                     ${castelletto > 0 ? `<span>·</span><span class="green">Cast. ${formatEuroShort(castelletto)}</span>` : ''}
                                 </div>
                             </div>

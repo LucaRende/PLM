@@ -172,11 +172,9 @@
            SEZIONE RICERCA SEMPRE VISIBILE + FILTRI
            ============================================= */
         .search-filters-section {
-            position: fixed;
-            top: 106px;
-            left: 0;
-            right: 0;
-            z-index: 998;
+            position: sticky;
+            top: 0;
+            z-index: 100;
             background: var(--surface-0);
             border-bottom: 1px solid var(--border-default);
         }
@@ -580,16 +578,10 @@
            CONTENT
            ============================================= */
         .page-content {
-            padding: 190px 16px calc(env(safe-area-inset-bottom) + 20px);
-            min-height: 100vh;
+            padding: 16px;
+            padding-bottom: calc(env(safe-area-inset-bottom) + 20px);
+            min-height: 50vh;
             background: var(--surface-0);
-            transition: padding-top 0.3s ease;
-            position: relative;
-            z-index: 1;
-        }
-        
-        .page-content.filters-open {
-            padding-top: 520px;
         }
         
         /* Stats Summary */
@@ -657,12 +649,9 @@
            LISTA BOLLETTINI
            ============================================= */
         .bollettini-list {
-            display: flex !important;
-            flex-direction: column !important;
-            gap: 12px !important;
-            min-height: 100px;
-            padding: 0;
-            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
         }
         
         .bollettino-card {
@@ -1829,9 +1818,6 @@
             </button>
             <h1 class="page-title">Bollettini</h1>
         </div>
-                </button>
-            </div>
-        </div>
         
         <!-- SEZIONE RICERCA + FILTRI -->
         <section class="search-filters-section">
@@ -2354,8 +2340,6 @@
                       ruolo === 'manager' ||
                       currentUser.is_admin === true;
             
-            console.log('Ruolo utente:', currentUser.ruolo, '-> isAdmin:', isAdmin);
-            
             // Mostra/nascondi filtro operatore e bottone "tutti"
             if (isAdmin) {
                 document.getElementById('filter-operatore-group').style.display = 'flex';
@@ -2479,8 +2463,6 @@
             const tecnicoCorrente = `${currentUser.nome || ''} ${currentUser.cognome || ''}`.trim();
             const tecnicoCorrenteAlt = `${currentUser.cognome || ''} ${currentUser.nome || ''}`.trim();
             
-            console.log('applyFilters - allBollettini:', allBollettini.length, 'filterType:', currentFilterType, 'isAdmin:', isAdmin);
-            
             filteredBollettini = allBollettini.filter(b => {
                 // Filtro miei/tutti
                 if (currentFilterType === 'miei') {
@@ -2534,8 +2516,6 @@
                 return true;
             });
             
-            console.log('applyFilters - dopo filtro:', filteredBollettini.length);
-            
             renderBollettini();
             updateStats();
             updateFilterBadge();
@@ -2577,8 +2557,6 @@
                 
                 // Filtra lato client i bollettini eliminati (se la colonna esiste)
                 allBollettini = (data || []).filter(b => b.eliminato !== true);
-                
-                console.log('loadBollettini - caricati:', allBollettini.length);
                 
                 // Conta notifiche
                 countNotifiche();
@@ -2661,13 +2639,7 @@
         // =============================================
         function renderBollettini() {
             const container = document.getElementById('bollettini-list');
-            
-            console.log('renderBollettini - filteredBollettini:', filteredBollettini.length);
-            
-            if (!container) {
-                console.error('CONTAINER NON TROVATO!');
-                return;
-            }
+            if (!container) return;
             
             if (filteredBollettini.length === 0) {
                 container.innerHTML = `
@@ -2686,59 +2658,53 @@
                 return;
             }
             
-            // Genera HTML semplice
-            let html = '<div style="background:red; color:white; padding:20px; margin-bottom:10px; font-size:18px;">DEBUG: ' + filteredBollettini.length + ' BOLLETTINI</div>';
+            // Genera HTML
+            let html = '';
             filteredBollettini.forEach(b => {
                 const dataObj = b.data ? new Date(b.data) : null;
                 const dateStr = dataObj ? dataObj.toLocaleDateString('it-IT', { day: '2-digit', month: 'short' }) : '-';
+                const weekday = dataObj ? dataObj.toLocaleDateString('it-IT', { weekday: 'short' }) : '';
                 const isValidated = b.validato === true;
+                const hasFirma = b.firma_cliente && b.firma_cliente.data;
                 
                 let badge = '<span class="bollettino-badge pending">In attesa</span>';
                 if (isValidated) {
                     badge = '<span class="bollettino-badge validated">✓ Validato</span>';
-                } else if (b.firma_cliente && b.firma_cliente.data) {
+                } else if (hasFirma) {
                     badge = '<span class="bollettino-badge signed">Firmato</span>';
                 }
                 
                 html += `
-                    <div class="bollettino-card" onclick="openDettaglio(${b.id_bollettino})" style="display:block !important; visibility:visible !important; opacity:1 !important; background:#1a1a2e; border:1px solid #333; border-radius:12px; padding:0; margin-bottom:12px;">
-                        <div class="bollettino-card-header" style="padding:12px 16px; border-bottom:1px solid #333; display:flex; justify-content:space-between; align-items:center;">
-                            <div>
-                                <div style="font-size:16px; font-weight:600; color:#fff;">${dateStr}</div>
+                    <div class="bollettino-card" onclick="openDettaglio(${b.id_bollettino})">
+                        <div class="bollettino-card-header">
+                            <div class="bollettino-date-block">
+                                <div class="bollettino-date">${dateStr}</div>
+                                <div class="bollettino-weekday">${weekday}</div>
                             </div>
                             ${badge}
                         </div>
-                        <div class="bollettino-card-body" style="padding:12px 16px;">
-                            <div style="font-size:15px; font-weight:500; color:#fff; margin-bottom:4px;">${b.cliente || 'Cliente non specificato'}</div>
-                            <div style="font-size:13px; color:#888;">${b.montaggio_macchina || 'Macchina non specificata'}</div>
+                        <div class="bollettino-card-body">
+                            <div class="bollettino-cliente">${b.cliente || 'Cliente non specificato'}</div>
+                            <div class="bollettino-macchina">${b.montaggio_macchina || 'Macchina non specificata'}</div>
                         </div>
-                        <div class="bollettino-card-footer" style="padding:12px 16px; border-top:1px solid #333; display:flex; justify-content:space-between; align-items:center;">
-                            <div style="display:flex; gap:12px; align-items:center;">
-                                <span style="color:#dc2626; font-weight:600;">${b.ore_totali || 0}h</span>
-                                <span style="color:#666; font-size:12px;">${b.orario_inizio || '--:--'} - ${b.orario_fine || '--:--'}</span>
+                        <div class="bollettino-card-footer">
+                            <div class="bollettino-meta">
+                                <div class="bollettino-ore">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <circle cx="12" cy="12" r="10"/>
+                                        <polyline points="12 6 12 12 16 14"/>
+                                    </svg>
+                                    ${b.ore_totali || 0}h
+                                </div>
+                                <div class="bollettino-orario">${b.orario_inizio || '--:--'} - ${b.orario_fine || '--:--'}</div>
                             </div>
-                            <div style="font-size:12px; color:#888;">${b.tecnico_installatore || ''}</div>
+                            <div class="bollettino-tecnico">${b.tecnico_installatore || ''}</div>
                         </div>
                     </div>
                 `;
             });
             
             container.innerHTML = html;
-            console.log('HTML inserito, container.children:', container.children.length);
-            
-            // FORZA visualizzazione
-            container.style.display = 'flex';
-            container.style.flexDirection = 'column';
-            container.style.gap = '12px';
-            
-            // Scroll to content
-            setTimeout(() => {
-                const pageContent = document.getElementById('page-content');
-                if (pageContent) {
-                    pageContent.scrollTop = 0;
-                    window.scrollTo(0, 200);
-                }
-            }, 100);
         }
         
         // =============================================

@@ -33,7 +33,7 @@
     <!-- Nascondi contenuto finché loader non è attivo -->
     <style id="preload-style">
         body { background: #030305; }
-        .page { visibility: hidden; }
+        .page { opacity: 0; transition: opacity 0.3s ease; }
     </style>
     
     <style>
@@ -52,6 +52,7 @@
         .page {
             min-height: 100vh;
             overflow: visible !important;
+            position: relative;
         }
         
         /* Header Fisso */
@@ -1149,6 +1150,18 @@
         
         .form-row.triple {
             grid-template-columns: 1fr 1fr 1fr;
+            gap: 8px;
+        }
+        
+        /* Mobile: stack su 2 righe */
+        @media (max-width: 400px) {
+            .form-row.triple {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .form-row.triple .form-group:last-child {
+                grid-column: span 2;
+            }
         }
         
         .form-group {
@@ -1184,6 +1197,57 @@
             outline: none;
             transition: all var(--transition-fast);
             width: 100%;
+            box-sizing: border-box;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+        
+        /* Fix input time per iOS */
+        input[type="time"],
+        input[type="date"] {
+            min-height: 44px;
+            line-height: 1.2;
+            padding: 10px 12px;
+            color-scheme: dark;
+            -webkit-appearance: none;
+            appearance: none;
+            color: #fff !important;
+            background: var(--surface-2) !important;
+        }
+        
+        input[type="time"]::-webkit-date-and-time-value,
+        input[type="date"]::-webkit-date-and-time-value {
+            text-align: left;
+            color: #fff !important;
+        }
+        
+        /* Fix per iOS Safari - rende visibile il placeholder */
+        input[type="time"]::-webkit-datetime-edit,
+        input[type="date"]::-webkit-datetime-edit {
+            color: #fff !important;
+        }
+        
+        input[type="time"]::-webkit-datetime-edit-fields-wrapper,
+        input[type="date"]::-webkit-datetime-edit-fields-wrapper {
+            padding: 0;
+            color: #fff !important;
+        }
+        
+        input[type="time"]::-webkit-datetime-edit-text,
+        input[type="time"]::-webkit-datetime-edit-hour-field,
+        input[type="time"]::-webkit-datetime-edit-minute-field,
+        input[type="date"]::-webkit-datetime-edit-text,
+        input[type="date"]::-webkit-datetime-edit-day-field,
+        input[type="date"]::-webkit-datetime-edit-month-field,
+        input[type="date"]::-webkit-datetime-edit-year-field {
+            color: #fff !important;
+        }
+        
+        input[type="time"]::-webkit-calendar-picker-indicator,
+        input[type="date"]::-webkit-calendar-picker-indicator {
+            filter: invert(1);
+            opacity: 0.6;
+            cursor: pointer;
         }
         
         .form-input:focus,
@@ -3444,23 +3508,15 @@
         // =============================================
         window.addEventListener('load', async function() {
             try {
-                // Mostra loader pagina
+                // Mostra loader pagina SUBITO
                 if (typeof Loader !== 'undefined') {
-                    Loader.show('pagina', 'Caricamento...');
+                    Loader.show('pagina', 'Caricamento bollettini...');
                 }
                 
-                // Mostra contenuto
-                document.querySelector('.page').style.visibility = 'visible';
-                
+                // Inizializza
                 loadUserData();
                 await initSupabase();
                 await loadBollettini();
-                
-                // Fix scroll - assicura che il body sia scrollabile
-                document.body.style.overflow = '';
-                document.body.style.overflowY = 'auto';
-                document.documentElement.style.overflow = '';
-                document.documentElement.style.overflowY = 'auto';
                 
                 // Event listeners per calcolo ore
                 document.getElementById('bollettino-orario-inizio').addEventListener('change', calcOre);
@@ -3470,9 +3526,21 @@
             } catch (error) {
                 console.error('Errore inizializzazione:', error);
             } finally {
+                // Nascondi loader
                 if (typeof Loader !== 'undefined') {
                     Loader.hide();
                 }
+                
+                // Mostra contenuto con fade-in
+                document.querySelector('.page').style.opacity = '1';
+                
+                // Fix scroll DOPO loader hide
+                setTimeout(() => {
+                    document.body.style.overflow = '';
+                    document.body.style.overflowY = 'auto';
+                    document.documentElement.style.overflow = '';
+                    document.documentElement.style.overflowY = 'auto';
+                }, 350); // Aspetta fine animazione loader
             }
         });
     </script>

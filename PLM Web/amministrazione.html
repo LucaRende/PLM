@@ -377,6 +377,13 @@
         .mese-badge.yellow { background: rgba(245, 158, 11, 0.2); color: #f59e0b; }
         .mese-badge.red { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
         
+        .mese-fatture {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 4px;
+        }
+        
         /* =============================================
            CONTENUTO MESE ESPANSO
            ============================================= */
@@ -1275,6 +1282,14 @@
                 const circumference = Math.PI * 36;
                 const offset = circumference * (1 - stats.percentuale / 100);
                 
+                // Calcola fatture filtrate per giorno (se è il mese selezionato)
+                let fattureLabel = `${stats.fatture} fatt.`;
+                if (selectedMese === idx) {
+                    const fattureMese = getFatturePerMese(idx);
+                    const numFiltered = fattureMese.filter(f => f.dataScadenza && new Date(f.dataScadenza).getDate() <= currentDayFilter).length;
+                    fattureLabel = `${numFiltered} su ${stats.fatture}`;
+                }
+                
                 return `
                     <div class="mese-card ${selectedMese === idx ? 'selected' : ''}" onclick="selectMese(${idx})">
                         <div class="mese-nome">${mese}</div>
@@ -1283,7 +1298,7 @@
                             <circle cx="25" cy="25" r="18" fill="none" stroke="${strokeColor}" stroke-width="4" stroke-linecap="round"
                                 stroke-dasharray="${circumference}" stroke-dashoffset="${offset}" transform="rotate(-90 25 25)"/>
                         </svg>
-                        <div class="mese-perc">${stats.percentuale.toFixed(0)}%</div>
+                        <div class="mese-fatture" id="mese-fatture-${idx}">${fattureLabel}</div>
                         <div class="mese-badge ${stats.badgeClass}">${stats.badgeText}</div>
                     </div>
                 `;
@@ -1323,6 +1338,15 @@
             document.getElementById('day-slider-value').textContent = day;
             applyDayFilter();
             updateStatsRiepilogo();
+            
+            // Aggiorna anche il numero fatture nella card del mese selezionato
+            if (selectedMese !== null) {
+                const fattureMese = getFatturePerMese(selectedMese);
+                const totale = fattureMese.length;
+                const numFiltered = fattureMese.filter(f => f.dataScadenza && new Date(f.dataScadenza).getDate() <= currentDayFilter).length;
+                const meseCard = document.getElementById(`mese-fatture-${selectedMese}`);
+                if (meseCard) meseCard.textContent = `${numFiltered} su ${totale}`;
+            }
         }
         
         function applyDayFilter() {
@@ -1335,11 +1359,12 @@
         function updateStatsRiepilogo() {
             if (selectedMese === null) return;
             const fattureMese = getFatturePerMese(selectedMese);
+            const totale = fattureMese.length;
             const fattureFiltered = fattureMese.filter(f => f.dataScadenza && new Date(f.dataScadenza).getDate() <= currentDayFilter);
-            const totale = fattureFiltered.reduce((sum, f) => sum + (f.importoDaPagare || 0), 0);
+            const importoFiltered = fattureFiltered.reduce((sum, f) => sum + (f.importoDaPagare || 0), 0);
             
-            document.getElementById('stat-totale-fatture').textContent = fattureFiltered.length;
-            document.getElementById('stat-totale-importo').textContent = formatEuro(totale);
+            document.getElementById('stat-totale-fatture').textContent = `${fattureFiltered.length} su ${totale}`;
+            document.getElementById('stat-totale-importo').textContent = formatEuro(importoFiltered);
         }
         
         function renderBanchePerMese() {
@@ -1354,9 +1379,12 @@
             });
             
             const banche = Object.keys(bancheMap).sort();
-            const totale = fattureMese.reduce((sum, f) => sum + (f.importoDaPagare || 0), 0);
-            document.getElementById('stat-totale-fatture').textContent = fattureMese.length;
-            document.getElementById('stat-totale-importo').textContent = formatEuro(totale);
+            const totale = fattureMese.length;
+            const fattureFiltered = fattureMese.filter(f => f.dataScadenza && new Date(f.dataScadenza).getDate() <= currentDayFilter);
+            const importoFiltered = fattureFiltered.reduce((sum, f) => sum + (f.importoDaPagare || 0), 0);
+            
+            document.getElementById('stat-totale-fatture').textContent = `${fattureFiltered.length} su ${totale}`;
+            document.getElementById('stat-totale-importo').textContent = formatEuro(importoFiltered);
             
             if (banche.length === 0) {
                 document.getElementById('banche-list').innerHTML = '<div class="no-fatture">📭 Nessuna fattura in questo mese</div>';

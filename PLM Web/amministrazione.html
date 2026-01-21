@@ -1762,6 +1762,7 @@
                 
                 // LOGICA CORRETTA C# con filtro giorno
                 const totaleDaPagareTuttiMesiBanca = calcTotaleDaPagareTuttiMesi(banca);
+                const totaleDaPagareAnnoFiltratoBanca = calcTotaleDaPagareAnnoFiltrato(banca, selectedMese, currentDayFilter);
                 const daPagareMeseGiornoBanca = calcDaPagareMeseGiorno(selectedMese, banca, currentDayFilter);
                 
                 // Calcola rimanente e occupato in base al giorno filtrato
@@ -1782,7 +1783,7 @@
                 const progressEl = document.getElementById(`banca-progress-${idx}`);
                 
                 if (countEl) countEl.textContent = `${fattureFiltered.length} su ${fatture.length}`;
-                if (importoEl) importoEl.textContent = formatEuroShort(totaleDaPagareTuttiMesiBanca);
+                if (importoEl) importoEl.textContent = `${formatEuroShort(totaleDaPagareAnnoFiltratoBanca)} su ${formatEuroShort(totaleDaPagareTuttiMesiBanca)}`;
                 if (daPagareEl) {
                     daPagareEl.textContent = formatEuroShort(daPagareMeseGiornoBanca);
                 }
@@ -1887,6 +1888,27 @@
                 .reduce((sum, f) => sum + (f.importoDaPagare || 0), 0);
         }
         
+        // Funzione helper: calcola totale annuale filtrato (mese corrente con filtro giorno, altri mesi completi)
+        function calcTotaleDaPagareAnnoFiltrato(nomeBanca, meseIdx, giornoMax) {
+            if (!allFatture || !Array.isArray(allFatture)) return 0;
+            return allFatture
+                .filter(f => {
+                    if (!f.dataScadenza) return false;
+                    const date = new Date(f.dataScadenza);
+                    const matchAnno = date.getFullYear() === currentYear;
+                    const matchBanca = nomeBanca ? (f.bancaAssociata === nomeBanca) : true;
+                    if (!matchAnno || !matchBanca) return false;
+                    
+                    // Se è il mese selezionato, applica filtro giorno
+                    if (date.getMonth() === meseIdx) {
+                        return date.getDate() <= giornoMax;
+                    }
+                    // Altri mesi: includi tutto
+                    return true;
+                })
+                .reduce((sum, f) => sum + (f.importoDaPagare || 0), 0);
+        }
+        
         function renderBanchePerMese() {
             if (selectedMese === null) return;
             
@@ -1978,6 +2000,7 @@
                 // LOGICA CORRETTA C# con filtro giorno: Calcola per questa banca specifica
                 const fattureFiltered = fatture.filter(f => f.dataScadenza && new Date(f.dataScadenza).getDate() <= currentDayFilter);
                 const totaleDaPagareTuttiMesiBanca = calcTotaleDaPagareTuttiMesi(banca);
+                const totaleDaPagareAnnoFiltratoBanca = calcTotaleDaPagareAnnoFiltrato(banca, selectedMese, currentDayFilter);
                 const daPagareMeseGiornoBanca = calcDaPagareMeseGiorno(selectedMese, banca, currentDayFilter);
                 
                 // FORMULA CORRETTA C# con filtro giorno
@@ -2002,7 +2025,7 @@
                                 <div class="banca-card-name">${banca}</div>
                                 <div class="banca-card-stats-multi">
                                     <div class="banca-stat-row"><span class="banca-fatture-count" id="banca-fatture-${idx}">${fattureFiltered.length} su ${fatture.length}</span></div>
-                                    <div class="banca-stat-row"><span class="stat-label-mini">Tot. da pagare ${currentYear}:</span> <span class="red" id="banca-importo-${idx}">${formatEuroShort(totaleDaPagareTuttiMesiBanca)}</span></div>
+                                    <div class="banca-stat-row"><span class="stat-label-mini">Tot. da pagare ${currentYear}:</span> <span class="red" id="banca-importo-${idx}">${formatEuroShort(totaleDaPagareAnnoFiltratoBanca)} su ${formatEuroShort(totaleDaPagareTuttiMesiBanca)}</span></div>
                                     ${castelletto > 0 ? `<div class="banca-stat-row"><span class="stat-label-mini">Castelletto:</span> <span class="green">${formatEuroShort(castelletto)}</span></div>` : ''}
                                 </div>
                             </div>

@@ -2642,9 +2642,11 @@
         // =============================================
         // CARICA BOLLETTINI
         // =============================================
-        async function loadBollettini() {
+        async function loadBollettini(showLoader = true) {
             try {
-                Loader.show('funzione', 'Caricamento bollettini...');
+                if (showLoader) {
+                    Loader.show('funzione', 'Caricamento bollettini...');
+                }
                 
                 // Query semplice senza filtri complicati
                 const { data, error } = await supabaseClient
@@ -2675,7 +2677,9 @@
                     </div>
                 `;
             } finally {
-                Loader.hide();
+                if (showLoader) {
+                    Loader.hide();
+                }
             }
         }
         
@@ -3566,7 +3570,9 @@
                 // Inizializza
                 loadUserData();
                 await initSupabase();
-                await loadBollettini();
+                
+                // Carica bollettini SENZA loader interno (usa quello pagina)
+                await loadBollettini(false);
                 
                 // Calcola padding iniziale
                 updateContentPadding();

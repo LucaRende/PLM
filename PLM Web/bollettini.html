@@ -23,10 +23,12 @@
     <!-- Loader JS - caricato subito per mostrare il loading -->
     <script src="Load/loader.js"></script>
     <script>
-        // Mostra loader IMMEDIATAMENTE
-        if (typeof Loader !== 'undefined') {
-            Loader.show('pagina', 'Caricamento bollettini...');
-        }
+        // Mostra loader appena il DOM è pronto
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof Loader !== 'undefined') {
+                Loader.show('pagina', 'Caricamento bollettini...');
+            }
+        });
     </script>
     
     <!-- CONTROLLO AUTENTICAZIONE -->
@@ -2806,10 +2808,16 @@
                 document.getElementById('modal-title').textContent = 'Nuovo Bollettino';
                 document.getElementById('bollettino-id').value = '';
                 document.getElementById('bollettino-data').value = new Date().toISOString().split('T')[0];
-                document.getElementById('bollettino-orario-inizio').value = '';
-                document.getElementById('bollettino-orario-fine').value = '';
+                
+                // Orario inizio: 08:00 di default
+                document.getElementById('bollettino-orario-inizio').value = '08:00';
+                
+                // Orario fine: ora attuale
+                const now = new Date();
+                const oraAttuale = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
+                document.getElementById('bollettino-orario-fine').value = oraAttuale;
+                
                 document.getElementById('bollettino-pausa').value = '60';
-                document.getElementById('bollettino-ore').textContent = '0.00 h';
                 document.getElementById('bollettino-cliente').value = '';
                 document.getElementById('bollettino-macchina').value = '';
                 document.getElementById('bollettino-tecnico').value = `${currentUser.nome || ''} ${currentUser.cognome || ''}`.trim();
@@ -2818,6 +2826,9 @@
                 
                 uploadedPhotos = [];
                 renderPhotosGrid();
+                
+                // Calcola ore con i valori di default
+                setTimeout(calcOre, 100);
             }
             
             initFirmaCanvas();
@@ -3248,8 +3259,8 @@
             // Gestione permessi pulsanti (usa isMyBollettino già calcolato sopra)
             const isOwner = isMyBollettino;
             
-            // Pulsante Modifica: owner può modificare se non validato, admin può sempre modificare
-            const canEdit = (isOwner && !isValidated) || isAdmin;
+            // Pulsante Modifica: NESSUNO può modificare se validato
+            const canEdit = !isValidated && (isOwner || isAdmin);
             document.getElementById('btn-modifica').style.display = canEdit ? 'block' : 'none';
             
             // Azioni Admin
@@ -3257,22 +3268,39 @@
             if (isAdmin) {
                 adminActions.style.display = 'flex';
                 
-                // Pulsante Valida: disabilitato se già validato
+                // Pulsante Valida: disabilitato se già validato O se manca la firma
                 const btnValidate = document.getElementById('btn-validate');
-                btnValidate.disabled = isValidated;
-                btnValidate.innerHTML = isValidated ? `
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
-                        <polyline points="22 4 12 14.01 9 11.01"/>
-                    </svg>
-                    Già Validato
-                ` : `
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
-                        <polyline points="22 4 12 14.01 9 11.01"/>
-                    </svg>
-                    Valida
-                `;
+                const canValidate = !isValidated && hasFirma;
+                btnValidate.disabled = !canValidate;
+                
+                if (isValidated) {
+                    btnValidate.innerHTML = `
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                            <polyline points="22 4 12 14.01 9 11.01"/>
+                        </svg>
+                        Già Validato
+                    `;
+                    btnValidate.title = '';
+                } else if (!hasFirma) {
+                    btnValidate.innerHTML = `
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                            <polyline points="22 4 12 14.01 9 11.01"/>
+                        </svg>
+                        Valida
+                    `;
+                    btnValidate.title = 'Firma cliente mancante';
+                } else {
+                    btnValidate.innerHTML = `
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                            <polyline points="22 4 12 14.01 9 11.01"/>
+                        </svg>
+                        Valida
+                    `;
+                    btnValidate.title = '';
+                }
                 
                 // Pulsante Elimina: disabilitato se validato
                 const btnDelete = document.getElementById('btn-delete');
@@ -3315,8 +3343,8 @@
                             (cognome && tecnicoDB.includes(cognome));
             const isValidated = bollettino.validato === true;
             
-            // Se validato e non admin, non può modificare
-            if (isValidated && !isAdmin) {
+            // Se validato, NESSUNO può modificare
+            if (isValidated) {
                 alert('Non puoi modificare un bollettino già validato.');
                 return;
             }
@@ -3465,6 +3493,14 @@
             // Doppio controllo validazione
             if (bollettino && bollettino.validato === true) {
                 alert('Questo bollettino è già stato validato.');
+                closeConfirmDialog('validate');
+                return;
+            }
+            
+            // Controllo firma
+            const hasFirma = bollettino && bollettino.firma_cliente && bollettino.firma_cliente.data;
+            if (!hasFirma) {
+                alert('Non puoi validare un bollettino senza la firma del cliente.');
                 closeConfirmDialog('validate');
                 return;
             }

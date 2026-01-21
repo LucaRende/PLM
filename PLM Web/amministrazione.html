@@ -507,11 +507,6 @@
             grid-column: 1 / -1;
         }
         
-        .stat-mini.rimanente-big .stat-mini-value {
-            font-size: 28px;
-            font-weight: 700;
-        }
-        
         .stat-mini-value {
             font-size: 18px;
             font-weight: 700;
@@ -608,7 +603,7 @@
         /* Banca Stats Dettagliate */
         .banca-stats-detail {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(4, 1fr);
             gap: var(--space-2);
             padding: var(--space-3);
             background: var(--surface-3);
@@ -621,7 +616,7 @@
         }
         
         .banca-stat-value {
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 700;
             color: var(--text-primary);
         }
@@ -631,7 +626,7 @@
         .banca-stat-value.yellow { color: #f59e0b; }
         
         .banca-stat-label {
-            font-size: 9px;
+            font-size: 8px;
             color: var(--text-muted);
             text-transform: uppercase;
             margin-top: 2px;
@@ -1258,19 +1253,15 @@
                             
                             <!-- Stats Riepilogo -->
                             <div class="stats-riepilogo">
-                                <div class="stat-mini">
+                                <div class="stat-mini full-width">
                                     <div class="stat-mini-value" id="stat-totale-fatture">0</div>
                                     <div class="stat-mini-label" id="stat-label-fatture">Fatture</div>
-                                </div>
-                                <div class="stat-mini">
-                                    <div class="stat-mini-value red" id="stat-totale-importo">€0</div>
-                                    <div class="stat-mini-label" id="stat-label-dapagare">Tot. da pagare</div>
                                 </div>
                                 <div class="stat-mini full-width">
                                     <div class="stat-mini-value green" id="stat-castelletto-totale">€0</div>
                                     <div class="stat-mini-label">Castelletto Tot.</div>
                                 </div>
-                                <div class="stat-mini full-width rimanente-big">
+                                <div class="stat-mini full-width">
                                     <div class="stat-mini-value green" id="stat-castelletto-rimanente">€0</div>
                                     <div class="stat-mini-label">Rimanente</div>
                                     <div class="stat-progress-bar">
@@ -1652,12 +1643,14 @@
                 // Update elementi
                 const countEl = document.getElementById(`banca-fatture-${idx}`);
                 const importoEl = document.getElementById(`banca-importo-${idx}`);
+                const daPagareEl = document.getElementById(`banca-dapagare-${idx}`);
                 const occupatoEl = document.getElementById(`banca-occupato-${idx}`);
                 const rimanenteEl = document.getElementById(`banca-rimanente-${idx}`);
                 const progressEl = document.getElementById(`banca-progress-${idx}`);
                 
                 if (countEl) countEl.textContent = `${fattureFiltered.length} su ${fatture.length}`;
-                if (importoEl) importoEl.textContent = formatEuroShort(occupato);
+                if (importoEl) importoEl.textContent = `${formatEuroShort(totaleDaPagareTuttiMesiBanca)} ${currentYear}`;
+                if (daPagareEl) daPagareEl.textContent = formatEuroShort(daPagareMeseCorrenteBanca);
                 if (occupatoEl) occupatoEl.textContent = formatEuroShort(occupato);
                 if (rimanenteEl) {
                     rimanenteEl.textContent = formatEuroShort(rimanente);
@@ -1689,7 +1682,6 @@
             
             // Stats fatture
             document.getElementById('stat-totale-fatture').textContent = `${fattureFiltered.length} su ${totale}`;
-            document.getElementById('stat-totale-importo').textContent = formatEuro(daPagareMeseCorrente);
             
             // Stats castelletto globali - FORMULA CORRETTA C#
             const castellettoTotale = Object.values(castellettiPerBanca).reduce((sum, c) => sum + c, 0);
@@ -1771,18 +1763,13 @@
             
             // Update stats globali
             document.getElementById('stat-totale-fatture').textContent = `${fattureFilteredGlobal.length}/${totale}`;
-            document.getElementById('stat-totale-importo').textContent = formatEuro(daPagareMeseCorrenteGlobal);
             document.getElementById('stat-castelletto-totale').textContent = formatEuro(castellettoTotaleGlobal);
             document.getElementById('stat-castelletto-rimanente').textContent = formatEuro(castellettoRimanenteGlobal);
             
             // Update label dinamiche con mese (con controlli di sicurezza)
             const labelFatture = document.getElementById('stat-label-fatture');
-            const labelDaPagare = document.getElementById('stat-label-dapagare');
             if (labelFatture && selectedMese !== null && MESI_FULL[selectedMese]) {
                 labelFatture.textContent = `Fatture ${MESI_FULL[selectedMese].toUpperCase()}`;
-            }
-            if (labelDaPagare && selectedMese !== null && MESI_FULL[selectedMese]) {
-                labelDaPagare.textContent = `Tot. da pagare ${MESI_FULL[selectedMese].toUpperCase()}`;
             }
             
             // Update progress bar globale
@@ -1863,7 +1850,7 @@
                                 <div class="banca-card-stats">
                                     <span class="banca-fatture-count" id="banca-fatture-${idx}">${fattureFiltered.length} su ${fatture.length}</span>
                                     <span>·</span>
-                                    <span class="red" id="banca-importo-${idx}">${formatEuroShort(occupato)}</span>
+                                    <span class="red" id="banca-importo-${idx}">${formatEuroShort(totaleDaPagareTuttiMesiBanca)} ${currentYear}</span>
                                     ${castelletto > 0 ? `<span>·</span><span class="green">Cast. ${formatEuroShort(castelletto)}</span>` : ''}
                                 </div>
                             </div>
@@ -1876,16 +1863,20 @@
                                 ${castelletto > 0 ? `
                                 <div class="banca-stats-detail">
                                     <div class="banca-stat-item">
+                                        <div class="banca-stat-value red" id="banca-dapagare-${idx}">${formatEuroShort(daPagareMeseCorrenteBanca)}</div>
+                                        <div class="banca-stat-label">Da pagare ${MESI_FULL[selectedMese]}</div>
+                                    </div>
+                                    <div class="banca-stat-item">
                                         <div class="banca-stat-value green">${formatEuroShort(castelletto)}</div>
                                         <div class="banca-stat-label">Castelletto</div>
                                     </div>
                                     <div class="banca-stat-item">
-                                        <div class="banca-stat-value red" id="banca-occupato-${idx}">${formatEuroShort(occupato)}</div>
-                                        <div class="banca-stat-label">Occupato</div>
-                                    </div>
-                                    <div class="banca-stat-item">
                                         <div class="banca-stat-value ${colorClass}" id="banca-rimanente-${idx}">${formatEuroShort(rimanente)}</div>
                                         <div class="banca-stat-label">Rimanente</div>
+                                    </div>
+                                    <div class="banca-stat-item">
+                                        <div class="banca-stat-value red" id="banca-occupato-${idx}">${formatEuroShort(occupato)}</div>
+                                        <div class="banca-stat-label">Occupato</div>
                                     </div>
                                     <div class="banca-progress-bar">
                                         <div class="banca-progress-fill" id="banca-progress-${idx}" style="width: ${Math.min(100, percentuale)}%; background: ${progressColor};"></div>
@@ -1929,17 +1920,13 @@
                 // Stats per la banca selezionata
                 const fattureBanca = fattureMese.filter(f => f.bancaAssociata === selectedBancaNome);
                 const fattureFiltered = fattureBanca.filter(f => f.dataScadenza && new Date(f.dataScadenza).getDate() <= currentDayFilter);
-                const daPagareMese = calcDaPagareMese(selectedMese, selectedBancaNome);
                 
                 document.getElementById('stat-totale-fatture').textContent = `${fattureFiltered.length}/${totale}`;
-                document.getElementById('stat-totale-importo').textContent = formatEuro(daPagareMese);
             } else {
                 // Stats globali (tutte le banche)
                 const fattureFiltered = fattureMese.filter(f => f.dataScadenza && new Date(f.dataScadenza).getDate() <= currentDayFilter);
-                const daPagareMese = calcDaPagareMese(selectedMese, null);
                 
                 document.getElementById('stat-totale-fatture').textContent = `${fattureFiltered.length}/${totale}`;
-                document.getElementById('stat-totale-importo').textContent = formatEuro(daPagareMese);
             }
         }
         

@@ -20,16 +20,8 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="Load/loader.css">
     
-    <!-- Loader JS - caricato subito per mostrare il loading -->
+    <!-- Loader JS -->
     <script src="Load/loader.js"></script>
-    <script>
-        // Mostra loader appena il DOM è pronto
-        document.addEventListener('DOMContentLoaded', function() {
-            if (typeof Loader !== 'undefined') {
-                Loader.show('pagina', 'Caricamento bollettini...');
-            }
-        });
-    </script>
     
     <!-- CONTROLLO AUTENTICAZIONE -->
     <script>
@@ -3547,13 +3539,13 @@
         // =============================================
         // INIT
         // =============================================
-        window.addEventListener('load', async function() {
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Mostra loader SUBITO
+            if (typeof Loader !== 'undefined') {
+                Loader.show('pagina', 'Caricamento bollettini...');
+            }
+            
             try {
-                // Loader già mostrato nell'head, aggiorna solo il testo
-                if (typeof Loader !== 'undefined') {
-                    Loader.updateText('Caricamento dati...');
-                }
-                
                 // Inizializza
                 loadUserData();
                 await initSupabase();
@@ -3567,7 +3559,7 @@
             } catch (error) {
                 console.error('Errore inizializzazione:', error);
             } finally {
-                // Nascondi loader - la pagina è già pronta dietro
+                // Nascondi loader SOLO quando tutto è pronto
                 if (typeof Loader !== 'undefined') {
                     Loader.hide();
                 }

@@ -1273,6 +1273,26 @@
             color: var(--text-muted);
         }
         
+        /* Input con icona/suffix */
+        .input-with-icon {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        
+        .input-with-icon .form-input {
+            padding-right: 40px;
+        }
+        
+        .input-icon-suffix {
+            position: absolute;
+            right: 14px;
+            color: var(--text-muted);
+            font-size: 15px;
+            font-weight: 500;
+            pointer-events: none;
+        }
+        
         .form-input.readonly {
             background: var(--surface-3);
             color: var(--text-secondary);
@@ -1815,6 +1835,30 @@
             object-fit: cover;
         }
         
+        /* Totale Speso nel Dettaglio */
+        .detail-totale-speso {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--space-3) var(--space-4);
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(5, 150, 105, 0.15) 100%);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: var(--radius-lg);
+            margin-top: var(--space-3);
+        }
+        
+        .totale-speso-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+        
+        .totale-speso-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: #10b981;
+        }
+        
         /* =============================================
            RESPONSIVE TABLET/DESKTOP
            ============================================= */
@@ -2173,6 +2217,15 @@
                             </div>
                             <input type="file" id="scontrini-input" accept="image/*" multiple onchange="handlePhotoUpload(event)">
                             <p class="form-hint" style="margin-top: var(--space-2);">Puoi caricare più foto di scontrini del pranzo</p>
+                        </div>
+                        
+                        <!-- Totale Speso -->
+                        <div class="form-group" style="margin-top: var(--space-4);">
+                            <label class="form-label">💰 Totale Speso (€)</label>
+                            <div class="input-with-icon">
+                                <input type="number" class="form-input" id="bollettino-totale-speso" placeholder="0.00" step="0.01" min="0">
+                                <span class="input-icon-suffix">€</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -2668,6 +2721,13 @@
                 // Applica filtri iniziali
                 applyFilters();
                 
+                // ASPETTA che il browser abbia renderizzato le card
+                await new Promise(resolve => {
+                    requestAnimationFrame(() => {
+                        requestAnimationFrame(resolve);
+                    });
+                });
+                
             } catch (error) {
                 console.error('Errore caricamento:', error);
                 document.getElementById('bollettini-list').innerHTML = `
@@ -2835,6 +2895,7 @@
                 document.getElementById('bollettino-tecnico').value = `${currentUser.nome || ''} ${currentUser.cognome || ''}`.trim();
                 document.getElementById('bollettino-lavori').value = '';
                 document.getElementById('bollettino-note').value = '';
+                document.getElementById('bollettino-totale-speso').value = '';
                 
                 uploadedPhotos = [];
                 renderPhotosGrid();
@@ -3073,6 +3134,7 @@
                 note: document.getElementById('bollettino-note').value || null,
                 firma_cliente: getFirmaData(),
                 foto_scontrini: uploadedPhotos.length > 0 ? uploadedPhotos : null,
+                totale_speso: parseFloat(document.getElementById('bollettino-totale-speso').value) || null,
                 data_modifica: new Date().toISOString()
             };
             
@@ -3108,7 +3170,19 @@
                 }
                 
                 closeModal();
-                await loadBollettini();
+                
+                // Aggiorna testo loader
+                Loader.updateText('Aggiornamento lista...');
+                
+                // Ricarica senza loader interno (usa quello già attivo)
+                await loadBollettini(false);
+                
+                // Aspetta rendering
+                await new Promise(resolve => {
+                    requestAnimationFrame(() => {
+                        requestAnimationFrame(resolve);
+                    });
+                });
                 
             } catch (error) {
                 console.error('Errore salvataggio:', error);
@@ -3254,9 +3328,10 @@
                     `}
                 </div>
                 
-                ${hasPhotos ? `
+                ${hasPhotos || bollettino.totale_speso ? `
                 <div class="detail-section">
-                    <div class="detail-section-title">🧾 Scontrini Pranzo (${bollettino.foto_scontrini.length})</div>
+                    <div class="detail-section-title">🧾 Scontrini Pranzo${hasPhotos ? ` (${bollettino.foto_scontrini.length})` : ''}</div>
+                    ${hasPhotos ? `
                     <div class="detail-photos">
                         ${bollettino.foto_scontrini.map((photo, i) => `
                             <div class="detail-photo" onclick="openPhotoModal('${photo.data}')">
@@ -3264,6 +3339,13 @@
                             </div>
                         `).join('')}
                     </div>
+                    ` : ''}
+                    ${bollettino.totale_speso ? `
+                    <div class="detail-totale-speso">
+                        <span class="totale-speso-label">💰 Totale Speso</span>
+                        <span class="totale-speso-value">€ ${parseFloat(bollettino.totale_speso).toFixed(2)}</span>
+                    </div>
+                    ` : ''}
                 </div>
                 ` : ''}
             `;
@@ -3382,6 +3464,7 @@
             document.getElementById('bollettino-tecnico').value = bollettino.tecnico_installatore || '';
             document.getElementById('bollettino-lavori').value = bollettino.lavori_eseguiti || '';
             document.getElementById('bollettino-note').value = bollettino.note || '';
+            document.getElementById('bollettino-totale-speso').value = bollettino.totale_speso || '';
             
             // Carica foto esistenti
             uploadedPhotos = bollettino.foto_scontrini || [];
@@ -3484,7 +3567,19 @@
                 if (error) throw error;
                 
                 closeModalDettaglio();
-                await loadBollettini();
+                
+                // Aggiorna testo
+                Loader.updateText('Aggiornamento lista...');
+                
+                // Ricarica senza loader interno
+                await loadBollettini(false);
+                
+                // Aspetta rendering
+                await new Promise(resolve => {
+                    requestAnimationFrame(() => {
+                        requestAnimationFrame(resolve);
+                    });
+                });
                 
             } catch (error) {
                 console.error('Errore eliminazione:', error);
@@ -3534,14 +3629,28 @@
                 
                 if (error) throw error;
                 
-                // Aggiorna lista e riapri dettaglio aggiornato
-                await loadBollettini();
+                // Aggiorna testo
+                Loader.updateText('Aggiornamento...');
+                
+                // Aggiorna lista senza loader interno
+                await loadBollettini(false);
+                
+                // Aspetta rendering
+                await new Promise(resolve => {
+                    requestAnimationFrame(() => {
+                        requestAnimationFrame(resolve);
+                    });
+                });
+                
+                // Nascondi loader prima di riaprire dettaglio
+                Loader.hide();
+                
+                // Riapri dettaglio aggiornato
                 openDettaglio(currentBollettinoId);
                 
             } catch (error) {
                 console.error('Errore validazione:', error);
                 alert('Errore durante la validazione: ' + error.message);
-            } finally {
                 Loader.hide();
             }
         }
@@ -3582,10 +3691,17 @@
                 document.getElementById('bollettino-orario-fine').addEventListener('change', calcOre);
                 document.getElementById('bollettino-pausa').addEventListener('input', calcOre);
                 
+                // ASPETTA che il browser abbia renderizzato le card
+                await new Promise(resolve => {
+                    requestAnimationFrame(() => {
+                        requestAnimationFrame(resolve);
+                    });
+                });
+                
             } catch (error) {
                 console.error('Errore inizializzazione:', error);
             } finally {
-                // Nascondi loader SOLO quando tutto è pronto
+                // Nascondi loader SOLO quando tutto è renderizzato
                 if (typeof Loader !== 'undefined') {
                     Loader.hide();
                 }

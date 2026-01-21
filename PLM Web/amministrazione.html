@@ -1763,13 +1763,14 @@
                 const totaleDaPagareTuttiMesiBanca = calcTotaleDaPagareTuttiMesi(banca);
                 const totaleDaPagareAnnoFiltratoBanca = calcTotaleDaPagareAnnoFiltrato(banca, selectedMese, currentDayFilter);
                 const daPagareMeseGiornoBanca = calcDaPagareMeseGiorno(selectedMese, banca, currentDayFilter);
+                const daPagareMeseTotaleBanca = calcDaPagareMese(selectedMese, banca); // Totale mese senza filtro giorno
                 
                 // Calcola rimanente e occupato con formula corretta
                 const rimanente = castelletto + totaleDaPagareAnnoFiltratoBanca;
                 const occupato = castelletto - rimanente;
                 const percentuale = castelletto > 0 ? (Math.abs(occupato) / castelletto) * 100 : 0;
                 
-                console.log(`[${banca}] idx=${idx}, giorno=${currentDayFilter}, filtrato=${formatEuroShort(totaleDaPagareAnnoFiltratoBanca)}, totale=${formatEuroShort(totaleDaPagareTuttiMesiBanca)}, rimanente=${formatEuroShort(rimanente)}`);
+                console.log(`[${banca}] idx=${idx}, giorno=${currentDayFilter}, meseFiltrato=${formatEuroShort(daPagareMeseGiornoBanca)}, meseTotale=${formatEuroShort(daPagareMeseTotaleBanca)}`);
                 
                 // Colori
                 const colorClass = rimanente < 0 ? 'red' : percentuale > 80 ? 'red' : percentuale > 50 ? 'yellow' : 'green';
@@ -1783,10 +1784,8 @@
                 const rimanenteEl = document.getElementById(`banca-rimanente-${idx}`);
                 const progressEl = document.getElementById(`banca-progress-${idx}`);
                 
-                console.log(`[${banca}] importoEl trovato:`, !!importoEl);
-                
                 if (countEl) countEl.textContent = `${fattureFiltered.length} su ${fatture.length}`;
-                if (importoEl) importoEl.textContent = `${formatEuroShort(totaleDaPagareAnnoFiltratoBanca)} su ${formatEuroShort(totaleDaPagareTuttiMesiBanca)}`;
+                if (importoEl) importoEl.textContent = `${formatEuroShort(daPagareMeseGiornoBanca)} su ${formatEuroShort(daPagareMeseTotaleBanca)}`;
                 if (daPagareEl) {
                     daPagareEl.textContent = formatEuroShort(daPagareMeseGiornoBanca);
                 }
@@ -2006,6 +2005,7 @@
                 const totaleDaPagareTuttiMesiBanca = calcTotaleDaPagareTuttiMesi(banca);
                 const totaleDaPagareAnnoFiltratoBanca = calcTotaleDaPagareAnnoFiltrato(banca, selectedMese, currentDayFilter);
                 const daPagareMeseGiornoBanca = calcDaPagareMeseGiorno(selectedMese, banca, currentDayFilter);
+                const daPagareMeseTotaleBanca = calcDaPagareMese(selectedMese, banca); // Totale mese senza filtro giorno
                 
                 // FORMULA CORRETTA con filtro giorno
                 const rimanente = castelletto + totaleDaPagareAnnoFiltratoBanca;
@@ -2029,7 +2029,7 @@
                                 <div class="banca-card-name">${banca}</div>
                                 <div class="banca-card-stats-multi">
                                     <div class="banca-stat-row"><span class="banca-fatture-count" id="banca-fatture-${idx}">${fattureFiltered.length} su ${fatture.length}</span></div>
-                                    <div class="banca-stat-row"><span class="stat-label-mini">Tot. da pagare ${currentYear}:</span> <span class="red" id="banca-importo-${idx}">${formatEuroShort(totaleDaPagareAnnoFiltratoBanca)} su ${formatEuroShort(totaleDaPagareTuttiMesiBanca)}</span></div>
+                                    <div class="banca-stat-row"><span class="stat-label-mini">Tot. da pagare ${MESI_FULL[selectedMese]}:</span> <span class="red" id="banca-importo-${idx}">${formatEuroShort(daPagareMeseGiornoBanca)} su ${formatEuroShort(daPagareMeseTotaleBanca)}</span></div>
                                     ${castelletto > 0 ? `<div class="banca-stat-row"><span class="stat-label-mini">Castelletto:</span> <span class="green">${formatEuroShort(castelletto)}</span></div>` : ''}
                                 </div>
                             </div>

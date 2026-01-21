@@ -600,6 +600,28 @@
         .banca-card-stats .green { color: #22c55e; }
         .banca-card-stats .red { color: #ef4444; }
         
+        /* Banca Stats Multi-riga */
+        .banca-card-stats-multi {
+            font-size: 11px;
+            color: var(--text-muted);
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        
+        .banca-stat-row {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .banca-stat-row .green { color: #22c55e; font-weight: 600; }
+        .banca-stat-row .red { color: #ef4444; font-weight: 600; }
+        
+        .stat-label-mini {
+            color: var(--text-muted);
+        }
+        
         /* Banca Stats Dettagliate */
         .banca-stats-detail {
             display: grid;
@@ -1733,7 +1755,6 @@
             
             // Aggiorna stats per ogni banca - LOGICA CORRETTA C# con filtro giorno
             const banche = Object.keys(bancheMap).sort();
-            console.log('updateBancheStats chiamata, banche:', banche.length, 'currentDayFilter:', currentDayFilter);
             banche.forEach((banca, idx) => {
                 const fatture = bancheMap[banca];
                 const castelletto = castellettiPerBanca[banca] || 0;
@@ -1761,12 +1782,9 @@
                 const progressEl = document.getElementById(`banca-progress-${idx}`);
                 
                 if (countEl) countEl.textContent = `${fattureFiltered.length} su ${fatture.length}`;
-                if (importoEl) importoEl.textContent = `${formatEuroShort(totaleDaPagareTuttiMesiBanca)} ${currentYear}`;
+                if (importoEl) importoEl.textContent = formatEuroShort(totaleDaPagareTuttiMesiBanca);
                 if (daPagareEl) {
                     daPagareEl.textContent = formatEuroShort(daPagareMeseGiornoBanca);
-                    console.log(`Banca ${idx} (${banca}): daPagare aggiornato a ${formatEuroShort(daPagareMeseGiornoBanca)}`);
-                } else {
-                    console.log(`Banca ${idx} (${banca}): elemento banca-dapagare-${idx} NON TROVATO`);
                 }
                 if (occupatoEl) {
                     occupatoEl.textContent = formatEuroShort(occupato);
@@ -1982,11 +2000,10 @@
                             </div>
                             <div class="banca-card-info">
                                 <div class="banca-card-name">${banca}</div>
-                                <div class="banca-card-stats">
-                                    <span class="banca-fatture-count" id="banca-fatture-${idx}">${fattureFiltered.length} su ${fatture.length}</span>
-                                    <span>·</span>
-                                    <span class="red" id="banca-importo-${idx}">${formatEuroShort(totaleDaPagareTuttiMesiBanca)} ${currentYear}</span>
-                                    ${castelletto > 0 ? `<span>·</span><span class="green">Cast. ${formatEuroShort(castelletto)}</span>` : ''}
+                                <div class="banca-card-stats-multi">
+                                    <div class="banca-stat-row"><span class="banca-fatture-count" id="banca-fatture-${idx}">${fattureFiltered.length} su ${fatture.length}</span></div>
+                                    <div class="banca-stat-row"><span class="stat-label-mini">Tot. da pagare ${currentYear}:</span> <span class="red" id="banca-importo-${idx}">${formatEuroShort(totaleDaPagareTuttiMesiBanca)}</span></div>
+                                    ${castelletto > 0 ? `<div class="banca-stat-row"><span class="stat-label-mini">Castelletto:</span> <span class="green">${formatEuroShort(castelletto)}</span></div>` : ''}
                                 </div>
                             </div>
                             <svg class="banca-card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">

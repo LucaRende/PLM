@@ -2342,8 +2342,11 @@
             if (currentUser.cognome) document.getElementById('userSurname').textContent = currentUser.cognome;
             if (currentUser.nome) document.getElementById('userFirstName').textContent = currentUser.nome;
             
-            // Check se è admin
-            isAdmin = currentUser.ruolo === 'Amministratore' || currentUser.ruolo === 'Admin' || currentUser.is_admin === true;
+            // Check se è admin o manager (possono validare bollettini)
+            isAdmin = currentUser.ruolo === 'Amministratore' || 
+                      currentUser.ruolo === 'Admin' || 
+                      currentUser.ruolo === 'Manager' ||
+                      currentUser.is_admin === true;
             
             // Mostra/nascondi filtro operatore e bottone "tutti"
             if (isAdmin) {

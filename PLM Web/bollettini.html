@@ -184,28 +184,28 @@
         /* Barra Ricerca SEMPRE VISIBILE */
         .search-row {
             display: flex;
-            gap: var(--space-2);
-            padding: var(--space-3) var(--space-4);
+            gap: 8px;
+            padding: 12px 16px;
             background: var(--surface-1);
+            align-items: center;
         }
         
         .search-bar {
             flex: 1;
             position: relative;
+            min-width: 0;
         }
         
         .search-bar input {
             width: 100%;
-            height: 44px;
-            padding: 0 var(--space-4);
-            padding-left: 40px;
-            padding-right: 40px;
+            height: 42px;
+            padding: 0 40px 0 38px;
             font-family: var(--font-sans);
             font-size: 15px;
             color: var(--text-primary);
             background: var(--surface-2);
             border: 1px solid var(--border-default);
-            border-radius: var(--radius-xl);
+            border-radius: 12px;
             outline: none;
             transition: all var(--transition-fast);
         }
@@ -224,15 +224,15 @@
             left: 12px;
             top: 50%;
             transform: translateY(-50%);
-            width: 20px;
-            height: 20px;
+            width: 18px;
+            height: 18px;
             color: var(--text-muted);
             pointer-events: none;
         }
         
         .search-bar .btn-clear-search {
             position: absolute;
-            right: 8px;
+            right: 6px;
             top: 50%;
             transform: translateY(-50%);
             width: 28px;
@@ -258,14 +258,14 @@
         
         /* Pulsante espandi filtri */
         .btn-expand-filters {
-            width: 44px;
-            height: 44px;
+            width: 42px;
+            height: 42px;
             display: flex;
             align-items: center;
             justify-content: center;
             background: var(--surface-2);
             border: 1px solid var(--border-default);
-            border-radius: var(--radius-xl);
+            border-radius: 12px;
             color: var(--text-secondary);
             cursor: pointer;
             position: relative;
@@ -290,8 +290,8 @@
         
         .filter-badge {
             position: absolute;
-            top: -4px;
-            right: -4px;
+            top: -5px;
+            right: -5px;
             min-width: 18px;
             height: 18px;
             padding: 0 5px;
@@ -311,14 +311,14 @@
         
         /* Pulsante Nuovo */
         .btn-new {
-            width: 44px;
-            height: 44px;
+            width: 42px;
+            height: 42px;
             display: flex;
             align-items: center;
             justify-content: center;
             background: var(--primary);
             border: none;
-            border-radius: var(--radius-xl);
+            border-radius: 12px;
             color: white;
             cursor: pointer;
             flex-shrink: 0;
@@ -344,21 +344,21 @@
         }
         
         .filters-panel.open {
-            max-height: 600px;
+            max-height: 500px;
             border-top: 1px solid var(--border-subtle);
         }
         
         .filters-inner {
-            padding: var(--space-4);
+            padding: 16px;
             display: flex;
             flex-direction: column;
-            gap: var(--space-3);
+            gap: 16px;
         }
         
-        /* Toggle Miei/Tutti */
+        /* Toggle Miei/Tutti + Reset - RIGA COMPATTA */
         .filter-toggle-container {
             display: flex;
-            gap: var(--space-2);
+            gap: 10px;
             align-items: center;
         }
         
@@ -366,22 +366,24 @@
             flex: 1;
             display: flex;
             background: var(--surface-2);
-            border-radius: var(--radius-lg);
+            border-radius: 10px;
             padding: 3px;
+            gap: 3px;
         }
         
         .filter-toggle-btn {
             flex: 1;
-            padding: var(--space-2) var(--space-3);
+            padding: 10px 12px;
             border: none;
             background: transparent;
             color: var(--text-muted);
             font-family: var(--font-sans);
             font-size: 13px;
             font-weight: 600;
-            border-radius: var(--radius-md);
+            border-radius: 8px;
             cursor: pointer;
             transition: all 0.2s ease;
+            white-space: nowrap;
         }
         
         .filter-toggle-btn.active {
@@ -390,27 +392,28 @@
         }
         
         .btn-reset-filters {
-            padding: var(--space-2) var(--space-3);
+            padding: 10px 14px;
             background: var(--surface-3);
             border: 1px solid var(--border-default);
-            border-radius: var(--radius-md);
+            border-radius: 8px;
             color: var(--text-muted);
             font-family: var(--font-sans);
-            font-size: 12px;
+            font-size: 13px;
             font-weight: 500;
             cursor: pointer;
             white-space: nowrap;
+            flex-shrink: 0;
         }
         
         .btn-reset-filters:active {
             background: var(--surface-4);
         }
         
-        /* Filtri Grid */
+        /* Filtri Grid - 2 COLONNE SU MOBILE */
         .filters-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: var(--space-3);
+            gap: 12px;
         }
         
         .filter-group {
@@ -434,15 +437,17 @@
         .filter-select,
         .filter-input {
             height: 40px;
-            padding: 0 var(--space-3);
+            padding: 0 12px;
             font-family: var(--font-sans);
             font-size: 14px;
             color: var(--text-primary);
             background: var(--surface-2);
             border: 1px solid var(--border-default);
-            border-radius: var(--radius-lg);
+            border-radius: 10px;
             outline: none;
             transition: all var(--transition-fast);
+            width: 100%;
+            box-sizing: border-box;
         }
         
         .filter-select {
@@ -459,24 +464,25 @@
             box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.1);
         }
         
-        /* Date Range */
+        /* Date Range - PIU' COMPATTO */
         .date-range {
             display: flex;
-            gap: var(--space-2);
+            gap: 8px;
             align-items: center;
         }
         
         .date-range input {
             flex: 1;
             height: 40px;
-            padding: 0 var(--space-2);
+            padding: 0 8px;
             font-family: var(--font-sans);
             font-size: 13px;
             color: var(--text-primary);
             background: var(--surface-2);
             border: 1px solid var(--border-default);
-            border-radius: var(--radius-md);
+            border-radius: 10px;
             outline: none;
+            min-width: 0;
         }
         
         .date-range input:focus {
@@ -485,20 +491,22 @@
         
         .date-range span {
             color: var(--text-muted);
-            font-size: 12px;
+            font-size: 14px;
+            flex-shrink: 0;
         }
         
         /* Chips filtri attivi */
         .active-filters {
             display: flex;
             flex-wrap: wrap;
-            gap: var(--space-2);
-            padding: 0 var(--space-4) var(--space-3);
+            gap: 8px;
+            padding: 0 16px 12px;
             background: var(--surface-1);
         }
         
         .active-filters:empty {
             display: none;
+            padding: 0;
         }
         
         .filter-chip {
@@ -3151,8 +3159,7 @@
                 ` : ''}
             `;
             
-            // Gestione permessi pulsanti
-            const tecnicoCorrente = `${currentUser.nome || ''} ${currentUser.cognome || ''}`.trim();
+            // Gestione permessi pulsanti (usa tecnicoCorrente già dichiarato sopra)
             const isOwner = bollettino.tecnico_installatore === tecnicoCorrente;
             
             // Pulsante Modifica: owner può modificare se non validato, admin può sempre modificare

@@ -20,6 +20,15 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="Load/loader.css">
     
+    <!-- Loader JS - caricato subito per mostrare il loading -->
+    <script src="Load/loader.js"></script>
+    <script>
+        // Mostra loader IMMEDIATAMENTE
+        if (typeof Loader !== 'undefined') {
+            Loader.show('pagina', 'Caricamento bollettini...');
+        }
+    </script>
+    
     <!-- CONTROLLO AUTENTICAZIONE -->
     <script>
         (function() {
@@ -2277,9 +2286,6 @@
         </div>
     </div>
     
-    <!-- Loader Script -->
-    <script src="Load/loader.js"></script>
-    
     <script>
         // =============================================
         // VARIABILI GLOBALI
@@ -3508,9 +3514,9 @@
         // =============================================
         window.addEventListener('load', async function() {
             try {
-                // Mostra loader pagina SUBITO
+                // Loader già mostrato nell'head, aggiorna solo il testo
                 if (typeof Loader !== 'undefined') {
-                    Loader.show('pagina', 'Caricamento bollettini...');
+                    Loader.updateText('Caricamento dati...');
                 }
                 
                 // Inizializza

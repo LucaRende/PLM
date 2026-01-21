@@ -1706,13 +1706,13 @@
                 bancheMap[banca].push(f);
             });
             
-            // LOGICA CORRETTA C#: Calcola totale da pagare TUTTI i mesi (globale)
+            // LOGICA CORRETTA C# con filtro giorno per stats globali
             const totaleDaPagareTuttiMesiGlobal = calcTotaleDaPagareTuttiMesi(null);
-            const daPagareMeseCorrenteGlobal = calcDaPagareMese(selectedMese, null);
+            const daPagareMeseGiornoGlobal = calcDaPagareMeseGiorno(selectedMese, null, currentDayFilter);
             const castellettoTotaleGlobal = Object.values(castellettiPerBanca).reduce((sum, c) => sum + c, 0);
             
-            // FORMULA CORRETTA C#
-            const castellettoRimanenteGlobal = castellettoTotaleGlobal + totaleDaPagareTuttiMesiGlobal - daPagareMeseCorrenteGlobal;
+            // FORMULA CORRETTA C# con filtro giorno
+            const castellettoRimanenteGlobal = castellettoTotaleGlobal + totaleDaPagareTuttiMesiGlobal - daPagareMeseGiornoGlobal;
             const castellettoOccupatoGlobal = castellettoTotaleGlobal - castellettoRimanenteGlobal;
             const percentualeGlobal = castellettoTotaleGlobal > 0 ? (Math.abs(castellettoOccupatoGlobal) / castellettoTotaleGlobal) * 100 : 0;
             
@@ -1731,17 +1731,20 @@
                 rimanenteEl.className = 'stat-mini-value ' + (castellettoRimanenteGlobal < 0 ? 'red' : percentualeGlobal > 80 ? 'red' : percentualeGlobal > 50 ? '' : 'green');
             }
             
-            // Aggiorna stats per ogni banca - LOGICA CORRETTA C#
+            // Aggiorna stats per ogni banca - LOGICA CORRETTA C# con filtro giorno
             const banche = Object.keys(bancheMap).sort();
+            console.log('updateBancheStats chiamata, banche:', banche.length, 'currentDayFilter:', currentDayFilter);
             banche.forEach((banca, idx) => {
                 const fatture = bancheMap[banca];
                 const castelletto = castellettiPerBanca[banca] || 0;
                 const fattureFiltered = fatture.filter(f => f.dataScadenza && new Date(f.dataScadenza).getDate() <= currentDayFilter);
                 
-                // LOGICA CORRETTA C#
+                // LOGICA CORRETTA C# con filtro giorno
                 const totaleDaPagareTuttiMesiBanca = calcTotaleDaPagareTuttiMesi(banca);
-                const daPagareMeseCorrenteBanca = calcDaPagareMese(selectedMese, banca);
-                const rimanente = castelletto + totaleDaPagareTuttiMesiBanca - daPagareMeseCorrenteBanca;
+                const daPagareMeseGiornoBanca = calcDaPagareMeseGiorno(selectedMese, banca, currentDayFilter);
+                
+                // Calcola rimanente e occupato in base al giorno filtrato
+                const rimanente = castelletto + totaleDaPagareTuttiMesiBanca - daPagareMeseGiornoBanca;
                 const occupato = castelletto - rimanente;
                 const percentuale = castelletto > 0 ? (Math.abs(occupato) / castelletto) * 100 : 0;
                 
@@ -1759,8 +1762,16 @@
                 
                 if (countEl) countEl.textContent = `${fattureFiltered.length} su ${fatture.length}`;
                 if (importoEl) importoEl.textContent = `${formatEuroShort(totaleDaPagareTuttiMesiBanca)} ${currentYear}`;
-                if (daPagareEl) daPagareEl.textContent = formatEuroShort(daPagareMeseCorrenteBanca);
-                if (occupatoEl) occupatoEl.textContent = formatEuroShort(occupato);
+                if (daPagareEl) {
+                    daPagareEl.textContent = formatEuroShort(daPagareMeseGiornoBanca);
+                    console.log(`Banca ${idx} (${banca}): daPagare aggiornato a ${formatEuroShort(daPagareMeseGiornoBanca)}`);
+                } else {
+                    console.log(`Banca ${idx} (${banca}): elemento banca-dapagare-${idx} NON TROVATO`);
+                }
+                if (occupatoEl) {
+                    occupatoEl.textContent = formatEuroShort(occupato);
+                    occupatoEl.className = 'banca-stat-value red';
+                }
                 if (rimanenteEl) {
                     rimanenteEl.textContent = formatEuroShort(rimanente);
                     rimanenteEl.className = `banca-stat-value ${colorClass}`;
@@ -1785,16 +1796,16 @@
             const totale = fattureMese.length;
             const fattureFiltered = fattureMese.filter(f => f.dataScadenza && new Date(f.dataScadenza).getDate() <= currentDayFilter);
             
-            // LOGICA CORRETTA C#: Calcola totale da pagare TUTTI i mesi
+            // LOGICA CORRETTA C# con filtro giorno
             const totaleDaPagareTuttiMesi = calcTotaleDaPagareTuttiMesi(null);
-            const daPagareMeseCorrente = calcDaPagareMese(selectedMese, null);
+            const daPagareMeseGiorno = calcDaPagareMeseGiorno(selectedMese, null, currentDayFilter);
             
             // Stats fatture
             document.getElementById('stat-totale-fatture').textContent = `${fattureFiltered.length} su ${totale}`;
             
-            // Stats castelletto globali - FORMULA CORRETTA C#
+            // Stats castelletto globali - FORMULA CORRETTA C# con filtro giorno
             const castellettoTotale = Object.values(castellettiPerBanca).reduce((sum, c) => sum + c, 0);
-            const castellettoRimanente = castellettoTotale + totaleDaPagareTuttiMesi - daPagareMeseCorrente;
+            const castellettoRimanente = castellettoTotale + totaleDaPagareTuttiMesi - daPagareMeseGiorno;
             const castellettoOccupato = castellettoTotale - castellettoRimanente;
             const percentuale = castellettoTotale > 0 ? (Math.abs(castellettoOccupato) / castellettoTotale) * 100 : 0;
             
@@ -1843,6 +1854,21 @@
                 .reduce((sum, f) => sum + (f.importoDaPagare || 0), 0);
         }
         
+        // Funzione helper: calcola da pagare del mese filtrato per giorno
+        function calcDaPagareMeseGiorno(meseIdx, nomeBanca, giornoMax) {
+            if (!allFatture || !Array.isArray(allFatture)) return 0;
+            return allFatture
+                .filter(f => {
+                    if (!f.dataScadenza) return false;
+                    const date = new Date(f.dataScadenza);
+                    const matchMese = date.getMonth() === meseIdx && date.getFullYear() === currentYear;
+                    const matchGiorno = date.getDate() <= giornoMax;
+                    const matchBanca = nomeBanca ? (f.bancaAssociata === nomeBanca) : true;
+                    return matchMese && matchBanca && matchGiorno;
+                })
+                .reduce((sum, f) => sum + (f.importoDaPagare || 0), 0);
+        }
+        
         function renderBanchePerMese() {
             if (selectedMese === null) return;
             
@@ -1858,15 +1884,15 @@
             const totale = fattureMese.length;
             const fattureFilteredGlobal = fattureMese.filter(f => f.dataScadenza && new Date(f.dataScadenza).getDate() <= currentDayFilter);
             
-            // LOGICA CORRETTA C#: Calcola totale da pagare TUTTI i mesi (globale)
+            // LOGICA CORRETTA C# con filtro giorno per stats globali
             const totaleDaPagareTuttiMesiGlobal = calcTotaleDaPagareTuttiMesi(null);
-            const daPagareMeseCorrenteGlobal = calcDaPagareMese(selectedMese, null);
+            const daPagareMeseGiornoGlobal = calcDaPagareMeseGiorno(selectedMese, null, currentDayFilter);
             
             // Calcola castelletto totale globale (tutte le banche)
             const castellettoTotaleGlobal = Object.values(castellettiPerBanca).reduce((sum, c) => sum + c, 0);
             
-            // FORMULA CORRETTA C#: Castelletto rimanente = Castelletto + TotaleTuttiMesi - DaPagareMeseCorrente
-            const castellettoRimanenteGlobal = castellettoTotaleGlobal + totaleDaPagareTuttiMesiGlobal - daPagareMeseCorrenteGlobal;
+            // FORMULA CORRETTA C# con filtro giorno
+            const castellettoRimanenteGlobal = castellettoTotaleGlobal + totaleDaPagareTuttiMesiGlobal - daPagareMeseGiornoGlobal;
             const castellettoOccupatoGlobal = castellettoTotaleGlobal - castellettoRimanenteGlobal;
             const percentualeGlobal = castellettoTotaleGlobal > 0 ? (Math.abs(castellettoOccupatoGlobal) / castellettoTotaleGlobal) * 100 : 0;
             
@@ -1931,13 +1957,13 @@
                     `;
                 }).join('');
                 
-                // LOGICA CORRETTA C#: Calcola per questa banca specifica
+                // LOGICA CORRETTA C# con filtro giorno: Calcola per questa banca specifica
                 const fattureFiltered = fatture.filter(f => f.dataScadenza && new Date(f.dataScadenza).getDate() <= currentDayFilter);
                 const totaleDaPagareTuttiMesiBanca = calcTotaleDaPagareTuttiMesi(banca);
-                const daPagareMeseCorrenteBanca = calcDaPagareMese(selectedMese, banca);
+                const daPagareMeseGiornoBanca = calcDaPagareMeseGiorno(selectedMese, banca, currentDayFilter);
                 
-                // FORMULA CORRETTA C#
-                const rimanente = castelletto + totaleDaPagareTuttiMesiBanca - daPagareMeseCorrenteBanca;
+                // FORMULA CORRETTA C# con filtro giorno
+                const rimanente = castelletto + totaleDaPagareTuttiMesiBanca - daPagareMeseGiornoBanca;
                 const occupato = castelletto - rimanente;
                 const percentuale = castelletto > 0 ? (Math.abs(occupato) / castelletto) * 100 : 0;
                 
@@ -1972,7 +1998,7 @@
                                 ${castelletto > 0 ? `
                                 <div class="banca-stats-detail">
                                     <div class="banca-stat-item">
-                                        <div class="banca-stat-value red" id="banca-dapagare-${idx}">${formatEuroShort(daPagareMeseCorrenteBanca)}</div>
+                                        <div class="banca-stat-value red" id="banca-dapagare-${idx}">${formatEuroShort(daPagareMeseGiornoBanca)}</div>
                                         <div class="banca-stat-label">Da pagare ${MESI_FULL[selectedMese]}</div>
                                     </div>
                                     <div class="banca-stat-item">

@@ -736,6 +736,45 @@
            GESTIONE ACCOUNT
            ============================================= */
         
+        /* Filtro Ricerca Account */
+        .account-search-box {
+            position: relative;
+            margin-bottom: var(--space-3);
+        }
+        
+        .account-search-box .search-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 18px;
+            height: 18px;
+            color: var(--text-muted);
+            pointer-events: none;
+        }
+        
+        .account-filter-input {
+            width: 100%;
+            padding: 14px 14px 14px 44px;
+            background: var(--surface-3);
+            border: 1.5px solid var(--border-default);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-size: 14px;
+            font-family: 'Inter', sans-serif;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+        
+        .account-filter-input::placeholder {
+            color: var(--text-muted);
+        }
+        
+        .account-filter-input:focus {
+            border-color: var(--primary);
+            background: var(--surface-2);
+        }
+        
         .btn-new-account {
             width: 100%;
             padding: var(--space-4);
@@ -1267,6 +1306,14 @@
                 </div>
                 <div class="section-content">
                     <div class="section-inner">
+                        <!-- Filtro Ricerca Account -->
+                        <div class="account-search-box">
+                            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="11" cy="11" r="8"/>
+                                <path d="M21 21l-4.35-4.35"/>
+                            </svg>
+                            <input type="text" id="account-filter" class="account-filter-input" placeholder="Cerca per nome o cognome..." oninput="filterAccounts()">
+                        </div>
                         <button class="btn-new-account" onclick="openAccountModal()">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <line x1="12" y1="5" x2="12" y2="19"/>
@@ -1911,14 +1958,36 @@
             }
         }
         
+        function filterAccounts() {
+            renderAccounts();
+        }
+        
         function renderAccounts() {
             const list = document.getElementById('accounts-list');
-            if (allAccounts.length === 0) {
-                list.innerHTML = '<div class="empty-state"><div class="empty-state-icon">👤</div><div class="empty-state-text">Nessun account trovato</div></div>';
+            const filterInput = document.getElementById('account-filter');
+            const filterText = filterInput ? filterInput.value.toLowerCase().trim() : '';
+            
+            // Filtra gli account in base al testo di ricerca
+            let filteredAccounts = allAccounts;
+            if (filterText) {
+                filteredAccounts = allAccounts.filter(account => {
+                    const nome = (account.nome || '').toLowerCase();
+                    const cognome = (account.cognome || '').toLowerCase();
+                    const username = (account.username || '').toLowerCase();
+                    return nome.includes(filterText) || cognome.includes(filterText) || username.includes(filterText);
+                });
+            }
+            
+            if (filteredAccounts.length === 0) {
+                if (filterText) {
+                    list.innerHTML = '<div class="empty-state"><div class="empty-state-icon">🔍</div><div class="empty-state-text">Nessun account trovato per "' + filterText + '"</div></div>';
+                } else {
+                    list.innerHTML = '<div class="empty-state"><div class="empty-state-icon">👤</div><div class="empty-state-text">Nessun account trovato</div></div>';
+                }
                 return;
             }
             
-            list.innerHTML = allAccounts.map(account => {
+            list.innerHTML = filteredAccounts.map(account => {
                 const initials = ((account.nome || '').charAt(0) + (account.cognome || '').charAt(0)).toUpperCase() || '??';
                 const permessi = account.permessi_pagine || ['home'];
                 const permessiArray = Array.isArray(permessi) ? permessi : JSON.parse(permessi || '["home"]');

@@ -1338,10 +1338,6 @@
                                     <div class="stat-mini-value green" id="stat-castelletto-totale">€0</div>
                                     <div class="stat-mini-label">Castelletto Tot.</div>
                                 </div>
-                                <div class="stat-mini full-width">
-                                    <div class="stat-mini-value red" id="stat-dapagare-mese">€0</div>
-                                    <div class="stat-mini-label" id="stat-label-dapagare">Tot. da pagare</div>
-                                </div>
                             </div>
                             
                             <!-- Lista Banche -->
@@ -1725,12 +1721,6 @@
                 bancheMap[banca].push(f);
             });
             
-            // Calcola totale da pagare del mese filtrato per giorno
-            const daPagareMeseGiornoGlobal = calcDaPagareMeseGiorno(selectedMese, null, currentDayFilter);
-            
-            // Update totale da pagare mese
-            document.getElementById('stat-dapagare-mese').textContent = formatEuro(daPagareMeseGiornoGlobal);
-            
             // Aggiorna stats per ogni banca - LOGICA CORRETTA con filtro giorno
             const banche = Object.keys(bancheMap).sort();
             banche.forEach((banca, idx) => {
@@ -1796,18 +1786,12 @@
             const totale = fattureMese.length;
             const fattureFiltered = fattureMese.filter(f => f.dataScadenza && new Date(f.dataScadenza).getDate() <= currentDayFilter);
             
-            // Calcola totale da pagare del mese filtrato per giorno
-            const daPagareMeseGiorno = calcDaPagareMeseGiorno(selectedMese, null, currentDayFilter);
-            
             // Stats fatture
             document.getElementById('stat-totale-fatture').textContent = `${fattureFiltered.length} su ${totale}`;
             
             // Stats castelletto totale
             const castellettoTotale = Object.values(castellettiPerBanca).reduce((sum, c) => sum + c, 0);
             document.getElementById('stat-castelletto-totale').textContent = formatEuro(castellettoTotale);
-            
-            // Stats totale da pagare mese
-            document.getElementById('stat-dapagare-mese').textContent = formatEuro(daPagareMeseGiorno);
         }
         
         // Funzione helper: calcola totale da pagare di TUTTI i mesi per una banca (logica C#)
@@ -1896,24 +1880,14 @@
             // Calcola castelletto totale globale (tutte le banche)
             const castellettoTotaleGlobal = Object.values(castellettiPerBanca).reduce((sum, c) => sum + c, 0);
             
-            // Calcola totale da pagare del mese filtrato per giorno
-            const daPagareMeseGiornoGlobal = calcDaPagareMeseGiorno(selectedMese, null, currentDayFilter);
-            
             // Update stats globali
             document.getElementById('stat-totale-fatture').textContent = `${fattureFilteredGlobal.length}/${totale}`;
             document.getElementById('stat-castelletto-totale').textContent = formatEuro(castellettoTotaleGlobal);
-            document.getElementById('stat-dapagare-mese').textContent = formatEuro(daPagareMeseGiornoGlobal);
             
             // Update label dinamiche con mese (con controlli di sicurezza)
             const labelFatture = document.getElementById('stat-label-fatture');
             if (labelFatture && selectedMese !== null && MESI_FULL[selectedMese]) {
                 labelFatture.textContent = `Fatture ${MESI_FULL[selectedMese].toUpperCase()}`;
-            }
-            
-            // Update label tot da pagare con mese
-            const labelDaPagare = document.getElementById('stat-label-dapagare');
-            if (labelDaPagare && selectedMese !== null && MESI_FULL[selectedMese]) {
-                labelDaPagare.textContent = `Tot. da pagare ${MESI_FULL[selectedMese].toUpperCase()}`;
             }
             
             if (banche.length === 0) {

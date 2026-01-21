@@ -599,11 +599,7 @@
             padding: 180px 16px calc(env(safe-area-inset-bottom) + 20px);
             min-height: 100vh;
             background: var(--surface-0);
-            transition: padding-top 0.3s ease;
-        }
-        
-        .page-content.filters-open {
-            padding-top: 480px;
+            transition: padding-top 0.2s ease;
         }
         
         /* Stats Summary */
@@ -2439,11 +2435,12 @@
         function toggleFilters() {
             const panel = document.getElementById('filters-panel');
             const btn = document.getElementById('btn-expand-filters');
-            const content = document.getElementById('page-content');
             
             panel.classList.toggle('open');
             btn.classList.toggle('active');
-            content.classList.toggle('filters-open');
+            
+            // Aggiorna padding dopo la transizione
+            setTimeout(updateContentPadding, 320);
         }
         
         function handleSearchInput() {
@@ -2529,6 +2526,26 @@
             }
             
             container.innerHTML = chips.join('');
+            
+            // Aggiorna padding del contenuto in base ai chips attivi
+            // Aggiorna padding dopo che i chips sono renderizzati
+            setTimeout(updateContentPadding, 50);
+        }
+        
+        function updateContentPadding() {
+            const content = document.getElementById('page-content');
+            const filtersSection = document.querySelector('.search-filters-section');
+            
+            if (!content || !filtersSection) return;
+            
+            // Calcola altezza totale della sezione fixed (106px header + title bar)
+            const baseTop = 106;
+            const filtersSectionHeight = filtersSection.offsetHeight;
+            
+            // Padding = base + altezza sezione filtri + margine
+            let paddingTop = baseTop + filtersSectionHeight + 12;
+            
+            content.style.paddingTop = paddingTop + 'px';
         }
         
         function applyFilters() {
@@ -3550,6 +3567,9 @@
                 loadUserData();
                 await initSupabase();
                 await loadBollettini();
+                
+                // Calcola padding iniziale
+                updateContentPadding();
                 
                 // Event listeners per calcolo ore
                 document.getElementById('bollettino-orario-inizio').addEventListener('change', calcOre);

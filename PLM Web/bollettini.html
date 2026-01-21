@@ -1,0 +1,1292 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Bollettini Montatori - PLM Web</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/PLM/favicon.ico">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Supabase JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <!-- Stili -->
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="Load/loader.css">
+    
+    <!-- CONTROLLO AUTENTICAZIONE -->
+    <script>
+        (function() {
+            const isLogged = sessionStorage.getItem('plm_logged_in') || localStorage.getItem('plm_logged_in');
+            if (isLogged !== 'true') {
+                window.location.replace('login.html');
+            }
+        })();
+    </script>
+    
+    <!-- Nascondi contenuto finché loader non è attivo -->
+    <style id="preload-style">
+        body { background: #030305; }
+        .page { visibility: hidden; }
+    </style>
+    
+    <style>
+        /* =============================================
+           BOLLETTINI - STILE IPHONE
+           ============================================= */
+        
+        /* Header Fisso Premium */
+        .page-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: var(--space-3) var(--space-4);
+            background: rgba(3, 3, 5, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .page-user-info {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .page-user-surname {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+            line-height: 1.2;
+        }
+        
+        .page-user-name {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-weight: 400;
+            line-height: 1.3;
+        }
+        
+        .page-logo {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        
+        .page-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .btn-logout {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            border-radius: 10px;
+            color: var(--error);
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        .btn-logout:active {
+            background: rgba(239, 68, 68, 0.2);
+            transform: scale(0.95);
+        }
+        
+        .btn-logout svg {
+            width: 18px;
+            height: 18px;
+        }
+        
+        /* Barra Titolo */
+        .page-title-bar {
+            position: fixed;
+            top: 62px;
+            left: 0;
+            right: 0;
+            z-index: 999;
+            padding: var(--space-3) var(--space-4);
+            background: rgba(3, 3, 5, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+        }
+        
+        .btn-back {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--surface-2);
+            border: 1px solid var(--border-default);
+            border-radius: 12px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        .btn-back:active {
+            background: var(--surface-3);
+            color: var(--primary);
+            transform: scale(0.95);
+        }
+        
+        .btn-back svg {
+            width: 22px;
+            height: 22px;
+        }
+        
+        .page-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+            flex: 1;
+        }
+        
+        .btn-new {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--primary);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        .btn-new:active {
+            transform: scale(0.95);
+            opacity: 0.9;
+        }
+        
+        .btn-new svg {
+            width: 22px;
+            height: 22px;
+        }
+        
+        /* Content */
+        .page-content {
+            padding: 130px var(--space-4) var(--space-4);
+            min-height: 100vh;
+            background: var(--surface-0);
+        }
+        
+        /* Filtro Toggle */
+        .filter-toggle {
+            display: flex;
+            background: var(--surface-2);
+            border: 1px solid var(--border-default);
+            border-radius: 12px;
+            padding: 4px;
+            margin-bottom: var(--space-4);
+        }
+        
+        .filter-btn {
+            flex: 1;
+            padding: var(--space-3);
+            border: none;
+            background: transparent;
+            color: var(--text-muted);
+            font-size: 13px;
+            font-weight: 500;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .filter-btn.active {
+            background: var(--primary);
+            color: white;
+        }
+        
+        /* Lista Bollettini */
+        .bollettini-list {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-3);
+        }
+        
+        .bollettino-card {
+            background: var(--surface-2);
+            border: 1px solid var(--border-default);
+            border-radius: 16px;
+            padding: var(--space-4);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .bollettino-card:active {
+            transform: scale(0.98);
+            border-color: var(--primary);
+        }
+        
+        .bollettino-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: var(--space-3);
+        }
+        
+        .bollettino-date {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .bollettino-badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .bollettino-badge.signed {
+            background: rgba(16, 185, 129, 0.15);
+            color: #10b981;
+        }
+        
+        .bollettino-badge.pending {
+            background: rgba(245, 158, 11, 0.15);
+            color: #f59e0b;
+        }
+        
+        .bollettino-cliente {
+            font-size: 15px;
+            color: var(--text-secondary);
+            margin-bottom: var(--space-2);
+        }
+        
+        .bollettino-macchina {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: var(--space-2);
+        }
+        
+        .bollettino-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: var(--space-3);
+            border-top: 1px solid var(--border-subtle);
+        }
+        
+        .bollettino-ore {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+        
+        .bollettino-tecnico {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+        
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: var(--space-10);
+            color: var(--text-muted);
+        }
+        
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: var(--space-4);
+        }
+        
+        .empty-state-text {
+            font-size: 14px;
+        }
+        
+        /* =============================================
+           MODAL
+           ============================================= */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .modal-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .modal-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 2001;
+            overflow-y: auto;
+            padding: var(--space-4);
+            transform: translateY(100%);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .modal-overlay.show .modal-container {
+            transform: translateY(0);
+        }
+        
+        .modal-content {
+            background: var(--surface-1);
+            border: 1px solid var(--border-default);
+            border-radius: 20px;
+            max-width: 500px;
+            margin: 0 auto;
+            overflow: hidden;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--space-4);
+            border-bottom: 1px solid var(--border-default);
+            background: var(--surface-2);
+        }
+        
+        .modal-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .modal-close {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--surface-3);
+            border: none;
+            border-radius: 8px;
+            color: var(--text-muted);
+            cursor: pointer;
+        }
+        
+        .modal-close:active {
+            background: var(--surface-4);
+        }
+        
+        .modal-body {
+            padding: var(--space-4);
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+        
+        .modal-footer {
+            display: flex;
+            gap: var(--space-3);
+            padding: var(--space-4);
+            border-top: 1px solid var(--border-default);
+            background: var(--surface-2);
+        }
+        
+        .btn-modal {
+            flex: 1;
+            padding: var(--space-4);
+            border: none;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .btn-cancel {
+            background: var(--surface-3);
+            color: var(--text-secondary);
+        }
+        
+        .btn-save {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .btn-save:active {
+            transform: scale(0.98);
+        }
+        
+        /* Form Fields */
+        .form-row {
+            display: flex;
+            gap: var(--space-3);
+            margin-bottom: var(--space-4);
+        }
+        
+        .form-row .form-group {
+            flex: 1;
+            margin-bottom: 0;
+        }
+        
+        .form-group {
+            margin-bottom: var(--space-4);
+        }
+        
+        .form-label {
+            display: block;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-muted);
+            margin-bottom: var(--space-2);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: var(--space-3) var(--space-4);
+            font-family: var(--font-sans);
+            font-size: 15px;
+            color: var(--text-primary);
+            background: var(--surface-2);
+            border: 1px solid var(--border-default);
+            border-radius: 10px;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+        
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.2);
+        }
+        
+        .form-textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .form-select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2371717a' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            padding-right: 40px;
+        }
+        
+        /* Firma Canvas */
+        .firma-container {
+            margin-bottom: var(--space-4);
+        }
+        
+        .firma-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-2);
+        }
+        
+        .firma-label span {
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .btn-clear-firma {
+            padding: 4px 10px;
+            background: var(--surface-3);
+            border: none;
+            border-radius: 6px;
+            color: var(--text-muted);
+            font-size: 11px;
+            cursor: pointer;
+        }
+        
+        .firma-canvas-wrapper {
+            background: var(--surface-2);
+            border: 1px solid var(--border-default);
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .firma-canvas {
+            width: 100%;
+            height: 150px;
+            display: block;
+            touch-action: none;
+        }
+        
+        .firma-placeholder {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: var(--text-muted);
+            font-size: 13px;
+            pointer-events: none;
+        }
+        
+        .firma-canvas-wrapper.has-signature .firma-placeholder {
+            display: none;
+        }
+        
+        /* Preview firma */
+        .firma-preview {
+            width: 100%;
+            max-height: 150px;
+            background: var(--surface-2);
+            border: 1px solid var(--border-default);
+            border-radius: 10px;
+            padding: var(--space-2);
+        }
+        
+        .firma-preview img {
+            width: 100%;
+            height: auto;
+            max-height: 130px;
+            object-fit: contain;
+        }
+        
+        /* Sezione Dettagli */
+        .detail-section {
+            margin-bottom: var(--space-4);
+        }
+        
+        .detail-section-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: var(--space-3);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            padding: var(--space-3) 0;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+        
+        .detail-item:last-child {
+            border-bottom: none;
+        }
+        
+        .detail-label {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+        
+        .detail-value {
+            font-size: 14px;
+            color: var(--text-primary);
+            font-weight: 500;
+            text-align: right;
+            max-width: 60%;
+        }
+        
+        .detail-value.green {
+            color: #10b981;
+        }
+        
+        .detail-value.red {
+            color: var(--primary);
+        }
+        
+        /* Note box */
+        .note-box {
+            background: var(--surface-2);
+            border-radius: 10px;
+            padding: var(--space-3);
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+    <!-- Loader -->
+    <div id="loader" class="loader"><div class="loader-spinner"></div></div>
+    
+    <div class="page">
+        <!-- Header -->
+        <header class="page-header">
+            <div class="page-user-info">
+                <div class="page-user-surname" id="userSurname">Caricamento...</div>
+                <div class="page-user-name" id="userFirstName"></div>
+            </div>
+            
+            <div class="page-logo">
+                <img src="Assets/LogoProsystem.jpg" alt="Logo">
+            </div>
+            
+            <button class="btn-logout" onclick="logout()" title="Esci">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                    <polyline points="16 17 21 12 16 7"/>
+                    <line x1="21" y1="12" x2="9" y2="12"/>
+                </svg>
+            </button>
+        </header>
+        
+        <!-- Barra Titolo -->
+        <div class="page-title-bar">
+            <button class="btn-back" onclick="window.location.href='home.html'">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="15 18 9 12 15 6"/>
+                </svg>
+            </button>
+            <h1 class="page-title">Bollettini</h1>
+            <button class="btn-new" onclick="openModal(true)" title="Nuovo Bollettino">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="12" y1="5" x2="12" y2="19"/>
+                    <line x1="5" y1="12" x2="19" y2="12"/>
+                </svg>
+            </button>
+        </div>
+        
+        <!-- Content -->
+        <main class="page-content">
+            <!-- Filtro -->
+            <div class="filter-toggle">
+                <button class="filter-btn active" data-filter="miei" onclick="setFilter('miei')">I miei bollettini</button>
+                <button class="filter-btn" data-filter="tutti" onclick="setFilter('tutti')">Tutti</button>
+            </div>
+            
+            <!-- Lista -->
+            <div class="bollettini-list" id="bollettini-list">
+                <!-- Popolato via JS -->
+            </div>
+        </main>
+    </div>
+    
+    <!-- Modal Crea/Modifica -->
+    <div class="modal-overlay" id="modal-bollettino">
+        <div class="modal-container">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title" id="modal-title">Nuovo Bollettino</h2>
+                    <button class="modal-close" onclick="closeModal()">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18"/>
+                            <line x1="6" y1="6" x2="18" y2="18"/>
+                        </svg>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="bollettino-id">
+                    
+                    <!-- Data -->
+                    <div class="form-group">
+                        <label class="form-label">Data</label>
+                        <input type="date" class="form-input" id="bollettino-data">
+                    </div>
+                    
+                    <!-- Orari -->
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Orario Inizio</label>
+                            <input type="time" class="form-input" id="bollettino-orario-inizio">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Orario Fine</label>
+                            <input type="time" class="form-input" id="bollettino-orario-fine">
+                        </div>
+                    </div>
+                    
+                    <!-- Pausa e Ore -->
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Pausa (minuti)</label>
+                            <input type="number" class="form-input" id="bollettino-pausa" placeholder="60" min="0">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Ore Totali</label>
+                            <input type="number" class="form-input" id="bollettino-ore" placeholder="8.00" step="0.01" readonly>
+                        </div>
+                    </div>
+                    
+                    <!-- Cliente -->
+                    <div class="form-group">
+                        <label class="form-label">Cliente</label>
+                        <input type="text" class="form-input" id="bollettino-cliente" placeholder="Nome cliente">
+                    </div>
+                    
+                    <!-- Macchina -->
+                    <div class="form-group">
+                        <label class="form-label">Montaggio Macchina</label>
+                        <input type="text" class="form-input" id="bollettino-macchina" placeholder="Tipo macchina">
+                    </div>
+                    
+                    <!-- Tecnico -->
+                    <div class="form-group">
+                        <label class="form-label">Tecnico Installatore</label>
+                        <input type="text" class="form-input" id="bollettino-tecnico" readonly>
+                    </div>
+                    
+                    <!-- Lavori Eseguiti -->
+                    <div class="form-group">
+                        <label class="form-label">Lavori Eseguiti</label>
+                        <textarea class="form-textarea" id="bollettino-lavori" placeholder="Descrizione lavori..."></textarea>
+                    </div>
+                    
+                    <!-- Note -->
+                    <div class="form-group">
+                        <label class="form-label">Note</label>
+                        <textarea class="form-textarea" id="bollettino-note" placeholder="Note aggiuntive..."></textarea>
+                    </div>
+                    
+                    <!-- Firma -->
+                    <div class="firma-container">
+                        <div class="firma-label">
+                            <span>Firma Cliente</span>
+                            <button class="btn-clear-firma" onclick="clearFirma()">Cancella</button>
+                        </div>
+                        <div class="firma-canvas-wrapper" id="firma-wrapper">
+                            <canvas class="firma-canvas" id="firma-canvas"></canvas>
+                            <div class="firma-placeholder">Firma qui con il dito</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn-modal btn-cancel" onclick="closeModal()">Annulla</button>
+                    <button class="btn-modal btn-save" onclick="saveBollettino()">Salva</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal Visualizza Dettagli -->
+    <div class="modal-overlay" id="modal-dettaglio">
+        <div class="modal-container">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title">Dettaglio Bollettino</h2>
+                    <button class="modal-close" onclick="closeModalDettaglio()">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18"/>
+                            <line x1="6" y1="6" x2="18" y2="18"/>
+                        </svg>
+                    </button>
+                </div>
+                <div class="modal-body" id="dettaglio-body">
+                    <!-- Popolato via JS -->
+                </div>
+                <div class="modal-footer">
+                    <button class="btn-modal btn-cancel" onclick="closeModalDettaglio()">Chiudi</button>
+                    <button class="btn-modal btn-save" id="btn-modifica" onclick="openModalModifica()">Modifica</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Loader Script -->
+    <script src="Load/loader.js"></script>
+    
+    <script>
+        // =============================================
+        // VARIABILI GLOBALI
+        // =============================================
+        let supabaseClient = null;
+        let currentUser = null;
+        let allBollettini = [];
+        let currentFilter = 'miei';
+        let currentBollettinoId = null;
+        
+        // Canvas firma
+        let firmaCanvas = null;
+        let firmaCtx = null;
+        let isDrawing = false;
+        let hasSignature = false;
+        
+        // =============================================
+        // INIT
+        // =============================================
+        async function initSupabase() {
+            try {
+                const response = await fetch('/PLM/autenticazione.json');
+                const config = await response.json();
+                supabaseClient = supabase.createClient(config.supabase.url, config.supabase.anonKey);
+                return true;
+            } catch (error) {
+                console.error('Errore Supabase:', error);
+                return false;
+            }
+        }
+        
+        function loadUserData() {
+            currentUser = JSON.parse(localStorage.getItem('plm_user') || sessionStorage.getItem('plm_user') || '{}');
+            if (currentUser.cognome) document.getElementById('userSurname').textContent = currentUser.cognome;
+            if (currentUser.nome) document.getElementById('userFirstName').textContent = currentUser.nome;
+        }
+        
+        // =============================================
+        // CARICA BOLLETTINI
+        // =============================================
+        async function loadBollettini() {
+            if (!supabaseClient) return;
+            
+            try {
+                const { data, error } = await supabaseClient
+                    .from('BollettiniMontatori')
+                    .select('*')
+                    .order('data', { ascending: false });
+                
+                if (error) throw error;
+                
+                allBollettini = data || [];
+                renderBollettini();
+            } catch (error) {
+                console.error('Errore caricamento bollettini:', error);
+            }
+        }
+        
+        function renderBollettini() {
+            const list = document.getElementById('bollettini-list');
+            const tecnicoCorrente = `${currentUser.nome || ''} ${currentUser.cognome || ''}`.trim();
+            
+            let filtered = allBollettini;
+            if (currentFilter === 'miei') {
+                filtered = allBollettini.filter(b => b.tecnico_installatore === tecnicoCorrente);
+            }
+            
+            if (filtered.length === 0) {
+                list.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📋</div>
+                        <div class="empty-state-text">${currentFilter === 'miei' ? 'Non hai ancora creato bollettini' : 'Nessun bollettino trovato'}</div>
+                    </div>
+                `;
+                return;
+            }
+            
+            list.innerHTML = filtered.map(b => {
+                const hasFirma = b.firma_cliente && b.firma_cliente.data;
+                const dataFormatted = b.data ? new Date(b.data).toLocaleDateString('it-IT', { weekday: 'short', day: '2-digit', month: 'short', year: 'numeric' }) : '-';
+                
+                return `
+                    <div class="bollettino-card" onclick="openDettaglio(${b.id_bollettino})">
+                        <div class="bollettino-header">
+                            <div class="bollettino-date">${dataFormatted}</div>
+                            <span class="bollettino-badge ${hasFirma ? 'signed' : 'pending'}">${hasFirma ? 'Firmato' : 'Da firmare'}</span>
+                        </div>
+                        <div class="bollettino-cliente">${b.cliente || 'Cliente non specificato'}</div>
+                        <div class="bollettino-macchina">${b.montaggio_macchina || '-'}</div>
+                        <div class="bollettino-footer">
+                            <span class="bollettino-ore">${b.ore_totali || 0} ore</span>
+                            <span class="bollettino-tecnico">${b.tecnico_installatore || '-'}</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        function setFilter(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.filter === filter);
+            });
+            renderBollettini();
+        }
+        
+        // =============================================
+        // MODAL CREA/MODIFICA
+        // =============================================
+        function openModal(isNew = true) {
+            const modal = document.getElementById('modal-bollettino');
+            document.getElementById('modal-title').textContent = isNew ? 'Nuovo Bollettino' : 'Modifica Bollettino';
+            
+            if (isNew) {
+                resetForm();
+                document.getElementById('bollettino-id').value = '';
+                // Imposta data odierna
+                document.getElementById('bollettino-data').value = new Date().toISOString().split('T')[0];
+                // Imposta tecnico corrente
+                const tecnicoCorrente = `${currentUser.nome || ''} ${currentUser.cognome || ''}`.trim();
+                document.getElementById('bollettino-tecnico').value = tecnicoCorrente;
+            }
+            
+            modal.classList.add('show');
+            document.body.style.overflow = 'hidden';
+            initFirmaCanvas();
+        }
+        
+        function closeModal() {
+            document.getElementById('modal-bollettino').classList.remove('show');
+            document.body.style.overflow = '';
+        }
+        
+        function resetForm() {
+            document.getElementById('bollettino-data').value = '';
+            document.getElementById('bollettino-orario-inizio').value = '';
+            document.getElementById('bollettino-orario-fine').value = '';
+            document.getElementById('bollettino-pausa').value = '';
+            document.getElementById('bollettino-ore').value = '';
+            document.getElementById('bollettino-cliente').value = '';
+            document.getElementById('bollettino-macchina').value = '';
+            document.getElementById('bollettino-tecnico').value = '';
+            document.getElementById('bollettino-lavori').value = '';
+            document.getElementById('bollettino-note').value = '';
+            clearFirma();
+        }
+        
+        // =============================================
+        // CALCOLO ORE AUTOMATICO
+        // =============================================
+        function calcOre() {
+            const inizio = document.getElementById('bollettino-orario-inizio').value;
+            const fine = document.getElementById('bollettino-orario-fine').value;
+            const pausa = parseInt(document.getElementById('bollettino-pausa').value) || 0;
+            
+            if (inizio && fine) {
+                const [hI, mI] = inizio.split(':').map(Number);
+                const [hF, mF] = fine.split(':').map(Number);
+                
+                let minutiTotali = (hF * 60 + mF) - (hI * 60 + mI) - pausa;
+                if (minutiTotali < 0) minutiTotali = 0;
+                
+                const ore = (minutiTotali / 60).toFixed(2);
+                document.getElementById('bollettino-ore').value = ore;
+            }
+        }
+        
+        // =============================================
+        // FIRMA CANVAS
+        // =============================================
+        function initFirmaCanvas() {
+            firmaCanvas = document.getElementById('firma-canvas');
+            firmaCtx = firmaCanvas.getContext('2d');
+            
+            // Imposta dimensioni reali
+            const wrapper = firmaCanvas.parentElement;
+            const rect = wrapper.getBoundingClientRect();
+            firmaCanvas.width = rect.width;
+            firmaCanvas.height = 150;
+            
+            // Stile linea
+            firmaCtx.strokeStyle = '#f4f4f5';
+            firmaCtx.lineWidth = 2;
+            firmaCtx.lineCap = 'round';
+            firmaCtx.lineJoin = 'round';
+            
+            // Event listeners
+            firmaCanvas.addEventListener('mousedown', startDrawing);
+            firmaCanvas.addEventListener('mousemove', draw);
+            firmaCanvas.addEventListener('mouseup', stopDrawing);
+            firmaCanvas.addEventListener('mouseleave', stopDrawing);
+            
+            firmaCanvas.addEventListener('touchstart', handleTouchStart, { passive: false });
+            firmaCanvas.addEventListener('touchmove', handleTouchMove, { passive: false });
+            firmaCanvas.addEventListener('touchend', stopDrawing);
+        }
+        
+        function startDrawing(e) {
+            isDrawing = true;
+            const pos = getPos(e);
+            firmaCtx.beginPath();
+            firmaCtx.moveTo(pos.x, pos.y);
+        }
+        
+        function draw(e) {
+            if (!isDrawing) return;
+            const pos = getPos(e);
+            firmaCtx.lineTo(pos.x, pos.y);
+            firmaCtx.stroke();
+            hasSignature = true;
+            document.getElementById('firma-wrapper').classList.add('has-signature');
+        }
+        
+        function stopDrawing() {
+            isDrawing = false;
+        }
+        
+        function handleTouchStart(e) {
+            e.preventDefault();
+            const touch = e.touches[0];
+            startDrawing(touch);
+        }
+        
+        function handleTouchMove(e) {
+            e.preventDefault();
+            const touch = e.touches[0];
+            draw(touch);
+        }
+        
+        function getPos(e) {
+            const rect = firmaCanvas.getBoundingClientRect();
+            return {
+                x: (e.clientX || e.pageX) - rect.left,
+                y: (e.clientY || e.pageY) - rect.top
+            };
+        }
+        
+        function clearFirma() {
+            if (firmaCtx) {
+                firmaCtx.clearRect(0, 0, firmaCanvas.width, firmaCanvas.height);
+            }
+            hasSignature = false;
+            document.getElementById('firma-wrapper').classList.remove('has-signature');
+        }
+        
+        function getFirmaData() {
+            if (!hasSignature) return null;
+            return {
+                data: firmaCanvas.toDataURL('image/png'),
+                timestamp: new Date().toISOString()
+            };
+        }
+        
+        function loadFirmaToCanvas(firmaData) {
+            if (!firmaData || !firmaData.data) return;
+            
+            const img = new Image();
+            img.onload = function() {
+                firmaCtx.clearRect(0, 0, firmaCanvas.width, firmaCanvas.height);
+                firmaCtx.drawImage(img, 0, 0);
+                hasSignature = true;
+                document.getElementById('firma-wrapper').classList.add('has-signature');
+            };
+            img.src = firmaData.data;
+        }
+        
+        // =============================================
+        // SALVA BOLLETTINO
+        // =============================================
+        async function saveBollettino() {
+            const id = document.getElementById('bollettino-id').value;
+            const data = {
+                data: document.getElementById('bollettino-data').value || null,
+                orario_inizio: document.getElementById('bollettino-orario-inizio').value || null,
+                orario_fine: document.getElementById('bollettino-orario-fine').value || null,
+                pausa_minuti: parseInt(document.getElementById('bollettino-pausa').value) || null,
+                ore_totali: parseFloat(document.getElementById('bollettino-ore').value) || null,
+                cliente: document.getElementById('bollettino-cliente').value || null,
+                montaggio_macchina: document.getElementById('bollettino-macchina').value || null,
+                tecnico_installatore: document.getElementById('bollettino-tecnico').value || null,
+                lavori_eseguiti: document.getElementById('bollettino-lavori').value || null,
+                note: document.getElementById('bollettino-note').value || null,
+                firma_cliente: getFirmaData(),
+                data_modifica: new Date().toISOString()
+            };
+            
+            // Validazione base
+            if (!data.data || !data.cliente) {
+                alert('Data e Cliente sono obbligatori');
+                return;
+            }
+            
+            try {
+                let result;
+                
+                if (id) {
+                    // Update
+                    const { data: updated, error } = await supabaseClient
+                        .from('BollettiniMontatori')
+                        .update(data)
+                        .eq('id_bollettino', id)
+                        .select();
+                    
+                    if (error) throw error;
+                    result = updated;
+                } else {
+                    // Insert
+                    data.data_creazione = new Date().toISOString();
+                    const { data: inserted, error } = await supabaseClient
+                        .from('BollettiniMontatori')
+                        .insert([data])
+                        .select();
+                    
+                    if (error) throw error;
+                    result = inserted;
+                }
+                
+                closeModal();
+                await loadBollettini();
+                
+            } catch (error) {
+                console.error('Errore salvataggio:', error);
+                alert('Errore durante il salvataggio: ' + error.message);
+            }
+        }
+        
+        // =============================================
+        // MODAL DETTAGLIO
+        // =============================================
+        function openDettaglio(id) {
+            currentBollettinoId = id;
+            const bollettino = allBollettini.find(b => b.id_bollettino === id);
+            if (!bollettino) return;
+            
+            const dataFormatted = bollettino.data ? new Date(bollettino.data).toLocaleDateString('it-IT', { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' }) : '-';
+            const hasFirma = bollettino.firma_cliente && bollettino.firma_cliente.data;
+            
+            document.getElementById('dettaglio-body').innerHTML = `
+                <div class="detail-section">
+                    <div class="detail-section-title">Informazioni Generali</div>
+                    <div class="detail-item">
+                        <span class="detail-label">Data</span>
+                        <span class="detail-value">${dataFormatted}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Cliente</span>
+                        <span class="detail-value">${bollettino.cliente || '-'}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Macchina</span>
+                        <span class="detail-value">${bollettino.montaggio_macchina || '-'}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Tecnico</span>
+                        <span class="detail-value">${bollettino.tecnico_installatore || '-'}</span>
+                    </div>
+                </div>
+                
+                <div class="detail-section">
+                    <div class="detail-section-title">Orari</div>
+                    <div class="detail-item">
+                        <span class="detail-label">Orario Inizio</span>
+                        <span class="detail-value">${bollettino.orario_inizio || '-'}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Orario Fine</span>
+                        <span class="detail-value">${bollettino.orario_fine || '-'}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Pausa</span>
+                        <span class="detail-value">${bollettino.pausa_minuti || 0} min</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Ore Totali</span>
+                        <span class="detail-value red">${bollettino.ore_totali || 0} h</span>
+                    </div>
+                </div>
+                
+                ${bollettino.lavori_eseguiti ? `
+                <div class="detail-section">
+                    <div class="detail-section-title">Lavori Eseguiti</div>
+                    <div class="note-box">${bollettino.lavori_eseguiti}</div>
+                </div>
+                ` : ''}
+                
+                ${bollettino.note ? `
+                <div class="detail-section">
+                    <div class="detail-section-title">Note</div>
+                    <div class="note-box">${bollettino.note}</div>
+                </div>
+                ` : ''}
+                
+                <div class="detail-section">
+                    <div class="detail-section-title">Firma Cliente</div>
+                    ${hasFirma ? `
+                        <div class="firma-preview">
+                            <img src="${bollettino.firma_cliente.data}" alt="Firma cliente">
+                        </div>
+                    ` : `
+                        <div class="note-box" style="text-align: center; color: var(--warning);">⚠️ Firma non presente</div>
+                    `}
+                </div>
+            `;
+            
+            // Mostra/nascondi pulsante modifica in base al tecnico
+            const tecnicoCorrente = `${currentUser.nome || ''} ${currentUser.cognome || ''}`.trim();
+            const isOwner = bollettino.tecnico_installatore === tecnicoCorrente;
+            document.getElementById('btn-modifica').style.display = isOwner ? 'block' : 'none';
+            
+            document.getElementById('modal-dettaglio').classList.add('show');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeModalDettaglio() {
+            document.getElementById('modal-dettaglio').classList.remove('show');
+            document.body.style.overflow = '';
+            currentBollettinoId = null;
+        }
+        
+        function openModalModifica() {
+            const bollettino = allBollettini.find(b => b.id_bollettino === currentBollettinoId);
+            if (!bollettino) return;
+            
+            closeModalDettaglio();
+            
+            // Popola form
+            document.getElementById('bollettino-id').value = bollettino.id_bollettino;
+            document.getElementById('bollettino-data').value = bollettino.data || '';
+            document.getElementById('bollettino-orario-inizio').value = bollettino.orario_inizio || '';
+            document.getElementById('bollettino-orario-fine').value = bollettino.orario_fine || '';
+            document.getElementById('bollettino-pausa').value = bollettino.pausa_minuti || '';
+            document.getElementById('bollettino-ore').value = bollettino.ore_totali || '';
+            document.getElementById('bollettino-cliente').value = bollettino.cliente || '';
+            document.getElementById('bollettino-macchina').value = bollettino.montaggio_macchina || '';
+            document.getElementById('bollettino-tecnico').value = bollettino.tecnico_installatore || '';
+            document.getElementById('bollettino-lavori').value = bollettino.lavori_eseguiti || '';
+            document.getElementById('bollettino-note').value = bollettino.note || '';
+            
+            openModal(false);
+            
+            // Carica firma esistente
+            setTimeout(() => {
+                if (bollettino.firma_cliente) {
+                    loadFirmaToCanvas(bollettino.firma_cliente);
+                }
+            }, 100);
+        }
+        
+        // =============================================
+        // LOGOUT
+        // =============================================
+        function logout() {
+            sessionStorage.removeItem('plm_logged_in');
+            sessionStorage.removeItem('plm_user');
+            localStorage.removeItem('plm_logged_in');
+            localStorage.removeItem('plm_user');
+            window.location.href = 'login.html';
+        }
+        
+        // =============================================
+        // INIT
+        // =============================================
+        window.addEventListener('load', async function() {
+            loadUserData();
+            await initSupabase();
+            await loadBollettini();
+            
+            // Event listeners per calcolo ore automatico
+            document.getElementById('bollettino-orario-inizio').addEventListener('change', calcOre);
+            document.getElementById('bollettino-orario-fine').addEventListener('change', calcOre);
+            document.getElementById('bollettino-pausa').addEventListener('input', calcOre);
+            
+            Loader.hide();
+        });
+    </script>
+</body>
+</html>

@@ -1151,7 +1151,7 @@
         <!-- Content -->
         <main class="page-content">
             <!-- Sezione Panoramica Castelletti -->
-            <div class="section-box expanded" id="section-castelletti">
+            <div class="section-box" id="section-castelletti">
                 <div class="section-header" onclick="toggleSection('section-castelletti')">
                     <div class="section-icon">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -1505,7 +1505,15 @@
             renderMesiGrid();
             
             setTimeout(() => {
-                document.getElementById('mese-expanded').scrollIntoView({ behavior: 'smooth', block: 'start' });
+                const element = document.getElementById('mese-expanded');
+                const headerOffset = 130; // Altezza header + title bar fissi
+                const elementPosition = element.getBoundingClientRect().top;
+                const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+                
+                window.scrollTo({
+                    top: offsetPosition,
+                    behavior: 'smooth'
+                });
             }, 100);
         }
         

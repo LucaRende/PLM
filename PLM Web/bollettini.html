@@ -2347,10 +2347,16 @@
             // Check se è admin
             isAdmin = currentUser.ruolo === 'Amministratore' || currentUser.ruolo === 'Admin' || currentUser.is_admin === true;
             
+            console.log('User:', currentUser.nome, currentUser.cognome, '- Admin:', isAdmin);
+            
             // Mostra/nascondi filtro operatore e bottone "tutti"
             if (isAdmin) {
                 document.getElementById('filter-operatore-group').style.display = 'flex';
                 document.getElementById('btn-tutti').style.display = 'block';
+                // Admin parte con "Tutti" di default
+                currentFilterType = 'tutti';
+                document.querySelector('.filter-toggle-btn[data-filter="miei"]').classList.remove('active');
+                document.querySelector('.filter-toggle-btn[data-filter="tutti"]').classList.add('active');
             }
         }
         
@@ -2466,10 +2472,15 @@
             const tecnicoCorrente = `${currentUser.nome || ''} ${currentUser.cognome || ''}`.trim();
             const tecnicoCorrenteAlt = `${currentUser.cognome || ''} ${currentUser.nome || ''}`.trim(); // Formato alternativo
             
-            // DEBUG - rimuovere dopo
-            console.log('Filtro tecnico:', tecnicoCorrente, '/', tecnicoCorrenteAlt);
+            // DEBUG COMPLETO
+            console.log('=== APPLY FILTERS ===');
+            console.log('allBollettini:', allBollettini.length);
+            console.log('currentFilterType:', currentFilterType);
+            console.log('isAdmin:', isAdmin);
+            console.log('tecnicoCorrente:', tecnicoCorrente);
+            console.log('Filtri attivi:', { search, operatore, cliente, macchina, durataMin, durataMax, stato, dataDa, dataA });
             if (allBollettini.length > 0) {
-                console.log('Tecnici nei bollettini:', [...new Set(allBollettini.map(b => b.tecnico_installatore))]);
+                console.log('Primo bollettino:', allBollettini[0]);
             }
             
             filteredBollettini = allBollettini.filter(b => {
@@ -2524,6 +2535,8 @@
                 
                 return true;
             });
+            
+            console.log('Bollettini dopo filtro:', filteredBollettini.length);
             
             renderBollettini();
             updateStats();
@@ -2650,6 +2663,8 @@
         // =============================================
         function renderBollettini() {
             const container = document.getElementById('bollettini-list');
+            
+            console.log('renderBollettini chiamato, filteredBollettini:', filteredBollettini.length);
             
             if (filteredBollettini.length === 0) {
                 container.innerHTML = `

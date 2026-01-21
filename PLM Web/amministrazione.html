@@ -1545,14 +1545,17 @@
                 bancheMap[banca].push(f);
             });
             
-            // Aggiorna stats globali - USA Math.abs()
-            const fattureFilteredGlobal = fattureMese.filter(f => f.dataScadenza && new Date(f.dataScadenza).getDate() <= currentDayFilter);
-            const importoFilteredGlobal = fattureFilteredGlobal.reduce((sum, f) => sum + Math.abs(f.importoDaPagare || 0), 0);
+            // LOGICA CORRETTA C#: Calcola totale da pagare TUTTI i mesi (globale)
+            const totaleDaPagareTuttiMesiGlobal = calcTotaleDaPagareTuttiMesi(null);
+            const daPagareMeseCorrenteGlobal = calcDaPagareMese(selectedMese, null);
             const castellettoTotaleGlobal = Object.values(castellettiPerBanca).reduce((sum, c) => sum + c, 0);
-            const castellettoRimanenteGlobal = castellettoTotaleGlobal - importoFilteredGlobal;
-            const percentualeGlobal = castellettoTotaleGlobal > 0 ? (importoFilteredGlobal / castellettoTotaleGlobal) * 100 : 0;
             
-            document.getElementById('stat-castelletto-occupato').textContent = formatEuro(importoFilteredGlobal);
+            // FORMULA CORRETTA C#
+            const castellettoRimanenteGlobal = castellettoTotaleGlobal + totaleDaPagareTuttiMesiGlobal - daPagareMeseCorrenteGlobal;
+            const castellettoOccupatoGlobal = castellettoTotaleGlobal - castellettoRimanenteGlobal;
+            const percentualeGlobal = castellettoTotaleGlobal > 0 ? (Math.abs(castellettoOccupatoGlobal) / castellettoTotaleGlobal) * 100 : 0;
+            
+            document.getElementById('stat-castelletto-occupato').textContent = formatEuro(castellettoOccupatoGlobal);
             document.getElementById('stat-castelletto-rimanente').textContent = formatEuro(castellettoRimanenteGlobal);
             
             // Update progress bar globale
@@ -1568,19 +1571,25 @@
                 rimanenteEl.className = 'stat-mini-value ' + (castellettoRimanenteGlobal < 0 ? 'red' : percentualeGlobal > 80 ? 'red' : percentualeGlobal > 50 ? '' : 'green');
             }
             
-            // Aggiorna stats per ogni banca - USA Math.abs()
+            // Aggiorna stats per ogni banca - LOGICA CORRETTA C#
             const banche = Object.keys(bancheMap).sort();
             banche.forEach((banca, idx) => {
                 const fatture = bancheMap[banca];
                 const castelletto = castellettiPerBanca[banca] || 0;
                 const fattureFiltered = fatture.filter(f => f.dataScadenza && new Date(f.dataScadenza).getDate() <= currentDayFilter);
-                const importoOccupato = fattureFiltered.reduce((sum, f) => sum + Math.abs(f.importoDaPagare || 0), 0);
-                const rimanente = castelletto - importoOccupato;
-                const percentuale = castelletto > 0 ? (importoOccupato / castelletto) * 100 : 0;
+                
+                // LOGICA CORRETTA C#: Calcola per questa banca specifica
+                const totaleDaPagareTuttiMesiBanca = calcTotaleDaPagareTuttiMesi(banca);
+                const daPagareMeseCorrenteBanca = calcDaPagareMese(selectedMese, banca);
+                
+                // FORMULA CORRETTA C#
+                const castellettoRimanente = castelletto + totaleDaPagareTuttiMesiBanca - daPagareMeseCorrenteBanca;
+                const castellettoOccupato = castelletto - castellettoRimanente;
+                const percentuale = castelletto > 0 ? (Math.abs(castellettoOccupato) / castelletto) * 100 : 0;
                 
                 // Colori
-                const colorClass = rimanente < 0 ? 'red' : percentuale > 80 ? 'red' : percentuale > 50 ? 'yellow' : 'green';
-                const progressColor = rimanente < 0 ? '#ef4444' : percentuale > 80 ? '#ef4444' : percentuale > 50 ? '#f59e0b' : '#22c55e';
+                const colorClass = castellettoRimanente < 0 ? 'red' : percentuale > 80 ? 'red' : percentuale > 50 ? 'yellow' : 'green';
+                const progressColor = castellettoRimanente < 0 ? '#ef4444' : percentuale > 80 ? '#ef4444' : percentuale > 50 ? '#f59e0b' : '#22c55e';
                 
                 // Update elementi
                 const countEl = document.getElementById(`banca-fatture-${idx}`);
@@ -1590,10 +1599,10 @@
                 const progressEl = document.getElementById(`banca-progress-${idx}`);
                 
                 if (countEl) countEl.textContent = `${fattureFiltered.length} su ${fatture.length}`;
-                if (importoEl) importoEl.textContent = formatEuroShort(importoOccupato);
-                if (occupatoEl) occupatoEl.textContent = formatEuroShort(importoOccupato);
+                if (importoEl) importoEl.textContent = formatEuroShort(castellettoOccupato);
+                if (occupatoEl) occupatoEl.textContent = formatEuroShort(castellettoOccupato);
                 if (rimanenteEl) {
-                    rimanenteEl.textContent = formatEuroShort(rimanente);
+                    rimanenteEl.textContent = formatEuroShort(castellettoRimanente);
                     rimanenteEl.className = `banca-stat-value ${colorClass}`;
                 }
                 if (progressEl) {
@@ -1615,19 +1624,23 @@
             const fattureMese = getFatturePerMese(selectedMese);
             const totale = fattureMese.length;
             const fattureFiltered = fattureMese.filter(f => f.dataScadenza && new Date(f.dataScadenza).getDate() <= currentDayFilter);
-            const importoFiltered = fattureFiltered.reduce((sum, f) => sum + Math.abs(f.importoDaPagare || 0), 0);
+            
+            // LOGICA CORRETTA C#: Calcola totale da pagare TUTTI i mesi
+            const totaleDaPagareTuttiMesi = calcTotaleDaPagareTuttiMesi(null);
+            const daPagareMeseCorrente = calcDaPagareMese(selectedMese, null);
             
             // Stats fatture
             document.getElementById('stat-totale-fatture').textContent = `${fattureFiltered.length} su ${totale}`;
-            document.getElementById('stat-totale-importo').textContent = formatEuro(importoFiltered);
+            document.getElementById('stat-totale-importo').textContent = formatEuro(daPagareMeseCorrente);
             
-            // Stats castelletto globali
+            // Stats castelletto globali - FORMULA CORRETTA C#
             const castellettoTotale = Object.values(castellettiPerBanca).reduce((sum, c) => sum + c, 0);
-            const castellettoRimanente = castellettoTotale - importoFiltered;
-            const percentuale = castellettoTotale > 0 ? (importoFiltered / castellettoTotale) * 100 : 0;
+            const castellettoRimanente = castellettoTotale + totaleDaPagareTuttiMesi - daPagareMeseCorrente;
+            const castellettoOccupato = castellettoTotale - castellettoRimanente;
+            const percentuale = castellettoTotale > 0 ? (Math.abs(castellettoOccupato) / castellettoTotale) * 100 : 0;
             
             document.getElementById('stat-castelletto-totale').textContent = formatEuro(castellettoTotale);
-            document.getElementById('stat-castelletto-occupato').textContent = formatEuro(importoFiltered);
+            document.getElementById('stat-castelletto-occupato').textContent = formatEuro(castellettoOccupato);
             document.getElementById('stat-castelletto-rimanente').textContent = formatEuro(castellettoRimanente);
             
             // Update progress bar
@@ -1644,6 +1657,33 @@
             }
         }
         
+        // Funzione helper: calcola totale da pagare di TUTTI i mesi per una banca (logica C#)
+        function calcTotaleDaPagareTuttiMesi(nomeBanca) {
+            return allFatture
+                .filter(f => {
+                    if (!f.dataScadenza) return false;
+                    const date = new Date(f.dataScadenza);
+                    // Filtra per anno corrente e banca
+                    const matchAnno = date.getFullYear() === currentYear;
+                    const matchBanca = nomeBanca ? (f.bancaAssociata === nomeBanca) : true;
+                    return matchAnno && matchBanca;
+                })
+                .reduce((sum, f) => sum + (f.importoDaPagare || 0), 0); // NON usare Math.abs!
+        }
+        
+        // Funzione helper: calcola da pagare del mese specifico per una banca
+        function calcDaPagareMese(meseIdx, nomeBanca) {
+            return allFatture
+                .filter(f => {
+                    if (!f.dataScadenza) return false;
+                    const date = new Date(f.dataScadenza);
+                    const matchMese = date.getMonth() === meseIdx && date.getFullYear() === currentYear;
+                    const matchBanca = nomeBanca ? (f.bancaAssociata === nomeBanca) : true;
+                    return matchMese && matchBanca;
+                })
+                .reduce((sum, f) => sum + (f.importoDaPagare || 0), 0); // NON usare Math.abs!
+        }
+        
         function renderBanchePerMese() {
             if (selectedMese === null) return;
             
@@ -1658,18 +1698,26 @@
             const banche = Object.keys(bancheMap).sort();
             const totale = fattureMese.length;
             const fattureFilteredGlobal = fattureMese.filter(f => f.dataScadenza && new Date(f.dataScadenza).getDate() <= currentDayFilter);
-            const importoFilteredGlobal = fattureFilteredGlobal.reduce((sum, f) => sum + Math.abs(f.importoDaPagare || 0), 0);
+            
+            // LOGICA CORRETTA C#: Calcola totale da pagare TUTTI i mesi (globale)
+            const totaleDaPagareTuttiMesiGlobal = calcTotaleDaPagareTuttiMesi(null);
+            const daPagareMeseCorrenteGlobal = calcDaPagareMese(selectedMese, null);
             
             // Calcola castelletto totale globale (tutte le banche)
             const castellettoTotaleGlobal = Object.values(castellettiPerBanca).reduce((sum, c) => sum + c, 0);
-            const castellettoRimanenteGlobal = castellettoTotaleGlobal - importoFilteredGlobal;
-            const percentualeGlobal = castellettoTotaleGlobal > 0 ? (importoFilteredGlobal / castellettoTotaleGlobal) * 100 : 0;
+            
+            // FORMULA CORRETTA C#: Castelletto rimanente = Castelletto + TotaleTuttiMesi - DaPagareMeseCorrente
+            const castellettoRimanenteGlobal = castellettoTotaleGlobal + totaleDaPagareTuttiMesiGlobal - daPagareMeseCorrenteGlobal;
+            // Castelletto occupato = Castelletto - Castelletto rimanente
+            const castellettoOccupatoGlobal = castellettoTotaleGlobal - castellettoRimanenteGlobal;
+            
+            const percentualeGlobal = castellettoTotaleGlobal > 0 ? (Math.abs(castellettoOccupatoGlobal) / castellettoTotaleGlobal) * 100 : 0;
             
             // Update stats globali
             document.getElementById('stat-totale-fatture').textContent = `${fattureFilteredGlobal.length} su ${totale}`;
-            document.getElementById('stat-totale-importo').textContent = formatEuro(importoFilteredGlobal);
+            document.getElementById('stat-totale-importo').textContent = formatEuro(daPagareMeseCorrenteGlobal);
             document.getElementById('stat-castelletto-totale').textContent = formatEuro(castellettoTotaleGlobal);
-            document.getElementById('stat-castelletto-occupato').textContent = formatEuro(importoFilteredGlobal);
+            document.getElementById('stat-castelletto-occupato').textContent = formatEuro(castellettoOccupatoGlobal);
             document.getElementById('stat-castelletto-rimanente').textContent = formatEuro(castellettoRimanenteGlobal);
             
             // Update progress bar globale
@@ -1722,15 +1770,21 @@
                     `;
                 }).join('');
                 
-                // Calcola fatture filtrate per questa banca - USA Math.abs()
-                const fattureFiltered = fatture.filter(f => f.dataScadenza && new Date(f.dataScadenza).getDate() <= currentDayFilter);
-                const importoOccupato = fattureFiltered.reduce((sum, f) => sum + Math.abs(f.importoDaPagare || 0), 0);
-                const rimanente = castelletto - importoOccupato;
-                const percentuale = castelletto > 0 ? (importoOccupato / castelletto) * 100 : 0;
+                // LOGICA CORRETTA C#: Calcola per questa banca specifica
+                const totaleDaPagareTuttiMesiBanca = calcTotaleDaPagareTuttiMesi(banca);
+                const daPagareMeseCorrenteBanca = calcDaPagareMese(selectedMese, banca);
+                
+                // FORMULA CORRETTA C#
+                const castellettoRimanente = castelletto + totaleDaPagareTuttiMesiBanca - daPagareMeseCorrenteBanca;
+                const castellettoOccupato = castelletto - castellettoRimanente;
+                const percentuale = castelletto > 0 ? (Math.abs(castellettoOccupato) / castelletto) * 100 : 0;
                 
                 // Colori in base alla percentuale (rimanente può essere negativo = sforamento)
-                const colorClass = rimanente < 0 ? 'red' : percentuale > 80 ? 'red' : percentuale > 50 ? 'yellow' : 'green';
-                const progressColor = rimanente < 0 ? '#ef4444' : percentuale > 80 ? '#ef4444' : percentuale > 50 ? '#f59e0b' : '#22c55e';
+                const colorClass = castellettoRimanente < 0 ? 'red' : percentuale > 80 ? 'red' : percentuale > 50 ? 'yellow' : 'green';
+                const progressColor = castellettoRimanente < 0 ? '#ef4444' : percentuale > 80 ? '#ef4444' : percentuale > 50 ? '#f59e0b' : '#22c55e';
+                
+                // Numero fatture filtrate per giorno (per il conteggio visivo)
+                const fattureFiltered = fatture.filter(f => f.dataScadenza && new Date(f.dataScadenza).getDate() <= currentDayFilter);
                 
                 return `
                     <div class="banca-card" id="banca-${idx}" data-banca-name="${banca.replace(/"/g, '&quot;')}">
@@ -1746,7 +1800,7 @@
                                 <div class="banca-card-stats">
                                     <span class="banca-fatture-count" id="banca-fatture-${idx}">${fattureFiltered.length} su ${fatture.length}</span>
                                     <span>·</span>
-                                    <span class="red" id="banca-importo-${idx}">${formatEuroShort(importoOccupato)}</span>
+                                    <span class="red" id="banca-importo-${idx}">${formatEuroShort(castellettoOccupato)}</span>
                                     ${castelletto > 0 ? `<span>·</span><span class="green">Cast. ${formatEuroShort(castelletto)}</span>` : ''}
                                 </div>
                             </div>
@@ -1763,11 +1817,11 @@
                                         <div class="banca-stat-label">Castelletto</div>
                                     </div>
                                     <div class="banca-stat-item">
-                                        <div class="banca-stat-value red" id="banca-occupato-${idx}">${formatEuroShort(importoOccupato)}</div>
+                                        <div class="banca-stat-value red" id="banca-occupato-${idx}">${formatEuroShort(castellettoOccupato)}</div>
                                         <div class="banca-stat-label">Occupato</div>
                                     </div>
                                     <div class="banca-stat-item">
-                                        <div class="banca-stat-value ${colorClass}" id="banca-rimanente-${idx}">${formatEuroShort(rimanente)}</div>
+                                        <div class="banca-stat-value ${colorClass}" id="banca-rimanente-${idx}">${formatEuroShort(castellettoRimanente)}</div>
                                         <div class="banca-stat-label">Rimanente</div>
                                     </div>
                                     <div class="banca-progress-bar">

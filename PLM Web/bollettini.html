@@ -620,8 +620,27 @@
         }
         
         /* Stat chip per validati */
-        .stat-chip:nth-child(4) .stat-chip-value {
+        .stat-chip:nth-child(5) .stat-chip-value {
             color: #3b82f6;
+        }
+        
+        /* Stat chip notifiche */
+        .stat-chip.stat-notifiche {
+            background: rgba(16, 185, 129, 0.1);
+            border-color: rgba(16, 185, 129, 0.3);
+        }
+        
+        .stat-chip.stat-notifiche .stat-chip-value {
+            color: #10b981;
+        }
+        
+        .stat-chip.stat-notifiche.admin {
+            background: rgba(245, 158, 11, 0.1);
+            border-color: rgba(245, 158, 11, 0.3);
+        }
+        
+        .stat-chip.stat-notifiche.admin .stat-chip-value {
+            color: #f59e0b;
         }
         
         /* =============================================
@@ -714,6 +733,144 @@
         .bollettino-validated-badge svg {
             width: 12px;
             height: 12px;
+        }
+        
+        /* =============================================
+           SISTEMA NOTIFICHE
+           ============================================= */
+        
+        /* Badge NUOVO nel dettaglio */
+        .new-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 2px 8px;
+            margin-left: 8px;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            font-size: 10px;
+            font-weight: 700;
+            border-radius: var(--radius-full);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            animation: pulse-badge 2s infinite;
+        }
+        
+        @keyframes pulse-badge {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.9; }
+        }
+        
+        /* Validation status con animazione per nuove */
+        .validation-status.new-validation {
+            background: rgba(16, 185, 129, 0.15);
+            border-color: rgba(16, 185, 129, 0.4);
+            animation: glow-green 2s infinite;
+        }
+        
+        @keyframes glow-green {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+            50% { box-shadow: 0 0 20px 5px rgba(16, 185, 129, 0.2); }
+        }
+        
+        /* Indicatore notifica nella card */
+        .bollettino-card.has-notification {
+            position: relative;
+        }
+        
+        /* Notifica verde: bollettino validato da vedere */
+        .bollettino-card.notification-new {
+            border-color: #10b981;
+        }
+        
+        .bollettino-card.notification-new::before {
+            content: '';
+            position: absolute;
+            top: -1px;
+            left: -1px;
+            right: -1px;
+            bottom: -1px;
+            border: 2px solid #10b981;
+            border-radius: inherit;
+            animation: pulse-border-green 2s infinite;
+            pointer-events: none;
+        }
+        
+        /* Notifica arancione: bollettino da validare (admin) */
+        .bollettino-card.notification-pending {
+            border-color: #f59e0b;
+        }
+        
+        .bollettino-card.notification-pending::before {
+            content: '';
+            position: absolute;
+            top: -1px;
+            left: -1px;
+            right: -1px;
+            bottom: -1px;
+            border: 2px solid #f59e0b;
+            border-radius: inherit;
+            animation: pulse-border-orange 2s infinite;
+            pointer-events: none;
+        }
+        
+        @keyframes pulse-border-green {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        @keyframes pulse-border-orange {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .notification-dot {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: 2px solid var(--surface-0);
+            z-index: 5;
+        }
+        
+        .notification-new .notification-dot {
+            background: #10b981;
+            animation: pulse-dot-green 1.5s infinite;
+        }
+        
+        .notification-pending .notification-dot {
+            background: #f59e0b;
+            animation: pulse-dot-orange 1.5s infinite;
+        }
+        
+        @keyframes pulse-dot-green {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5); }
+            50% { transform: scale(1.1); box-shadow: 0 0 8px 2px rgba(16, 185, 129, 0.3); }
+        }
+        
+        @keyframes pulse-dot-orange {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.5); }
+            50% { transform: scale(1.1); box-shadow: 0 0 8px 2px rgba(245, 158, 11, 0.3); }
+        }
+        
+        /* Badge numero notifiche admin */
+        .admin-pending-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 10px;
+            background: rgba(245, 158, 11, 0.15);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            border-radius: var(--radius-full);
+            color: var(--warning);
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .admin-pending-badge svg {
+            width: 14px;
+            height: 14px;
         }
         
         .bollettino-card-body {
@@ -1784,6 +1941,10 @@
         <main class="page-content" id="page-content">
             <!-- Stats Summary -->
             <div class="stats-summary" id="stats-summary">
+                <div class="stat-chip stat-notifiche" id="stat-notifiche-chip" style="display: none;">
+                    <span class="stat-chip-value" id="stat-notifiche">0</span>
+                    <span class="stat-chip-label" id="stat-notifiche-label">Nuovi</span>
+                </div>
                 <div class="stat-chip">
                     <span class="stat-chip-value" id="stat-totali">0</span>
                     <span class="stat-chip-label">Totali</span>
@@ -2048,6 +2209,7 @@
         let currentFilterType = 'miei';
         let currentBollettinoId = null;
         let isAdmin = false;
+        let notificheCount = 0;
         
         // Canvas firma
         let firmaCanvas = null;
@@ -2057,6 +2219,85 @@
         
         // Foto scontrini
         let uploadedPhotos = [];
+        
+        // =============================================
+        // SISTEMA NOTIFICHE
+        // =============================================
+        function countNotifiche() {
+            const tecnicoCorrente = `${currentUser.nome || ''} ${currentUser.cognome || ''}`.trim();
+            
+            if (isAdmin) {
+                // Admin: conta bollettini DA VALIDARE (non validati e non eliminati)
+                notificheCount = allBollettini.filter(b => 
+                    b.validato !== true && 
+                    b.eliminato !== true
+                ).length;
+            } else {
+                // Utente normale: conta bollettini PROPRI VALIDATI che non ha ancora visto
+                notificheCount = allBollettini.filter(b => 
+                    b.tecnico_installatore === tecnicoCorrente &&
+                    b.validato === true && 
+                    b.notifica_vista !== true
+                ).length;
+            }
+            
+            // Salva in sessionStorage per la home
+            sessionStorage.setItem('bollettini_notifiche', notificheCount.toString());
+            sessionStorage.setItem('bollettini_is_admin', isAdmin.toString());
+            
+            console.log('Notifiche bollettini:', notificheCount, isAdmin ? '(admin - da validare)' : '(user - nuovi)');
+            
+            return notificheCount;
+        }
+        
+        async function markAsViewed(bollettinoId) {
+            const bollettino = allBollettini.find(b => b.id_bollettino === bollettinoId);
+            if (!bollettino) return;
+            
+            const tecnicoCorrente = `${currentUser.nome || ''} ${currentUser.cognome || ''}`.trim();
+            
+            // Solo se è il proprio bollettino e è stato validato ma non ancora visto
+            if (bollettino.tecnico_installatore === tecnicoCorrente && 
+                bollettino.validato === true && 
+                bollettino.notifica_vista !== true) {
+                
+                try {
+                    const { error } = await supabaseClient
+                        .from('BollettiniMontatori')
+                        .update({
+                            notifica_vista: true,
+                            data_visualizzazione: new Date().toISOString()
+                        })
+                        .eq('id_bollettino', bollettinoId);
+                    
+                    if (error) {
+                        console.log('Colonna notifica_vista non esiste ancora, ignoro');
+                        return;
+                    }
+                    
+                    // Aggiorna localmente
+                    bollettino.notifica_vista = true;
+                    bollettino.data_visualizzazione = new Date().toISOString();
+                    
+                    // Ricalcola notifiche e aggiorna UI
+                    countNotifiche();
+                    updateStats();
+                    renderBollettini();
+                    
+                } catch (error) {
+                    console.error('Errore marcatura visualizzazione:', error);
+                }
+            }
+        }
+        
+        // Funzione globale per ottenere notifiche (usata dalla home)
+        window.getBollettiniNotifiche = function() {
+            return parseInt(sessionStorage.getItem('bollettini_notifiche') || '0');
+        };
+        
+        window.isBollettiniAdmin = function() {
+            return sessionStorage.getItem('bollettini_is_admin') === 'true';
+        };
         
         // =============================================
         // INIT
@@ -2279,16 +2520,21 @@
             try {
                 Loader.show('funzione', 'Caricamento bollettini...');
                 
-                // Carica solo bollettini NON eliminati
+                // Query semplice senza filtri complicati
                 const { data, error } = await supabaseClient
                     .from('BollettiniMontatori')
                     .select('*')
-                    .or('eliminato.is.null,eliminato.eq.false')
                     .order('data', { ascending: false });
                 
                 if (error) throw error;
                 
-                allBollettini = data || [];
+                // Filtra lato client i bollettini eliminati (se la colonna esiste)
+                allBollettini = (data || []).filter(b => b.eliminato !== true);
+                
+                console.log('Bollettini caricati:', allBollettini.length);
+                
+                // Conta notifiche
+                countNotifiche();
                 
                 // Popola filtri dropdown
                 populateFilterDropdowns();
@@ -2301,7 +2547,7 @@
                 document.getElementById('bollettini-list').innerHTML = `
                     <div class="empty-state">
                         <div class="empty-state-icon">❌</div>
-                        <p class="empty-state-text">Errore nel caricamento</p>
+                        <p class="empty-state-text">Errore nel caricamento: ${error.message}</p>
                     </div>
                 `;
             } finally {
@@ -2339,6 +2585,28 @@
             document.getElementById('stat-ore').textContent = oreTotali.toFixed(1) + 'h';
             document.getElementById('stat-firmati').textContent = firmati;
             document.getElementById('stat-validati').textContent = validati;
+            
+            // Aggiorna stat notifiche
+            const notificheChip = document.getElementById('stat-notifiche-chip');
+            const notificheValue = document.getElementById('stat-notifiche');
+            const notificheLabel = document.getElementById('stat-notifiche-label');
+            
+            if (notificheCount > 0) {
+                notificheChip.style.display = 'flex';
+                notificheValue.textContent = notificheCount;
+                
+                if (isAdmin) {
+                    notificheChip.classList.add('admin');
+                    notificheChip.classList.remove('user');
+                    notificheLabel.textContent = 'Da validare';
+                } else {
+                    notificheChip.classList.add('user');
+                    notificheChip.classList.remove('admin');
+                    notificheLabel.textContent = 'Nuovi';
+                }
+            } else {
+                notificheChip.style.display = 'none';
+            }
         }
         
         // =============================================
@@ -2372,6 +2640,23 @@
                 const hasPhotos = b.foto_scontrini && b.foto_scontrini.length > 0;
                 const isValidated = b.validato === true;
                 
+                // Check notifica
+                const tecnicoCorrente = `${currentUser.nome || ''} ${currentUser.cognome || ''}`.trim();
+                let hasNotification = false;
+                let notificationClass = '';
+                
+                if (isAdmin) {
+                    // Admin: notifica se da validare
+                    hasNotification = !isValidated;
+                    notificationClass = hasNotification ? 'notification-pending' : '';
+                } else {
+                    // Utente: notifica se validato e non visto
+                    hasNotification = b.tecnico_installatore === tecnicoCorrente && 
+                                      isValidated && 
+                                      b.notifica_vista !== true;
+                    notificationClass = hasNotification ? 'notification-new' : '';
+                }
+                
                 // Determina il badge da mostrare
                 let badgeHtml = '';
                 if (isValidated) {
@@ -2383,7 +2668,8 @@
                 }
                 
                 return `
-                    <div class="bollettino-card" onclick="openDettaglio(${b.id_bollettino})">
+                    <div class="bollettino-card ${hasNotification ? 'has-notification ' + notificationClass : ''}" onclick="openDettaglio(${b.id_bollettino})">
+                        ${hasNotification ? '<span class="notification-dot"></span>' : ''}
                         <div class="bollettino-card-header">
                             <div class="bollettino-date-block">
                                 <div class="bollettino-date">${dateStr}</div>
@@ -2739,6 +3025,12 @@
             const hasPhotos = bollettino.foto_scontrini && bollettino.foto_scontrini.length > 0;
             const isValidated = bollettino.validato === true;
             
+            // Check se è una notifica nuova (validato ma non visto)
+            const tecnicoCorrente = `${currentUser.nome || ''} ${currentUser.cognome || ''}`.trim();
+            const isNewNotification = bollettino.tecnico_installatore === tecnicoCorrente && 
+                                      isValidated && 
+                                      bollettino.notifica_vista !== true;
+            
             // Formatta data validazione se presente
             let validazioneInfo = '';
             if (isValidated && bollettino.data_validazione) {
@@ -2752,15 +3044,15 @@
             document.getElementById('dettaglio-body').innerHTML = `
                 <!-- Stato Validazione -->
                 <div class="detail-section">
-                    <div class="detail-section-title">📋 Stato</div>
+                    <div class="detail-section-title">📋 Stato ${isNewNotification ? '<span class="new-badge">NUOVO!</span>' : ''}</div>
                     ${isValidated ? `
-                        <div class="validation-status validated">
+                        <div class="validation-status validated ${isNewNotification ? 'new-validation' : ''}">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
                                 <polyline points="22 4 12 14.01 9 11.01"/>
                             </svg>
                             <div>
-                                <div>Bollettino Validato</div>
+                                <div>Bollettino Validato ${isNewNotification ? '🎉' : ''}</div>
                                 ${validazioneInfo ? `<div class="validation-info">${validazioneInfo}</div>` : ''}
                             </div>
                         </div>
@@ -2903,6 +3195,11 @@
             
             document.getElementById('modal-dettaglio').classList.add('show');
             document.body.style.overflow = 'hidden';
+            
+            // Marca come visto se è una notifica nuova
+            if (isNewNotification) {
+                markAsViewed(id);
+            }
         }
         
         function closeModalDettaglio() {

@@ -44,7 +44,6 @@
     <!-- Nascondi contenuto finché loader non è attivo -->
     <style id="preload-style">
         body { background: #030305; }
-        .page { opacity: 0; transition: opacity 0.3s ease; }
     </style>
     
     <style>
@@ -3568,13 +3567,10 @@
             } catch (error) {
                 console.error('Errore inizializzazione:', error);
             } finally {
-                // Nascondi loader
+                // Nascondi loader - la pagina è già pronta dietro
                 if (typeof Loader !== 'undefined') {
                     Loader.hide();
                 }
-                
-                // Mostra contenuto con fade-in
-                document.querySelector('.page').style.opacity = '1';
                 
                 // Fix scroll DOPO loader hide
                 setTimeout(() => {
@@ -3582,7 +3578,7 @@
                     document.body.style.overflowY = 'auto';
                     document.documentElement.style.overflow = '';
                     document.documentElement.style.overflowY = 'auto';
-                }, 350); // Aspetta fine animazione loader
+                }, 350);
             }
         });
     </script>

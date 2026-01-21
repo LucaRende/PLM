@@ -1412,14 +1412,16 @@
         }
         
         function formatEuro(value) {
-            return new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(Math.abs(value));
+            const sign = value < 0 ? '-' : '';
+            return sign + new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(Math.abs(value));
         }
         
         function formatEuroShort(value) {
+            const sign = value < 0 ? '-' : '';
             const abs = Math.abs(value);
-            if (abs >= 1000000) return (abs / 1000000).toFixed(1) + 'M€';
-            if (abs >= 1000) return (abs / 1000).toFixed(0) + 'K€';
-            return abs.toFixed(0) + '€';
+            if (abs >= 1000000) return sign + (abs / 1000000).toFixed(1) + 'M€';
+            if (abs >= 1000) return sign + (abs / 1000).toFixed(0) + 'K€';
+            return sign + abs.toFixed(0) + '€';
         }
         
         function changeYear(delta) {
@@ -1443,7 +1445,7 @@
         
         function calcMeseStats(meseIdx) {
             const fattureMese = getFatturePerMese(meseIdx);
-            const totale = fattureMese.reduce((sum, f) => sum + (f.importoDaPagare || 0), 0);
+            const totale = fattureMese.reduce((sum, f) => sum + Math.abs(f.importoDaPagare || 0), 0);
             const totCastelletto = Object.values(castellettiPerBanca).reduce((sum, c) => sum + c, 0);
             const percentuale = totCastelletto > 0 ? Math.min(100, (totale / totCastelletto) * 100) : 0;
             
@@ -1543,11 +1545,11 @@
                 bancheMap[banca].push(f);
             });
             
-            // Aggiorna stats globali
+            // Aggiorna stats globali - USA Math.abs()
             const fattureFilteredGlobal = fattureMese.filter(f => f.dataScadenza && new Date(f.dataScadenza).getDate() <= currentDayFilter);
-            const importoFilteredGlobal = fattureFilteredGlobal.reduce((sum, f) => sum + (f.importoDaPagare || 0), 0);
+            const importoFilteredGlobal = fattureFilteredGlobal.reduce((sum, f) => sum + Math.abs(f.importoDaPagare || 0), 0);
             const castellettoTotaleGlobal = Object.values(castellettiPerBanca).reduce((sum, c) => sum + c, 0);
-            const castellettoRimanenteGlobal = Math.max(0, castellettoTotaleGlobal - importoFilteredGlobal);
+            const castellettoRimanenteGlobal = castellettoTotaleGlobal - importoFilteredGlobal;
             const percentualeGlobal = castellettoTotaleGlobal > 0 ? (importoFilteredGlobal / castellettoTotaleGlobal) * 100 : 0;
             
             document.getElementById('stat-castelletto-occupato').textContent = formatEuro(importoFilteredGlobal);
@@ -1557,28 +1559,28 @@
             const progressFill = document.getElementById('stat-progress-fill');
             if (progressFill) {
                 progressFill.style.width = `${Math.min(100, percentualeGlobal)}%`;
-                progressFill.style.background = percentualeGlobal > 80 ? '#ef4444' : percentualeGlobal > 50 ? '#f59e0b' : '#22c55e';
+                progressFill.style.background = castellettoRimanenteGlobal < 0 ? '#ef4444' : percentualeGlobal > 80 ? '#ef4444' : percentualeGlobal > 50 ? '#f59e0b' : '#22c55e';
             }
             
             // Colore castelletto rimanente
             const rimanenteEl = document.getElementById('stat-castelletto-rimanente');
             if (rimanenteEl) {
-                rimanenteEl.className = 'stat-mini-value ' + (percentualeGlobal > 80 ? 'red' : percentualeGlobal > 50 ? '' : 'green');
+                rimanenteEl.className = 'stat-mini-value ' + (castellettoRimanenteGlobal < 0 ? 'red' : percentualeGlobal > 80 ? 'red' : percentualeGlobal > 50 ? '' : 'green');
             }
             
-            // Aggiorna stats per ogni banca
+            // Aggiorna stats per ogni banca - USA Math.abs()
             const banche = Object.keys(bancheMap).sort();
             banche.forEach((banca, idx) => {
                 const fatture = bancheMap[banca];
                 const castelletto = castellettiPerBanca[banca] || 0;
                 const fattureFiltered = fatture.filter(f => f.dataScadenza && new Date(f.dataScadenza).getDate() <= currentDayFilter);
-                const importoOccupato = fattureFiltered.reduce((sum, f) => sum + (f.importoDaPagare || 0), 0);
-                const rimanente = Math.max(0, castelletto - importoOccupato);
+                const importoOccupato = fattureFiltered.reduce((sum, f) => sum + Math.abs(f.importoDaPagare || 0), 0);
+                const rimanente = castelletto - importoOccupato;
                 const percentuale = castelletto > 0 ? (importoOccupato / castelletto) * 100 : 0;
                 
                 // Colori
-                const colorClass = percentuale > 80 ? 'red' : percentuale > 50 ? 'yellow' : 'green';
-                const progressColor = percentuale > 80 ? '#ef4444' : percentuale > 50 ? '#f59e0b' : '#22c55e';
+                const colorClass = rimanente < 0 ? 'red' : percentuale > 80 ? 'red' : percentuale > 50 ? 'yellow' : 'green';
+                const progressColor = rimanente < 0 ? '#ef4444' : percentuale > 80 ? '#ef4444' : percentuale > 50 ? '#f59e0b' : '#22c55e';
                 
                 // Update elementi
                 const countEl = document.getElementById(`banca-fatture-${idx}`);
@@ -1613,7 +1615,7 @@
             const fattureMese = getFatturePerMese(selectedMese);
             const totale = fattureMese.length;
             const fattureFiltered = fattureMese.filter(f => f.dataScadenza && new Date(f.dataScadenza).getDate() <= currentDayFilter);
-            const importoFiltered = fattureFiltered.reduce((sum, f) => sum + (f.importoDaPagare || 0), 0);
+            const importoFiltered = fattureFiltered.reduce((sum, f) => sum + Math.abs(f.importoDaPagare || 0), 0);
             
             // Stats fatture
             document.getElementById('stat-totale-fatture').textContent = `${fattureFiltered.length} su ${totale}`;
@@ -1621,7 +1623,7 @@
             
             // Stats castelletto globali
             const castellettoTotale = Object.values(castellettiPerBanca).reduce((sum, c) => sum + c, 0);
-            const castellettoRimanente = Math.max(0, castellettoTotale - importoFiltered);
+            const castellettoRimanente = castellettoTotale - importoFiltered;
             const percentuale = castellettoTotale > 0 ? (importoFiltered / castellettoTotale) * 100 : 0;
             
             document.getElementById('stat-castelletto-totale').textContent = formatEuro(castellettoTotale);
@@ -1632,13 +1634,13 @@
             const progressFill = document.getElementById('stat-progress-fill');
             if (progressFill) {
                 progressFill.style.width = `${Math.min(100, percentuale)}%`;
-                progressFill.style.background = percentuale > 80 ? '#ef4444' : percentuale > 50 ? '#f59e0b' : '#22c55e';
+                progressFill.style.background = castellettoRimanente < 0 ? '#ef4444' : percentuale > 80 ? '#ef4444' : percentuale > 50 ? '#f59e0b' : '#22c55e';
             }
             
-            // Colore castelletto rimanente
+            // Colore castelletto rimanente (negativo = rosso)
             const rimanenteEl = document.getElementById('stat-castelletto-rimanente');
             if (rimanenteEl) {
-                rimanenteEl.className = 'stat-mini-value ' + (percentuale > 80 ? 'red' : percentuale > 50 ? '' : 'green');
+                rimanenteEl.className = 'stat-mini-value ' + (castellettoRimanente < 0 ? 'red' : percentuale > 80 ? 'red' : percentuale > 50 ? '' : 'green');
             }
         }
         
@@ -1656,11 +1658,11 @@
             const banche = Object.keys(bancheMap).sort();
             const totale = fattureMese.length;
             const fattureFilteredGlobal = fattureMese.filter(f => f.dataScadenza && new Date(f.dataScadenza).getDate() <= currentDayFilter);
-            const importoFilteredGlobal = fattureFilteredGlobal.reduce((sum, f) => sum + (f.importoDaPagare || 0), 0);
+            const importoFilteredGlobal = fattureFilteredGlobal.reduce((sum, f) => sum + Math.abs(f.importoDaPagare || 0), 0);
             
             // Calcola castelletto totale globale (tutte le banche)
             const castellettoTotaleGlobal = Object.values(castellettiPerBanca).reduce((sum, c) => sum + c, 0);
-            const castellettoRimanenteGlobal = Math.max(0, castellettoTotaleGlobal - importoFilteredGlobal);
+            const castellettoRimanenteGlobal = castellettoTotaleGlobal - importoFilteredGlobal;
             const percentualeGlobal = castellettoTotaleGlobal > 0 ? (importoFilteredGlobal / castellettoTotaleGlobal) * 100 : 0;
             
             // Update stats globali
@@ -1680,7 +1682,7 @@
             // Colore castelletto rimanente
             const rimanenteEl = document.getElementById('stat-castelletto-rimanente');
             if (rimanenteEl) {
-                rimanenteEl.className = 'stat-mini-value ' + (percentualeGlobal > 80 ? 'red' : percentualeGlobal > 50 ? '' : 'green');
+                rimanenteEl.className = 'stat-mini-value ' + (castellettoRimanenteGlobal < 0 ? 'red' : percentualeGlobal > 80 ? 'red' : percentualeGlobal > 50 ? '' : 'green');
             }
             
             if (banche.length === 0) {
@@ -1715,20 +1717,20 @@
                                 <div class="fattura-cliente">${f.cliente || 'N/D'}</div>
                                 <div class="fattura-numero">Fatt. ${String(f.numeroFattura || '-')}</div>
                             </div>
-                            <div class="fattura-importo">${formatEuro(f.importoDaPagare || 0)}</div>
+                            <div class="fattura-importo">${formatEuro(Math.abs(f.importoDaPagare || 0))}</div>
                         </div>
                     `;
                 }).join('');
                 
-                // Calcola fatture filtrate per questa banca
+                // Calcola fatture filtrate per questa banca - USA Math.abs()
                 const fattureFiltered = fatture.filter(f => f.dataScadenza && new Date(f.dataScadenza).getDate() <= currentDayFilter);
-                const importoOccupato = fattureFiltered.reduce((sum, f) => sum + (f.importoDaPagare || 0), 0);
-                const rimanente = Math.max(0, castelletto - importoOccupato);
+                const importoOccupato = fattureFiltered.reduce((sum, f) => sum + Math.abs(f.importoDaPagare || 0), 0);
+                const rimanente = castelletto - importoOccupato;
                 const percentuale = castelletto > 0 ? (importoOccupato / castelletto) * 100 : 0;
                 
-                // Colori in base alla percentuale
-                const colorClass = percentuale > 80 ? 'red' : percentuale > 50 ? 'yellow' : 'green';
-                const progressColor = percentuale > 80 ? '#ef4444' : percentuale > 50 ? '#f59e0b' : '#22c55e';
+                // Colori in base alla percentuale (rimanente può essere negativo = sforamento)
+                const colorClass = rimanente < 0 ? 'red' : percentuale > 80 ? 'red' : percentuale > 50 ? 'yellow' : 'green';
+                const progressColor = rimanente < 0 ? '#ef4444' : percentuale > 80 ? '#ef4444' : percentuale > 50 ? '#f59e0b' : '#22c55e';
                 
                 return `
                     <div class="banca-card" id="banca-${idx}" data-banca-name="${banca.replace(/"/g, '&quot;')}">

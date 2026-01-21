@@ -2343,10 +2343,13 @@
             if (currentUser.nome) document.getElementById('userFirstName').textContent = currentUser.nome;
             
             // Check se è admin o manager (possono validare bollettini)
-            isAdmin = currentUser.ruolo === 'Amministratore' || 
-                      currentUser.ruolo === 'Admin' || 
-                      currentUser.ruolo === 'Manager' ||
+            const ruolo = (currentUser.ruolo || '').toLowerCase();
+            isAdmin = ruolo === 'amministratore' || 
+                      ruolo === 'admin' || 
+                      ruolo === 'manager' ||
                       currentUser.is_admin === true;
+            
+            console.log('Ruolo utente:', currentUser.ruolo, '-> isAdmin:', isAdmin);
             
             // Mostra/nascondi filtro operatore e bottone "tutti"
             if (isAdmin) {
@@ -2471,6 +2474,8 @@
             const tecnicoCorrente = `${currentUser.nome || ''} ${currentUser.cognome || ''}`.trim();
             const tecnicoCorrenteAlt = `${currentUser.cognome || ''} ${currentUser.nome || ''}`.trim();
             
+            console.log('applyFilters - allBollettini:', allBollettini.length, 'filterType:', currentFilterType, 'isAdmin:', isAdmin);
+            
             filteredBollettini = allBollettini.filter(b => {
                 // Filtro miei/tutti
                 if (currentFilterType === 'miei') {
@@ -2524,6 +2529,8 @@
                 return true;
             });
             
+            console.log('applyFilters - dopo filtro:', filteredBollettini.length);
+            
             renderBollettini();
             updateStats();
             updateFilterBadge();
@@ -2565,6 +2572,8 @@
                 
                 // Filtra lato client i bollettini eliminati (se la colonna esiste)
                 allBollettini = (data || []).filter(b => b.eliminato !== true);
+                
+                console.log('loadBollettini - caricati:', allBollettini.length);
                 
                 // Conta notifiche
                 countNotifiche();
@@ -2647,6 +2656,8 @@
         // =============================================
         function renderBollettini() {
             const container = document.getElementById('bollettini-list');
+            
+            console.log('renderBollettini - filteredBollettini:', filteredBollettini.length);
             
             if (!container) return;
             

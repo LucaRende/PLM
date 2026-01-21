@@ -1764,38 +1764,56 @@
             if (!accountId && !password) { alert('La password è obbligatoria per i nuovi account'); return; }
             
             try {
-                const accountData = { 
-                    nome, 
-                    cognome, 
-                    username, 
-                    email: email || null, 
-                    ruolo: ruolo || 'utente', 
-                    attivo: attivo,
-                    permessi_pagine: permessi
-                };
-                if (password) accountData.password_hash = password;
-                
-                console.log('Salvataggio account:', accountData);
-                
                 let result;
+                
                 if (accountId) {
+                    // Update account esistente tramite RPC
                     console.log('Update account ID:', accountId);
-                    result = await supabaseClient.from('accounts').update(accountData).eq('id', accountId).select();
+                    const { data, error } = await supabaseClient.rpc('update_account', {
+                        p_id: accountId,
+                        p_nome: nome,
+                        p_cognome: cognome,
+                        p_username: username,
+                        p_password: password || null,
+                        p_email: email || null,
+                        p_ruolo: ruolo || 'utente',
+                        p_attivo: attivo,
+                        p_permessi_pagine: permessi
+                    });
+                    
+                    if (error) throw error;
+                    result = data;
                 } else {
+                    // Crea nuovo account tramite RPC
                     console.log('Insert nuovo account');
-                    result = await supabaseClient.from('accounts').insert(accountData).select();
+                    const { data, error } = await supabaseClient.rpc('create_account', {
+                        p_nome: nome,
+                        p_cognome: cognome,
+                        p_username: username,
+                        p_password: password,
+                        p_email: email || null,
+                        p_ruolo: ruolo || 'utente',
+                        p_attivo: attivo,
+                        p_permessi_pagine: permessi
+                    });
+                    
+                    if (error) throw error;
+                    result = data;
                 }
                 
-                console.log('Risultato:', result);
+                console.log('Risultato RPC:', result);
                 
-                if (result.error) throw result.error;
+                // Verifica risultato della funzione
+                if (result && result.success === false) {
+                    throw new Error(result.error || 'Errore sconosciuto');
+                }
                 
                 alert('Account salvato con successo!');
                 closeAccountModal();
                 await loadAccounts();
             } catch (error) {
                 console.error('Errore salvataggio account:', error);
-                alert('Errore: ' + error.message + '\n\nVerifica che la tabella accounts abbia tutti i campi necessari (ruolo, attivo, email)');
+                alert('Errore: ' + error.message);
             }
         }
         
@@ -1807,8 +1825,16 @@
             if (!confirm(`Sei sicuro di voler eliminare l'account di ${account?.cognome} ${account?.nome}?`)) return;
             
             try {
-                const { error } = await supabaseClient.from('accounts').delete().eq('id', accountId);
+                const { data, error } = await supabaseClient.rpc('delete_account', {
+                    p_id: accountId
+                });
+                
                 if (error) throw error;
+                
+                if (data && data.success === false) {
+                    throw new Error(data.error || 'Errore sconosciuto');
+                }
+                
                 closeAccountModal();
                 await loadAccounts();
             } catch (error) {

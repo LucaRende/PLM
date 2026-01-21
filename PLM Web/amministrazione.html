@@ -104,7 +104,6 @@
             border-radius: 10px;
             color: var(--error);
             cursor: pointer;
-            transition: all var(--transition-fast);
             -webkit-tap-highlight-color: transparent;
         }
         
@@ -146,7 +145,6 @@
             border-radius: 12px;
             color: var(--text-secondary);
             cursor: pointer;
-            transition: all var(--transition-fast);
             -webkit-tap-highlight-color: transparent;
         }
         
@@ -169,12 +167,12 @@
         
         /* Content */
         .page-content {
-            padding: 120px var(--space-4) var(--space-4);
+            padding: 130px var(--space-4) var(--space-4);
             min-height: 100vh;
             background: var(--surface-0);
         }
         
-        /* Section Box - Panoramica Castelletti */
+        /* Section Box */
         .section-box {
             background: var(--surface-2);
             border: 1.5px solid var(--border-default);
@@ -193,7 +191,6 @@
             gap: var(--space-3);
             padding: var(--space-4);
             cursor: pointer;
-            transition: background var(--transition-fast);
             -webkit-tap-highlight-color: transparent;
         }
         
@@ -238,7 +235,7 @@
             width: 24px;
             height: 24px;
             color: var(--text-muted);
-            transition: transform var(--transition-fast);
+            transition: transform 0.2s ease;
         }
         
         .section-box.expanded .section-arrow {
@@ -261,42 +258,286 @@
         }
         
         /* =============================================
-           BANCA CARD - OTTIMIZZATO MOBILE
+           SELETTORE ANNO
            ============================================= */
         
-        .banca-box {
-            background: var(--surface-3);
-            border: 1.5px solid var(--border-default);
-            border-radius: 16px;
-            margin-bottom: var(--space-3);
-            overflow: hidden;
-        }
-        
-        .banca-box:last-child {
-            margin-bottom: 0;
-        }
-        
-        .banca-box.expanded {
-            border-color: var(--primary);
-        }
-        
-        .banca-header {
+        .year-selector {
             display: flex;
             align-items: center;
-            padding: var(--space-4);
+            justify-content: center;
+            gap: var(--space-3);
+            padding: var(--space-3);
+            background: var(--surface-3);
+            border-radius: 16px;
+            margin-bottom: var(--space-4);
+        }
+        
+        .year-btn {
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--surface-2);
+            border: 1.5px solid var(--border-default);
+            border-radius: 12px;
+            color: var(--text-secondary);
             cursor: pointer;
             -webkit-tap-highlight-color: transparent;
         }
         
-        .banca-header:active {
+        .year-btn:active {
+            transform: scale(0.95);
             background: var(--surface-4);
+            color: var(--primary);
         }
         
-        .banca-icon {
-            width: 44px;
-            height: 44px;
+        .year-btn svg {
+            width: 20px;
+            height: 20px;
+        }
+        
+        .year-display {
+            min-width: 100px;
+            text-align: center;
+        }
+        
+        .year-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        
+        .year-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+        
+        /* =============================================
+           GRIGLIA MESI 4x3
+           ============================================= */
+        
+        .mesi-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: var(--space-3);
+        }
+        
+        .mese-card {
+            background: var(--surface-3);
+            border: 1.5px solid var(--border-default);
+            border-radius: 14px;
+            padding: var(--space-3);
+            cursor: pointer;
+            text-align: center;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        .mese-card:active {
+            transform: scale(0.95);
+        }
+        
+        .mese-card.selected {
+            border-color: var(--primary);
+            background: rgba(220, 38, 38, 0.1);
+        }
+        
+        .mese-nome {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: var(--space-2);
+            text-transform: uppercase;
+        }
+        
+        .mese-progress {
+            width: 50px;
+            height: 50px;
+            margin: 0 auto var(--space-2);
+        }
+        
+        .mese-perc {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+        
+        .mese-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        
+        .mese-badge.green { background: rgba(34, 197, 94, 0.2); color: #22c55e; }
+        .mese-badge.yellow { background: rgba(245, 158, 11, 0.2); color: #f59e0b; }
+        .mese-badge.red { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
+        
+        /* =============================================
+           CONTENUTO MESE ESPANSO
+           ============================================= */
+        
+        .mese-expanded {
+            margin-top: var(--space-4);
+            padding-top: var(--space-4);
+            border-top: 1px dashed var(--border-default);
+            display: none;
+        }
+        
+        .mese-expanded.show { display: block; }
+        
+        .mese-expanded-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-3);
+        }
+        
+        .mese-expanded-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .mese-expanded-close {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--surface-3);
+            border: 1px solid var(--border-default);
+            border-radius: 8px;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        /* Slider Giorno */
+        .day-slider-container {
+            background: var(--surface-3);
+            border-radius: 14px;
+            padding: var(--space-4);
+            margin-bottom: var(--space-4);
+        }
+        
+        .day-slider-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-3);
+        }
+        
+        .day-slider-label {
+            font-size: 12px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+        
+        .day-slider-value {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        
+        .day-slider {
+            width: 100%;
+            height: 8px;
+            -webkit-appearance: none;
+            background: var(--surface-2);
+            border-radius: 4px;
+            outline: none;
+        }
+        
+        .day-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 24px;
+            height: 24px;
             background: linear-gradient(135deg, var(--primary) 0%, #b91c1c 100%);
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(220, 38, 38, 0.4);
+        }
+        
+        .day-slider::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+            background: linear-gradient(135deg, var(--primary) 0%, #b91c1c 100%);
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+        }
+        
+        .day-slider-info {
+            display: flex;
+            justify-content: space-between;
+            margin-top: var(--space-2);
+            font-size: 10px;
+            color: var(--text-muted);
+        }
+        
+        /* Stats Riepilogo */
+        .stats-riepilogo {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--space-3);
+            margin-bottom: var(--space-4);
+        }
+        
+        .stat-mini {
+            background: var(--surface-2);
+            border: 1px solid var(--border-default);
             border-radius: 12px;
+            padding: var(--space-3);
+            text-align: center;
+        }
+        
+        .stat-mini-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        
+        .stat-mini-value.green { color: #22c55e; }
+        .stat-mini-value.red { color: #ef4444; }
+        
+        .stat-mini-label {
+            font-size: 10px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+        
+        /* Banca Card */
+        .banca-card {
+            background: var(--surface-2);
+            border: 1.5px solid var(--border-default);
+            border-radius: 14px;
+            margin-bottom: var(--space-3);
+            overflow: hidden;
+        }
+        
+        .banca-card:last-child { margin-bottom: 0; }
+        .banca-card.expanded { border-color: var(--primary); }
+        
+        .banca-card-header {
+            display: flex;
+            align-items: center;
+            padding: var(--space-3);
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        .banca-card-header:active { background: var(--surface-3); }
+        
+        .banca-card-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary) 0%, #b91c1c 100%);
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -304,449 +545,75 @@
             flex-shrink: 0;
         }
         
-        .banca-icon svg {
-            width: 22px;
-            height: 22px;
+        .banca-card-icon svg {
+            width: 20px;
+            height: 20px;
             color: white;
         }
         
-        .banca-info {
-            flex: 1;
-            min-width: 0;
-        }
+        .banca-card-info { flex: 1; min-width: 0; }
         
-        .banca-name {
-            font-size: 15px;
+        .banca-card-name {
+            font-size: 14px;
             font-weight: 600;
             color: var(--text-primary);
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            margin-bottom: 2px;
         }
         
-        .banca-castelletto {
-            font-size: 13px;
-            color: var(--success);
-            font-weight: 600;
-        }
-        
-        .banca-arrow {
-            width: 24px;
-            height: 24px;
-            color: var(--text-muted);
-            transition: transform var(--transition-fast);
-            flex-shrink: 0;
-        }
-        
-        .banca-box.expanded .banca-arrow {
-            transform: rotate(180deg);
-            color: var(--primary);
-        }
-        
-        .banca-content {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.3s ease;
-        }
-        
-        .banca-box.expanded .banca-content {
-            max-height: 5000px;
-        }
-        
-        .banca-inner {
-            padding: 0 var(--space-4) var(--space-4);
-        }
-        
-        /* =============================================
-           STATS SUMMARY - BOX GRANDI
-           ============================================= */
-        
-        .stats-summary {
-            display: flex;
-            gap: var(--space-3);
-            margin-bottom: var(--space-4);
-            width: 100%;
-        }
-        
-        .stat-box {
-            flex: 1;
-            background: var(--surface-2);
-            border: 1px solid var(--border-default);
-            border-radius: 14px;
-            padding: var(--space-3);
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-            min-width: 0;
-        }
-        
-        .stat-box::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, var(--primary), transparent);
-        }
-        
-        .stat-box-value {
-            font-size: 1.3rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            margin-bottom: 2px;
-            white-space: nowrap;
-        }
-        
-        .stat-box-value.green {
-            color: var(--success);
-        }
-        
-        .stat-box-label {
-            font-size: 9px;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.03em;
-            white-space: nowrap;
-        }
-        
-        /* =============================================
-           MESI - DESIGN MOBILE OTTIMIZZATO
-           ============================================= */
-        
-        .mesi-list {
-            display: flex;
-            flex-direction: column;
-            gap: var(--space-3);
-        }
-        
-        .mese-box {
-            background: var(--surface-2);
-            border: 1.5px solid var(--border-default);
-            border-radius: 16px;
-            overflow: hidden;
-            transition: all 0.2s ease;
-        }
-        
-        .mese-box.expanded {
-            border-color: var(--primary);
-        }
-        
-        .mese-header {
-            display: flex;
-            align-items: center;
-            padding: var(--space-4);
-            cursor: pointer;
-            -webkit-tap-highlight-color: transparent;
-            gap: var(--space-3);
-        }
-        
-        .mese-header:active {
-            background: var(--surface-3);
-        }
-        
-        .mese-indicator {
-            width: 48px;
-            height: 48px;
-            border-radius: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-            position: relative;
-        }
-        
-        .mese-indicator.green {
-            background: rgba(34, 197, 94, 0.15);
-        }
-        
-        .mese-indicator.yellow {
-            background: rgba(245, 158, 11, 0.15);
-        }
-        
-        .mese-indicator.red {
-            background: rgba(239, 68, 68, 0.15);
-        }
-        
-        .mese-indicator-perc {
-            font-size: 14px;
-            font-weight: 700;
-        }
-        
-        .mese-indicator.green .mese-indicator-perc { color: #22c55e; }
-        .mese-indicator.yellow .mese-indicator-perc { color: #f59e0b; }
-        .mese-indicator.red .mese-indicator-perc { color: #ef4444; }
-        
-        .mese-info {
-            flex: 1;
-            min-width: 0;
-        }
-        
-        .mese-nome {
-            font-size: 15px;
-            font-weight: 600;
-            color: var(--text-primary);
-            margin-bottom: 2px;
-        }
-        
-        .mese-subtitle {
-            font-size: 12px;
+        .banca-card-stats {
+            font-size: 11px;
             color: var(--text-muted);
             display: flex;
-            align-items: center;
             gap: var(--space-2);
         }
         
-        .mese-badge {
-            display: inline-block;
-            padding: 3px 8px;
-            border-radius: 6px;
-            font-size: 10px;
-            font-weight: 700;
-            text-transform: uppercase;
-        }
+        .banca-card-stats .green { color: #22c55e; }
+        .banca-card-stats .red { color: #ef4444; }
         
-        .mese-badge.green {
-            background: rgba(34, 197, 94, 0.2);
-            color: #22c55e;
-        }
-        
-        .mese-badge.yellow {
-            background: rgba(245, 158, 11, 0.2);
-            color: #f59e0b;
-        }
-        
-        .mese-badge.red {
-            background: rgba(239, 68, 68, 0.2);
-            color: #ef4444;
-        }
-        
-        .mese-arrow {
-            width: 24px;
-            height: 24px;
+        .banca-card-arrow {
+            width: 20px;
+            height: 20px;
             color: var(--text-muted);
             transition: transform 0.2s ease;
             flex-shrink: 0;
         }
         
-        .mese-box.expanded .mese-arrow {
+        .banca-card.expanded .banca-card-arrow {
             transform: rotate(180deg);
             color: var(--primary);
         }
         
-        .mese-content {
+        .banca-card-content {
             max-height: 0;
             overflow: hidden;
             transition: max-height 0.3s ease;
         }
         
-        .mese-box.expanded .mese-content {
-            max-height: 2000px;
-        }
+        .banca-card.expanded .banca-card-content { max-height: 2000px; }
         
-        .mese-inner {
-            padding: 0 var(--space-4) var(--space-4);
-        }
+        .banca-card-inner { padding: 0 var(--space-3) var(--space-3); }
         
-        /* Slider Giorni */
-        .slider-container {
-            background: var(--surface-3);
-            border-radius: 14px;
-            padding: var(--space-4);
-            margin-bottom: var(--space-4);
-        }
-        
-        .slider-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: var(--space-3);
-        }
-        
-        .slider-label {
-            font-size: 12px;
-            color: var(--text-muted);
-        }
-        
-        .slider-day {
-            font-size: 16px;
-            font-weight: 700;
-            color: var(--primary);
-        }
-        
-        .slider-track {
-            position: relative;
-            height: 44px;
-            background: var(--surface-2);
-            border-radius: 12px;
-            margin-bottom: var(--space-3);
-            overflow: hidden;
-        }
-        
-        .slider-fill {
-            position: absolute;
-            left: 0;
-            top: 0;
-            bottom: 0;
-            background: linear-gradient(90deg, var(--primary), #f59e0b);
-            border-radius: 12px;
-            transition: width 0.15s ease;
-        }
-        
-        .slider-input {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            opacity: 0;
-            cursor: pointer;
-            -webkit-appearance: none;
-            z-index: 10;
-        }
-        
-        .slider-thumb {
-            position: absolute;
-            top: 50%;
-            transform: translate(-50%, -50%);
-            width: 36px;
-            height: 36px;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            font-weight: 700;
-            color: var(--surface-0);
-            pointer-events: none;
-            transition: left 0.15s ease;
-        }
-        
-        .slider-totale {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: var(--space-3);
-            background: var(--surface-2);
-            border-radius: 12px;
-        }
-        
-        .slider-totale-label {
-            font-size: 12px;
-            color: var(--text-muted);
-        }
-        
-        .slider-totale-value {
-            font-size: 18px;
-            font-weight: 700;
-            color: var(--error);
-        }
-        
-        /* Ricerca Fatture */
-        .fatture-search-box {
-            display: flex;
-            align-items: center;
-            background: var(--surface-2);
-            border: 1.5px solid var(--border-default);
-            border-radius: 12px;
-            margin-bottom: var(--space-3);
-            overflow: hidden;
-            transition: border-color 0.2s ease;
-        }
-        
-        .fatture-search-box:focus-within {
-            border-color: var(--primary);
-        }
-        
-        .fatture-search-icon {
-            width: 16px;
-            height: 16px;
-            margin-left: 12px;
-            color: var(--text-muted);
-            flex-shrink: 0;
-        }
-        
-        .fatture-search-input {
-            flex: 1;
-            padding: 12px;
-            background: transparent;
-            border: none;
-            color: var(--text-primary);
-            font-size: 14px;
-            font-family: 'Inter', sans-serif;
-            outline: none;
-            min-width: 0;
-        }
-        
-        .fatture-search-input::placeholder {
-            color: var(--text-muted);
-        }
-        
-        .fatture-search-clear {
-            width: 28px;
-            height: 28px;
-            margin-right: 8px;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            background: var(--surface-4);
-            border: none;
-            border-radius: 50%;
-            color: var(--text-muted);
-            font-size: 12px;
-            cursor: pointer;
-            -webkit-tap-highlight-color: transparent;
-        }
-        
-        .fatture-search-clear.show {
-            display: flex;
-        }
-        
-        /* Fatture List */
-        .fatture-list {
-            margin-top: var(--space-3);
-        }
-        
-        .fatture-list-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: var(--space-3);
-        }
-        
-        .fatture-list-title {
-            font-size: 12px;
-            font-weight: 600;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-        
-        .fatture-count-label {
-            font-size: 11px;
-            color: var(--text-muted);
-        }
-        
+        /* Fattura Item */
         .fattura-item {
-            background: var(--surface-3);
-            border-radius: 12px;
-            padding: var(--space-3);
-            margin-bottom: var(--space-2);
             display: flex;
             align-items: center;
             gap: var(--space-3);
+            padding: var(--space-3);
+            background: var(--surface-3);
+            border-radius: 10px;
+            margin-bottom: var(--space-2);
         }
         
-        .fattura-item:last-child {
-            margin-bottom: 0;
-        }
+        .fattura-item:last-child { margin-bottom: 0; }
+        .fattura-item.filtered-out { opacity: 0.3; }
         
         .fattura-giorno {
-            width: 40px;
-            height: 40px;
-            background: var(--surface-2);
-            border-radius: 10px;
+            width: 36px;
+            height: 36px;
+            background: var(--surface-4);
+            border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -756,20 +623,11 @@
             flex-shrink: 0;
         }
         
-        .fattura-giorno.past {
-            background: rgba(34, 197, 94, 0.15);
-            color: #22c55e;
-        }
+        .fattura-giorno.past { background: rgba(34, 197, 94, 0.2); color: #22c55e; }
+        .fattura-giorno.today { background: rgba(245, 158, 11, 0.2); color: #f59e0b; }
+        .fattura-giorno.future { background: rgba(59, 130, 246, 0.2); color: #3b82f6; }
         
-        .fattura-giorno.future {
-            background: rgba(245, 158, 11, 0.15);
-            color: #f59e0b;
-        }
-        
-        .fattura-info {
-            flex: 1;
-            min-width: 0;
-        }
+        .fattura-info { flex: 1; min-width: 0; }
         
         .fattura-cliente {
             font-size: 13px;
@@ -788,39 +646,15 @@
         .fattura-importo {
             font-size: 14px;
             font-weight: 700;
-            color: var(--error);
-            text-align: right;
+            color: var(--primary);
             flex-shrink: 0;
         }
         
-        .fattura-importo.paid {
-            color: var(--success);
-            text-decoration: line-through;
-            opacity: 0.7;
-        }
-        
-        /* No fatture */
         .no-fatture {
             text-align: center;
             padding: var(--space-4);
             color: var(--text-muted);
             font-size: 13px;
-        }
-        
-        /* Empty State */
-        .empty-state {
-            text-align: center;
-            padding: var(--space-6);
-            color: var(--text-muted);
-        }
-        
-        .empty-state-icon {
-            font-size: 40px;
-            margin-bottom: var(--space-3);
-        }
-        
-        .empty-state-text {
-            font-size: 14px;
         }
         
         /* =============================================
@@ -844,7 +678,6 @@
             cursor: pointer;
             margin-bottom: var(--space-4);
             -webkit-tap-highlight-color: transparent;
-            transition: all 0.2s ease;
         }
         
         .btn-new-account:active {
@@ -857,23 +690,16 @@
             height: 20px;
         }
         
-        /* Account Card */
         .account-card {
-            background: var(--surface-2);
+            background: var(--surface-3);
             border: 1.5px solid var(--border-default);
             border-radius: 14px;
             margin-bottom: var(--space-3);
             overflow: hidden;
-            transition: all 0.2s ease;
         }
         
-        .account-card:last-child {
-            margin-bottom: 0;
-        }
-        
-        .account-card.inactive {
-            opacity: 0.5;
-        }
+        .account-card:last-child { margin-bottom: 0; }
+        .account-card.inactive { opacity: 0.5; }
         
         .account-header {
             display: flex;
@@ -883,9 +709,7 @@
             -webkit-tap-highlight-color: transparent;
         }
         
-        .account-header:active {
-            background: var(--surface-3);
-        }
+        .account-header:active { background: var(--surface-4); }
         
         .account-avatar {
             width: 48px;
@@ -907,10 +731,7 @@
             color: var(--text-muted);
         }
         
-        .account-info {
-            flex: 1;
-            min-width: 0;
-        }
+        .account-info { flex: 1; min-width: 0; }
         
         .account-name {
             font-size: 15px;
@@ -922,85 +743,19 @@
         .account-details {
             font-size: 12px;
             color: var(--text-muted);
-            display: flex;
-            flex-wrap: wrap;
-            gap: var(--space-2);
         }
         
         .account-badge {
-            display: inline-block;
-            padding: 2px 8px;
-            border-radius: 6px;
+            padding: 4px 10px;
+            border-radius: 8px;
             font-size: 10px;
-            font-weight: 600;
+            font-weight: 700;
             text-transform: uppercase;
         }
         
-        .account-badge.admin {
-            background: rgba(220, 38, 38, 0.2);
-            color: var(--primary);
-        }
-        
-        .account-badge.manager {
-            background: rgba(245, 158, 11, 0.2);
-            color: #f59e0b;
-        }
-        
-        .account-badge.utente {
-            background: rgba(59, 130, 246, 0.2);
-            color: #3b82f6;
-        }
-        
-        .account-badge.inactive {
-            background: rgba(107, 114, 128, 0.2);
-            color: #6b7280;
-        }
-        
-        .account-edit-btn {
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: var(--surface-3);
-            border: 1px solid var(--border-default);
-            border-radius: 10px;
-            color: var(--text-muted);
-            flex-shrink: 0;
-            cursor: pointer;
-            -webkit-tap-highlight-color: transparent;
-        }
-        
-        .account-edit-btn:active {
-            background: var(--surface-4);
-            color: var(--primary);
-        }
-        
-        .account-edit-btn svg {
-            width: 18px;
-            height: 18px;
-        }
-        
-        /* Permessi Tags */
-        .account-permessi {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
-            padding: 0 var(--space-4) var(--space-4);
-        }
-        
-        .permesso-tag {
-            padding: 4px 10px;
-            background: var(--surface-3);
-            border-radius: 8px;
-            font-size: 10px;
-            color: var(--text-secondary);
-        }
-        
-        .permesso-tag.active {
-            background: rgba(34, 197, 94, 0.15);
-            color: #22c55e;
-        }
+        .account-badge.admin { background: rgba(220, 38, 38, 0.2); color: var(--primary); }
+        .account-badge.manager { background: rgba(245, 158, 11, 0.2); color: #f59e0b; }
+        .account-badge.utente { background: rgba(59, 130, 246, 0.2); color: #3b82f6; }
         
         /* =============================================
            MODAL
@@ -1021,9 +776,7 @@
             justify-content: center;
         }
         
-        .modal-overlay.show {
-            display: flex;
-        }
+        .modal-overlay.show { display: flex; }
         
         .modal-container {
             width: 100%;
@@ -1037,14 +790,8 @@
         }
         
         @keyframes slideUp {
-            from {
-                transform: translateY(100%);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
+            from { transform: translateY(100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
         }
         
         .modal-header {
@@ -1074,11 +821,6 @@
             color: var(--text-muted);
             font-size: 18px;
             cursor: pointer;
-            -webkit-tap-highlight-color: transparent;
-        }
-        
-        .modal-close:active {
-            background: var(--surface-4);
         }
         
         .modal-body {
@@ -1097,10 +839,7 @@
             padding-bottom: calc(var(--space-4) + env(safe-area-inset-bottom, 0));
         }
         
-        /* Form Styles */
-        .form-group {
-            margin-bottom: var(--space-4);
-        }
+        .form-group { margin-bottom: var(--space-4); }
         
         .form-row {
             display: grid;
@@ -1115,7 +854,6 @@
             color: var(--text-secondary);
             margin-bottom: var(--space-2);
             text-transform: uppercase;
-            letter-spacing: 0.05em;
         }
         
         .form-label span {
@@ -1126,8 +864,7 @@
         }
         
         .form-input,
-        .form-select,
-        .form-textarea {
+        .form-select {
             width: 100%;
             padding: 14px 16px;
             background: var(--surface-2);
@@ -1137,18 +874,12 @@
             font-size: 15px;
             font-family: 'Inter', sans-serif;
             outline: none;
-            transition: border-color 0.2s ease;
             -webkit-appearance: none;
         }
         
         .form-input:focus,
-        .form-select:focus,
-        .form-textarea:focus {
+        .form-select:focus {
             border-color: var(--primary);
-        }
-        
-        .form-input::placeholder {
-            color: var(--text-muted);
         }
         
         .form-select {
@@ -1160,50 +891,15 @@
             padding-right: 40px;
         }
         
-        .form-textarea {
-            resize: none;
-            min-height: 80px;
-        }
-        
-        /* Permessi Grid */
-        .permessi-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: var(--space-2);
-        }
-        
-        .permesso-checkbox {
+        .attivo-toggle {
             display: flex;
             align-items: center;
             gap: var(--space-2);
-            padding: 12px 14px;
-            background: var(--surface-2);
+            padding: 14px 16px;
+            background: var(--surface-3);
             border: 1.5px solid var(--border-default);
             border-radius: 12px;
             cursor: pointer;
-            transition: all 0.2s ease;
-            -webkit-tap-highlight-color: transparent;
-        }
-        
-        .permesso-checkbox:has(input:checked) {
-            border-color: var(--primary);
-            background: rgba(220, 38, 38, 0.1);
-        }
-        
-        .permesso-checkbox input {
-            width: 18px;
-            height: 18px;
-            accent-color: var(--primary);
-            cursor: pointer;
-        }
-        
-        .permesso-label {
-            font-size: 13px;
-            color: var(--text-primary);
-        }
-        
-        .attivo-toggle {
-            background: var(--surface-3);
             justify-content: center;
         }
         
@@ -1212,7 +908,17 @@
             border-color: #22c55e;
         }
         
-        /* Modal Buttons */
+        .attivo-toggle input {
+            width: 18px;
+            height: 18px;
+            accent-color: #22c55e;
+        }
+        
+        .attivo-toggle span {
+            font-size: 13px;
+            color: var(--text-primary);
+        }
+        
         .btn-modal {
             flex: 1;
             padding: 14px 20px;
@@ -1222,31 +928,27 @@
             font-weight: 600;
             font-family: 'Inter', sans-serif;
             cursor: pointer;
-            transition: all 0.2s ease;
             -webkit-tap-highlight-color: transparent;
         }
         
-        .btn-modal:active {
-            transform: scale(0.98);
+        .btn-modal:active { transform: scale(0.98); }
+        .btn-cancel { background: var(--surface-3); color: var(--text-secondary); }
+        .btn-save { background: linear-gradient(135deg, var(--primary) 0%, #b91c1c 100%); color: white; }
+        .btn-delete { background: rgba(239, 68, 68, 0.15); color: #ef4444; flex: 0.5; }
+        
+        .empty-state {
+            text-align: center;
+            padding: var(--space-6);
+            color: var(--text-muted);
         }
         
-        .btn-cancel {
-            background: var(--surface-3);
-            color: var(--text-secondary);
+        .empty-state-icon {
+            font-size: 40px;
+            margin-bottom: var(--space-3);
         }
         
-        .btn-save {
-            background: linear-gradient(135deg, var(--primary) 0%, #b91c1c 100%);
-            color: white;
-        }
+        .empty-state-text { font-size: 14px; }
         
-        .btn-delete {
-            background: rgba(239, 68, 68, 0.15);
-            color: #ef4444;
-            flex: 0.5;
-        }
-        
-        /* Footer */
         .footer {
             padding: var(--space-6) var(--space-4);
             text-align: center;
@@ -1256,23 +958,12 @@
             margin-top: var(--space-4);
         }
         
-        /* Safe area per iPhone */
+        /* Safe area iPhone */
         @supports (padding-bottom: env(safe-area-inset-bottom)) {
-            .footer {
-                padding-bottom: calc(var(--space-6) + env(safe-area-inset-bottom));
-            }
-            
-            .page-header {
-                padding-top: calc(var(--space-3) + env(safe-area-inset-top));
-            }
-            
-            .page-title-bar {
-                top: calc(62px + env(safe-area-inset-top));
-            }
-            
-            .page-content {
-                padding-top: calc(130px + env(safe-area-inset-top));
-            }
+            .footer { padding-bottom: calc(var(--space-6) + env(safe-area-inset-bottom)); }
+            .page-header { padding-top: calc(var(--space-3) + env(safe-area-inset-top)); }
+            .page-title-bar { top: calc(62px + env(safe-area-inset-top)); }
+            .page-content { padding-top: calc(130px + env(safe-area-inset-top)); }
         }
     </style>
     
@@ -1292,13 +983,11 @@
                 <div class="page-user-surname" id="userSurname">Cognome</div>
                 <div class="page-user-name" id="userFirstName">Nome</div>
             </div>
-            
             <div class="page-logo">
                 <img src="/PLM/logo-tondo.png" alt="PLM">
             </div>
-            
             <button class="btn-logout" onclick="logout()" title="Esci">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
                     <polyline points="16 17 21 12 16 7"/>
                     <line x1="21" y1="12" x2="9" y2="12"/>
@@ -1309,7 +998,7 @@
         <!-- Barra Titolo -->
         <div class="page-title-bar">
             <button class="btn-back" onclick="window.location.href='home.html'">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <polyline points="15 18 9 12 15 6"/>
                 </svg>
             </button>
@@ -1319,10 +1008,10 @@
         <!-- Content -->
         <main class="page-content">
             <!-- Sezione Panoramica Castelletti -->
-            <div class="section-box" id="section-castelletti">
+            <div class="section-box expanded" id="section-castelletti">
                 <div class="section-header" onclick="toggleSection('section-castelletti')">
                     <div class="section-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <rect x="3" y="4" width="18" height="16" rx="2"/>
                             <line x1="3" y1="10" x2="21" y2="10"/>
                             <line x1="9" y1="10" x2="9" y2="20"/>
@@ -1333,18 +1022,67 @@
                         <div class="section-title">Panoramica Castelletti</div>
                         <div class="section-subtitle" id="castelletti-subtitle">Caricamento...</div>
                     </div>
-                    <svg class="section-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <svg class="section-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <polyline points="6 9 12 15 18 9"/>
                     </svg>
                 </div>
                 <div class="section-content">
                     <div class="section-inner">
-                        <!-- Lista Banche -->
-                        <div id="banche-list">
-                            <div class="empty-state">
-                                <div class="empty-state-icon">⏳</div>
-                                <div class="empty-state-text">Caricamento castelletti...</div>
+                        <!-- Selettore Anno -->
+                        <div class="year-selector">
+                            <button class="year-btn" onclick="changeYear(-1)">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="15 18 9 12 15 6"/>
+                                </svg>
+                            </button>
+                            <div class="year-display">
+                                <div class="year-value" id="current-year">2026</div>
+                                <div class="year-label">Anno</div>
                             </div>
+                            <button class="year-btn" onclick="changeYear(1)">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="9 18 15 12 9 6"/>
+                                </svg>
+                            </button>
+                        </div>
+                        
+                        <!-- Griglia Mesi 4x3 -->
+                        <div class="mesi-grid" id="mesi-grid"></div>
+                        
+                        <!-- Contenuto Mese Espanso -->
+                        <div class="mese-expanded" id="mese-expanded">
+                            <div class="mese-expanded-header">
+                                <span class="mese-expanded-title" id="mese-expanded-title">Gennaio 2026</span>
+                                <button class="mese-expanded-close" onclick="closeMeseExpanded()">✕</button>
+                            </div>
+                            
+                            <!-- Slider Giorno -->
+                            <div class="day-slider-container">
+                                <div class="day-slider-header">
+                                    <span class="day-slider-label">Situazione al giorno</span>
+                                    <span class="day-slider-value" id="day-slider-value">31</span>
+                                </div>
+                                <input type="range" class="day-slider" id="day-slider" min="1" max="31" value="31" oninput="updateDayFilter(this.value)">
+                                <div class="day-slider-info">
+                                    <span>1</span>
+                                    <span id="day-slider-max">31</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Stats Riepilogo -->
+                            <div class="stats-riepilogo">
+                                <div class="stat-mini">
+                                    <div class="stat-mini-value" id="stat-totale-fatture">0</div>
+                                    <div class="stat-mini-label">Fatture</div>
+                                </div>
+                                <div class="stat-mini">
+                                    <div class="stat-mini-value red" id="stat-totale-importo">€0</div>
+                                    <div class="stat-mini-label">Tot. Scadenze</div>
+                                </div>
+                            </div>
+                            
+                            <!-- Lista Banche -->
+                            <div id="banche-list"></div>
                         </div>
                     </div>
                 </div>
@@ -1354,7 +1092,7 @@
             <div class="section-box" id="section-accounts">
                 <div class="section-header" onclick="toggleSection('section-accounts')">
                     <div class="section-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
                             <circle cx="9" cy="7" r="4"/>
                             <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
@@ -1365,13 +1103,12 @@
                         <div class="section-title">Gestione Account</div>
                         <div class="section-subtitle" id="accounts-subtitle">Caricamento...</div>
                     </div>
-                    <svg class="section-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <svg class="section-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <polyline points="6 9 12 15 18 9"/>
                     </svg>
                 </div>
                 <div class="section-content">
                     <div class="section-inner">
-                        <!-- Pulsante Nuovo Account -->
                         <button class="btn-new-account" onclick="openAccountModal()">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <line x1="12" y1="5" x2="12" y2="19"/>
@@ -1379,8 +1116,6 @@
                             </svg>
                             Nuovo Account
                         </button>
-                        
-                        <!-- Lista Account -->
                         <div id="accounts-list">
                             <div class="empty-state">
                                 <div class="empty-state-icon">⏳</div>
@@ -1402,7 +1137,6 @@
                 <div class="modal-body">
                     <form id="account-form">
                         <input type="hidden" id="account-id">
-                        
                         <div class="form-row">
                             <div class="form-group">
                                 <label class="form-label">Nome *</label>
@@ -1413,22 +1147,18 @@
                                 <input type="text" class="form-input" id="account-cognome" required>
                             </div>
                         </div>
-                        
                         <div class="form-group">
                             <label class="form-label">Username *</label>
                             <input type="text" class="form-input" id="account-username" required autocomplete="off">
                         </div>
-                        
                         <div class="form-group">
                             <label class="form-label">Password <span id="password-hint">(lascia vuoto per non modificare)</span></label>
                             <input type="password" class="form-input" id="account-password" autocomplete="new-password">
                         </div>
-                        
                         <div class="form-group">
                             <label class="form-label">Email</label>
                             <input type="email" class="form-input" id="account-email">
                         </div>
-                        
                         <div class="form-group">
                             <label class="form-label">Ruolo</label>
                             <select class="form-select" id="account-ruolo">
@@ -1437,11 +1167,10 @@
                                 <option value="manager">Manager</option>
                             </select>
                         </div>
-                        
                         <div class="form-group">
-                            <label class="permesso-checkbox attivo-toggle">
+                            <label class="attivo-toggle">
                                 <input type="checkbox" id="account-attivo" checked>
-                                <span class="permesso-label">Account Attivo</span>
+                                <span>Account Attivo</span>
                             </label>
                         </div>
                     </form>
@@ -1454,17 +1183,12 @@
             </div>
         </div>
         
-        <!-- Footer -->
         <footer class="footer">
             © 2026 PLM Web — Pro System s.r.l. — Powered by: Luca Rende
         </footer>
     </div>
 
     <script>
-        // =============================================
-        // AMMINISTRAZIONE - PANORAMICA CASTELLETTI
-        // =============================================
-        
         let supabaseClient = null;
         let currentUser = null;
         
@@ -1473,10 +1197,11 @@
                           'Luglio', 'Agosto', 'Settembre', 'Ottobre', 'Novembre', 'Dicembre'];
         
         let allFatture = [];
-        let fatturePerBanca = {};
         let castellettiPerBanca = {};
+        let currentYear = new Date().getFullYear();
+        let selectedMese = null;
+        let currentDayFilter = 31;
         
-        // Init Supabase
         async function initSupabase() {
             try {
                 const response = await fetch('/PLM/autenticazione.json');
@@ -1489,431 +1214,245 @@
             }
         }
         
-        // Carica dati utente
         function loadUserData() {
             currentUser = JSON.parse(localStorage.getItem('plm_user') || sessionStorage.getItem('plm_user') || '{}');
-            
-            if (currentUser.cognome) {
-                document.getElementById('userSurname').textContent = currentUser.cognome;
-            }
-            if (currentUser.nome) {
-                document.getElementById('userFirstName').textContent = currentUser.nome;
-            }
+            if (currentUser.cognome) document.getElementById('userSurname').textContent = currentUser.cognome;
+            if (currentUser.nome) document.getElementById('userFirstName').textContent = currentUser.nome;
         }
         
-        // Toggle Section
         function toggleSection(sectionId) {
-            const section = document.getElementById(sectionId);
-            section.classList.toggle('expanded');
+            document.getElementById(sectionId).classList.toggle('expanded');
         }
         
-        // Toggle Banca
-        function toggleBanca(bancaIdx) {
-            const box = document.querySelector(`[data-banca="${bancaIdx}"]`);
-            if (box) {
-                // Chiudi tutte le altre
-                document.querySelectorAll('.banca-box.expanded').forEach(b => {
-                    if (b !== box) b.classList.remove('expanded');
-                });
-                box.classList.toggle('expanded');
-            }
-        }
-        
-        // Format Euro
         function formatEuro(value) {
-            return new Intl.NumberFormat('it-IT', { 
-                style: 'currency', 
-                currency: 'EUR',
-                minimumFractionDigits: 0,
-                maximumFractionDigits: 0
-            }).format(Math.abs(value));
+            return new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(Math.abs(value));
         }
         
-        // Format Euro Short
         function formatEuroShort(value) {
             const abs = Math.abs(value);
-            if (abs >= 1000000) {
-                return (abs / 1000000).toFixed(1) + 'M€';
-            }
-            if (abs >= 1000) {
-                return (abs / 1000).toFixed(0) + 'K€';
-            }
+            if (abs >= 1000000) return (abs / 1000000).toFixed(1) + 'M€';
+            if (abs >= 1000) return (abs / 1000).toFixed(0) + 'K€';
             return abs.toFixed(0) + '€';
         }
         
-        // Organizza dati per banca e mese
-        function organizzaDatiPerBanca(fatture) {
-            fatturePerBanca = {};
-            
-            fatture.forEach(f => {
-                const banca = f.bancaAssociata || 'Banca non specificata';
-                
-                if (!fatturePerBanca[banca]) {
-                    fatturePerBanca[banca] = {};
-                    MESI.forEach((_, idx) => {
-                        fatturePerBanca[banca][idx] = [];
-                    });
-                }
-                
-                // Estrai mese dalla data scadenza
-                if (f.dataScadenza) {
-                    const date = new Date(f.dataScadenza);
-                    const meseIdx = date.getMonth();
-                    fatturePerBanca[banca][meseIdx].push(f);
-                }
-            });
+        function changeYear(delta) {
+            currentYear += delta;
+            document.getElementById('current-year').textContent = currentYear;
+            closeMeseExpanded();
+            renderMesiGrid();
         }
         
-        // Toggle Mese (mostra fatture)
-        // Toggle Mese (espandi/comprimi)
-        function toggleMeseBox(bancaIdx, meseIdx) {
-            const box = document.getElementById(`mese-box-${bancaIdx}-${meseIdx}`);
-            if (box) {
-                // Chiudi altri mesi aperti nella stessa banca
-                document.querySelectorAll(`[data-banca="${bancaIdx}"] .mese-box.expanded`).forEach(b => {
-                    if (b !== box) b.classList.remove('expanded');
-                });
-                box.classList.toggle('expanded');
-            }
-        }
-        
-        // Aggiorna slider giorno
-        function updateSlider(bancaIdx, meseIdx, banca, value) {
-            const slider = document.getElementById(`slider-${bancaIdx}-${meseIdx}`);
-            const fill = document.getElementById(`slider-fill-${bancaIdx}-${meseIdx}`);
-            const thumb = document.getElementById(`slider-thumb-${bancaIdx}-${meseIdx}`);
-            const dayLabel = document.getElementById(`slider-day-${bancaIdx}-${meseIdx}`);
-            const totaleEl = document.getElementById(`slider-totale-${bancaIdx}-${meseIdx}`);
-            
-            const maxDay = parseInt(slider.max);
-            const day = parseInt(value);
-            const percent = ((day - 1) / (maxDay - 1)) * 100;
-            
-            fill.style.width = `${percent}%`;
-            thumb.style.left = `${percent}%`;
-            thumb.textContent = day;
-            dayLabel.textContent = `${day} ${MESI_FULL[meseIdx]}`;
-            
-            // Calcola totale fino a quel giorno
-            const fatture = fatturePerBanca[banca]?.[meseIdx] || [];
-            let totaleFino = 0;
-            
-            fatture.forEach(f => {
-                if (f.dataScadenza) {
-                    const fDate = new Date(f.dataScadenza);
-                    if (fDate.getDate() <= day) {
-                        totaleFino += (f.importoDaPagare || 0);
-                    }
-                }
-            });
-            
-            totaleEl.textContent = formatEuro(totaleFino);
-            
-            // Aggiorna visual fatture (evidenzia quelle fino a quel giorno)
-            document.querySelectorAll(`#fatture-list-${bancaIdx}-${meseIdx} .fattura-item`).forEach(item => {
-                const itemDay = parseInt(item.dataset.day || 0);
-                const dayEl = item.querySelector('.fattura-giorno');
-                if (itemDay <= day) {
-                    dayEl.classList.add('past');
-                    dayEl.classList.remove('future');
-                } else {
-                    dayEl.classList.remove('past');
-                    dayEl.classList.add('future');
-                }
-            });
-        }
-        
-        // Filtra fatture per numero
-        function filterFattureByNumero(bancaIdx, meseIdx, searchValue) {
-            const search = searchValue.toLowerCase().trim();
-            const clearBtn = document.getElementById(`search-clear-${bancaIdx}-${meseIdx}`);
-            const countLabel = document.getElementById(`fatture-count-${bancaIdx}-${meseIdx}`);
-            const items = document.querySelectorAll(`#fatture-list-${bancaIdx}-${meseIdx} .fattura-item`);
-            
-            // Mostra/nascondi bottone clear
-            if (search.length > 0) {
-                clearBtn.classList.add('show');
-            } else {
-                clearBtn.classList.remove('show');
-            }
-            
-            let visibili = 0;
-            items.forEach(item => {
-                const numero = item.dataset.numero || '';
-                const cliente = item.querySelector('.fattura-cliente')?.textContent?.toLowerCase() || '';
-                
-                if (!search || numero.includes(search) || cliente.includes(search)) {
-                    item.style.display = '';
-                    visibili++;
-                } else {
-                    item.style.display = 'none';
-                }
-            });
-            
-            if (countLabel) {
-                countLabel.textContent = `${visibili} fattur${visibili === 1 ? 'a' : 'e'}`;
-            }
-        }
-        
-        // Clear filtro fatture
-        function clearFattureFilter(bancaIdx, meseIdx) {
-            const input = document.getElementById(`search-fatture-${bancaIdx}-${meseIdx}`);
-            if (input) {
-                input.value = '';
-                filterFattureByNumero(bancaIdx, meseIdx, '');
-            }
-        }
-        
-        // Helper: giorni nel mese
-        function getDaysInMonth(month, year = 2026) {
+        function getDaysInMonth(month, year) {
             return new Date(year, month + 1, 0).getDate();
         }
         
-        // Render Banche con nuovo design
-        function renderBanche() {
-            const list = document.getElementById('banche-list');
-            const banche = Object.keys(fatturePerBanca).sort();
+        function getFatturePerMese(meseIdx) {
+            return allFatture.filter(f => {
+                if (!f.dataScadenza) return false;
+                const date = new Date(f.dataScadenza);
+                return date.getMonth() === meseIdx && date.getFullYear() === currentYear;
+            });
+        }
+        
+        function calcMeseStats(meseIdx) {
+            const fattureMese = getFatturePerMese(meseIdx);
+            const totale = fattureMese.reduce((sum, f) => sum + (f.importoDaPagare || 0), 0);
+            const totCastelletto = Object.values(castellettiPerBanca).reduce((sum, c) => sum + c, 0);
+            const percentuale = totCastelletto > 0 ? Math.min(100, (totale / totCastelletto) * 100) : 0;
             
-            if (banche.length === 0) {
-                list.innerHTML = `
-                    <div class="empty-state">
-                        <div class="empty-state-icon">📊</div>
-                        <div class="empty-state-text">Nessuna banca trovata</div>
+            let badgeClass = 'green', badgeText = 'OK';
+            if (percentuale > 80) { badgeClass = 'red'; badgeText = 'Critico'; }
+            else if (percentuale > 50) { badgeClass = 'yellow'; badgeText = 'Attenz.'; }
+            
+            return { fatture: fattureMese.length, totale, percentuale, badgeClass, badgeText };
+        }
+        
+        function renderMesiGrid() {
+            const grid = document.getElementById('mesi-grid');
+            grid.innerHTML = MESI.map((mese, idx) => {
+                const stats = calcMeseStats(idx);
+                const strokeColor = stats.percentuale > 80 ? '#ef4444' : stats.percentuale > 50 ? '#f59e0b' : '#22c55e';
+                const circumference = Math.PI * 36;
+                const offset = circumference * (1 - stats.percentuale / 100);
+                
+                return `
+                    <div class="mese-card ${selectedMese === idx ? 'selected' : ''}" onclick="selectMese(${idx})">
+                        <div class="mese-nome">${mese}</div>
+                        <svg class="mese-progress" viewBox="0 0 50 50">
+                            <circle cx="25" cy="25" r="18" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="4"/>
+                            <circle cx="25" cy="25" r="18" fill="none" stroke="${strokeColor}" stroke-width="4" stroke-linecap="round"
+                                stroke-dasharray="${circumference}" stroke-dashoffset="${offset}" transform="rotate(-90 25 25)"/>
+                        </svg>
+                        <div class="mese-perc">${stats.percentuale.toFixed(0)}%</div>
+                        <div class="mese-badge ${stats.badgeClass}">${stats.badgeText}</div>
                     </div>
                 `;
+            }).join('');
+        }
+        
+        function selectMese(meseIdx) {
+            if (selectedMese === meseIdx) { closeMeseExpanded(); return; }
+            
+            selectedMese = meseIdx;
+            const daysInMonth = getDaysInMonth(meseIdx, currentYear);
+            currentDayFilter = daysInMonth;
+            
+            document.getElementById('mese-expanded-title').textContent = `${MESI_FULL[meseIdx]} ${currentYear}`;
+            document.getElementById('day-slider').max = daysInMonth;
+            document.getElementById('day-slider').value = daysInMonth;
+            document.getElementById('day-slider-value').textContent = daysInMonth;
+            document.getElementById('day-slider-max').textContent = daysInMonth;
+            
+            renderBanchePerMese();
+            document.getElementById('mese-expanded').classList.add('show');
+            renderMesiGrid();
+            
+            setTimeout(() => {
+                document.getElementById('mese-expanded').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 100);
+        }
+        
+        function closeMeseExpanded() {
+            selectedMese = null;
+            document.getElementById('mese-expanded').classList.remove('show');
+            renderMesiGrid();
+        }
+        
+        function updateDayFilter(day) {
+            currentDayFilter = parseInt(day);
+            document.getElementById('day-slider-value').textContent = day;
+            applyDayFilter();
+            updateStatsRiepilogo();
+        }
+        
+        function applyDayFilter() {
+            document.querySelectorAll('.fattura-item').forEach(item => {
+                const day = parseInt(item.dataset.day);
+                item.classList.toggle('filtered-out', day > currentDayFilter);
+            });
+        }
+        
+        function updateStatsRiepilogo() {
+            if (selectedMese === null) return;
+            const fattureMese = getFatturePerMese(selectedMese);
+            const fattureFiltered = fattureMese.filter(f => f.dataScadenza && new Date(f.dataScadenza).getDate() <= currentDayFilter);
+            const totale = fattureFiltered.reduce((sum, f) => sum + (f.importoDaPagare || 0), 0);
+            
+            document.getElementById('stat-totale-fatture').textContent = fattureFiltered.length;
+            document.getElementById('stat-totale-importo').textContent = formatEuro(totale);
+        }
+        
+        function renderBanchePerMese() {
+            if (selectedMese === null) return;
+            
+            const fattureMese = getFatturePerMese(selectedMese);
+            const bancheMap = {};
+            fattureMese.forEach(f => {
+                const banca = f.bancaAssociata || 'Banca non specificata';
+                if (!bancheMap[banca]) bancheMap[banca] = [];
+                bancheMap[banca].push(f);
+            });
+            
+            const banche = Object.keys(bancheMap).sort();
+            const totale = fattureMese.reduce((sum, f) => sum + (f.importoDaPagare || 0), 0);
+            document.getElementById('stat-totale-fatture').textContent = fattureMese.length;
+            document.getElementById('stat-totale-importo').textContent = formatEuro(totale);
+            
+            if (banche.length === 0) {
+                document.getElementById('banche-list').innerHTML = '<div class="no-fatture">📭 Nessuna fattura in questo mese</div>';
                 return;
             }
             
-            document.getElementById('castelletti-subtitle').textContent = `${banche.length} banche · ${allFatture.length} fatture`;
-            
-            list.innerHTML = banche.map((banca, idx) => {
+            document.getElementById('banche-list').innerHTML = banche.map((banca, idx) => {
+                const fatture = bancheMap[banca];
+                const totBanca = fatture.reduce((sum, f) => sum + (f.importoDaPagare || 0), 0);
                 const castelletto = castellettiPerBanca[banca] || 0;
-                const tutteFatture = Object.values(fatturePerBanca[banca]).flat();
-                const totaleDaPagare = tutteFatture.reduce((sum, f) => sum + (f.importoDaPagare || 0), 0);
                 
-                // Render mesi come lista verticale
-                const mesiHtml = MESI.map((mese, meseIdx) => {
-                    const fatture = fatturePerBanca[banca][meseIdx] || [];
-                    const daPagareMese = fatture.reduce((sum, f) => sum + (f.importoDaPagare || 0), 0);
-                    const numFatture = fatture.length;
-                    
-                    // Calcola percentuale occupazione
-                    const occupato = totaleDaPagare - daPagareMese;
-                    const rimanente = castelletto + occupato;
-                    const percentuale = castelletto > 0 
-                        ? Math.min(100, Math.max(0, ((castelletto - rimanente) / castelletto) * 100))
-                        : 0;
-                    
-                    let badgeClass = 'green';
-                    let badgeText = 'OK';
-                    if (percentuale > 80) {
-                        badgeClass = 'red';
-                        badgeText = 'Critico';
-                    } else if (percentuale > 50) {
-                        badgeClass = 'yellow';
-                        badgeText = 'Attenzione';
+                fatture.sort((a, b) => {
+                    const dayA = a.dataScadenza ? new Date(a.dataScadenza).getDate() : 0;
+                    const dayB = b.dataScadenza ? new Date(b.dataScadenza).getDate() : 0;
+                    return dayA - dayB;
+                });
+                
+                const today = new Date();
+                const fattureHtml = fatture.map(f => {
+                    const date = f.dataScadenza ? new Date(f.dataScadenza) : null;
+                    const day = date ? date.getDate() : '?';
+                    let dayClass = 'future';
+                    if (date) {
+                        if (date < today) dayClass = 'past';
+                        else if (date.toDateString() === today.toDateString()) dayClass = 'today';
                     }
                     
-                    const daysInMonth = getDaysInMonth(meseIdx);
-                    const today = new Date();
-                    const currentDay = (today.getMonth() === meseIdx) ? today.getDate() : 1;
-                    
-                    // Ordina fatture per giorno
-                    const fattureSorted = [...fatture].sort((a, b) => {
-                        const dayA = a.dataScadenza ? new Date(a.dataScadenza).getDate() : 0;
-                        const dayB = b.dataScadenza ? new Date(b.dataScadenza).getDate() : 0;
-                        return dayA - dayB;
-                    });
-                    
-                    // Render lista fatture
-                    const fattureHtml = fattureSorted.length > 0 ? fattureSorted.map(f => {
-                        const fDate = f.dataScadenza ? new Date(f.dataScadenza) : null;
-                        const day = fDate ? fDate.getDate() : '?';
-                        const numero = String(f.numeroFattura || '').toLowerCase();
-                        return `
-                            <div class="fattura-item" data-day="${day}" data-numero="${numero}">
-                                <div class="fattura-giorno future">${day}</div>
-                                <div class="fattura-info">
-                                    <div class="fattura-cliente">${f.cliente || 'N/D'}</div>
-                                    <div class="fattura-numero">Fatt. ${f.numeroFattura || '-'}</div>
-                                </div>
-                                <div class="fattura-importo">${formatEuro(f.importoDaPagare || 0)}</div>
-                            </div>
-                        `;
-                    }).join('') : '<div class="no-fatture">📭 Nessuna fattura in scadenza</div>';
-                    
                     return `
-                        <div class="mese-box" id="mese-box-${idx}-${meseIdx}" data-banca="${idx}">
-                            <div class="mese-header" onclick="toggleMeseBox(${idx}, ${meseIdx})">
-                                <div class="mese-indicator ${badgeClass}">
-                                    <span class="mese-indicator-perc">${percentuale.toFixed(0)}%</span>
-                                </div>
-                                <div class="mese-info">
-                                    <div class="mese-nome">${MESI_FULL[meseIdx]}</div>
-                                    <div class="mese-subtitle">
-                                        <span>${numFatture} fatture</span>
-                                        <span>·</span>
-                                        <span>${formatEuroShort(daPagareMese)}</span>
-                                    </div>
-                                </div>
-                                <span class="mese-badge ${badgeClass}">${badgeText}</span>
-                                <svg class="mese-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <polyline points="6 9 12 15 18 9"/>
-                                </svg>
+                        <div class="fattura-item ${day > currentDayFilter ? 'filtered-out' : ''}" data-day="${day}">
+                            <div class="fattura-giorno ${dayClass}">${day}</div>
+                            <div class="fattura-info">
+                                <div class="fattura-cliente">${f.cliente || 'N/D'}</div>
+                                <div class="fattura-numero">Fatt. ${String(f.numeroFattura || '-')}</div>
                             </div>
-                            <div class="mese-content">
-                                <div class="mese-inner">
-                                    <!-- Slider Giorni -->
-                                    <div class="slider-container">
-                                        <div class="slider-header">
-                                            <span class="slider-label">Scorri per vedere il totale al:</span>
-                                            <span class="slider-day" id="slider-day-${idx}-${meseIdx}">${currentDay} ${MESI_FULL[meseIdx]}</span>
-                                        </div>
-                                        <div class="slider-track">
-                                            <div class="slider-fill" id="slider-fill-${idx}-${meseIdx}" style="width: 0%;"></div>
-                                            <input type="range" class="slider-input" 
-                                                id="slider-${idx}-${meseIdx}"
-                                                min="1" max="${daysInMonth}" value="${currentDay}"
-                                                oninput="updateSlider(${idx}, ${meseIdx}, '${banca.replace(/'/g, "\\'")}', this.value)">
-                                            <div class="slider-thumb" id="slider-thumb-${idx}-${meseIdx}" style="left: 0%;">${currentDay}</div>
-                                        </div>
-                                        <div class="slider-totale">
-                                            <span class="slider-totale-label">Totale da pagare entro questa data:</span>
-                                            <span class="slider-totale-value" id="slider-totale-${idx}-${meseIdx}">€ 0</span>
-                                        </div>
-                                    </div>
-                                    
-                                    <!-- Ricerca Fatture -->
-                                    <div class="fatture-search-box">
-                                        <svg class="fatture-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                            <circle cx="11" cy="11" r="8"/>
-                                            <path d="m21 21-4.35-4.35"/>
-                                        </svg>
-                                        <input type="text" class="fatture-search-input" 
-                                            placeholder="Cerca n° fattura..." 
-                                            id="search-fatture-${idx}-${meseIdx}"
-                                            oninput="filterFattureByNumero(${idx}, ${meseIdx}, this.value)">
-                                        <button class="fatture-search-clear" id="search-clear-${idx}-${meseIdx}" onclick="clearFattureFilter(${idx}, ${meseIdx})">✕</button>
-                                    </div>
-                                    
-                                    <!-- Lista Fatture -->
-                                    <div class="fatture-list" id="fatture-list-${idx}-${meseIdx}">
-                                        <div class="fatture-list-header">
-                                            <span class="fatture-list-title">📋 Scadenze del mese</span>
-                                            <span class="fatture-count-label" id="fatture-count-${idx}-${meseIdx}">${numFatture} fatture</span>
-                                        </div>
-                                        ${fattureHtml}
-                                    </div>
-                                </div>
-                            </div>
+                            <div class="fattura-importo">${formatEuro(f.importoDaPagare || 0)}</div>
                         </div>
                     `;
                 }).join('');
                 
                 return `
-                    <div class="banca-box" data-banca="${idx}">
-                        <div class="banca-header" onclick="toggleBanca(${idx})">
-                            <div class="banca-icon">
+                    <div class="banca-card" id="banca-${idx}">
+                        <div class="banca-card-header" onclick="toggleBancaCard(${idx})">
+                            <div class="banca-card-icon">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <path d="M3 9L12 2L21 9V20C21 20.5304 20.7893 21.0391 20.4142 21.4142C20.0391 21.7893 19.5304 22 19 22H5C4.46957 22 3.96086 21.7893 3.58579 21.4142C3.21071 21.0391 3 20.5304 3 20V9Z"/>
                                     <path d="M9 22V12H15V22"/>
                                 </svg>
                             </div>
-                            <div class="banca-info">
-                                <div class="banca-name">${banca}</div>
-                                <div class="banca-castelletto">💰 ${formatEuro(castelletto)}</div>
+                            <div class="banca-card-info">
+                                <div class="banca-card-name">${banca}</div>
+                                <div class="banca-card-stats">
+                                    <span>${fatture.length} fatture</span>
+                                    <span>·</span>
+                                    <span class="red">${formatEuroShort(totBanca)}</span>
+                                    ${castelletto > 0 ? `<span>·</span><span class="green">Cast. ${formatEuroShort(castelletto)}</span>` : ''}
+                                </div>
                             </div>
-                            <svg class="banca-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <svg class="banca-card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <polyline points="6 9 12 15 18 9"/>
                             </svg>
                         </div>
-                        <div class="banca-content">
-                            <div class="banca-inner">
-                                <div class="stats-summary">
-                                    <div class="stat-box">
-                                        <div class="stat-box-value green">${formatEuroShort(castelletto)}</div>
-                                        <div class="stat-box-label">Castelletto</div>
-                                    </div>
-                                    <div class="stat-box">
-                                        <div class="stat-box-value" style="color: var(--error);">${formatEuroShort(totaleDaPagare)}</div>
-                                        <div class="stat-box-label">Tot. da Pagare</div>
-                                    </div>
-                                </div>
-                                <div class="mesi-list">
-                                    ${mesiHtml}
-                                </div>
-                            </div>
+                        <div class="banca-card-content">
+                            <div class="banca-card-inner">${fattureHtml}</div>
                         </div>
                     </div>
                 `;
             }).join('');
-            
-            // Inizializza gli slider dopo il render
-            setTimeout(() => {
-                banche.forEach((banca, idx) => {
-                    MESI.forEach((_, meseIdx) => {
-                        const slider = document.getElementById(`slider-${idx}-${meseIdx}`);
-                        if (slider) {
-                            updateSlider(idx, meseIdx, banca, slider.value);
-                        }
-                    });
-                });
-            }, 100);
         }
         
-        // Carica Castelletti
-        async function loadCastelletti() {
-            if (!supabaseClient) {
-                // Demo data
-                document.getElementById('castelletti-subtitle').textContent = 'Connessione non disponibile';
-                return;
+        function toggleBancaCard(idx) {
+            const card = document.getElementById(`banca-${idx}`);
+            if (card) {
+                document.querySelectorAll('.banca-card.expanded').forEach(c => { if (c !== card) c.classList.remove('expanded'); });
+                card.classList.toggle('expanded');
             }
+        }
+        
+        async function loadCastelletti() {
+            if (!supabaseClient) { document.getElementById('castelletti-subtitle').textContent = 'Connessione non disponibile'; return; }
             
             try {
-                // Carica castelletti
-                const { data: bancheData, error: bancheError } = await supabaseClient
-                    .from('ImportiCastelletti')
-                    .select('*');
-                    
+                const { data: bancheData, error: bancheError } = await supabaseClient.from('ImportiCastelletti').select('*');
                 if (bancheError) throw bancheError;
+                if (bancheData) bancheData.forEach(b => { castellettiPerBanca[b.nome] = b.totaleCastelletto || 0; });
                 
-                // Mappa castelletti per nome
-                if (bancheData) {
-                    bancheData.forEach(b => {
-                        castellettiPerBanca[b.nome] = b.totaleCastelletto || 0;
-                    });
-                }
-                
-                // Carica fatture
-                const { data, error } = await supabaseClient
-                    .from('FattureCastelletti')
-                    .select('*');
-                    
+                const { data, error } = await supabaseClient.from('FattureCastelletti').select('*');
                 if (error) throw error;
                 
-                if (data && data.length > 0) {
-                    allFatture = data;
-                    organizzaDatiPerBanca(data);
-                    renderBanche();
-                } else {
-                    document.getElementById('banche-list').innerHTML = `
-                        <div class="empty-state">
-                            <div class="empty-state-icon">📊</div>
-                            <div class="empty-state-text">Nessuna fattura trovata</div>
-                        </div>
-                    `;
-                    document.getElementById('castelletti-subtitle').textContent = 'Nessun dato';
-                }
-                
+                allFatture = data || [];
+                const numBanche = Object.keys(castellettiPerBanca).length;
+                document.getElementById('castelletti-subtitle').textContent = `${numBanche} banche · ${allFatture.length} fatture`;
+                document.getElementById('current-year').textContent = currentYear;
+                renderMesiGrid();
             } catch (error) {
                 console.error('Errore caricamento castelletti:', error);
                 document.getElementById('castelletti-subtitle').textContent = 'Errore caricamento';
-                document.getElementById('banche-list').innerHTML = `
-                    <div class="empty-state">
-                        <div class="empty-state-icon">⚠️</div>
-                        <div class="empty-state-text">Errore: ${error.message}</div>
-                    </div>
-                `;
             }
         }
         
@@ -1923,64 +1462,39 @@
         
         let allAccounts = [];
         
-        // Carica Account
         async function loadAccounts() {
-            if (!supabaseClient) {
-                document.getElementById('accounts-subtitle').textContent = 'Connessione non disponibile';
-                return;
-            }
+            if (!supabaseClient) { document.getElementById('accounts-subtitle').textContent = 'Connessione non disponibile'; return; }
             
             try {
-                const { data, error } = await supabaseClient
-                    .from('accounts')
-                    .select('*')
-                    .order('cognome', { ascending: true });
-                    
+                const { data, error } = await supabaseClient.from('accounts').select('*').order('cognome', { ascending: true });
                 if (error) throw error;
                 
                 allAccounts = data || [];
                 document.getElementById('accounts-subtitle').textContent = `${allAccounts.length} account`;
                 renderAccounts();
-                
             } catch (error) {
                 console.error('Errore caricamento account:', error);
                 document.getElementById('accounts-subtitle').textContent = 'Errore caricamento';
-                document.getElementById('accounts-list').innerHTML = `
-                    <div class="empty-state">
-                        <div class="empty-state-icon">⚠️</div>
-                        <div class="empty-state-text">Errore: ${error.message}</div>
-                    </div>
-                `;
+                document.getElementById('accounts-list').innerHTML = `<div class="empty-state"><div class="empty-state-icon">⚠️</div><div class="empty-state-text">Errore: ${error.message}</div></div>`;
             }
         }
         
-        // Render Account
         function renderAccounts() {
             const list = document.getElementById('accounts-list');
-            
             if (allAccounts.length === 0) {
-                list.innerHTML = `
-                    <div class="empty-state">
-                        <div class="empty-state-icon">👤</div>
-                        <div class="empty-state-text">Nessun account trovato</div>
-                    </div>
-                `;
+                list.innerHTML = '<div class="empty-state"><div class="empty-state-icon">👤</div><div class="empty-state-text">Nessun account trovato</div></div>';
                 return;
             }
             
             list.innerHTML = allAccounts.map(account => {
-                const initials = getAccountInitials(account);
-                
+                const initials = ((account.nome || '').charAt(0) + (account.cognome || '').charAt(0)).toUpperCase() || '??';
                 return `
                     <div class="account-card ${!account.attivo ? 'inactive' : ''}" data-id="${account.id}">
                         <div class="account-header" onclick="editAccount('${account.id}')">
                             <div class="account-avatar ${!account.attivo ? 'inactive' : ''}">${initials}</div>
                             <div class="account-info">
                                 <div class="account-name">${account.cognome || ''} ${account.nome || ''}</div>
-                                <div class="account-details">
-                                    <span>@${account.username}</span>
-                                    ${account.email ? `<span>· ${account.email}</span>` : ''}
-                                </div>
+                                <div class="account-details">@${account.username}${account.email ? ` · ${account.email}` : ''}</div>
                             </div>
                             <span class="account-badge ${account.ruolo || 'utente'}">${account.ruolo || 'utente'}</span>
                         </div>
@@ -1989,55 +1503,27 @@
             }).join('');
         }
         
-        // Get Initials
-        function getAccountInitials(account) {
-            const nome = account.nome || '';
-            const cognome = account.cognome || '';
-            return (nome.charAt(0) + cognome.charAt(0)).toUpperCase() || '??';
-        }
-        
-        // Open Modal
         function openAccountModal(isNew = true) {
             const modal = document.getElementById('account-modal');
-            const title = document.getElementById('modal-title');
-            const deleteBtn = document.getElementById('btn-delete');
-            const passwordHint = document.getElementById('password-hint');
-            
-            if (isNew) {
-                title.textContent = 'Nuovo Account';
-                deleteBtn.style.display = 'none';
-                passwordHint.style.display = 'none';
-                resetAccountForm();
-            } else {
-                title.textContent = 'Modifica Account';
-                deleteBtn.style.display = 'block';
-                passwordHint.style.display = 'inline';
-            }
-            
+            document.getElementById('modal-title').textContent = isNew ? 'Nuovo Account' : 'Modifica Account';
+            document.getElementById('btn-delete').style.display = isNew ? 'none' : 'block';
+            document.getElementById('password-hint').style.display = isNew ? 'none' : 'inline';
+            if (isNew) resetAccountForm();
             modal.classList.add('show');
             document.body.style.overflow = 'hidden';
         }
         
-        // Close Modal
         function closeAccountModal() {
-            const modal = document.getElementById('account-modal');
-            modal.classList.remove('show');
+            document.getElementById('account-modal').classList.remove('show');
             document.body.style.overflow = '';
         }
         
-        // Reset Form
         function resetAccountForm() {
-            document.getElementById('account-id').value = '';
-            document.getElementById('account-nome').value = '';
-            document.getElementById('account-cognome').value = '';
-            document.getElementById('account-username').value = '';
-            document.getElementById('account-password').value = '';
-            document.getElementById('account-email').value = '';
+            ['account-id', 'account-nome', 'account-cognome', 'account-username', 'account-password', 'account-email'].forEach(id => document.getElementById(id).value = '');
             document.getElementById('account-ruolo').value = 'utente';
             document.getElementById('account-attivo').checked = true;
         }
         
-        // Edit Account
         function editAccount(accountId) {
             const account = allAccounts.find(a => a.id === accountId);
             if (!account) return;
@@ -2054,7 +1540,6 @@
             openAccountModal(false);
         }
         
-        // Save Account
         async function saveAccount() {
             const accountId = document.getElementById('account-id').value;
             const nome = document.getElementById('account-nome').value.trim();
@@ -2065,92 +1550,47 @@
             const ruolo = document.getElementById('account-ruolo').value;
             const attivo = document.getElementById('account-attivo').checked;
             
-            // Validazione
-            if (!nome || !cognome || !username) {
-                alert('Nome, Cognome e Username sono obbligatori');
-                return;
-            }
-            
-            if (!accountId && !password) {
-                alert('La password è obbligatoria per i nuovi account');
-                return;
-            }
+            if (!nome || !cognome || !username) { alert('Nome, Cognome e Username sono obbligatori'); return; }
+            if (!accountId && !password) { alert('La password è obbligatoria per i nuovi account'); return; }
             
             try {
-                let data, error;
+                const accountData = { nome, cognome, username, email: email || null, ruolo, attivo };
+                if (password) accountData.password_hash = password;
                 
-                const accountData = {
-                    nome,
-                    cognome,
-                    username,
-                    email: email || null,
-                    ruolo,
-                    attivo
-                };
-                
-                // Se c'è password, aggiungila (in produzione dovresti hashare!)
-                if (password) {
-                    accountData.password_hash = password; // In produzione: usa bcrypt o simile
-                }
-                
+                let result;
                 if (accountId) {
-                    // Update
-                    ({ data, error } = await supabaseClient
-                        .from('accounts')
-                        .update(accountData)
-                        .eq('id', accountId)
-                        .select());
+                    result = await supabaseClient.from('accounts').update(accountData).eq('id', accountId).select();
                 } else {
-                    // Insert
-                    if (!password) {
-                        alert('Password obbligatoria per nuovi account');
-                        return;
-                    }
-                    ({ data, error } = await supabaseClient
-                        .from('accounts')
-                        .insert(accountData)
-                        .select());
+                    result = await supabaseClient.from('accounts').insert(accountData).select();
                 }
                 
-                if (error) throw error;
-                
+                if (result.error) throw result.error;
                 closeAccountModal();
                 await loadAccounts();
-                
             } catch (error) {
                 console.error('Errore salvataggio account:', error);
                 alert('Errore: ' + error.message);
             }
         }
         
-        // Delete Account
         async function deleteAccount() {
             const accountId = document.getElementById('account-id').value;
             if (!accountId) return;
             
             const account = allAccounts.find(a => a.id === accountId);
-            const conferma = confirm(`Sei sicuro di voler eliminare l'account di ${account?.cognome} ${account?.nome}?`);
-            
-            if (!conferma) return;
+            if (!confirm(`Sei sicuro di voler eliminare l'account di ${account?.cognome} ${account?.nome}?`)) return;
             
             try {
-                const { error } = await supabaseClient
-                    .from('accounts')
-                    .delete()
-                    .eq('id', accountId);
-                    
+                const { error } = await supabaseClient.from('accounts').delete().eq('id', accountId);
                 if (error) throw error;
-                
                 closeAccountModal();
                 await loadAccounts();
-                
             } catch (error) {
                 console.error('Errore eliminazione account:', error);
                 alert('Errore: ' + error.message);
             }
         }
         
-        // Logout
         function logout() {
             sessionStorage.removeItem('plm_logged_in');
             sessionStorage.removeItem('plm_user');
@@ -2159,7 +1599,6 @@
             window.location.href = 'login.html';
         }
         
-        // Init
         window.addEventListener('load', async function() {
             loadUserData();
             await initSupabase();

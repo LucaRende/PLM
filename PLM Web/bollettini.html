@@ -580,14 +580,14 @@
            CONTENT
            ============================================= */
         .page-content {
-            padding: 180px var(--space-4) calc(env(safe-area-inset-bottom) + 20px);
+            padding: 178px 16px calc(env(safe-area-inset-bottom) + 20px);
             min-height: 100vh;
             background: var(--surface-0);
             transition: padding-top 0.3s ease;
         }
         
         .page-content.filters-open {
-            padding-top: 420px;
+            padding-top: 480px;
         }
         
         /* Stats Summary */
@@ -2232,7 +2232,17 @@
         // SISTEMA NOTIFICHE
         // =============================================
         function countNotifiche() {
-            const tecnicoCorrente = `${currentUser.nome || ''} ${currentUser.cognome || ''}`.trim();
+            const tecnicoCorrente = `${currentUser.nome || ''} ${currentUser.cognome || ''}`.trim().toLowerCase();
+            const tecnicoCorrenteAlt = `${currentUser.cognome || ''} ${currentUser.nome || ''}`.trim().toLowerCase();
+            const cognome = (currentUser.cognome || '').toLowerCase();
+            
+            // Funzione per verificare se il bollettino appartiene all'utente
+            const isMyBollettino = (b) => {
+                const tecnicoDB = (b.tecnico_installatore || '').toLowerCase();
+                return tecnicoDB === tecnicoCorrente || 
+                       tecnicoDB === tecnicoCorrenteAlt ||
+                       (cognome && tecnicoDB.includes(cognome));
+            };
             
             if (isAdmin) {
                 // Admin: conta bollettini DA VALIDARE (non validati e non eliminati)
@@ -2243,7 +2253,7 @@
             } else {
                 // Utente normale: conta bollettini PROPRI VALIDATI che non ha ancora visto
                 notificheCount = allBollettini.filter(b => 
-                    b.tecnico_installatore === tecnicoCorrente &&
+                    isMyBollettino(b) &&
                     b.validato === true && 
                     b.notifica_vista !== true
                 ).length;
@@ -2262,10 +2272,17 @@
             const bollettino = allBollettini.find(b => b.id_bollettino === bollettinoId);
             if (!bollettino) return;
             
-            const tecnicoCorrente = `${currentUser.nome || ''} ${currentUser.cognome || ''}`.trim();
+            const tecnicoCorrente = `${currentUser.nome || ''} ${currentUser.cognome || ''}`.trim().toLowerCase();
+            const tecnicoCorrenteAlt = `${currentUser.cognome || ''} ${currentUser.nome || ''}`.trim().toLowerCase();
+            const cognome = (currentUser.cognome || '').toLowerCase();
+            const tecnicoDB = (bollettino.tecnico_installatore || '').toLowerCase();
+            
+            const isMyBollettino = tecnicoDB === tecnicoCorrente || 
+                                   tecnicoDB === tecnicoCorrenteAlt ||
+                                   (cognome && tecnicoDB.includes(cognome));
             
             // Solo se è il proprio bollettino e è stato validato ma non ancora visto
-            if (bollettino.tecnico_installatore === tecnicoCorrente && 
+            if (isMyBollettino && 
                 bollettino.validato === true && 
                 bollettino.notifica_vista !== true) {
                 
@@ -2447,11 +2464,22 @@
             const dataA = document.getElementById('filter-data-a').value;
             
             const tecnicoCorrente = `${currentUser.nome || ''} ${currentUser.cognome || ''}`.trim();
+            const tecnicoCorrenteAlt = `${currentUser.cognome || ''} ${currentUser.nome || ''}`.trim(); // Formato alternativo
+            
+            // DEBUG - rimuovere dopo
+            console.log('Filtro tecnico:', tecnicoCorrente, '/', tecnicoCorrenteAlt);
+            if (allBollettini.length > 0) {
+                console.log('Tecnici nei bollettini:', [...new Set(allBollettini.map(b => b.tecnico_installatore))]);
+            }
             
             filteredBollettini = allBollettini.filter(b => {
                 // Filtro miei/tutti
                 if (currentFilterType === 'miei') {
-                    if (b.tecnico_installatore !== tecnicoCorrente) return false;
+                    const tecnicoDB = (b.tecnico_installatore || '').toLowerCase();
+                    const match = tecnicoDB === tecnicoCorrente.toLowerCase() || 
+                                  tecnicoDB === tecnicoCorrenteAlt.toLowerCase() ||
+                                  tecnicoDB.includes(currentUser.cognome?.toLowerCase() || '---');
+                    if (!match) return false;
                 }
                 
                 // Ricerca testuale
@@ -2648,8 +2676,15 @@
                 const hasPhotos = b.foto_scontrini && b.foto_scontrini.length > 0;
                 const isValidated = b.validato === true;
                 
-                // Check notifica
-                const tecnicoCorrente = `${currentUser.nome || ''} ${currentUser.cognome || ''}`.trim();
+                // Check notifica con confronto flessibile
+                const tecnicoCorrente = `${currentUser.nome || ''} ${currentUser.cognome || ''}`.trim().toLowerCase();
+                const tecnicoCorrenteAlt = `${currentUser.cognome || ''} ${currentUser.nome || ''}`.trim().toLowerCase();
+                const cognome = (currentUser.cognome || '').toLowerCase();
+                const tecnicoDB = (b.tecnico_installatore || '').toLowerCase();
+                const isMyBollettino = tecnicoDB === tecnicoCorrente || 
+                                       tecnicoDB === tecnicoCorrenteAlt ||
+                                       (cognome && tecnicoDB.includes(cognome));
+                
                 let hasNotification = false;
                 let notificationClass = '';
                 
@@ -2659,7 +2694,7 @@
                     notificationClass = hasNotification ? 'notification-pending' : '';
                 } else {
                     // Utente: notifica se validato e non visto
-                    hasNotification = b.tecnico_installatore === tecnicoCorrente && 
+                    hasNotification = isMyBollettino && 
                                       isValidated && 
                                       b.notifica_vista !== true;
                     notificationClass = hasNotification ? 'notification-new' : '';
@@ -3033,9 +3068,16 @@
             const hasPhotos = bollettino.foto_scontrini && bollettino.foto_scontrini.length > 0;
             const isValidated = bollettino.validato === true;
             
-            // Check se è una notifica nuova (validato ma non visto)
-            const tecnicoCorrente = `${currentUser.nome || ''} ${currentUser.cognome || ''}`.trim();
-            const isNewNotification = bollettino.tecnico_installatore === tecnicoCorrente && 
+            // Check se è una notifica nuova (validato ma non visto) - confronto flessibile
+            const tecnicoCorrente = `${currentUser.nome || ''} ${currentUser.cognome || ''}`.trim().toLowerCase();
+            const tecnicoCorrenteAlt = `${currentUser.cognome || ''} ${currentUser.nome || ''}`.trim().toLowerCase();
+            const cognome = (currentUser.cognome || '').toLowerCase();
+            const tecnicoDB = (bollettino.tecnico_installatore || '').toLowerCase();
+            const isMyBollettino = tecnicoDB === tecnicoCorrente || 
+                                   tecnicoDB === tecnicoCorrenteAlt ||
+                                   (cognome && tecnicoDB.includes(cognome));
+            
+            const isNewNotification = isMyBollettino && 
                                       isValidated && 
                                       bollettino.notifica_vista !== true;
             
@@ -3159,8 +3201,8 @@
                 ` : ''}
             `;
             
-            // Gestione permessi pulsanti (usa tecnicoCorrente già dichiarato sopra)
-            const isOwner = bollettino.tecnico_installatore === tecnicoCorrente;
+            // Gestione permessi pulsanti (usa isMyBollettino già calcolato sopra)
+            const isOwner = isMyBollettino;
             
             // Pulsante Modifica: owner può modificare se non validato, admin può sempre modificare
             const canEdit = (isOwner && !isValidated) || isAdmin;
@@ -3219,9 +3261,14 @@
             const bollettino = allBollettini.find(b => b.id_bollettino === currentBollettinoId);
             if (!bollettino) return;
             
-            // Controlla permessi modifica
-            const tecnicoCorrente = `${currentUser.nome || ''} ${currentUser.cognome || ''}`.trim();
-            const isOwner = bollettino.tecnico_installatore === tecnicoCorrente;
+            // Controlla permessi modifica con confronto flessibile
+            const tecnicoCorrente = `${currentUser.nome || ''} ${currentUser.cognome || ''}`.trim().toLowerCase();
+            const tecnicoCorrenteAlt = `${currentUser.cognome || ''} ${currentUser.nome || ''}`.trim().toLowerCase();
+            const cognome = (currentUser.cognome || '').toLowerCase();
+            const tecnicoDB = (bollettino.tecnico_installatore || '').toLowerCase();
+            const isOwner = tecnicoDB === tecnicoCorrente || 
+                            tecnicoDB === tecnicoCorrenteAlt ||
+                            (cognome && tecnicoDB.includes(cognome));
             const isValidated = bollettino.validato === true;
             
             // Se validato e non admin, non può modificare

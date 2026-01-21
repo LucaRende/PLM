@@ -1765,6 +1765,8 @@
                 const totaleDaPagareAnnoFiltratoBanca = calcTotaleDaPagareAnnoFiltrato(banca, selectedMese, currentDayFilter);
                 const daPagareMeseGiornoBanca = calcDaPagareMeseGiorno(selectedMese, banca, currentDayFilter);
                 
+                console.log(`[${banca}] idx=${idx}, giorno=${currentDayFilter}, filtrato=${formatEuroShort(totaleDaPagareAnnoFiltratoBanca)}, totale=${formatEuroShort(totaleDaPagareTuttiMesiBanca)}`);
+                
                 // Calcola rimanente e occupato in base al giorno filtrato
                 const rimanente = castelletto + totaleDaPagareTuttiMesiBanca - daPagareMeseGiornoBanca;
                 const occupato = castelletto - rimanente;
@@ -1781,6 +1783,8 @@
                 const occupatoEl = document.getElementById(`banca-occupato-${idx}`);
                 const rimanenteEl = document.getElementById(`banca-rimanente-${idx}`);
                 const progressEl = document.getElementById(`banca-progress-${idx}`);
+                
+                console.log(`[${banca}] importoEl trovato:`, !!importoEl);
                 
                 if (countEl) countEl.textContent = `${fattureFiltered.length} su ${fatture.length}`;
                 if (importoEl) importoEl.textContent = `${formatEuroShort(totaleDaPagareAnnoFiltratoBanca)} su ${formatEuroShort(totaleDaPagareTuttiMesiBanca)}`;

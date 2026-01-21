@@ -166,100 +166,40 @@
             font-weight: 600;
             color: var(--text-primary);
             flex: 1;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        
-        .header-actions {
-            display: flex;
-            gap: var(--space-2);
-        }
-        
-        .btn-filter-toggle,
-        .btn-new {
-            width: 36px;
-            height: 36px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            -webkit-tap-highlight-color: transparent;
-            transition: all var(--transition-fast);
-        }
-        
-        .btn-filter-toggle {
-            background: var(--surface-2);
-            border: 1px solid var(--border-default);
-            color: var(--text-secondary);
-        }
-        
-        .btn-filter-toggle.active {
-            background: rgba(220, 38, 38, 0.15);
-            border-color: var(--primary);
-            color: var(--primary);
-        }
-        
-        .btn-filter-toggle:active {
-            transform: scale(0.95);
-        }
-        
-        .btn-new {
-            background: var(--primary);
-            color: white;
-        }
-        
-        .btn-new:active {
-            transform: scale(0.95);
-            opacity: 0.9;
-        }
-        
-        .btn-filter-toggle svg,
-        .btn-new svg {
-            width: 20px;
-            height: 20px;
         }
         
         /* =============================================
-           SEZIONE FILTRI ESPANDIBILE
+           SEZIONE RICERCA SEMPRE VISIBILE + FILTRI
            ============================================= */
-        .filters-section {
+        .search-filters-section {
             position: fixed;
-            top: 110px;
+            top: 106px;
             left: 0;
             right: 0;
             z-index: 998;
-            background: rgba(10, 10, 15, 0.98);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+            background: var(--surface-0);
             border-bottom: 1px solid var(--border-default);
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.3s ease, padding 0.3s ease;
         }
         
-        .filters-section.open {
-            max-height: 500px;
-            padding: var(--space-4);
-        }
-        
-        .filters-inner {
+        /* Barra Ricerca SEMPRE VISIBILE */
+        .search-row {
             display: flex;
-            flex-direction: column;
-            gap: var(--space-3);
+            gap: var(--space-2);
+            padding: var(--space-3) var(--space-4);
+            background: var(--surface-1);
         }
         
-        /* Barra Ricerca */
         .search-bar {
+            flex: 1;
             position: relative;
         }
         
         .search-bar input {
             width: 100%;
-            padding: var(--space-3) var(--space-4);
-            padding-left: 42px;
+            height: 44px;
+            padding: 0 var(--space-4);
+            padding-left: 40px;
+            padding-right: 40px;
             font-family: var(--font-sans);
             font-size: 15px;
             color: var(--text-primary);
@@ -279,28 +219,204 @@
             color: var(--text-muted);
         }
         
-        .search-bar svg {
+        .search-bar .search-icon {
             position: absolute;
-            left: 14px;
+            left: 12px;
             top: 50%;
             transform: translateY(-50%);
-            width: 18px;
-            height: 18px;
+            width: 20px;
+            height: 20px;
             color: var(--text-muted);
             pointer-events: none;
+        }
+        
+        .search-bar .btn-clear-search {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 28px;
+            height: 28px;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            background: var(--surface-3);
+            border: none;
+            border-radius: 50%;
+            color: var(--text-muted);
+            cursor: pointer;
+        }
+        
+        .search-bar .btn-clear-search.show {
+            display: flex;
+        }
+        
+        .search-bar .btn-clear-search svg {
+            width: 14px;
+            height: 14px;
+        }
+        
+        /* Pulsante espandi filtri */
+        .btn-expand-filters {
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--surface-2);
+            border: 1px solid var(--border-default);
+            border-radius: var(--radius-xl);
+            color: var(--text-secondary);
+            cursor: pointer;
+            position: relative;
+            flex-shrink: 0;
+            transition: all var(--transition-fast);
+        }
+        
+        .btn-expand-filters.active {
+            background: rgba(220, 38, 38, 0.15);
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+        
+        .btn-expand-filters:active {
+            transform: scale(0.95);
+        }
+        
+        .btn-expand-filters svg {
+            width: 20px;
+            height: 20px;
+        }
+        
+        .filter-badge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            min-width: 18px;
+            height: 18px;
+            padding: 0 5px;
+            background: var(--primary);
+            border-radius: var(--radius-full);
+            font-size: 10px;
+            font-weight: 700;
+            color: white;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .filter-badge.show {
+            display: flex;
+        }
+        
+        /* Pulsante Nuovo */
+        .btn-new {
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--primary);
+            border: none;
+            border-radius: var(--radius-xl);
+            color: white;
+            cursor: pointer;
+            flex-shrink: 0;
+            transition: all var(--transition-fast);
+        }
+        
+        .btn-new:active {
+            transform: scale(0.95);
+            opacity: 0.9;
+        }
+        
+        .btn-new svg {
+            width: 22px;
+            height: 22px;
+        }
+        
+        /* Pannello Filtri Espandibile */
+        .filters-panel {
+            max-height: 0;
+            overflow: hidden;
+            background: var(--surface-1);
+            transition: max-height 0.3s ease;
+        }
+        
+        .filters-panel.open {
+            max-height: 600px;
+            border-top: 1px solid var(--border-subtle);
+        }
+        
+        .filters-inner {
+            padding: var(--space-4);
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-3);
+        }
+        
+        /* Toggle Miei/Tutti */
+        .filter-toggle-container {
+            display: flex;
+            gap: var(--space-2);
+            align-items: center;
+        }
+        
+        .filter-toggle {
+            flex: 1;
+            display: flex;
+            background: var(--surface-2);
+            border-radius: var(--radius-lg);
+            padding: 3px;
+        }
+        
+        .filter-toggle-btn {
+            flex: 1;
+            padding: var(--space-2) var(--space-3);
+            border: none;
+            background: transparent;
+            color: var(--text-muted);
+            font-family: var(--font-sans);
+            font-size: 13px;
+            font-weight: 600;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .filter-toggle-btn.active {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .btn-reset-filters {
+            padding: var(--space-2) var(--space-3);
+            background: var(--surface-3);
+            border: 1px solid var(--border-default);
+            border-radius: var(--radius-md);
+            color: var(--text-muted);
+            font-family: var(--font-sans);
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+        
+        .btn-reset-filters:active {
+            background: var(--surface-4);
         }
         
         /* Filtri Grid */
         .filters-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: var(--space-2);
+            gap: var(--space-3);
         }
         
         .filter-group {
             display: flex;
             flex-direction: column;
-            gap: var(--space-1);
+            gap: 4px;
         }
         
         .filter-group.full-width {
@@ -309,7 +425,7 @@
         
         .filter-label {
             font-size: 11px;
-            font-weight: 500;
+            font-weight: 600;
             color: var(--text-muted);
             text-transform: uppercase;
             letter-spacing: 0.03em;
@@ -317,13 +433,14 @@
         
         .filter-select,
         .filter-input {
-            padding: var(--space-2) var(--space-3);
+            height: 40px;
+            padding: 0 var(--space-3);
             font-family: var(--font-sans);
             font-size: 14px;
             color: var(--text-primary);
             background: var(--surface-2);
             border: 1px solid var(--border-default);
-            border-radius: var(--radius-md);
+            border-radius: var(--radius-lg);
             outline: none;
             transition: all var(--transition-fast);
         }
@@ -339,9 +456,10 @@
         .filter-select:focus,
         .filter-input:focus {
             border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.1);
         }
         
-        /* Periodo date */
+        /* Date Range */
         .date-range {
             display: flex;
             gap: var(--space-2);
@@ -350,7 +468,8 @@
         
         .date-range input {
             flex: 1;
-            padding: var(--space-2) var(--space-3);
+            height: 40px;
+            padding: 0 var(--space-2);
             font-family: var(--font-sans);
             font-size: 13px;
             color: var(--text-primary);
@@ -360,43 +479,57 @@
             outline: none;
         }
         
+        .date-range input:focus {
+            border-color: var(--primary);
+        }
+        
         .date-range span {
             color: var(--text-muted);
             font-size: 12px;
         }
         
-        /* Filtro Toggle Miei/Tutti */
-        .filter-toggle-row {
+        /* Chips filtri attivi */
+        .active-filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--space-2);
+            padding: 0 var(--space-4) var(--space-3);
+            background: var(--surface-1);
+        }
+        
+        .active-filters:empty {
+            display: none;
+        }
+        
+        .filter-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 8px 4px 10px;
+            background: rgba(220, 38, 38, 0.1);
+            border: 1px solid rgba(220, 38, 38, 0.2);
+            border-radius: var(--radius-full);
+            font-size: 12px;
+            color: var(--primary);
+        }
+        
+        .filter-chip button {
+            width: 16px;
+            height: 16px;
             display: flex;
             align-items: center;
-            gap: var(--space-3);
-            padding-top: var(--space-2);
-        }
-        
-        .filter-toggle {
-            display: flex;
-            background: var(--surface-3);
-            border-radius: var(--radius-lg);
-            padding: 3px;
-            flex: 1;
-        }
-        
-        .filter-toggle-btn {
-            flex: 1;
-            padding: var(--space-2) var(--space-3);
+            justify-content: center;
+            background: rgba(220, 38, 38, 0.2);
             border: none;
-            background: transparent;
-            color: var(--text-muted);
-            font-size: 13px;
-            font-weight: 500;
-            border-radius: var(--radius-md);
+            border-radius: 50%;
+            color: var(--primary);
             cursor: pointer;
-            transition: all 0.2s ease;
+            padding: 0;
         }
         
-        .filter-toggle-btn.active {
-            background: var(--primary);
-            color: white;
+        .filter-chip button svg {
+            width: 10px;
+            height: 10px;
         }
         
         .btn-reset-filters {
@@ -439,14 +572,14 @@
            CONTENT
            ============================================= */
         .page-content {
-            padding: 120px var(--space-4) calc(env(safe-area-inset-bottom) + 80px);
+            padding: 180px var(--space-4) calc(env(safe-area-inset-bottom) + 20px);
             min-height: 100vh;
             background: var(--surface-0);
             transition: padding-top 0.3s ease;
         }
         
         .page-content.filters-open {
-            padding-top: 380px;
+            padding-top: 420px;
         }
         
         /* Stats Summary */
@@ -1525,104 +1658,126 @@
                 </svg>
             </button>
             <h1 class="page-title">Bollettini</h1>
-            <div class="header-actions">
-                <button class="btn-filter-toggle" id="btn-filter-toggle" onclick="toggleFilters()" title="Filtri">
+        </div>
+                </button>
+            </div>
+        </div>
+        
+        <!-- SEZIONE RICERCA + FILTRI -->
+        <section class="search-filters-section">
+            <!-- Barra Ricerca SEMPRE VISIBILE -->
+            <div class="search-row">
+                <div class="search-bar">
+                    <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"/>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                    </svg>
+                    <input type="text" id="search-input" placeholder="Cerca cliente, macchina..." oninput="handleSearchInput()">
+                    <button class="btn-clear-search" id="btn-clear-search" onclick="clearSearch()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18"/>
+                            <line x1="6" y1="6" x2="18" y2="18"/>
+                        </svg>
+                    </button>
+                </div>
+                <button class="btn-expand-filters" id="btn-expand-filters" onclick="toggleFilters()">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+                        <line x1="4" y1="21" x2="4" y2="14"/>
+                        <line x1="4" y1="10" x2="4" y2="3"/>
+                        <line x1="12" y1="21" x2="12" y2="12"/>
+                        <line x1="12" y1="8" x2="12" y2="3"/>
+                        <line x1="20" y1="21" x2="20" y2="16"/>
+                        <line x1="20" y1="12" x2="20" y2="3"/>
+                        <line x1="1" y1="14" x2="7" y2="14"/>
+                        <line x1="9" y1="8" x2="15" y2="8"/>
+                        <line x1="17" y1="16" x2="23" y2="16"/>
                     </svg>
                     <span class="filter-badge" id="filter-badge">0</span>
                 </button>
-                <button class="btn-new" onclick="openModal(true)" title="Nuovo Bollettino">
+                <button class="btn-new" onclick="openModal(true)" title="Nuovo">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <line x1="12" y1="5" x2="12" y2="19"/>
                         <line x1="5" y1="12" x2="19" y2="12"/>
                     </svg>
                 </button>
             </div>
-        </div>
-        
-        <!-- Sezione Filtri -->
-        <section class="filters-section" id="filters-section">
-            <div class="filters-inner">
-                <!-- Barra ricerca -->
-                <div class="search-bar">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="11" cy="11" r="8"/>
-                        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
-                    </svg>
-                    <input type="text" id="search-input" placeholder="Cerca cliente, macchina, note..." oninput="applyFilters()">
-                </div>
-                
-                <!-- Grid Filtri -->
-                <div class="filters-grid">
-                    <!-- Operatore (solo per admin) -->
-                    <div class="filter-group" id="filter-operatore-group" style="display: none;">
-                        <span class="filter-label">Operatore</span>
-                        <select class="filter-select" id="filter-operatore" onchange="applyFilters()">
-                            <option value="">Tutti</option>
-                        </select>
+            
+            <!-- Pannello Filtri Espandibile -->
+            <div class="filters-panel" id="filters-panel">
+                <div class="filters-inner">
+                    <!-- Toggle Miei/Tutti + Reset -->
+                    <div class="filter-toggle-container">
+                        <div class="filter-toggle">
+                            <button class="filter-toggle-btn active" data-filter="miei" onclick="setFilterType('miei')">I miei</button>
+                            <button class="filter-toggle-btn" data-filter="tutti" onclick="setFilterType('tutti')" id="btn-tutti" style="display: none;">Tutti</button>
+                        </div>
+                        <button class="btn-reset-filters" onclick="resetFilters()">Reset</button>
                     </div>
                     
-                    <!-- Cliente -->
-                    <div class="filter-group">
-                        <span class="filter-label">Cliente</span>
-                        <select class="filter-select" id="filter-cliente" onchange="applyFilters()">
-                            <option value="">Tutti</option>
-                        </select>
-                    </div>
-                    
-                    <!-- Macchina -->
-                    <div class="filter-group">
-                        <span class="filter-label">Macchina</span>
-                        <select class="filter-select" id="filter-macchina" onchange="applyFilters()">
-                            <option value="">Tutte</option>
-                        </select>
-                    </div>
-                    
-                    <!-- Durata minima -->
-                    <div class="filter-group">
-                        <span class="filter-label">Durata min (ore)</span>
-                        <input type="number" class="filter-input" id="filter-durata-min" placeholder="0" min="0" step="0.5" onchange="applyFilters()">
-                    </div>
-                    
-                    <!-- Durata massima -->
-                    <div class="filter-group">
-                        <span class="filter-label">Durata max (ore)</span>
-                        <input type="number" class="filter-input" id="filter-durata-max" placeholder="24" min="0" step="0.5" onchange="applyFilters()">
-                    </div>
-                    
-                    <!-- Stato Validazione -->
-                    <div class="filter-group">
-                        <span class="filter-label">Stato</span>
-                        <select class="filter-select" id="filter-stato" onchange="applyFilters()">
-                            <option value="">Tutti</option>
-                            <option value="validato">Validati</option>
-                            <option value="non-validato">Non validati</option>
-                            <option value="firmato">Firmati</option>
-                            <option value="non-firmato">Non firmati</option>
-                        </select>
-                    </div>
-                    
-                    <!-- Periodo date -->
-                    <div class="filter-group full-width">
-                        <span class="filter-label">Periodo</span>
-                        <div class="date-range">
-                            <input type="date" id="filter-data-da" onchange="applyFilters()">
-                            <span>—</span>
-                            <input type="date" id="filter-data-a" onchange="applyFilters()">
+                    <!-- Grid Filtri -->
+                    <div class="filters-grid">
+                        <!-- Operatore (solo per admin) -->
+                        <div class="filter-group" id="filter-operatore-group" style="display: none;">
+                            <span class="filter-label">Operatore</span>
+                            <select class="filter-select" id="filter-operatore" onchange="applyFilters()">
+                                <option value="">Tutti</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Cliente -->
+                        <div class="filter-group">
+                            <span class="filter-label">Cliente</span>
+                            <select class="filter-select" id="filter-cliente" onchange="applyFilters()">
+                                <option value="">Tutti</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Macchina -->
+                        <div class="filter-group">
+                            <span class="filter-label">Macchina</span>
+                            <select class="filter-select" id="filter-macchina" onchange="applyFilters()">
+                                <option value="">Tutte</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Stato -->
+                        <div class="filter-group">
+                            <span class="filter-label">Stato</span>
+                            <select class="filter-select" id="filter-stato" onchange="applyFilters()">
+                                <option value="">Tutti</option>
+                                <option value="validato">✓ Validati</option>
+                                <option value="non-validato">Non validati</option>
+                                <option value="firmato">Firmati</option>
+                                <option value="non-firmato">Non firmati</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Durata -->
+                        <div class="filter-group">
+                            <span class="filter-label">Ore min</span>
+                            <input type="number" class="filter-input" id="filter-durata-min" placeholder="0" min="0" step="0.5" onchange="applyFilters()">
+                        </div>
+                        
+                        <div class="filter-group">
+                            <span class="filter-label">Ore max</span>
+                            <input type="number" class="filter-input" id="filter-durata-max" placeholder="∞" min="0" step="0.5" onchange="applyFilters()">
+                        </div>
+                        
+                        <!-- Periodo -->
+                        <div class="filter-group full-width">
+                            <span class="filter-label">Periodo</span>
+                            <div class="date-range">
+                                <input type="date" id="filter-data-da" onchange="applyFilters()">
+                                <span>→</span>
+                                <input type="date" id="filter-data-a" onchange="applyFilters()">
+                            </div>
                         </div>
                     </div>
                 </div>
-                
-                <!-- Toggle e Reset -->
-                <div class="filter-toggle-row">
-                    <div class="filter-toggle" id="filter-toggle-container">
-                        <button class="filter-toggle-btn active" data-filter="miei" onclick="setFilterType('miei')">I miei</button>
-                        <button class="filter-toggle-btn" data-filter="tutti" onclick="setFilterType('tutti')" id="btn-tutti" style="display: none;">Tutti</button>
-                    </div>
-                    <button class="btn-reset-filters" onclick="resetFilters()">Reset filtri</button>
-                </div>
             </div>
+            
+            <!-- Chips filtri attivi -->
+            <div class="active-filters" id="active-filters"></div>
         </section>
         
         <!-- Content -->
@@ -1937,13 +2092,31 @@
         // FILTRI
         // =============================================
         function toggleFilters() {
-            const section = document.getElementById('filters-section');
-            const btn = document.getElementById('btn-filter-toggle');
+            const panel = document.getElementById('filters-panel');
+            const btn = document.getElementById('btn-expand-filters');
             const content = document.getElementById('page-content');
             
-            section.classList.toggle('open');
+            panel.classList.toggle('open');
             btn.classList.toggle('active');
             content.classList.toggle('filters-open');
+        }
+        
+        function handleSearchInput() {
+            const input = document.getElementById('search-input');
+            const clearBtn = document.getElementById('btn-clear-search');
+            
+            // Mostra/nascondi pulsante clear
+            clearBtn.classList.toggle('show', input.value.length > 0);
+            
+            applyFilters();
+            updateActiveFiltersChips();
+        }
+        
+        function clearSearch() {
+            document.getElementById('search-input').value = '';
+            document.getElementById('btn-clear-search').classList.remove('show');
+            applyFilters();
+            updateActiveFiltersChips();
         }
         
         function setFilterType(type) {
@@ -1957,10 +2130,12 @@
             });
             
             applyFilters();
+            updateActiveFiltersChips();
         }
         
         function resetFilters() {
             document.getElementById('search-input').value = '';
+            document.getElementById('btn-clear-search').classList.remove('show');
             document.getElementById('filter-operatore').value = '';
             document.getElementById('filter-cliente').value = '';
             document.getElementById('filter-macchina').value = '';
@@ -1972,6 +2147,43 @@
             
             setFilterType('miei');
             updateFilterBadge();
+            updateActiveFiltersChips();
+        }
+        
+        function clearSingleFilter(filterName) {
+            const el = document.getElementById(filterName);
+            if (el) {
+                el.value = '';
+                applyFilters();
+                updateActiveFiltersChips();
+            }
+        }
+        
+        function updateActiveFiltersChips() {
+            const container = document.getElementById('active-filters');
+            let chips = [];
+            
+            const search = document.getElementById('search-input').value;
+            if (search) {
+                chips.push(`<span class="filter-chip">Cerca: "${search}" <button onclick="clearSearch()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></span>`);
+            }
+            
+            const cliente = document.getElementById('filter-cliente');
+            if (cliente.value) {
+                chips.push(`<span class="filter-chip">Cliente: ${cliente.value} <button onclick="clearSingleFilter('filter-cliente')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></span>`);
+            }
+            
+            const macchina = document.getElementById('filter-macchina');
+            if (macchina.value) {
+                chips.push(`<span class="filter-chip">Macchina: ${macchina.value} <button onclick="clearSingleFilter('filter-macchina')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></span>`);
+            }
+            
+            const stato = document.getElementById('filter-stato');
+            if (stato.value) {
+                chips.push(`<span class="filter-chip">Stato: ${stato.options[stato.selectedIndex].text} <button onclick="clearSingleFilter('filter-stato')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></span>`);
+            }
+            
+            container.innerHTML = chips.join('');
         }
         
         function applyFilters() {
@@ -2039,12 +2251,13 @@
             renderBollettini();
             updateStats();
             updateFilterBadge();
+            updateActiveFiltersChips();
         }
         
         function updateFilterBadge() {
             let count = 0;
             
-            if (document.getElementById('search-input').value) count++;
+            // Non contare la ricerca nel badge, è già visibile
             if (document.getElementById('filter-operatore').value) count++;
             if (document.getElementById('filter-cliente').value) count++;
             if (document.getElementById('filter-macchina').value) count++;
@@ -2066,9 +2279,11 @@
             try {
                 Loader.show('funzione', 'Caricamento bollettini...');
                 
+                // Carica solo bollettini NON eliminati
                 const { data, error } = await supabaseClient
                     .from('BollettiniMontatori')
                     .select('*')
+                    .or('eliminato.is.null,eliminato.eq.false')
                     .order('data', { ascending: false });
                 
                 if (error) throw error;
@@ -2801,7 +3016,7 @@
         }
         
         // =============================================
-        // ELIMINA BOLLETTINO
+        // ELIMINA BOLLETTINO (SOFT DELETE)
         // =============================================
         async function deleteBollettino() {
             if (!currentBollettinoId) return;
@@ -2819,9 +3034,16 @@
                 closeConfirmDialog('delete');
                 Loader.show('invio', 'Eliminazione...');
                 
+                const eliminatoDa = `${currentUser.nome || ''} ${currentUser.cognome || ''}`.trim();
+                
+                // SOFT DELETE: marca come eliminato invece di cancellare
                 const { error } = await supabaseClient
                     .from('BollettiniMontatori')
-                    .delete()
+                    .update({
+                        eliminato: true,
+                        data_eliminazione: new Date().toISOString(),
+                        eliminato_da: eliminatoDa
+                    })
                     .eq('id_bollettino', currentBollettinoId);
                 
                 if (error) throw error;

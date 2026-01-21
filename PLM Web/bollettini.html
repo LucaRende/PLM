@@ -2666,6 +2666,11 @@
             
             console.log('renderBollettini chiamato, filteredBollettini:', filteredBollettini.length);
             
+            if (!container) {
+                console.error('Container bollettini-list non trovato!');
+                return;
+            }
+            
             if (filteredBollettini.length === 0) {
                 container.innerHTML = `
                     <div class="empty-state">
@@ -2683,88 +2688,63 @@
                 return;
             }
             
-            container.innerHTML = filteredBollettini.map(b => {
-                const dataObj = b.data ? new Date(b.data) : null;
-                const dateStr = dataObj ? dataObj.toLocaleDateString('it-IT', { day: '2-digit', month: 'short' }) : '-';
-                const weekday = dataObj ? dataObj.toLocaleDateString('it-IT', { weekday: 'short' }) : '';
-                const hasFirma = b.firma_cliente && b.firma_cliente.data;
-                const hasPhotos = b.foto_scontrini && b.foto_scontrini.length > 0;
-                const isValidated = b.validato === true;
-                
-                // Check notifica con confronto flessibile
-                const tecnicoCorrente = `${currentUser.nome || ''} ${currentUser.cognome || ''}`.trim().toLowerCase();
-                const tecnicoCorrenteAlt = `${currentUser.cognome || ''} ${currentUser.nome || ''}`.trim().toLowerCase();
-                const cognome = (currentUser.cognome || '').toLowerCase();
-                const tecnicoDB = (b.tecnico_installatore || '').toLowerCase();
-                const isMyBollettino = tecnicoDB === tecnicoCorrente || 
-                                       tecnicoDB === tecnicoCorrenteAlt ||
-                                       (cognome && tecnicoDB.includes(cognome));
-                
-                let hasNotification = false;
-                let notificationClass = '';
-                
-                if (isAdmin) {
-                    // Admin: notifica se da validare
-                    hasNotification = !isValidated;
-                    notificationClass = hasNotification ? 'notification-pending' : '';
-                } else {
-                    // Utente: notifica se validato e non visto
-                    hasNotification = isMyBollettino && 
-                                      isValidated && 
-                                      b.notifica_vista !== true;
-                    notificationClass = hasNotification ? 'notification-new' : '';
-                }
-                
-                // Determina il badge da mostrare
-                let badgeHtml = '';
-                if (isValidated) {
-                    badgeHtml = `<span class="bollettino-badge validated">✓ Validato</span>`;
-                } else if (hasFirma) {
-                    badgeHtml = `<span class="bollettino-badge signed">Firmato</span>`;
-                } else {
-                    badgeHtml = `<span class="bollettino-badge pending">In attesa</span>`;
-                }
-                
-                return `
-                    <div class="bollettino-card ${hasNotification ? 'has-notification ' + notificationClass : ''}" onclick="openDettaglio(${b.id_bollettino})">
-                        ${hasNotification ? '<span class="notification-dot"></span>' : ''}
-                        <div class="bollettino-card-header">
-                            <div class="bollettino-date-block">
-                                <div class="bollettino-date">${dateStr}</div>
-                                <div class="bollettino-weekday">${weekday}</div>
-                            </div>
-                            ${badgeHtml}
-                        </div>
-                        <div class="bollettino-card-body">
-                            <div class="bollettino-cliente">${b.cliente || 'Cliente non specificato'}</div>
-                            <div class="bollettino-macchina">${b.montaggio_macchina || 'Macchina non specificata'}</div>
-                        </div>
-                        <div class="bollettino-card-footer">
-                            <div class="bollettino-meta">
-                                <div class="bollettino-ore">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <circle cx="12" cy="12" r="10"/>
-                                        <polyline points="12 6 12 12 16 14"/>
-                                    </svg>
-                                    ${b.ore_totali || 0}h
+            try {
+                const html = filteredBollettini.map(b => {
+                    const dataObj = b.data ? new Date(b.data) : null;
+                    const dateStr = dataObj ? dataObj.toLocaleDateString('it-IT', { day: '2-digit', month: 'short' }) : '-';
+                    const weekday = dataObj ? dataObj.toLocaleDateString('it-IT', { weekday: 'short' }) : '';
+                    const hasFirma = b.firma_cliente && b.firma_cliente.data;
+                    const hasPhotos = b.foto_scontrini && Array.isArray(b.foto_scontrini) && b.foto_scontrini.length > 0;
+                    const isValidated = b.validato === true;
+                    
+                    // Determina il badge da mostrare
+                    let badgeHtml = '';
+                    if (isValidated) {
+                        badgeHtml = `<span class="bollettino-badge validated">✓ Validato</span>`;
+                    } else if (hasFirma) {
+                        badgeHtml = `<span class="bollettino-badge signed">Firmato</span>`;
+                    } else {
+                        badgeHtml = `<span class="bollettino-badge pending">In attesa</span>`;
+                    }
+                    
+                    return `
+                        <div class="bollettino-card" onclick="openDettaglio(${b.id_bollettino})">
+                            <div class="bollettino-card-header">
+                                <div class="bollettino-date-block">
+                                    <div class="bollettino-date">${dateStr}</div>
+                                    <div class="bollettino-weekday">${weekday}</div>
                                 </div>
-                                <div class="bollettino-orario">${b.orario_inizio || '--:--'} - ${b.orario_fine || '--:--'}</div>
-                                ${hasPhotos ? `
-                                    <div class="bollettino-has-photos">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-                                            <circle cx="8.5" cy="8.5" r="1.5"/>
-                                            <polyline points="21 15 16 10 5 21"/>
-                                        </svg>
-                                        ${b.foto_scontrini.length}
-                                    </div>
-                                ` : ''}
+                                ${badgeHtml}
                             </div>
-                            <div class="bollettino-tecnico">${b.tecnico_installatore || ''}</div>
+                            <div class="bollettino-card-body">
+                                <div class="bollettino-cliente">${b.cliente || 'Cliente non specificato'}</div>
+                                <div class="bollettino-macchina">${b.montaggio_macchina || 'Macchina non specificata'}</div>
+                            </div>
+                            <div class="bollettino-card-footer">
+                                <div class="bollettino-meta">
+                                    <div class="bollettino-ore">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <circle cx="12" cy="12" r="10"/>
+                                            <polyline points="12 6 12 12 16 14"/>
+                                        </svg>
+                                        ${b.ore_totali || 0}h
+                                    </div>
+                                    <div class="bollettino-orario">${b.orario_inizio || '--:--'} - ${b.orario_fine || '--:--'}</div>
+                                </div>
+                                <div class="bollettino-tecnico">${b.tecnico_installatore || ''}</div>
+                            </div>
                         </div>
-                    </div>
-                `;
-            }).join('');
+                    `;
+                }).join('');
+                
+                console.log('HTML generato, lunghezza:', html.length);
+                container.innerHTML = html;
+                console.log('HTML inserito nel container');
+                
+            } catch (error) {
+                console.error('ERRORE in renderBollettini:', error);
+                container.innerHTML = `<div class="empty-state"><p>Errore: ${error.message}</p></div>`;
+            }
         }
         
         // =============================================

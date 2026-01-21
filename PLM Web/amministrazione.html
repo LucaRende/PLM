@@ -1523,10 +1523,21 @@
         let allAccounts = [];
         
         async function loadAccounts() {
-            if (!supabaseClient) { document.getElementById('accounts-subtitle').textContent = 'Connessione non disponibile'; return; }
+            if (!supabaseClient) { 
+                document.getElementById('accounts-subtitle').textContent = 'Connessione non disponibile'; 
+                document.getElementById('accounts-list').innerHTML = '<div class="empty-state"><div class="empty-state-icon">⚠️</div><div class="empty-state-text">Supabase non connesso</div></div>';
+                return; 
+            }
             
             try {
-                const { data, error } = await supabaseClient.from('accounts').select('*').order('cognome', { ascending: true });
+                console.log('Caricamento accounts...');
+                const { data, error } = await supabaseClient
+                    .from('accounts')
+                    .select('id, nome, cognome, username, email, password_hash, ruolo, attivo')
+                    .order('cognome', { ascending: true });
+                
+                console.log('Risposta accounts:', { data, error });
+                
                 if (error) throw error;
                 
                 allAccounts = data || [];
@@ -1535,7 +1546,7 @@
             } catch (error) {
                 console.error('Errore caricamento account:', error);
                 document.getElementById('accounts-subtitle').textContent = 'Errore caricamento';
-                document.getElementById('accounts-list').innerHTML = `<div class="empty-state"><div class="empty-state-icon">⚠️</div><div class="empty-state-text">Errore: ${error.message}</div></div>`;
+                document.getElementById('accounts-list').innerHTML = `<div class="empty-state"><div class="empty-state-icon">⚠️</div><div class="empty-state-text">Errore: ${error.message}<br><small>Verifica che la tabella accounts abbia i campi: id, nome, cognome, username, email, ruolo, attivo</small></div></div>`;
             }
         }
         
@@ -1614,22 +1625,37 @@
             if (!accountId && !password) { alert('La password è obbligatoria per i nuovi account'); return; }
             
             try {
-                const accountData = { nome, cognome, username, email: email || null, ruolo, attivo };
+                const accountData = { 
+                    nome, 
+                    cognome, 
+                    username, 
+                    email: email || null, 
+                    ruolo: ruolo || 'utente', 
+                    attivo: attivo 
+                };
                 if (password) accountData.password_hash = password;
+                
+                console.log('Salvataggio account:', accountData);
                 
                 let result;
                 if (accountId) {
+                    console.log('Update account ID:', accountId);
                     result = await supabaseClient.from('accounts').update(accountData).eq('id', accountId).select();
                 } else {
+                    console.log('Insert nuovo account');
                     result = await supabaseClient.from('accounts').insert(accountData).select();
                 }
                 
+                console.log('Risultato:', result);
+                
                 if (result.error) throw result.error;
+                
+                alert('Account salvato con successo!');
                 closeAccountModal();
                 await loadAccounts();
             } catch (error) {
                 console.error('Errore salvataggio account:', error);
-                alert('Errore: ' + error.message);
+                alert('Errore: ' + error.message + '\n\nVerifica che la tabella accounts abbia tutti i campi necessari (ruolo, attivo, email)');
             }
         }
         

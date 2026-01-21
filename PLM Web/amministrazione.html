@@ -679,8 +679,12 @@
             background: var(--surface-3);
             border-radius: 10px;
             margin-bottom: var(--space-2);
+            cursor: pointer;
+            transition: background 0.2s ease, transform 0.1s ease;
+            -webkit-tap-highlight-color: transparent;
         }
         
+        .fattura-item:active { transform: scale(0.98); }
         .fattura-item:last-child { margin-bottom: 0; }
         .fattura-item.filtered-out { opacity: 0.3; }
         
@@ -1050,6 +1054,57 @@
         .btn-save { background: linear-gradient(135deg, var(--primary) 0%, #b91c1c 100%); color: white; }
         .btn-delete { background: rgba(239, 68, 68, 0.15); color: #ef4444; flex: 0.5; }
         
+        /* Modal Dettaglio Fattura */
+        .fattura-modal-container {
+            max-height: 80vh;
+        }
+        
+        .fattura-detail-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--space-3);
+        }
+        
+        .fattura-detail-item {
+            background: var(--surface-2);
+            padding: var(--space-3);
+            border-radius: 12px;
+            border: 1px solid var(--border-default);
+        }
+        
+        .fattura-detail-item.full-width {
+            grid-column: 1 / -1;
+        }
+        
+        .fattura-detail-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+        
+        .fattura-detail-value {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            word-break: break-word;
+        }
+        
+        .fattura-detail-value.big {
+            font-size: 20px;
+            font-weight: 700;
+        }
+        
+        .fattura-detail-value.green { color: #22c55e; }
+        .fattura-detail-value.red { color: #ef4444; }
+        
+        .fattura-detail-separator {
+            grid-column: 1 / -1;
+            height: 1px;
+            background: var(--border-default);
+            margin: var(--space-2) 0;
+        }
+        
         /* Permessi Pagine Grid */
         .permessi-section {
             margin-top: var(--space-2);
@@ -1405,6 +1460,60 @@
                     <button class="btn-modal btn-cancel" onclick="closeAccountModal()">Annulla</button>
                     <button class="btn-modal btn-delete" id="btn-delete" onclick="deleteAccount()" style="display: none;">Elimina</button>
                     <button class="btn-modal btn-save" onclick="saveAccount()">Salva</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Modal Dettaglio Fattura -->
+        <div class="modal-overlay" id="fattura-modal" onclick="if(event.target === this) closeFatturaModal()">
+            <div class="modal-container fattura-modal-container">
+                <div class="modal-header">
+                    <h2 class="modal-title">Dettaglio Fattura</h2>
+                    <button class="modal-close" onclick="closeFatturaModal()">✕</button>
+                </div>
+                <div class="modal-body">
+                    <div class="fattura-detail-grid">
+                        <div class="fattura-detail-item">
+                            <div class="fattura-detail-label">Cliente</div>
+                            <div class="fattura-detail-value" id="fd-cliente">-</div>
+                        </div>
+                        <div class="fattura-detail-item">
+                            <div class="fattura-detail-label">Banca Associata</div>
+                            <div class="fattura-detail-value" id="fd-banca">-</div>
+                        </div>
+                        <div class="fattura-detail-item">
+                            <div class="fattura-detail-label">Numero Fattura</div>
+                            <div class="fattura-detail-value" id="fd-numero">-</div>
+                        </div>
+                        <div class="fattura-detail-item">
+                            <div class="fattura-detail-label">Tipologia</div>
+                            <div class="fattura-detail-value" id="fd-tipologia">-</div>
+                        </div>
+                        <div class="fattura-detail-item">
+                            <div class="fattura-detail-label">Data Creazione</div>
+                            <div class="fattura-detail-value" id="fd-datacreazione">-</div>
+                        </div>
+                        <div class="fattura-detail-item">
+                            <div class="fattura-detail-label">Data Scadenza</div>
+                            <div class="fattura-detail-value" id="fd-datascadenza">-</div>
+                        </div>
+                        <div class="fattura-detail-separator"></div>
+                        <div class="fattura-detail-item full-width">
+                            <div class="fattura-detail-label">Importo Totale</div>
+                            <div class="fattura-detail-value big" id="fd-totale">-</div>
+                        </div>
+                        <div class="fattura-detail-item">
+                            <div class="fattura-detail-label">Importo Pagato</div>
+                            <div class="fattura-detail-value green" id="fd-pagato">-</div>
+                        </div>
+                        <div class="fattura-detail-item">
+                            <div class="fattura-detail-label">Importo Da Pagare</div>
+                            <div class="fattura-detail-value red" id="fd-dapagare">-</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn-modal btn-cancel" onclick="closeFatturaModal()">Chiudi</button>
                 </div>
             </div>
         </div>
@@ -1811,7 +1920,7 @@
                     }
                     
                     return `
-                        <div class="fattura-item ${day > currentDayFilter ? 'filtered-out' : ''}" data-day="${day}">
+                        <div class="fattura-item ${day > currentDayFilter ? 'filtered-out' : ''}" data-day="${day}" data-fattura-id="${f.id_db}" onclick="event.stopPropagation(); openFatturaDetail(${f.id_db})">
                             <div class="fattura-giorno ${dayClass}">${day}</div>
                             <div class="fattura-info">
                                 <div class="fattura-cliente">${f.cliente || 'N/D'}</div>
@@ -1889,6 +1998,38 @@
                     </div>
                 `;
             }).join('');
+        }
+        
+        // =============================================
+        // MODAL DETTAGLIO FATTURA
+        // =============================================
+        
+        function openFatturaDetail(fatturaId) {
+            const fattura = allFatture.find(f => f.id_db === fatturaId);
+            if (!fattura) {
+                console.error('Fattura non trovata:', fatturaId);
+                return;
+            }
+            
+            // Popola i campi del modal
+            document.getElementById('fd-cliente').textContent = fattura.cliente || '-';
+            document.getElementById('fd-banca').textContent = fattura.bancaAssociata || '-';
+            document.getElementById('fd-numero').textContent = fattura.numeroFattura || '-';
+            document.getElementById('fd-tipologia').textContent = fattura.tipologiaFattura || '-';
+            document.getElementById('fd-datacreazione').textContent = fattura.dataCreazione_Formattato || fattura.dataCreazione || '-';
+            document.getElementById('fd-datascadenza').textContent = fattura.dataScadenzaFormattato || fattura.dataScadenza || '-';
+            document.getElementById('fd-totale').textContent = fattura.importoTotale_Formattato || formatEuro(fattura.importoTotale || 0);
+            document.getElementById('fd-pagato').textContent = fattura.importoPagato_Formattato || formatEuro(fattura.importoPagato || 0);
+            document.getElementById('fd-dapagare').textContent = fattura.importoDaPagare_Formattato || formatEuro(Math.abs(fattura.importoDaPagare || 0));
+            
+            // Mostra il modal
+            document.getElementById('fattura-modal').classList.add('show');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeFatturaModal() {
+            document.getElementById('fattura-modal').classList.remove('show');
+            document.body.style.overflow = '';
         }
         
         function toggleBancaCard(idx) {

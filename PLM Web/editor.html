@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SQL Editor - Bollettini</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: #0a0a0f;
+            color: #f4f4f5;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container { max-width: 900px; margin: 0 auto; }
+        h1 { color: #dc2626; margin-bottom: 20px; font-size: 24px; }
+        
+        .warning {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #fca5a5;
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+        
+        .section {
+            background: #12121a;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .section-title {
+            font-size: 12px;
+            color: #71717a;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+        
+        .stat-card {
+            background: #1a1a24;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+        }
+        
+        .stat-value { font-size: 28px; font-weight: 700; color: #dc2626; }
+        .stat-value.blue { color: #3b82f6; }
+        .stat-value.green { color: #10b981; }
+        .stat-value.orange { color: #f59e0b; }
+        .stat-label { font-size: 11px; color: #71717a; margin-top: 4px; }
+        
+        .actions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 10px;
+        }
+        
+        .action-btn {
+            padding: 14px 16px;
+            background: #1a1a24;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            color: #f4f4f5;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: left;
+        }
+        
+        .action-btn:hover {
+            background: #24242f;
+            border-color: #dc2626;
+        }
+        
+        .action-btn.danger {
+            border-color: rgba(239, 68, 68, 0.3);
+            color: #fca5a5;
+        }
+        
+        .action-btn.danger:hover {
+            background: rgba(239, 68, 68, 0.15);
+            border-color: #ef4444;
+        }
+        
+        .action-btn span {
+            display: block;
+            font-size: 11px;
+            color: #71717a;
+            margin-top: 4px;
+            font-weight: 400;
+        }
+        
+        .status {
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-size: 14px;
+        }
+        
+        .status.success {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: #6ee7b7;
+        }
+        
+        .status.error {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #fca5a5;
+        }
+        
+        .status.loading {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            color: #93c5fd;
+        }
+        
+        .confirm-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.85);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .confirm-overlay.show { display: flex; }
+        
+        .confirm-box {
+            background: #12121a;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 12px;
+            padding: 30px;
+            max-width: 380px;
+            text-align: center;
+        }
+        
+        .confirm-icon { font-size: 48px; margin-bottom: 15px; }
+        .confirm-title { font-size: 18px; font-weight: 600; margin-bottom: 10px; }
+        .confirm-text { color: #a1a1aa; font-size: 14px; margin-bottom: 20px; line-height: 1.5; }
+        
+        .confirm-input {
+            width: 100%;
+            padding: 12px;
+            background: #0a0a0f;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            color: #f4f4f5;
+            font-size: 16px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .confirm-input:focus {
+            outline: none;
+            border-color: #dc2626;
+        }
+        
+        .confirm-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        
+        .btn-cancel {
+            background: #1a1a24;
+            color: #f4f4f5;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .btn-danger {
+            background: #dc2626;
+            color: white;
+        }
+        
+        .btn-danger:hover { background: #b91c1c; }
+        
+        .results {
+            margin-top: 15px;
+            max-height: 300px;
+            overflow: auto;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+        
+        th, td {
+            padding: 8px 10px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        
+        th {
+            background: #1a1a24;
+            color: #a1a1aa;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 10px;
+            position: sticky;
+            top: 0;
+        }
+        
+        tr:hover td { background: rgba(220, 38, 38, 0.05); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🗄️ SQL Editor - Bollettini</h1>
+        
+        <div class="warning">
+            ⚠️ <strong>ATTENZIONE:</strong> Le operazioni di DELETE sono irreversibili!
+        </div>
+        
+        <!-- Statistiche -->
+        <div class="section">
+            <div class="section-title">📊 Statistiche</div>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="stat-totali">-</div>
+                    <div class="stat-label">Totali</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value blue" id="stat-firmati">-</div>
+                    <div class="stat-label">Firmati</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value blue" id="stat-validati">-</div>
+                    <div class="stat-label">Validati</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value green" id="stat-fatturati">-</div>
+                    <div class="stat-label">Fatturati</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value orange" id="stat-eliminati">-</div>
+                    <div class="stat-label">Eliminati</div>
+                </div>
+            </div>
+            <button class="action-btn" onclick="loadStats()" style="width: 100%;">🔄 Aggiorna Statistiche</button>
+        </div>
+        
+        <!-- Azioni -->
+        <div class="section">
+            <div class="section-title">⚡ Azioni Rapide</div>
+            <div class="actions-grid">
+                <button class="action-btn" onclick="viewAll()">
+                    📋 Visualizza Tutti
+                    <span>Mostra tutti i record</span>
+                </button>
+                <button class="action-btn" onclick="viewActive()">
+                    ✅ Solo Attivi
+                    <span>Non eliminati</span>
+                </button>
+                <button class="action-btn danger" onclick="confirmAction('soft')">
+                    🗑️ Soft Delete TUTTI
+                    <span>Marca come eliminati</span>
+                </button>
+                <button class="action-btn danger" onclick="confirmAction('hard')">
+                    💀 ELIMINA TUTTO
+                    <span>Cancella permanentemente</span>
+                </button>
+                <button class="action-btn danger" onclick="confirmAction('clean')">
+                    🧹 Pulisci Eliminati
+                    <span>Rimuove soft-deleted</span>
+                </button>
+                <button class="action-btn" onclick="confirmAction('reset')">
+                    🔄 Reset Validazioni
+                    <span>Riporta a non validato</span>
+                </button>
+            </div>
+            
+            <div id="status"></div>
+            <div class="results" id="results"></div>
+        </div>
+    </div>
+    
+    <!-- Conferma -->
+    <div class="confirm-overlay" id="confirm-overlay">
+        <div class="confirm-box">
+            <div class="confirm-icon">⚠️</div>
+            <div class="confirm-title" id="confirm-title">Conferma Operazione</div>
+            <div class="confirm-text" id="confirm-text">Questa azione è irreversibile.</div>
+            <div>Scrivi <strong>ELIMINA</strong> per confermare:</div>
+            <input type="text" class="confirm-input" id="confirm-input" placeholder="ELIMINA">
+            <div class="confirm-buttons">
+                <button class="btn btn-cancel" onclick="closeConfirm()">Annulla</button>
+                <button class="btn btn-danger" onclick="executeConfirm()">Conferma</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const SUPABASE_URL = 'https://lyvzjcnpniwftrhetkml.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx5dnpqY25wbml3ZnRyaGV0a21sIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDIyMTIyMzgsImV4cCI6MjA1Nzc4ODIzOH0.vPOSVF9Y4MlCNHTgM5rqwFPv7p_I-E1SUXR0UhGv5EA';
+        
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        let pendingAction = null;
+        
+        async function loadStats() {
+            try {
+                const { count: totali } = await supabase.from('BollettiniMontatori').select('*', { count: 'exact', head: true });
+                const { count: firmati } = await supabase.from('BollettiniMontatori').select('*', { count: 'exact', head: true }).not('firma_cliente', 'is', null);
+                const { count: validati } = await supabase.from('BollettiniMontatori').select('*', { count: 'exact', head: true }).eq('validato', true);
+                const { count: fatturati } = await supabase.from('BollettiniMontatori').select('*', { count: 'exact', head: true }).eq('fatturato', true);
+                const { count: eliminati } = await supabase.from('BollettiniMontatori').select('*', { count: 'exact', head: true }).eq('eliminato', true);
+                
+                document.getElementById('stat-totali').textContent = totali || 0;
+                document.getElementById('stat-firmati').textContent = firmati || 0;
+                document.getElementById('stat-validati').textContent = validati || 0;
+                document.getElementById('stat-fatturati').textContent = fatturati || 0;
+                document.getElementById('stat-eliminati').textContent = eliminati || 0;
+            } catch (e) {
+                console.error('Errore stats:', e);
+            }
+        }
+        
+        async function viewAll() {
+            showStatus('loading', '⏳ Caricamento...');
+            const { data, error } = await supabase.from('BollettiniMontatori').select('id_bollettino, cliente, montaggio_macchina, data, validato, fatturato, eliminato').order('data_creazione', { ascending: false }).limit(50);
+            if (error) return showStatus('error', '❌ ' + error.message);
+            showResults(data);
+            showStatus('success', `✅ ${data.length} record trovati`);
+        }
+        
+        async function viewActive() {
+            showStatus('loading', '⏳ Caricamento...');
+            const { data, error } = await supabase.from('BollettiniMontatori').select('id_bollettino, cliente, montaggio_macchina, data, validato, fatturato').neq('eliminato', true).order('data_creazione', { ascending: false }).limit(50);
+            if (error) return showStatus('error', '❌ ' + error.message);
+            showResults(data);
+            showStatus('success', `✅ ${data.length} record attivi`);
+        }
+        
+        function confirmAction(action) {
+            pendingAction = action;
+            const texts = {
+                'soft': { title: 'Soft Delete TUTTI', text: 'Tutti i bollettini verranno marcati come eliminati (recuperabili).' },
+                'hard': { title: '⚠️ ELIMINA TUTTO', text: 'Tutti i bollettini verranno CANCELLATI PERMANENTEMENTE. Questa azione NON è reversibile!' },
+                'clean': { title: 'Pulisci Eliminati', text: 'I bollettini già marcati come eliminati verranno rimossi definitivamente.' },
+                'reset': { title: 'Reset Validazioni', text: 'Tutti i bollettini torneranno a stato "non validato" e "non fatturato".' }
+            };
+            document.getElementById('confirm-title').textContent = texts[action].title;
+            document.getElementById('confirm-text').textContent = texts[action].text;
+            document.getElementById('confirm-input').value = '';
+            document.getElementById('confirm-overlay').classList.add('show');
+        }
+        
+        function closeConfirm() {
+            document.getElementById('confirm-overlay').classList.remove('show');
+            pendingAction = null;
+        }
+        
+        async function executeConfirm() {
+            if (document.getElementById('confirm-input').value !== 'ELIMINA') {
+                alert('Scrivi ELIMINA per confermare');
+                return;
+            }
+            closeConfirm();
+            
+            showStatus('loading', '⏳ Esecuzione...');
+            
+            try {
+                let result;
+                switch(pendingAction) {
+                    case 'soft':
+                        result = await supabase.from('BollettiniMontatori').update({
+                            eliminato: true,
+                            data_eliminazione: new Date().toISOString(),
+                            eliminato_da: 'SQL Editor'
+                        }).neq('eliminato', true);
+                        break;
+                    case 'hard':
+                        result = await supabase.from('BollettiniMontatori').delete().gte('id_bollettino', 0);
+                        break;
+                    case 'clean':
+                        result = await supabase.from('BollettiniMontatori').delete().eq('eliminato', true);
+                        break;
+                    case 'reset':
+                        result = await supabase.from('BollettiniMontatori').update({
+                            validato: false,
+                            data_validazione: null,
+                            validato_da: null,
+                            fatturato: false,
+                            data_fatturazione: null,
+                            fatturato_da: null
+                        }).gte('id_bollettino', 0);
+                        break;
+                }
+                
+                if (result.error) throw result.error;
+                showStatus('success', '✅ Operazione completata!');
+                loadStats();
+                document.getElementById('results').innerHTML = '';
+            } catch (e) {
+                showStatus('error', '❌ Errore: ' + e.message);
+            }
+        }
+        
+        function showStatus(type, text) {
+            document.getElementById('status').innerHTML = `<div class="status ${type}">${text}</div>`;
+        }
+        
+        function showResults(data) {
+            if (!data || data.length === 0) {
+                document.getElementById('results').innerHTML = '<div style="color:#71717a;text-align:center;padding:20px;">Nessun risultato</div>';
+                return;
+            }
+            const cols = Object.keys(data[0]);
+            document.getElementById('results').innerHTML = `
+                <table>
+                    <thead><tr>${cols.map(c => `<th>${c}</th>`).join('')}</tr></thead>
+                    <tbody>${data.map(row => `<tr>${cols.map(c => {
+                        let v = row[c];
+                        if (v === null) return '<td style="color:#71717a">NULL</td>';
+                        if (typeof v === 'boolean') return `<td>${v ? '✅' : '❌'}</td>`;
+                        if (typeof v === 'string' && v.length > 25) v = v.substring(0,25) + '...';
+                        return `<td>${v}</td>`;
+                    }).join('')}</tr>`).join('')}</tbody>
+                </table>
+            `;
+        }
+        
+        document.getElementById('confirm-input').addEventListener('keypress', e => { if (e.key === 'Enter') executeConfirm(); });
+        loadStats();
+    </script>
+</body>
+</html>

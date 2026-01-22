@@ -645,11 +645,6 @@
             color: var(--text-muted);
         }
         
-        /* Stat chip per validati */
-        .stat-chip:nth-child(5) .stat-chip-value {
-            color: #3b82f6;
-        }
-        
         /* Stat chip notifiche */
         .stat-chip.stat-notifiche {
             background: rgba(16, 185, 129, 0.1);
@@ -667,6 +662,137 @@
         
         .stat-chip.stat-notifiche.admin .stat-chip-value {
             color: #f59e0b;
+        }
+        
+        /* Stat chip cliccabili */
+        .stat-chip.clickable {
+            cursor: pointer;
+            transition: all 0.2s ease;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        .stat-chip.clickable:hover {
+            border-color: var(--primary);
+            background: rgba(220, 38, 38, 0.05);
+        }
+        
+        .stat-chip.clickable:active {
+            transform: scale(0.95);
+        }
+        
+        .stat-chip.clickable.active {
+            background: rgba(220, 38, 38, 0.15);
+            border-color: var(--primary);
+        }
+        
+        .stat-chip.clickable.active .stat-chip-label {
+            color: var(--primary);
+        }
+        
+        /* Colori specifici per tipo */
+        .stat-chip[data-filter="validati"] .stat-chip-value {
+            color: #3b82f6;
+        }
+        
+        .stat-chip[data-filter="validati"].active {
+            background: rgba(59, 130, 246, 0.15);
+            border-color: #3b82f6;
+        }
+        
+        .stat-chip[data-filter="validati"].active .stat-chip-label {
+            color: #3b82f6;
+        }
+        
+        .stat-chip[data-filter="da-fatturare"] .stat-chip-value {
+            color: #f59e0b;
+        }
+        
+        .stat-chip[data-filter="da-fatturare"].active {
+            background: rgba(245, 158, 11, 0.15);
+            border-color: #f59e0b;
+        }
+        
+        .stat-chip[data-filter="da-fatturare"].active .stat-chip-label {
+            color: #f59e0b;
+        }
+        
+        .stat-chip[data-filter="fatturati"] .stat-chip-value {
+            color: #10b981;
+        }
+        
+        .stat-chip[data-filter="fatturati"].active {
+            background: rgba(16, 185, 129, 0.15);
+            border-color: #10b981;
+        }
+        
+        .stat-chip[data-filter="fatturati"].active .stat-chip-label {
+            color: #10b981;
+        }
+        
+        .stat-chip[data-filter="firmati"] .stat-chip-value {
+            color: #8b5cf6;
+        }
+        
+        .stat-chip[data-filter="firmati"].active {
+            background: rgba(139, 92, 246, 0.15);
+            border-color: #8b5cf6;
+        }
+        
+        .stat-chip[data-filter="firmati"].active .stat-chip-label {
+            color: #8b5cf6;
+        }
+        
+        /* Filtri attivi bar */
+        .stat-filters-active {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            padding: var(--space-2) var(--space-4);
+            background: var(--surface-2);
+            border-bottom: 1px solid var(--border-default);
+            font-size: 12px;
+            flex-wrap: wrap;
+        }
+        
+        .stat-filters-label {
+            color: var(--text-muted);
+        }
+        
+        .stat-filters-chips {
+            display: flex;
+            gap: var(--space-1);
+            flex-wrap: wrap;
+        }
+        
+        .stat-filter-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 2px 8px;
+            background: rgba(220, 38, 38, 0.1);
+            border: 1px solid rgba(220, 38, 38, 0.3);
+            border-radius: var(--radius-full);
+            color: var(--primary);
+            font-size: 11px;
+            cursor: pointer;
+        }
+        
+        .stat-filter-chip:hover {
+            background: rgba(220, 38, 38, 0.2);
+        }
+        
+        .stat-filters-clear {
+            margin-left: auto;
+            padding: 4px 8px;
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 11px;
+            cursor: pointer;
+        }
+        
+        .stat-filters-clear:hover {
+            color: var(--primary);
         }
         
         /* =============================================
@@ -2423,28 +2549,43 @@
         
         <!-- Content -->
         <main class="page-content" id="page-content">
-            <!-- Stats Summary -->
+            <!-- Stats Summary - Cliccabili come filtri -->
             <div class="stats-summary" id="stats-summary">
                 <div class="stat-chip stat-notifiche" id="stat-notifiche-chip" style="display: none;">
                     <span class="stat-chip-value" id="stat-notifiche">0</span>
                     <span class="stat-chip-label" id="stat-notifiche-label">Nuovi</span>
                 </div>
-                <div class="stat-chip">
+                <div class="stat-chip clickable" data-filter="totali" onclick="toggleStatFilter('totali')">
                     <span class="stat-chip-value" id="stat-totali">0</span>
                     <span class="stat-chip-label">Totali</span>
                 </div>
-                <div class="stat-chip">
+                <div class="stat-chip clickable" data-filter="ore" onclick="toggleStatFilter('ore')">
                     <span class="stat-chip-value" id="stat-ore">0h</span>
                     <span class="stat-chip-label">Ore</span>
                 </div>
-                <div class="stat-chip">
+                <div class="stat-chip clickable" data-filter="firmati" onclick="toggleStatFilter('firmati')">
                     <span class="stat-chip-value" id="stat-firmati">0</span>
                     <span class="stat-chip-label">Firmati</span>
                 </div>
-                <div class="stat-chip">
+                <div class="stat-chip clickable" data-filter="validati" onclick="toggleStatFilter('validati')">
                     <span class="stat-chip-value" id="stat-validati">0</span>
                     <span class="stat-chip-label">Validati</span>
                 </div>
+                <div class="stat-chip clickable" data-filter="da-fatturare" onclick="toggleStatFilter('da-fatturare')">
+                    <span class="stat-chip-value" id="stat-da-fatturare">0</span>
+                    <span class="stat-chip-label">Da Fatturare</span>
+                </div>
+                <div class="stat-chip clickable" data-filter="fatturati" onclick="toggleStatFilter('fatturati')">
+                    <span class="stat-chip-value" id="stat-fatturati">0</span>
+                    <span class="stat-chip-label">Fatturati</span>
+                </div>
+            </div>
+            
+            <!-- Filtri Attivi -->
+            <div class="stat-filters-active" id="stat-filters-active" style="display: none;">
+                <span class="stat-filters-label">Filtri attivi:</span>
+                <div class="stat-filters-chips" id="stat-filters-chips"></div>
+                <button class="stat-filters-clear" onclick="clearStatFilters()">✕ Rimuovi tutti</button>
             </div>
             
             <!-- Lista -->
@@ -2825,6 +2966,9 @@
         let currentBollettinoId = null;
         let isAdmin = false;
         let notificheCount = 0;
+        
+        // Filtri statistiche attivi (cliccando sui box)
+        let activeStatFilters = new Set();
         
         // Permessi specifici
         let canValidate = false;  // Può validare bollettini
@@ -3238,6 +3382,22 @@
                 if (dataDa && b.data < dataDa) return false;
                 if (dataA && b.data > dataA) return false;
                 
+                // ========================================
+                // FILTRI STATISTICHE (box cliccabili)
+                // ========================================
+                if (activeStatFilters.size > 0) {
+                    const hasFirma = b.firma_cliente && b.firma_cliente.data;
+                    const isValidato = b.validato === true;
+                    const isFatturato = b.fatturato === true;
+                    const isDaFatturare = isValidato && !isFatturato;
+                    
+                    // Ogni filtro attivo deve essere soddisfatto (AND logic)
+                    if (activeStatFilters.has('firmati') && !hasFirma) return false;
+                    if (activeStatFilters.has('validati') && !isValidato) return false;
+                    if (activeStatFilters.has('fatturati') && !isFatturato) return false;
+                    if (activeStatFilters.has('da-fatturare') && !isDaFatturare) return false;
+                }
+                
                 return true;
             });
             
@@ -3245,6 +3405,69 @@
             updateStats();
             updateFilterBadge();
             updateActiveFiltersChips();
+            updateStatFiltersUI();
+        }
+        
+        // =============================================
+        // FILTRI STATISTICHE (box cliccabili)
+        // =============================================
+        function toggleStatFilter(filterType) {
+            // Totali e Ore non sono filtri, mostrano solo le statistiche
+            if (filterType === 'totali' || filterType === 'ore') {
+                return;
+            }
+            
+            // Toggle del filtro
+            if (activeStatFilters.has(filterType)) {
+                activeStatFilters.delete(filterType);
+            } else {
+                activeStatFilters.add(filterType);
+            }
+            
+            // Riapplica filtri
+            applyFilters();
+        }
+        
+        function clearStatFilters() {
+            activeStatFilters.clear();
+            applyFilters();
+        }
+        
+        function updateStatFiltersUI() {
+            // Aggiorna classi active sui box
+            document.querySelectorAll('.stat-chip.clickable').forEach(chip => {
+                const filter = chip.dataset.filter;
+                if (activeStatFilters.has(filter)) {
+                    chip.classList.add('active');
+                } else {
+                    chip.classList.remove('active');
+                }
+            });
+            
+            // Mostra/nascondi barra filtri attivi
+            const filtersBar = document.getElementById('stat-filters-active');
+            const chipsContainer = document.getElementById('stat-filters-chips');
+            
+            if (activeStatFilters.size > 0) {
+                filtersBar.style.display = 'flex';
+                
+                // Genera chips per ogni filtro attivo
+                const filterLabels = {
+                    'firmati': '✍️ Firmati',
+                    'validati': '✅ Validati',
+                    'da-fatturare': '⏳ Da Fatturare',
+                    'fatturati': '📦 Fatturati'
+                };
+                
+                chipsContainer.innerHTML = Array.from(activeStatFilters).map(f => `
+                    <span class="stat-filter-chip" onclick="toggleStatFilter('${f}')">
+                        ${filterLabels[f] || f} ✕
+                    </span>
+                `).join('');
+            } else {
+                filtersBar.style.display = 'none';
+                chipsContainer.innerHTML = '';
+            }
         }
         
         function updateFilterBadge() {
@@ -3341,11 +3564,15 @@
             const oreTotali = filteredBollettini.reduce((sum, b) => sum + (parseFloat(b.ore_totali) || 0), 0);
             const firmati = filteredBollettini.filter(b => b.firma_cliente && b.firma_cliente.data).length;
             const validati = filteredBollettini.filter(b => b.validato === true).length;
+            const fatturati = filteredBollettini.filter(b => b.fatturato === true).length;
+            const daFatturare = filteredBollettini.filter(b => b.validato === true && b.fatturato !== true).length;
             
             document.getElementById('stat-totali').textContent = totali;
             document.getElementById('stat-ore').textContent = oreTotali.toFixed(1) + 'h';
             document.getElementById('stat-firmati').textContent = firmati;
             document.getElementById('stat-validati').textContent = validati;
+            document.getElementById('stat-da-fatturare').textContent = daFatturare;
+            document.getElementById('stat-fatturati').textContent = fatturati;
             
             // Aggiorna stat notifiche
             const notificheChip = document.getElementById('stat-notifiche-chip');

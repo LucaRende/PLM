@@ -10,7 +10,6 @@
         
         :root {
             --primary: #a855f7;
-            --primary-dark: #7c3aed;
             --surface-0: #030305;
             --surface-1: #0a0a0f;
             --surface-2: #12121a;
@@ -23,29 +22,24 @@
         }
         
         body {
-            font-family: 'Segoe UI', system-ui, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             background: var(--surface-0);
             color: var(--text-primary);
             min-height: 100vh;
+            padding: 16px;
         }
         
-        /* Header */
         .header {
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            padding: 16px 20px;
-            background: rgba(3, 3, 5, 0.9);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--border);
             display: flex;
             justify-content: space-between;
             align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border);
         }
         
-        .header-title {
-            font-size: 18px;
-            font-weight: 700;
+        .header h1 {
+            font-size: 20px;
             background: linear-gradient(90deg, #a855f7, #dc2626);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -57,60 +51,40 @@
             border: 1px solid var(--border);
             border-radius: 8px;
             color: var(--text-primary);
-            font-size: 13px;
-            cursor: pointer;
             text-decoration: none;
+            font-size: 13px;
         }
         
-        .btn-back:hover {
-            border-color: var(--primary);
-        }
-        
-        /* Content */
-        .content {
-            padding: 20px;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        
-        /* Section */
         .section {
             background: var(--surface-1);
             border: 1px solid var(--border);
-            border-radius: 16px;
-            margin-bottom: 20px;
+            border-radius: 12px;
+            margin-bottom: 16px;
             overflow: hidden;
         }
         
         .section-header {
-            padding: 16px 20px;
+            padding: 12px 16px;
             background: var(--surface-2);
             border-bottom: 1px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .section-title {
             font-size: 14px;
             font-weight: 600;
             color: var(--primary);
         }
         
         .section-body {
-            padding: 20px;
+            padding: 16px;
         }
         
-        /* Stats Grid */
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            grid-template-columns: repeat(2, 1fr);
             gap: 12px;
         }
         
         .stat-card {
             background: var(--surface-2);
-            border-radius: 12px;
+            border-radius: 10px;
             padding: 16px;
             text-align: center;
         }
@@ -121,9 +95,9 @@
             color: var(--primary);
         }
         
-        .stat-value.success { color: var(--success); }
-        .stat-value.warning { color: var(--warning); }
-        .stat-value.error { color: var(--error); }
+        .stat-value.green { color: var(--success); }
+        .stat-value.orange { color: var(--warning); }
+        .stat-value.red { color: var(--error); }
         
         .stat-label {
             font-size: 11px;
@@ -132,19 +106,66 @@
             text-transform: uppercase;
         }
         
-        /* Table */
-        .table-container {
-            overflow-x: auto;
+        .action-btn {
+            width: 100%;
+            padding: 14px 16px;
+            margin-bottom: 10px;
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-size: 14px;
+            text-align: left;
+            cursor: pointer;
+        }
+        
+        .action-btn:active {
+            opacity: 0.8;
+        }
+        
+        .action-btn.danger {
+            border-color: rgba(239, 68, 68, 0.3);
+            color: #fca5a5;
+        }
+        
+        .action-btn span {
+            display: block;
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+        
+        .status {
+            padding: 12px;
+            border-radius: 8px;
+            margin: 12px 0;
+            font-size: 13px;
+        }
+        
+        .status.success {
+            background: rgba(16, 185, 129, 0.15);
+            color: #6ee7b7;
+        }
+        
+        .status.error {
+            background: rgba(239, 68, 68, 0.15);
+            color: #fca5a5;
+        }
+        
+        .status.loading {
+            background: rgba(168, 85, 247, 0.15);
+            color: #c4b5fd;
         }
         
         table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 13px;
+            font-size: 12px;
+            margin-top: 12px;
         }
         
         th, td {
-            padding: 12px 16px;
+            padding: 10px;
             text-align: left;
             border-bottom: 1px solid var(--border);
         }
@@ -152,179 +173,30 @@
         th {
             background: var(--surface-2);
             color: var(--text-muted);
-            font-weight: 600;
-            font-size: 11px;
-            text-transform: uppercase;
-        }
-        
-        tr:hover td {
-            background: rgba(168, 85, 247, 0.05);
-        }
-        
-        .badge {
-            display: inline-block;
-            padding: 4px 8px;
-            border-radius: 6px;
             font-size: 10px;
-            font-weight: 600;
             text-transform: uppercase;
         }
         
-        .badge-superadmin {
-            background: linear-gradient(135deg, rgba(168, 85, 247, 0.2), rgba(220, 38, 38, 0.2));
-            color: #a855f7;
-        }
-        
-        .badge-admin {
-            background: rgba(220, 38, 38, 0.2);
-            color: #dc2626;
-        }
-        
-        .badge-manager {
-            background: rgba(245, 158, 11, 0.2);
-            color: #f59e0b;
-        }
-        
-        .badge-utente {
-            background: rgba(59, 130, 246, 0.2);
-            color: #3b82f6;
-        }
-        
-        .badge-active {
-            background: rgba(16, 185, 129, 0.2);
-            color: #10b981;
-        }
-        
-        .badge-inactive {
-            background: rgba(239, 68, 68, 0.2);
-            color: #ef4444;
-        }
-        
-        /* Actions */
-        .actions-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 12px;
-        }
-        
-        .action-btn {
-            padding: 16px;
-            background: var(--surface-2);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            color: var(--text-primary);
-            font-size: 14px;
-            cursor: pointer;
-            text-align: left;
-            transition: all 0.2s;
-        }
-        
-        .action-btn:hover {
-            border-color: var(--primary);
-            background: rgba(168, 85, 247, 0.1);
-        }
-        
-        .action-btn.danger {
-            border-color: rgba(239, 68, 68, 0.3);
-        }
-        
-        .action-btn.danger:hover {
-            border-color: var(--error);
-            background: rgba(239, 68, 68, 0.1);
-        }
-        
-        .action-btn span {
-            display: block;
-            font-size: 11px;
-            color: var(--text-muted);
-            margin-top: 4px;
-        }
-        
-        /* Status */
-        .status {
-            padding: 12px 16px;
-            border-radius: 8px;
-            margin-top: 16px;
-            font-size: 13px;
-        }
-        
-        .status.success {
-            background: rgba(16, 185, 129, 0.1);
-            border: 1px solid rgba(16, 185, 129, 0.3);
-            color: #6ee7b7;
-        }
-        
-        .status.error {
-            background: rgba(239, 68, 68, 0.1);
-            border: 1px solid rgba(239, 68, 68, 0.3);
-            color: #fca5a5;
-        }
-        
-        .status.loading {
-            background: rgba(168, 85, 247, 0.1);
-            border: 1px solid rgba(168, 85, 247, 0.3);
-            color: #c4b5fd;
-        }
-        
-        /* Tabs */
-        .tabs {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-        
-        .tab {
-            padding: 10px 16px;
-            background: var(--surface-2);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            color: var(--text-muted);
-            font-size: 13px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        
-        .tab:hover {
-            border-color: var(--primary);
-            color: var(--text-primary);
-        }
-        
-        .tab.active {
-            background: rgba(168, 85, 247, 0.2);
-            border-color: var(--primary);
-            color: var(--primary);
-        }
-        
-        .tab-content {
-            display: none;
-        }
-        
-        .tab-content.active {
-            display: block;
-        }
-        
-        /* Confirm Modal */
-        .modal-overlay {
+        .modal {
             display: none;
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.85);
+            background: rgba(0,0,0,0.9);
             z-index: 1000;
             align-items: center;
             justify-content: center;
+            padding: 20px;
         }
         
-        .modal-overlay.show {
-            display: flex;
-        }
+        .modal.show { display: flex; }
         
         .modal-box {
             background: var(--surface-1);
-            border: 1px solid rgba(168, 85, 247, 0.3);
-            border-radius: 16px;
+            border: 1px solid var(--error);
+            border-radius: 12px;
             padding: 24px;
-            max-width: 400px;
+            width: 100%;
+            max-width: 340px;
             text-align: center;
         }
         
@@ -336,8 +208,8 @@
         
         .modal-text {
             color: var(--text-muted);
-            font-size: 14px;
-            margin-bottom: 20px;
+            font-size: 13px;
+            margin-bottom: 16px;
         }
         
         .modal-input {
@@ -347,24 +219,24 @@
             border: 1px solid var(--border);
             border-radius: 8px;
             color: var(--text-primary);
-            font-size: 14px;
+            font-size: 16px;
             text-align: center;
             margin-bottom: 16px;
         }
         
         .modal-input:focus {
             outline: none;
-            border-color: var(--primary);
+            border-color: var(--error);
         }
         
         .modal-buttons {
             display: flex;
-            gap: 12px;
-            justify-content: center;
+            gap: 10px;
         }
         
-        .btn {
-            padding: 12px 24px;
+        .modal-buttons button {
+            flex: 1;
+            padding: 12px;
             border: none;
             border-radius: 8px;
             font-size: 14px;
@@ -375,419 +247,182 @@
         .btn-cancel {
             background: var(--surface-2);
             color: var(--text-primary);
-            border: 1px solid var(--border);
-        }
-        
-        .btn-confirm {
-            background: var(--primary);
-            color: white;
         }
         
         .btn-danger {
             background: var(--error);
             color: white;
         }
-        
-        /* Loading */
-        .loading {
-            text-align: center;
-            padding: 40px;
-            color: var(--text-muted);
-        }
-        
-        .loading::after {
-            content: '';
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 2px solid var(--primary);
-            border-top-color: transparent;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-left: 8px;
-            vertical-align: middle;
-        }
-        
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
     </style>
 </head>
 <body>
     <header class="header">
-        <span class="header-title">⚡ Super Admin Panel</span>
-        <a href="home.html" class="btn-back">← Torna alla Home</a>
+        <h1>⚡ Super Admin Panel</h1>
+        <a href="home.html" class="btn-back">← Home</a>
     </header>
     
-    <main class="content">
-        <!-- Tabs -->
-        <div class="tabs">
-            <button class="tab active" data-tab="overview" onclick="showTab('overview')">📊 Overview</button>
-            <button class="tab" data-tab="accounts" onclick="showTab('accounts')">👥 Accounts</button>
-            <button class="tab" data-tab="bollettini" onclick="showTab('bollettini')">📄 Bollettini</button>
-            <button class="tab" data-tab="database" onclick="showTab('database')">🗄️ Database</button>
-        </div>
-        
-        <!-- Tab: Overview -->
-        <div class="tab-content active" id="tab-overview">
-            <div class="section">
-                <div class="section-header">
-                    <span class="section-title">📊 Statistiche Sistema</span>
-                    <button class="btn-back" onclick="loadAllStats()">🔄 Aggiorna</button>
+    <!-- Stats Bollettini -->
+    <div class="section">
+        <div class="section-header">📄 Statistiche Bollettini</div>
+        <div class="section-body">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value green" id="stat-validati">-</div>
+                    <div class="stat-label">Validati</div>
                 </div>
-                <div class="section-body">
-                    <div class="stats-grid" id="system-stats">
-                        <div class="loading">Caricamento</div>
-                    </div>
+                <div class="stat-card">
+                    <div class="stat-value orange" id="stat-dafatturare">-</div>
+                    <div class="stat-label">Da Fatturare</div>
                 </div>
-            </div>
-        </div>
-        
-        <!-- Tab: Accounts -->
-        <div class="tab-content" id="tab-accounts">
-            <div class="section">
-                <div class="section-header">
-                    <span class="section-title">👥 Tutti gli Accounts</span>
+                <div class="stat-card">
+                    <div class="stat-value green" id="stat-fatturati">-</div>
+                    <div class="stat-label">Fatturati</div>
                 </div>
-                <div class="section-body">
-                    <div class="table-container" id="accounts-table">
-                        <div class="loading">Caricamento</div>
-                    </div>
+                <div class="stat-card">
+                    <div class="stat-value red" id="stat-eliminati">-</div>
+                    <div class="stat-label">Eliminati</div>
                 </div>
             </div>
         </div>
-        
-        <!-- Tab: Bollettini -->
-        <div class="tab-content" id="tab-bollettini">
-            <div class="section">
-                <div class="section-header">
-                    <span class="section-title">📄 Statistiche Bollettini</span>
-                </div>
-                <div class="section-body">
-                    <div class="stats-grid" id="bollettini-stats">
-                        <div class="loading">Caricamento</div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="section">
-                <div class="section-header">
-                    <span class="section-title">⚡ Azioni Rapide Bollettini</span>
-                </div>
-                <div class="section-body">
-                    <div class="actions-grid">
-                        <button class="action-btn" onclick="viewRecentBollettini()">
-                            📋 Ultimi 20 Bollettini
-                            <span>Visualizza i più recenti</span>
-                        </button>
-                        <button class="action-btn danger" onclick="confirmAction('soft-delete')">
-                            🗑️ Soft Delete Tutti
-                            <span>Marca come eliminati</span>
-                        </button>
-                        <button class="action-btn danger" onclick="confirmAction('hard-delete')">
-                            💀 Elimina Tutto
-                            <span>Cancella permanentemente</span>
-                        </button>
-                        <button class="action-btn" onclick="confirmAction('reset-validation')">
-                            🔄 Reset Validazioni
-                            <span>Riporta a non validato</span>
-                        </button>
-                    </div>
-                    <div id="bollettini-status"></div>
-                    <div id="bollettini-results"></div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Tab: Database -->
-        <div class="tab-content" id="tab-database">
-            <div class="section">
-                <div class="section-header">
-                    <span class="section-title">🗄️ Info Database</span>
-                </div>
-                <div class="section-body">
-                    <div class="stats-grid">
-                        <div class="stat-card">
-                            <div class="stat-value" style="font-size: 16px;">Supabase</div>
-                            <div class="stat-label">Provider</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-value" style="font-size: 14px;" id="db-url">-</div>
-                            <div class="stat-label">URL</div>
-                        </div>
-                    </div>
-                    
-                    <h4 style="margin: 20px 0 12px; color: var(--text-muted); font-size: 12px;">TABELLE DISPONIBILI</h4>
-                    <div id="tables-list">
-                        <div class="loading">Caricamento</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </main>
+    </div>
     
-    <!-- Confirm Modal -->
-    <div class="modal-overlay" id="modal-confirm">
+    <!-- Azioni -->
+    <div class="section">
+        <div class="section-header">⚡ Azioni Rapide Bollettini</div>
+        <div class="section-body">
+            <button class="action-btn" onclick="viewBollettini()">
+                📋 Ultimi 20 Bollettini
+                <span>Visualizza i più recenti</span>
+            </button>
+            <button class="action-btn danger" onclick="confirmAction('soft')">
+                🗑️ Soft Delete Tutti
+                <span>Marca come eliminati</span>
+            </button>
+            <button class="action-btn danger" onclick="confirmAction('hard')">
+                💀 Elimina Tutto
+                <span>Cancella permanentemente</span>
+            </button>
+            <button class="action-btn" onclick="confirmAction('reset')">
+                🔄 Reset Validazioni
+                <span>Riporta a non validato</span>
+            </button>
+            
+            <div id="status"></div>
+            <div id="results"></div>
+        </div>
+    </div>
+    
+    <!-- Modal Conferma -->
+    <div class="modal" id="modal">
         <div class="modal-box">
-            <div class="modal-title" id="modal-title">Conferma</div>
+            <div class="modal-title" id="modal-title">⚠️ Conferma</div>
             <div class="modal-text" id="modal-text">Sei sicuro?</div>
             <input type="text" class="modal-input" id="modal-input" placeholder="Scrivi ELIMINA">
             <div class="modal-buttons">
-                <button class="btn btn-cancel" onclick="closeModal()">Annulla</button>
-                <button class="btn btn-danger" onclick="executeAction()">Conferma</button>
+                <button class="btn-cancel" onclick="closeModal()">Annulla</button>
+                <button class="btn-danger" onclick="executeAction()">Conferma</button>
             </div>
         </div>
     </div>
     
     <script>
-        let supabaseClient = null;
+        let db = null;
         let pendingAction = null;
         
-        // Init Supabase - legge da autenticazione.json
-        async function initSupabase() {
+        // INIT
+        async function init() {
             try {
-                const response = await fetch('/PLM/autenticazione.json');
-                const config = await response.json();
-                supabaseClient = window.supabase.createClient(config.supabase.url, config.supabase.anonKey);
-                console.log('Supabase connesso:', config.supabase.url);
-                return true;
-            } catch (error) {
-                console.error('Errore connessione Supabase:', error);
-                document.getElementById('system-stats').innerHTML = `
-                    <div style="color: var(--error); text-align: center; padding: 20px;">
-                        ❌ Errore connessione database<br>
-                        <small>Verifica che autenticazione.json sia presente</small>
-                    </div>
-                `;
-                return false;
-            }
-        }
-        
-        // Tabs
-        function showTab(tabId) {
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-            
-            document.querySelector(`[data-tab="${tabId}"]`).classList.add('active');
-            document.getElementById(`tab-${tabId}`).classList.add('active');
-            
-            // Carica dati specifici del tab
-            if (tabId === 'accounts') loadAccounts();
-            if (tabId === 'bollettini') loadBollettiniStats();
-            if (tabId === 'database') loadDatabaseInfo();
-        }
-        
-        // Load All Stats
-        async function loadAllStats() {
-            try {
-                // Accounts
-                const { count: totalAccounts } = await supabaseClient.from('accounts').select('*', { count: 'exact', head: true });
-                const { count: activeAccounts } = await supabaseClient.from('accounts').select('*', { count: 'exact', head: true }).eq('attivo', true);
-                const { count: superAdmins } = await supabaseClient.from('accounts').select('*', { count: 'exact', head: true }).ilike('ruolo', 'superadmin');
-                
-                // Bollettini
-                const { count: totalBollettini } = await supabaseClient.from('BollettiniMontatori').select('*', { count: 'exact', head: true });
-                const { count: validati } = await supabaseClient.from('BollettiniMontatori').select('*', { count: 'exact', head: true }).eq('validato', true);
-                const { count: fatturati } = await supabaseClient.from('BollettiniMontatori').select('*', { count: 'exact', head: true }).eq('fatturato', true);
-                
-                document.getElementById('system-stats').innerHTML = `
-                    <div class="stat-card">
-                        <div class="stat-value">${totalAccounts || 0}</div>
-                        <div class="stat-label">Accounts Totali</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value success">${activeAccounts || 0}</div>
-                        <div class="stat-label">Accounts Attivi</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value">${superAdmins || 0}</div>
-                        <div class="stat-label">Super Admins</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value">${totalBollettini || 0}</div>
-                        <div class="stat-label">Bollettini Totali</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value success">${validati || 0}</div>
-                        <div class="stat-label">Validati</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value success">${fatturati || 0}</div>
-                        <div class="stat-label">Fatturati</div>
-                    </div>
-                `;
+                const res = await fetch('/PLM/autenticazione.json');
+                const config = await res.json();
+                db = window.supabase.createClient(config.supabase.url, config.supabase.anonKey);
+                console.log('Connesso:', config.supabase.url);
+                loadStats();
             } catch (e) {
-                document.getElementById('system-stats').innerHTML = `<div style="color: var(--error);">Errore: ${e.message}</div>`;
+                console.error('Errore init:', e);
+                showStatus('error', '❌ Errore connessione database');
             }
         }
         
-        // Load Accounts
-        async function loadAccounts() {
+        // LOAD STATS
+        async function loadStats() {
             try {
-                const { data, error } = await supabaseClient.from('accounts')
-                    .select('id, nome, cognome, username, email, ruolo, attivo, puo_validare_bollettini, puo_fatturare_bollettini')
-                    .order('cognome');
+                const { count: validati } = await db.from('BollettiniMontatori').select('*', { count: 'exact', head: true }).eq('validato', true);
+                const { count: fatturati } = await db.from('BollettiniMontatori').select('*', { count: 'exact', head: true }).eq('fatturato', true);
+                const { count: eliminati } = await db.from('BollettiniMontatori').select('*', { count: 'exact', head: true }).eq('eliminato', true);
+                
+                const daFatturare = (validati || 0) - (fatturati || 0);
+                
+                document.getElementById('stat-validati').textContent = validati || 0;
+                document.getElementById('stat-dafatturare').textContent = daFatturare;
+                document.getElementById('stat-fatturati').textContent = fatturati || 0;
+                document.getElementById('stat-eliminati').textContent = eliminati || 0;
+            } catch (e) {
+                console.error('Errore stats:', e);
+            }
+        }
+        
+        // VIEW BOLLETTINI
+        async function viewBollettini() {
+            showStatus('loading', '⏳ Caricamento...');
+            try {
+                const { data, error } = await db.from('BollettiniMontatori')
+                    .select('id_bollettino, cliente, montaggio_macchina, data, validato, fatturato')
+                    .order('data_creazione', { ascending: false })
+                    .limit(20);
                 
                 if (error) throw error;
                 
-                document.getElementById('accounts-table').innerHTML = `
+                if (!data || data.length === 0) {
+                    showStatus('success', '✅ Nessun bollettino trovato');
+                    document.getElementById('results').innerHTML = '';
+                    return;
+                }
+                
+                showStatus('success', `✅ ${data.length} bollettini trovati`);
+                document.getElementById('results').innerHTML = `
                     <table>
                         <thead>
-                            <tr>
-                                <th>Nome</th>
-                                <th>Username</th>
-                                <th>Email</th>
-                                <th>Ruolo</th>
-                                <th>Stato</th>
-                                <th>Permessi</th>
-                            </tr>
+                            <tr><th>ID</th><th>Cliente</th><th>Macchina</th><th>Data</th><th>Val</th><th>Fatt</th></tr>
                         </thead>
                         <tbody>
-                            ${data.map(a => `
+                            ${data.map(b => `
                                 <tr>
-                                    <td><strong>${a.cognome || ''}</strong> ${a.nome || ''}</td>
-                                    <td>${a.username || '-'}</td>
-                                    <td>${a.email || '-'}</td>
-                                    <td><span class="badge badge-${(a.ruolo || 'utente').toLowerCase()}">${a.ruolo || 'utente'}</span></td>
-                                    <td><span class="badge badge-${a.attivo ? 'active' : 'inactive'}">${a.attivo ? 'Attivo' : 'Inattivo'}</span></td>
-                                    <td>
-                                        ${a.puo_validare_bollettini ? '✅' : '❌'} Val
-                                        ${a.puo_fatturare_bollettini ? '✅' : '❌'} Fatt
-                                    </td>
+                                    <td>${b.id_bollettino}</td>
+                                    <td>${b.cliente || '-'}</td>
+                                    <td>${b.montaggio_macchina || '-'}</td>
+                                    <td>${b.data || '-'}</td>
+                                    <td>${b.validato ? '✅' : '❌'}</td>
+                                    <td>${b.fatturato ? '✅' : '❌'}</td>
                                 </tr>
                             `).join('')}
                         </tbody>
                     </table>
                 `;
             } catch (e) {
-                document.getElementById('accounts-table').innerHTML = `<div style="color: var(--error);">Errore: ${e.message}</div>`;
+                showStatus('error', '❌ Errore: ' + e.message);
             }
         }
         
-        // Load Bollettini Stats
-        async function loadBollettiniStats() {
-            try {
-                const { count: totali } = await supabaseClient.from('BollettiniMontatori').select('*', { count: 'exact', head: true });
-                const { count: firmati } = await supabaseClient.from('BollettiniMontatori').select('*', { count: 'exact', head: true }).not('firma_cliente', 'is', null);
-                const { count: validati } = await supabaseClient.from('BollettiniMontatori').select('*', { count: 'exact', head: true }).eq('validato', true);
-                const { count: fatturati } = await supabaseClient.from('BollettiniMontatori').select('*', { count: 'exact', head: true }).eq('fatturato', true);
-                const { count: eliminati } = await supabaseClient.from('BollettiniMontatori').select('*', { count: 'exact', head: true }).eq('eliminato', true);
-                const daFatturare = (validati || 0) - (fatturati || 0);
-                
-                document.getElementById('bollettini-stats').innerHTML = `
-                    <div class="stat-card">
-                        <div class="stat-value">${totali || 0}</div>
-                        <div class="stat-label">Totali</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value">${firmati || 0}</div>
-                        <div class="stat-label">Firmati</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value success">${validati || 0}</div>
-                        <div class="stat-label">Validati</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value warning">${daFatturare}</div>
-                        <div class="stat-label">Da Fatturare</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value success">${fatturati || 0}</div>
-                        <div class="stat-label">Fatturati</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value error">${eliminati || 0}</div>
-                        <div class="stat-label">Eliminati</div>
-                    </div>
-                `;
-            } catch (e) {
-                document.getElementById('bollettini-stats').innerHTML = `<div style="color: var(--error);">Errore: ${e.message}</div>`;
-            }
-        }
-        
-        // View Recent Bollettini
-        async function viewRecentBollettini() {
-            document.getElementById('bollettini-results').innerHTML = '<div class="loading">Caricamento</div>';
-            
-            try {
-                const { data, error } = await supabaseClient.from('BollettiniMontatori')
-                    .select('id_bollettino, cliente, montaggio_macchina, data, validato, fatturato, eliminato')
-                    .order('data_creazione', { ascending: false })
-                    .limit(20);
-                
-                if (error) throw error;
-                
-                document.getElementById('bollettini-results').innerHTML = `
-                    <div class="table-container" style="margin-top: 16px;">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Cliente</th>
-                                    <th>Macchina</th>
-                                    <th>Data</th>
-                                    <th>Validato</th>
-                                    <th>Fatturato</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${data.map(b => `
-                                    <tr style="${b.eliminato ? 'opacity: 0.5;' : ''}">
-                                        <td>${b.id_bollettino}</td>
-                                        <td>${b.cliente || '-'}</td>
-                                        <td>${b.montaggio_macchina || '-'}</td>
-                                        <td>${b.data || '-'}</td>
-                                        <td>${b.validato ? '✅' : '❌'}</td>
-                                        <td>${b.fatturato ? '✅' : '❌'}</td>
-                                    </tr>
-                                `).join('')}
-                            </tbody>
-                        </table>
-                    </div>
-                `;
-            } catch (e) {
-                document.getElementById('bollettini-results').innerHTML = `<div style="color: var(--error);">Errore: ${e.message}</div>`;
-            }
-        }
-        
-        // Load Database Info
-        function loadDatabaseInfo() {
-            document.getElementById('db-url').textContent = SUPABASE_URL.replace('https://', '').split('.')[0];
-            
-            document.getElementById('tables-list').innerHTML = `
-                <div class="stats-grid">
-                    <div class="stat-card" style="cursor: pointer;" onclick="showTab('accounts')">
-                        <div class="stat-value" style="font-size: 16px;">accounts</div>
-                        <div class="stat-label">Utenti sistema</div>
-                    </div>
-                    <div class="stat-card" style="cursor: pointer;" onclick="showTab('bollettini')">
-                        <div class="stat-value" style="font-size: 16px;">BollettiniMontatori</div>
-                        <div class="stat-label">Bollettini lavoro</div>
-                    </div>
-                </div>
-            `;
-        }
-        
-        // Confirm Action
+        // CONFIRM ACTION
         function confirmAction(action) {
             pendingAction = action;
             const texts = {
-                'soft-delete': { title: '🗑️ Soft Delete', text: 'Tutti i bollettini verranno marcati come eliminati.' },
-                'hard-delete': { title: '💀 Elimina Tutto', text: 'ATTENZIONE: Tutti i bollettini verranno CANCELLATI PERMANENTEMENTE!' },
-                'reset-validation': { title: '🔄 Reset Validazioni', text: 'Tutti i bollettini torneranno a "non validato".' }
+                'soft': { title: '🗑️ Soft Delete', text: 'Tutti i bollettini verranno marcati come eliminati.' },
+                'hard': { title: '💀 Elimina Tutto', text: 'ATTENZIONE: Cancellazione PERMANENTE!' },
+                'reset': { title: '🔄 Reset', text: 'Tutti i bollettini torneranno a non validato.' }
             };
-            
             document.getElementById('modal-title').textContent = texts[action].title;
             document.getElementById('modal-text').textContent = texts[action].text;
             document.getElementById('modal-input').value = '';
-            document.getElementById('modal-confirm').classList.add('show');
+            document.getElementById('modal').classList.add('show');
         }
         
         function closeModal() {
-            document.getElementById('modal-confirm').classList.remove('show');
+            document.getElementById('modal').classList.remove('show');
             pendingAction = null;
         }
         
+        // EXECUTE ACTION
         async function executeAction() {
             if (document.getElementById('modal-input').value !== 'ELIMINA') {
                 alert('Scrivi ELIMINA per confermare');
@@ -795,60 +430,71 @@
             }
             
             closeModal();
-            document.getElementById('bollettini-status').innerHTML = '<div class="status loading">Esecuzione in corso...</div>';
+            showStatus('loading', '⏳ Esecuzione...');
             
             try {
-                let data, error;
+                // Prima prendo tutti i record
+                const { data: allRecords, error: fetchError } = await db.from('BollettiniMontatori').select('id_bollettino');
+                
+                if (fetchError) throw fetchError;
+                
+                if (!allRecords || allRecords.length === 0) {
+                    showStatus('success', '✅ Nessun record da modificare');
+                    return;
+                }
+                
+                const ids = allRecords.map(r => r.id_bollettino);
+                let result;
                 
                 switch(pendingAction) {
-                    case 'soft-delete':
-                        ({ data, error } = await supabaseClient.from('BollettiniMontatori').update({
-                            eliminato: true,
-                            data_eliminazione: new Date().toISOString(),
-                            eliminato_da: 'Super Admin'
-                        }).not('eliminato', 'eq', true).select());
+                    case 'soft':
+                        result = await db.from('BollettiniMontatori')
+                            .update({
+                                eliminato: true,
+                                data_eliminazione: new Date().toISOString(),
+                                eliminato_da: 'Super Admin'
+                            })
+                            .in('id_bollettino', ids);
                         break;
-                    case 'hard-delete':
-                        // Prima prendo tutti gli ID
-                        const { data: allRecords } = await supabaseClient.from('BollettiniMontatori').select('id_bollettino');
-                        if (allRecords && allRecords.length > 0) {
-                            const ids = allRecords.map(r => r.id_bollettino);
-                            ({ data, error } = await supabaseClient.from('BollettiniMontatori').delete().in('id_bollettino', ids).select());
-                        } else {
-                            data = [];
-                            error = null;
-                        }
+                        
+                    case 'hard':
+                        result = await db.from('BollettiniMontatori')
+                            .delete()
+                            .in('id_bollettino', ids);
                         break;
-                    case 'reset-validation':
-                        ({ data, error } = await supabaseClient.from('BollettiniMontatori').update({
-                            validato: false,
-                            data_validazione: null,
-                            validato_da: null,
-                            fatturato: false,
-                            data_fatturazione: null,
-                            fatturato_da: null
-                        }).not('id_bollettino', 'is', null).select());
+                        
+                    case 'reset':
+                        result = await db.from('BollettiniMontatori')
+                            .update({
+                                validato: false,
+                                data_validazione: null,
+                                validato_da: null,
+                                fatturato: false,
+                                data_fatturazione: null,
+                                fatturato_da: null
+                            })
+                            .in('id_bollettino', ids);
                         break;
                 }
                 
-                if (error) throw error;
+                if (result.error) throw result.error;
                 
-                const count = data ? data.length : 0;
-                document.getElementById('bollettini-status').innerHTML = `<div class="status success">✅ Operazione completata! (${count} record modificati)</div>`;
-                loadBollettiniStats();
-                loadAllStats();
+                showStatus('success', `✅ Operazione completata! (${ids.length} record)`);
+                loadStats();
+                document.getElementById('results').innerHTML = '';
+                
             } catch (e) {
-                document.getElementById('bollettini-status').innerHTML = `<div class="status error">❌ Errore: ${e.message || e}</div>`;
+                showStatus('error', '❌ Errore: ' + (e.message || e));
             }
         }
         
-        // Init
-        (async function() {
-            const connected = await initSupabase();
-            if (connected) {
-                loadAllStats();
-            }
-        })();
+        // SHOW STATUS
+        function showStatus(type, text) {
+            document.getElementById('status').innerHTML = `<div class="status ${type}">${text}</div>`;
+        }
+        
+        // START
+        init();
     </script>
 </body>
 </html>

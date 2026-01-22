@@ -452,25 +452,33 @@
                 
                 let error = null;
                 
+                let result;
+                
                 switch(pendingAction) {
                     case 'soft':
-                        ({ error } = await db.from('BollettiniMontatori')
+                        result = await db.from('BollettiniMontatori')
                             .update({
                                 eliminato: true,
                                 data_eliminazione: new Date().toISOString(),
                                 eliminato_da: 'Super Admin'
                             })
-                            .in('id_bollettino', ids));
+                            .gte('id_bollettino', 0)
+                            .select();
+                        console.log('Risultato SOFT DELETE:', result);
+                        error = result.error;
                         break;
                         
                     case 'hard':
-                        ({ error } = await db.from('BollettiniMontatori')
+                        result = await db.from('BollettiniMontatori')
                             .delete()
-                            .in('id_bollettino', ids));
+                            .gte('id_bollettino', 0)
+                            .select();
+                        console.log('Risultato HARD DELETE:', result);
+                        error = result.error;
                         break;
                         
                     case 'reset':
-                        ({ error } = await db.from('BollettiniMontatori')
+                        result = await db.from('BollettiniMontatori')
                             .update({
                                 validato: false,
                                 data_validazione: null,
@@ -479,7 +487,10 @@
                                 data_fatturazione: null,
                                 fatturato_da: null
                             })
-                            .in('id_bollettino', ids));
+                            .gte('id_bollettino', 0)
+                            .select();
+                        console.log('Risultato RESET:', result);
+                        error = result.error;
                         break;
                 }
                 

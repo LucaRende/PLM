@@ -1890,44 +1890,50 @@
         
         /* Upload DDT */
         .ddt-upload-area {
-            border: 2px dashed var(--border-default);
-            border-radius: var(--radius-lg);
-            padding: var(--space-4);
+            border: 2px dashed rgba(220, 38, 38, 0.4);
+            border-radius: var(--radius-xl);
+            padding: var(--space-6) var(--space-4);
             text-align: center;
             cursor: pointer;
             transition: all var(--transition-fast);
             margin-top: var(--space-3);
+            background: rgba(220, 38, 38, 0.02);
+            -webkit-tap-highlight-color: transparent;
         }
         
-        .ddt-upload-area:hover {
+        .ddt-upload-area:hover,
+        .ddt-upload-area:active {
             border-color: var(--primary);
-            background: rgba(220, 38, 38, 0.05);
+            background: rgba(220, 38, 38, 0.08);
         }
         
         .ddt-upload-area.dragging {
             border-color: var(--primary);
             background: rgba(220, 38, 38, 0.1);
+            transform: scale(1.02);
         }
         
         .ddt-upload-icon {
-            width: 40px;
-            height: 40px;
-            margin: 0 auto var(--space-2);
-            color: var(--text-muted);
+            width: 48px;
+            height: 48px;
+            margin: 0 auto var(--space-3);
+            color: var(--primary);
+            opacity: 0.7;
         }
         
         .ddt-upload-text {
-            font-size: 13px;
-            color: var(--text-muted);
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--text-primary);
         }
         
         .ddt-upload-hint {
-            font-size: 11px;
+            font-size: 12px;
             color: var(--text-muted);
-            margin-top: var(--space-1);
+            margin-top: var(--space-2);
         }
         
-        /* Pulsante fatturazione */
+        /* Pulsante fatturazione nel dettaglio */
         .btn-invoice {
             flex: 1;
             display: flex;
@@ -1964,39 +1970,158 @@
             height: 18px;
         }
         
-        /* Modal fatturazione */
-        .invoice-modal-content {
-            padding: var(--space-4);
+        /* =============================================
+           MODAL FATTURAZIONE - OTTIMIZZATO MOBILE
+           ============================================= */
+        .modal-fattura {
+            max-height: 85vh;
         }
         
-        .uploaded-ddt-list {
+        .modal-header-fattura {
+            padding: var(--space-3) var(--space-4);
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(16, 185, 129, 0.05));
+            border-bottom: 1px solid rgba(16, 185, 129, 0.2);
+        }
+        
+        .modal-header-fattura .modal-title {
+            color: #10b981;
+            font-size: 17px;
+        }
+        
+        .invoice-modal-body {
+            padding: var(--space-4);
+            overflow-y: auto;
+        }
+        
+        /* Riepilogo compatto */
+        .invoice-riepilogo {
+            background: var(--surface-2);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            margin-bottom: var(--space-4);
+        }
+        
+        .invoice-riepilogo-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 14px;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+        
+        .invoice-riepilogo-row:last-child {
+            border-bottom: none;
+        }
+        
+        .invoice-riepilogo-label {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+        
+        .invoice-riepilogo-value {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            text-align: right;
+            max-width: 60%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        /* Sezione */
+        .invoice-section {
+            margin-bottom: var(--space-4);
+        }
+        
+        .invoice-section-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: var(--space-2);
+        }
+        
+        /* Upload box compatto */
+        .ddt-upload-box {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            padding: var(--space-4);
+            background: rgba(16, 185, 129, 0.05);
+            border: 2px dashed rgba(16, 185, 129, 0.3);
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+            transition: all 0.2s;
+        }
+        
+        .ddt-upload-box:active {
+            background: rgba(16, 185, 129, 0.1);
+            border-color: #10b981;
+            transform: scale(0.98);
+        }
+        
+        .ddt-upload-svg {
+            width: 32px;
+            height: 32px;
+            color: #10b981;
+            flex-shrink: 0;
+        }
+        
+        .ddt-upload-label {
+            font-size: 14px;
+            font-weight: 500;
+            color: #10b981;
+        }
+        
+        /* Lista file DDT */
+        .ddt-files-list {
             display: flex;
             flex-direction: column;
-            gap: var(--space-2);
+            gap: 8px;
             margin-top: var(--space-3);
         }
         
-        .uploaded-ddt-item {
+        .ddt-file-item {
             display: flex;
             align-items: center;
-            gap: var(--space-2);
-            padding: var(--space-2) var(--space-3);
-            background: var(--surface-3);
+            gap: var(--space-3);
+            padding: 10px 12px;
+            background: var(--surface-2);
+            border: 1px solid rgba(16, 185, 129, 0.2);
             border-radius: var(--radius-md);
         }
         
-        .uploaded-ddt-item .file-name {
+        .ddt-file-icon {
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(16, 185, 129, 0.1);
+            border-radius: 6px;
+            flex-shrink: 0;
+        }
+        
+        .ddt-file-icon svg {
+            width: 16px;
+            height: 16px;
+            color: #10b981;
+        }
+        
+        .ddt-file-name {
             flex: 1;
-            font-size: 12px;
+            font-size: 13px;
+            font-weight: 500;
             color: var(--text-primary);
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }
         
-        .uploaded-ddt-item .remove-btn {
-            width: 24px;
-            height: 24px;
+        .ddt-file-remove {
+            width: 28px;
+            height: 28px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -2005,11 +2130,86 @@
             border-radius: 50%;
             color: var(--error);
             cursor: pointer;
+            flex-shrink: 0;
+            -webkit-tap-highlight-color: transparent;
         }
         
-        .uploaded-ddt-item .remove-btn svg {
+        .ddt-file-remove:active {
+            background: rgba(239, 68, 68, 0.2);
+            transform: scale(0.9);
+        }
+        
+        .ddt-file-remove svg {
             width: 14px;
             height: 14px;
+        }
+        
+        /* Note input */
+        .invoice-note-label {
+            display: block;
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+        }
+        
+        .invoice-note-input {
+            width: 100%;
+            padding: 10px 12px;
+            background: var(--surface-2);
+            border: 1px solid var(--border-default);
+            border-radius: var(--radius-md);
+            color: var(--text-primary);
+            font-family: var(--font-sans);
+            font-size: 14px;
+            resize: none;
+        }
+        
+        .invoice-note-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        
+        /* Footer con pulsante */
+        .invoice-footer {
+            padding: var(--space-4);
+            padding-bottom: calc(env(safe-area-inset-bottom) + var(--space-4));
+            background: var(--surface-1);
+            border-top: 1px solid var(--border-default);
+        }
+        
+        .invoice-submit-btn {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-3);
+            padding: 14px 20px;
+            background: linear-gradient(135deg, #10b981, #059669);
+            border: none;
+            border-radius: var(--radius-lg);
+            color: white;
+            font-family: var(--font-sans);
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+            transition: all 0.2s;
+        }
+        
+        .invoice-submit-btn:active {
+            transform: scale(0.98);
+            opacity: 0.9;
+        }
+        
+        .invoice-submit-btn:disabled {
+            background: var(--surface-3);
+            color: var(--text-muted);
+            cursor: not-allowed;
+        }
+        
+        .invoice-submit-btn svg {
+            width: 18px;
+            height: 18px;
         }
         
         /* Footer modal con pulsanti admin */
@@ -2894,10 +3094,10 @@
     
     <!-- Modal Fatturazione -->
     <div class="modal-overlay" id="modal-fatturazione">
-        <div class="modal-container">
-            <div class="modal-header">
+        <div class="modal-container modal-fattura">
+            <div class="modal-header modal-header-fattura">
                 <div class="modal-header-content">
-                    <h2 class="modal-title">📦 Fatturazione Bollettino</h2>
+                    <h2 class="modal-title">📦 Fatturazione</h2>
                 </div>
                 <button class="modal-close" onclick="closeInvoiceModal()">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -2906,49 +3106,53 @@
                     </svg>
                 </button>
             </div>
-            <div class="modal-body invoice-modal-content">
-                <p style="color: var(--text-secondary); margin-bottom: var(--space-4); font-size: 14px;">
-                    Carica i DDT (Documenti di Trasporto) e completa la fatturazione. 
-                    Verrà inviata automaticamente una email al cliente con i documenti allegati.
-                </p>
-                
-                <!-- Info bollettino -->
-                <div class="detail-section" style="margin-bottom: var(--space-4);">
-                    <div class="detail-section-title">📋 Riepilogo</div>
-                    <div id="invoice-bollettino-info"></div>
+            <div class="modal-body invoice-modal-body">
+                <!-- Info Riepilogo Compatto -->
+                <div class="invoice-riepilogo">
+                    <div class="invoice-riepilogo-row">
+                        <span class="invoice-riepilogo-label">Cliente</span>
+                        <span class="invoice-riepilogo-value" id="invoice-cliente">-</span>
+                    </div>
+                    <div class="invoice-riepilogo-row">
+                        <span class="invoice-riepilogo-label">Macchina</span>
+                        <span class="invoice-riepilogo-value" id="invoice-macchina">-</span>
+                    </div>
+                    <div class="invoice-riepilogo-row">
+                        <span class="invoice-riepilogo-label">Data</span>
+                        <span class="invoice-riepilogo-value" id="invoice-data">-</span>
+                    </div>
                 </div>
                 
                 <!-- Upload DDT -->
-                <div class="detail-section">
-                    <div class="detail-section-title">📄 Carica DDT</div>
-                    <div class="ddt-upload-area" id="ddt-upload-area" onclick="document.getElementById('ddt-file-input').click()">
-                        <svg class="ddt-upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <div class="invoice-section">
+                    <div class="invoice-section-title">📄 Carica DDT</div>
+                    <div class="ddt-upload-box" onclick="document.getElementById('ddt-file-input').click()">
+                        <svg class="ddt-upload-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
                             <polyline points="17 8 12 3 7 8"/>
                             <line x1="12" y1="3" x2="12" y2="15"/>
                         </svg>
-                        <div class="ddt-upload-text">Tocca per caricare PDF</div>
-                        <div class="ddt-upload-hint">Puoi caricare più file DDT</div>
+                        <span class="ddt-upload-label">Tocca per caricare PDF</span>
                     </div>
                     <input type="file" id="ddt-file-input" accept=".pdf" multiple style="display: none;" onchange="handleDDTUpload(event)">
                     
                     <!-- Lista DDT caricati -->
-                    <div class="uploaded-ddt-list" id="uploaded-ddt-list"></div>
+                    <div class="ddt-files-list" id="uploaded-ddt-list"></div>
                 </div>
                 
-                <!-- Note fatturazione -->
-                <div class="form-group" style="margin-top: var(--space-4);">
-                    <label class="form-label">Note Fatturazione (opzionale)</label>
-                    <textarea class="form-textarea" id="invoice-notes" placeholder="Note aggiuntive..."></textarea>
+                <!-- Note (opzionale, collapsato) -->
+                <div class="invoice-section">
+                    <label class="invoice-note-label">Note (opzionale)</label>
+                    <textarea class="invoice-note-input" id="invoice-notes" placeholder="Note aggiuntive..." rows="2"></textarea>
                 </div>
             </div>
-            <div class="modal-footer-admin">
-                <button class="btn-primary btn-full" id="btn-complete-invoice" onclick="completeInvoice()" disabled>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;">
-                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
-                        <polyline points="22 4 12 14.01 9 11.01"/>
+            <div class="invoice-footer">
+                <button class="invoice-submit-btn" id="btn-complete-invoice" onclick="completeInvoice()" disabled>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M22 2L11 13"/>
+                        <path d="M22 2L15 22L11 13L2 9L22 2Z"/>
                     </svg>
-                    Completa Fatturazione e Invia Email
+                    Completa e Invia
                 </button>
             </div>
         </div>
@@ -5106,27 +5310,14 @@
             currentBollettinoId = bollettinoId;
             uploadedDDTs = [];
             
-            // Popola info bollettino
+            // Popola info bollettino compatto
             const dataFormatted = new Date(bollettino.data).toLocaleDateString('it-IT', {
-                weekday: 'long', day: '2-digit', month: 'long', year: 'numeric'
+                weekday: 'short', day: '2-digit', month: 'short', year: 'numeric'
             });
             
-            document.getElementById('invoice-bollettino-info').innerHTML = `
-                <div class="detail-grid">
-                    <div class="detail-item full-width">
-                        <div class="detail-label">Cliente</div>
-                        <div class="detail-value">${bollettino.cliente || '-'}</div>
-                    </div>
-                    <div class="detail-item full-width">
-                        <div class="detail-label">Macchina</div>
-                        <div class="detail-value">${bollettino.montaggio_macchina || '-'} ${bollettino.matricola ? `(${bollettino.matricola})` : ''}</div>
-                    </div>
-                    <div class="detail-item full-width">
-                        <div class="detail-label">Data Intervento</div>
-                        <div class="detail-value">${dataFormatted}</div>
-                    </div>
-                </div>
-            `;
+            document.getElementById('invoice-cliente').textContent = bollettino.cliente || '-';
+            document.getElementById('invoice-macchina').textContent = bollettino.montaggio_macchina + (bollettino.matricola ? ` (${bollettino.matricola})` : '') || '-';
+            document.getElementById('invoice-data').textContent = dataFormatted;
             
             // Reset form
             document.getElementById('uploaded-ddt-list').innerHTML = '';
@@ -5216,13 +5407,15 @@
             }
             
             container.innerHTML = uploadedDDTs.map((ddt, i) => `
-                <div class="uploaded-ddt-item">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;color:var(--primary);">
-                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                        <polyline points="14 2 14 8 20 8"/>
-                    </svg>
-                    <span class="file-name">${ddt.name}</span>
-                    <button class="remove-btn" onclick="removeDDT(${i})">
+                <div class="ddt-file-item">
+                    <div class="ddt-file-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                            <polyline points="14 2 14 8 20 8"/>
+                        </svg>
+                    </div>
+                    <span class="ddt-file-name">${ddt.name}</span>
+                    <button class="ddt-file-remove" onclick="removeDDT(${i})">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <line x1="18" y1="6" x2="6" y2="18"/>
                             <line x1="6" y1="6" x2="18" y2="18"/>

@@ -1463,6 +1463,22 @@
                                 </label>
                             </div>
                         </div>
+                        
+                        <!-- Permessi Bollettini -->
+                        <div class="form-group permessi-section">
+                            <label class="form-label">Permessi Bollettini</label>
+                            <div class="permessi-grid" id="permessi-bollettini-grid">
+                                <label class="permesso-checkbox">
+                                    <input type="checkbox" id="puo-validare-bollettini">
+                                    <span class="permesso-label">✅ Può Validare</span>
+                                </label>
+                                <label class="permesso-checkbox">
+                                    <input type="checkbox" id="puo-fatturare-bollettini">
+                                    <span class="permesso-label">📦 Può Fatturare</span>
+                                </label>
+                            </div>
+                        </div>
+                        
                         <div class="form-group">
                             <label class="attivo-toggle">
                                 <input type="checkbox" id="account-attivo" checked>
@@ -2112,7 +2128,7 @@
                 console.log('Caricamento accounts...');
                 const { data, error } = await supabaseClient
                     .from('accounts')
-                    .select('id, nome, cognome, username, email, password_hash, ruolo, attivo, permessi_pagine')
+                    .select('id, nome, cognome, username, email, password_hash, ruolo, attivo, permessi_pagine, puo_validare_bollettini, puo_fatturare_bollettini')
                     .order('cognome', { ascending: true });
                 
                 console.log('Risposta accounts:', { data, error });
@@ -2177,6 +2193,8 @@
                             ${PAGINE_DISPONIBILI.map(p => `
                                 <span class="permesso-tag ${permessiArray.includes(p.id) ? 'active' : ''}">${p.nome}</span>
                             `).join('')}
+                            ${account.puo_validare_bollettini ? '<span class="permesso-tag active" style="background: rgba(59, 130, 246, 0.2); color: #3b82f6;">✅ Valida</span>' : ''}
+                            ${account.puo_fatturare_bollettini ? '<span class="permesso-tag active" style="background: rgba(16, 185, 129, 0.2); color: #10b981;">📦 Fattura</span>' : ''}
                         </div>
                     </div>
                 `;
@@ -2207,6 +2225,10 @@
             document.querySelectorAll('#permessi-grid input[type="checkbox"]').forEach(cb => {
                 cb.checked = cb.value === 'home';
             });
+            
+            // Reset permessi bollettini
+            document.getElementById('puo-validare-bollettini').checked = false;
+            document.getElementById('puo-fatturare-bollettini').checked = false;
         }
         
         function editAccount(accountId) {
@@ -2233,6 +2255,10 @@
                     cb.checked = permessiArray.includes(cb.value);
                 }
             });
+            
+            // Carica permessi bollettini
+            document.getElementById('puo-validare-bollettini').checked = account.puo_validare_bollettini === true;
+            document.getElementById('puo-fatturare-bollettini').checked = account.puo_fatturare_bollettini === true;
             
             openAccountModal(false);
         }
@@ -2301,6 +2327,38 @@
                 // Verifica risultato della funzione
                 if (result && result.success === false) {
                     throw new Error(result.error || 'Errore sconosciuto');
+                }
+                
+                // Aggiorna permessi bollettini (non gestiti dalla RPC)
+                const puoValidare = document.getElementById('puo-validare-bollettini').checked;
+                const puoFatturare = document.getElementById('puo-fatturare-bollettini').checked;
+                
+                // Trova l'ID account (per nuovo account lo otteniamo dalla risposta o lo cerchiamo)
+                let targetAccountId = accountId;
+                if (!targetAccountId && result && result.id) {
+                    targetAccountId = result.id;
+                } else if (!targetAccountId) {
+                    // Cerca l'account appena creato per username
+                    const { data: newAcc } = await supabaseClient
+                        .from('accounts')
+                        .select('id')
+                        .eq('username', username)
+                        .single();
+                    if (newAcc) targetAccountId = newAcc.id;
+                }
+                
+                if (targetAccountId) {
+                    const { error: updateError } = await supabaseClient
+                        .from('accounts')
+                        .update({
+                            puo_validare_bollettini: puoValidare,
+                            puo_fatturare_bollettini: puoFatturare
+                        })
+                        .eq('id', targetAccountId);
+                    
+                    if (updateError) {
+                        console.error('Errore aggiornamento permessi bollettini:', updateError);
+                    }
                 }
                 
                 alert('Account salvato con successo!');

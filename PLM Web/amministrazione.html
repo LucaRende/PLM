@@ -896,6 +896,11 @@
         .account-badge.admin { background: rgba(220, 38, 38, 0.2); color: var(--primary); }
         .account-badge.manager { background: rgba(245, 158, 11, 0.2); color: #f59e0b; }
         .account-badge.utente { background: rgba(59, 130, 246, 0.2); color: #3b82f6; }
+        .account-badge.superAdmin, .account-badge.superadmin { 
+            background: linear-gradient(135deg, rgba(220, 38, 38, 0.3), rgba(168, 85, 247, 0.3)); 
+            color: #a855f7;
+            border: 1px solid rgba(168, 85, 247, 0.3);
+        }
         
         /* =============================================
            MODAL
@@ -1432,6 +1437,7 @@
                                 <option value="utente">Utente</option>
                                 <option value="admin">Amministratore</option>
                                 <option value="manager">Manager</option>
+                                <option value="superAdmin" id="option-superadmin" style="display: none;">Super Admin</option>
                             </select>
                         </div>
                         <div class="form-group permessi-section">
@@ -1553,6 +1559,7 @@
     <script>
         let supabaseClient = null;
         let currentUser = null;
+        let isSuperAdmin = false;
         
         const MESI = ['Gen', 'Feb', 'Mar', 'Apr', 'Mag', 'Giu', 'Lug', 'Ago', 'Set', 'Ott', 'Nov', 'Dic'];
         const MESI_FULL = ['Gennaio', 'Febbraio', 'Marzo', 'Aprile', 'Maggio', 'Giugno', 
@@ -1581,6 +1588,18 @@
             currentUser = JSON.parse(localStorage.getItem('plm_user') || sessionStorage.getItem('plm_user') || '{}');
             if (currentUser.cognome) document.getElementById('userSurname').textContent = currentUser.cognome;
             if (currentUser.nome) document.getElementById('userFirstName').textContent = currentUser.nome;
+            
+            // Check se è superAdmin
+            const ruolo = (currentUser.ruolo || '').toLowerCase();
+            isSuperAdmin = ruolo === 'superadmin';
+            
+            // Se è superAdmin, mostra l'opzione nel select ruoli
+            if (isSuperAdmin) {
+                const optionSuperAdmin = document.getElementById('option-superadmin');
+                if (optionSuperAdmin) {
+                    optionSuperAdmin.style.display = 'block';
+                }
+            }
         }
         
         function toggleSection(sectionId) {
@@ -2229,11 +2248,25 @@
             // Reset permessi bollettini
             document.getElementById('puo-validare-bollettini').checked = false;
             document.getElementById('puo-fatturare-bollettini').checked = false;
+            
+            // Reset select ruolo (abilita e mostra/nascondi superAdmin)
+            document.getElementById('account-ruolo').disabled = false;
+            const optionSuperAdmin = document.getElementById('option-superadmin');
+            if (optionSuperAdmin) {
+                optionSuperAdmin.style.display = isSuperAdmin ? 'block' : 'none';
+            }
         }
         
         function editAccount(accountId) {
             const account = allAccounts.find(a => a.id === accountId);
             if (!account) return;
+            
+            // Se l'account è superAdmin e l'utente corrente NON è superAdmin, blocca
+            const accountRuolo = (account.ruolo || '').toLowerCase();
+            if (accountRuolo === 'superadmin' && !isSuperAdmin) {
+                alert('Solo un Super Admin può modificare un altro Super Admin.');
+                return;
+            }
             
             document.getElementById('account-id').value = account.id;
             document.getElementById('account-nome').value = account.nome || '';
@@ -2243,6 +2276,16 @@
             document.getElementById('account-email').value = account.email || '';
             document.getElementById('account-ruolo').value = account.ruolo || 'utente';
             document.getElementById('account-attivo').checked = account.attivo !== false;
+            
+            // Mostra/nascondi opzione superAdmin nel select
+            const optionSuperAdmin = document.getElementById('option-superadmin');
+            if (optionSuperAdmin) {
+                // Mostra se: utente corrente è superAdmin OPPURE se l'account da editare è superAdmin
+                optionSuperAdmin.style.display = (isSuperAdmin || accountRuolo === 'superadmin') ? 'block' : 'none';
+            }
+            
+            // Disabilita il select ruolo se l'account è superAdmin e l'utente non è superAdmin
+            document.getElementById('account-ruolo').disabled = (accountRuolo === 'superadmin' && !isSuperAdmin);
             
             // Carica permessi pagine
             const permessi = account.permessi_pagine || ['home'];

@@ -540,11 +540,28 @@
     </div>
     
     <script>
-        const SUPABASE_URL = 'https://uoykvjxerdrthnmnfmgc.supabase.co';
-        const SUPABASE_KEY = 'sb_publishable_iGVhzkLqAktDZmpccXl7OA_PZ2nUYSY';
-        
-        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        let supabaseClient = null;
         let pendingAction = null;
+        
+        // Init Supabase - legge da autenticazione.json
+        async function initSupabase() {
+            try {
+                const response = await fetch('/PLM/autenticazione.json');
+                const config = await response.json();
+                supabaseClient = window.supabase.createClient(config.supabase.url, config.supabase.anonKey);
+                console.log('Supabase connesso:', config.supabase.url);
+                return true;
+            } catch (error) {
+                console.error('Errore connessione Supabase:', error);
+                document.getElementById('system-stats').innerHTML = `
+                    <div style="color: var(--error); text-align: center; padding: 20px;">
+                        ❌ Errore connessione database<br>
+                        <small>Verifica che autenticazione.json sia presente</small>
+                    </div>
+                `;
+                return false;
+            }
+        }
         
         // Tabs
         function showTab(tabId) {
@@ -781,43 +798,49 @@
             document.getElementById('bollettini-status').innerHTML = '<div class="status loading">Esecuzione in corso...</div>';
             
             try {
-                let result;
+                let data, error;
                 
                 switch(pendingAction) {
                     case 'soft-delete':
-                        result = await supabaseClient.from('BollettiniMontatori').update({
+                        ({ data, error } = await supabaseClient.from('BollettiniMontatori').update({
                             eliminato: true,
                             data_eliminazione: new Date().toISOString(),
                             eliminato_da: 'Super Admin'
-                        }).neq('eliminato', true);
+                        }).neq('eliminato', true).select());
                         break;
                     case 'hard-delete':
-                        result = await supabaseClient.from('BollettiniMontatori').delete().gte('id_bollettino', 0);
+                        ({ data, error } = await supabaseClient.from('BollettiniMontatori').delete().neq('id_bollettino', -999).select());
                         break;
                     case 'reset-validation':
-                        result = await supabaseClient.from('BollettiniMontatori').update({
+                        ({ data, error } = await supabaseClient.from('BollettiniMontatori').update({
                             validato: false,
                             data_validazione: null,
                             validato_da: null,
                             fatturato: false,
                             data_fatturazione: null,
                             fatturato_da: null
-                        }).gte('id_bollettino', 0);
+                        }).neq('id_bollettino', -999).select());
                         break;
                 }
                 
-                if (result.error) throw result.error;
+                if (error) throw error;
                 
-                document.getElementById('bollettini-status').innerHTML = '<div class="status success">✅ Operazione completata!</div>';
+                const count = data ? data.length : 0;
+                document.getElementById('bollettini-status').innerHTML = `<div class="status success">✅ Operazione completata! (${count} record modificati)</div>`;
                 loadBollettiniStats();
                 loadAllStats();
             } catch (e) {
-                document.getElementById('bollettini-status').innerHTML = `<div class="status error">❌ Errore: ${e.message}</div>`;
+                document.getElementById('bollettini-status').innerHTML = `<div class="status error">❌ Errore: ${e.message || e}</div>`;
             }
         }
         
         // Init
-        loadAllStats();
+        (async function() {
+            const connected = await initSupabase();
+            if (connected) {
+                loadAllStats();
+            }
+        })();
     </script>
 </body>
 </html>

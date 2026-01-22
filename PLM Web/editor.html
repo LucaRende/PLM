@@ -444,27 +444,27 @@
                 }
                 
                 const ids = allRecords.map(r => r.id_bollettino);
-                let result;
+                let error = null;
                 
                 switch(pendingAction) {
                     case 'soft':
-                        result = await db.from('BollettiniMontatori')
+                        ({ error } = await db.from('BollettiniMontatori')
                             .update({
                                 eliminato: true,
                                 data_eliminazione: new Date().toISOString(),
                                 eliminato_da: 'Super Admin'
                             })
-                            .in('id_bollettino', ids);
+                            .in('id_bollettino', ids));
                         break;
                         
                     case 'hard':
-                        result = await db.from('BollettiniMontatori')
+                        ({ error } = await db.from('BollettiniMontatori')
                             .delete()
-                            .in('id_bollettino', ids);
+                            .in('id_bollettino', ids));
                         break;
                         
                     case 'reset':
-                        result = await db.from('BollettiniMontatori')
+                        ({ error } = await db.from('BollettiniMontatori')
                             .update({
                                 validato: false,
                                 data_validazione: null,
@@ -473,11 +473,11 @@
                                 data_fatturazione: null,
                                 fatturato_da: null
                             })
-                            .in('id_bollettino', ids);
+                            .in('id_bollettino', ids));
                         break;
                 }
                 
-                if (result.error) throw result.error;
+                if (error) throw error;
                 
                 showStatus('success', `✅ Operazione completata! (${ids.length} record)`);
                 loadStats();

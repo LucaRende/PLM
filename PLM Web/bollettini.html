@@ -1644,6 +1644,248 @@
             margin-top: 2px;
         }
         
+        /* Stato fatturato/completo */
+        .invoice-status {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            padding: var(--space-3);
+            border-radius: var(--radius-md);
+            font-size: 13px;
+            font-weight: 500;
+            margin-top: var(--space-2);
+        }
+        
+        .invoice-status.invoiced {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: #10b981;
+        }
+        
+        .invoice-status.not-invoiced {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px dashed rgba(245, 158, 11, 0.3);
+            color: #f59e0b;
+        }
+        
+        .invoice-status svg {
+            width: 18px;
+            height: 18px;
+        }
+        
+        .invoice-info {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+        
+        /* Badge completo */
+        .bollettino-badge.completed {
+            background: rgba(16, 185, 129, 0.15);
+            color: #10b981;
+        }
+        
+        /* Sezione PDF */
+        .pdf-section {
+            margin-top: var(--space-3);
+        }
+        
+        .pdf-list {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-2);
+        }
+        
+        .pdf-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            padding: var(--space-3);
+            background: var(--surface-2);
+            border: 1px solid var(--border-default);
+            border-radius: var(--radius-md);
+            text-decoration: none;
+            color: var(--text-primary);
+            transition: all var(--transition-fast);
+        }
+        
+        .pdf-item:hover {
+            background: var(--surface-3);
+            border-color: var(--primary);
+        }
+        
+        .pdf-item:active {
+            transform: scale(0.98);
+        }
+        
+        .pdf-icon {
+            width: 36px;
+            height: 36px;
+            background: rgba(220, 38, 38, 0.1);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+        }
+        
+        .pdf-icon svg {
+            width: 20px;
+            height: 20px;
+        }
+        
+        .pdf-info {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .pdf-name {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-primary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .pdf-date {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+        
+        .pdf-download {
+            color: var(--text-muted);
+        }
+        
+        .pdf-download svg {
+            width: 18px;
+            height: 18px;
+        }
+        
+        /* Upload DDT */
+        .ddt-upload-area {
+            border: 2px dashed var(--border-default);
+            border-radius: var(--radius-lg);
+            padding: var(--space-4);
+            text-align: center;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            margin-top: var(--space-3);
+        }
+        
+        .ddt-upload-area:hover {
+            border-color: var(--primary);
+            background: rgba(220, 38, 38, 0.05);
+        }
+        
+        .ddt-upload-area.dragging {
+            border-color: var(--primary);
+            background: rgba(220, 38, 38, 0.1);
+        }
+        
+        .ddt-upload-icon {
+            width: 40px;
+            height: 40px;
+            margin: 0 auto var(--space-2);
+            color: var(--text-muted);
+        }
+        
+        .ddt-upload-text {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+        
+        .ddt-upload-hint {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: var(--space-1);
+        }
+        
+        /* Pulsante fatturazione */
+        .btn-invoice {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-2);
+            padding: var(--space-3);
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: var(--radius-lg);
+            color: #10b981;
+            font-family: var(--font-sans);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+        
+        .btn-invoice:hover {
+            background: rgba(16, 185, 129, 0.2);
+        }
+        
+        .btn-invoice:active {
+            transform: scale(0.98);
+        }
+        
+        .btn-invoice:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .btn-invoice svg {
+            width: 18px;
+            height: 18px;
+        }
+        
+        /* Modal fatturazione */
+        .invoice-modal-content {
+            padding: var(--space-4);
+        }
+        
+        .uploaded-ddt-list {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-2);
+            margin-top: var(--space-3);
+        }
+        
+        .uploaded-ddt-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            padding: var(--space-2) var(--space-3);
+            background: var(--surface-3);
+            border-radius: var(--radius-md);
+        }
+        
+        .uploaded-ddt-item .file-name {
+            flex: 1;
+            font-size: 12px;
+            color: var(--text-primary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .uploaded-ddt-item .remove-btn {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(239, 68, 68, 0.1);
+            border: none;
+            border-radius: 50%;
+            color: var(--error);
+            cursor: pointer;
+        }
+        
+        .uploaded-ddt-item .remove-btn svg {
+            width: 14px;
+            height: 14px;
+        }
+        
         /* Footer modal con pulsanti admin */
         .modal-footer-admin {
             display: flex;
@@ -2396,6 +2638,15 @@
                             </svg>
                             Valida
                         </button>
+                        <button class="btn-invoice" id="btn-invoice" onclick="openInvoiceModal(currentBollettinoId)" style="display: none;">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                <polyline points="14 2 14 8 20 8"/>
+                                <line x1="16" y1="13" x2="8" y2="13"/>
+                                <line x1="16" y1="17" x2="8" y2="17"/>
+                            </svg>
+                            Fattura
+                        </button>
                         <button class="btn-delete" id="btn-delete" onclick="confirmDelete()">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <polyline points="3 6 5 6 21 6"/>
@@ -2500,6 +2751,68 @@
         </div>
     </div>
     
+    <!-- Modal Fatturazione -->
+    <div class="modal-overlay" id="modal-fatturazione">
+        <div class="modal-container">
+            <div class="modal-header">
+                <div class="modal-header-content">
+                    <h2 class="modal-title">📦 Fatturazione Bollettino</h2>
+                </div>
+                <button class="modal-close" onclick="closeInvoiceModal()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body invoice-modal-content">
+                <p style="color: var(--text-secondary); margin-bottom: var(--space-4); font-size: 14px;">
+                    Carica i DDT (Documenti di Trasporto) e completa la fatturazione. 
+                    Verrà inviata automaticamente una email al cliente con i documenti allegati.
+                </p>
+                
+                <!-- Info bollettino -->
+                <div class="detail-section" style="margin-bottom: var(--space-4);">
+                    <div class="detail-section-title">📋 Riepilogo</div>
+                    <div id="invoice-bollettino-info"></div>
+                </div>
+                
+                <!-- Upload DDT -->
+                <div class="detail-section">
+                    <div class="detail-section-title">📄 Carica DDT</div>
+                    <div class="ddt-upload-area" id="ddt-upload-area" onclick="document.getElementById('ddt-file-input').click()">
+                        <svg class="ddt-upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                            <polyline points="17 8 12 3 7 8"/>
+                            <line x1="12" y1="3" x2="12" y2="15"/>
+                        </svg>
+                        <div class="ddt-upload-text">Tocca per caricare PDF</div>
+                        <div class="ddt-upload-hint">Puoi caricare più file DDT</div>
+                    </div>
+                    <input type="file" id="ddt-file-input" accept=".pdf" multiple style="display: none;" onchange="handleDDTUpload(event)">
+                    
+                    <!-- Lista DDT caricati -->
+                    <div class="uploaded-ddt-list" id="uploaded-ddt-list"></div>
+                </div>
+                
+                <!-- Note fatturazione -->
+                <div class="form-group" style="margin-top: var(--space-4);">
+                    <label class="form-label">Note Fatturazione (opzionale)</label>
+                    <textarea class="form-textarea" id="invoice-notes" placeholder="Note aggiuntive..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer-admin">
+                <button class="btn-primary btn-full" id="btn-complete-invoice" onclick="completeInvoice()" disabled>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                        <polyline points="22 4 12 14.01 9 11.01"/>
+                    </svg>
+                    Completa Fatturazione e Invia Email
+                </button>
+            </div>
+        </div>
+    </div>
+    
     <script>
         // =============================================
         // VARIABILI GLOBALI
@@ -2513,6 +2826,10 @@
         let isAdmin = false;
         let notificheCount = 0;
         
+        // Permessi specifici
+        let canValidate = false;  // Può validare bollettini
+        let canInvoice = false;   // Può fatturare bollettini
+        
         // Canvas firma
         let firmaCanvas = null;
         let firmaCtx = null;
@@ -2521,6 +2838,9 @@
         
         // Foto scontrini
         let uploadedPhotos = [];
+        
+        // DDT per fatturazione
+        let uploadedDDTs = [];
         
         // Email
         let pendingEmailData = null;
@@ -2690,6 +3010,10 @@
                       ruolo === 'manager' ||
                       currentUser.is_admin === true;
             
+            // Carica permessi specifici dal localStorage (saranno aggiornati da loadUserPermissions)
+            canValidate = currentUser.puo_validare_bollettini === true || isAdmin;
+            canInvoice = currentUser.puo_fatturare_bollettini === true || isAdmin;
+            
             // Mostra/nascondi filtro operatore e bottone "tutti"
             if (isAdmin) {
                 document.getElementById('filter-operatore-group').style.display = 'flex';
@@ -2698,6 +3022,31 @@
                 currentFilterType = 'tutti';
                 document.querySelector('.filter-toggle-btn[data-filter="miei"]').classList.remove('active');
                 document.querySelector('.filter-toggle-btn[data-filter="tutti"]').classList.add('active');
+            }
+        }
+        
+        // Carica permessi utente dal database
+        async function loadUserPermissions() {
+            if (!currentUser.id) return;
+            
+            try {
+                const { data, error } = await supabaseClient
+                    .from('accounts')
+                    .select('puo_validare_bollettini, puo_fatturare_bollettini')
+                    .eq('id', currentUser.id)
+                    .single();
+                
+                if (data) {
+                    canValidate = data.puo_validare_bollettini === true || isAdmin;
+                    canInvoice = data.puo_fatturare_bollettini === true || isAdmin;
+                    
+                    // Aggiorna localStorage per sessioni future
+                    currentUser.puo_validare_bollettini = data.puo_validare_bollettini;
+                    currentUser.puo_fatturare_bollettini = data.puo_fatturare_bollettini;
+                    localStorage.setItem('plm_user', JSON.stringify(currentUser));
+                }
+            } catch (e) {
+                console.log('Errore caricamento permessi:', e);
             }
         }
         
@@ -3047,10 +3396,13 @@
                 const dateStr = dataObj ? dataObj.toLocaleDateString('it-IT', { day: '2-digit', month: 'short' }) : '-';
                 const weekday = dataObj ? dataObj.toLocaleDateString('it-IT', { weekday: 'short' }) : '';
                 const isValidated = b.validato === true;
+                const isInvoiced = b.fatturato === true;
                 const hasFirma = b.firma_cliente && b.firma_cliente.data;
                 
                 let badge = '<span class="bollettino-badge pending">In attesa</span>';
-                if (isValidated) {
+                if (isInvoiced) {
+                    badge = '<span class="bollettino-badge completed">✓ Completo</span>';
+                } else if (isValidated) {
                     badge = '<span class="bollettino-badge validated">✓ Validato</span>';
                 } else if (hasFirma) {
                     badge = '<span class="bollettino-badge signed">Firmato</span>';
@@ -3470,6 +3822,8 @@
             const hasFirma = bollettino.firma_cliente && bollettino.firma_cliente.data;
             const hasPhotos = bollettino.foto_scontrini && bollettino.foto_scontrini.length > 0;
             const isValidated = bollettino.validato === true;
+            const isInvoiced = bollettino.fatturato === true;
+            const hasDDT = bollettino.ddt_files && bollettino.ddt_files.length > 0;
             
             // Check se è una notifica nuova (validato ma non visto) - confronto flessibile
             const tecnicoCorrente = `${currentUser.nome || ''} ${currentUser.cognome || ''}`.trim().toLowerCase();
@@ -3519,6 +3873,30 @@
                             <div>In attesa di validazione</div>
                         </div>
                     `}
+                    
+                    ${isValidated ? `
+                        <!-- Stato Fatturazione -->
+                        ${isInvoiced ? `
+                            <div class="invoice-status invoiced">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                                    <polyline points="22 4 12 14.01 9 11.01"/>
+                                </svg>
+                                <div>
+                                    <div>✅ Completo - Fatturato</div>
+                                    ${bollettino.data_fatturazione ? `<div class="invoice-info">Fatturato il ${new Date(bollettino.data_fatturazione).toLocaleDateString('it-IT')}${bollettino.fatturato_da ? ` da ${bollettino.fatturato_da}` : ''}</div>` : ''}
+                                </div>
+                            </div>
+                        ` : `
+                            <div class="invoice-status not-invoiced">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"/>
+                                    <polyline points="12 6 12 12 16 14"/>
+                                </svg>
+                                <div>In attesa di fatturazione</div>
+                            </div>
+                        `}
+                    ` : ''}
                 </div>
                 
                 <div class="detail-section">
@@ -3626,24 +4004,78 @@
                     ` : ''}
                 </div>
                 ` : ''}
+                
+                ${isInvoiced ? `
+                <!-- Documenti PDF -->
+                <div class="detail-section">
+                    <div class="detail-section-title">📄 Documenti</div>
+                    <div class="pdf-list">
+                        ${bollettino.pdf_bollettino_url ? `
+                        <a href="${bollettino.pdf_bollettino_url}" target="_blank" class="pdf-item">
+                            <div class="pdf-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                    <polyline points="14 2 14 8 20 8"/>
+                                </svg>
+                            </div>
+                            <div class="pdf-info">
+                                <div class="pdf-name">📋 Bollettino Intervento</div>
+                                <div class="pdf-date">PDF Ufficiale</div>
+                            </div>
+                            <div class="pdf-download">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                    <polyline points="7 10 12 15 17 10"/>
+                                    <line x1="12" y1="15" x2="12" y2="3"/>
+                                </svg>
+                            </div>
+                        </a>
+                        ` : ''}
+                        ${hasDDT ? bollettino.ddt_files.map((ddt, i) => `
+                        <a href="${ddt.url}" target="_blank" class="pdf-item">
+                            <div class="pdf-icon" style="background: rgba(16, 185, 129, 0.1);">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: #10b981;">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                    <polyline points="14 2 14 8 20 8"/>
+                                </svg>
+                            </div>
+                            <div class="pdf-info">
+                                <div class="pdf-name">📦 ${ddt.name}</div>
+                                <div class="pdf-date">${ddt.uploaded_at ? new Date(ddt.uploaded_at).toLocaleDateString('it-IT') : 'DDT'}</div>
+                            </div>
+                            <div class="pdf-download">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                    <polyline points="7 10 12 15 17 10"/>
+                                    <line x1="12" y1="15" x2="12" y2="3"/>
+                                </svg>
+                            </div>
+                        </a>
+                        `).join('') : ''}
+                    </div>
+                </div>
+                ` : ''}
             `;
             
             // Gestione permessi pulsanti (usa isMyBollettino già calcolato sopra)
             const isOwner = isMyBollettino;
             
             // Pulsante Modifica: NESSUNO può modificare se validato
-            const canEdit = !isValidated && (isOwner || isAdmin);
-            document.getElementById('btn-modifica').style.display = canEdit ? 'block' : 'none';
+            const canEditBollettino = !isValidated && (isOwner || isAdmin);
+            document.getElementById('btn-modifica').style.display = canEditBollettino ? 'block' : 'none';
             
-            // Azioni Admin
+            // Azioni Admin/Permessi speciali
             const adminActions = document.getElementById('admin-actions');
-            if (isAdmin) {
+            const hasSpecialPermissions = isAdmin || canValidate || canInvoice;
+            
+            if (hasSpecialPermissions) {
                 adminActions.style.display = 'flex';
                 
-                // Pulsante Valida: disabilitato se già validato O se manca la firma
+                // Pulsante Valida: visibile solo per chi può validare
                 const btnValidate = document.getElementById('btn-validate');
-                const canValidate = !isValidated && hasFirma;
-                btnValidate.disabled = !canValidate;
+                btnValidate.style.display = canValidate ? 'flex' : 'none';
+                const canValidateThis = !isValidated && hasFirma;
+                btnValidate.disabled = !canValidateThis;
                 
                 if (isValidated) {
                     btnValidate.innerHTML = `
@@ -3674,14 +4106,21 @@
                     btnValidate.title = '';
                 }
                 
-                // Pulsante Elimina: disabilitato se validato
+                // Pulsante Elimina: visibile solo per admin, disabilitato se validato
                 const btnDelete = document.getElementById('btn-delete');
+                btnDelete.style.display = isAdmin ? 'flex' : 'none';
                 btnDelete.disabled = isValidated;
                 if (isValidated) {
                     btnDelete.title = 'Non puoi eliminare un bollettino validato';
                 } else {
                     btnDelete.title = '';
                 }
+                
+                // Pulsante Fattura: visibile solo se validato E non fatturato E ha permesso
+                const btnInvoice = document.getElementById('btn-invoice');
+                const showInvoiceBtn = isValidated && !isInvoiced && canInvoice;
+                btnInvoice.style.display = showInvoiceBtn ? 'flex' : 'none';
+                
             } else {
                 adminActions.style.display = 'none';
             }
@@ -4422,6 +4861,267 @@
         }
         
         // =============================================
+        // FATTURAZIONE
+        // =============================================
+        
+        // Apri modal fatturazione
+        function openInvoiceModal(bollettinoId) {
+            const bollettino = allBollettini.find(b => b.id_bollettino === bollettinoId);
+            if (!bollettino) return;
+            
+            currentBollettinoId = bollettinoId;
+            uploadedDDTs = [];
+            
+            // Popola info bollettino
+            const dataFormatted = new Date(bollettino.data).toLocaleDateString('it-IT', {
+                weekday: 'long', day: '2-digit', month: 'long', year: 'numeric'
+            });
+            
+            document.getElementById('invoice-bollettino-info').innerHTML = `
+                <div class="detail-grid">
+                    <div class="detail-item full-width">
+                        <div class="detail-label">Cliente</div>
+                        <div class="detail-value">${bollettino.cliente || '-'}</div>
+                    </div>
+                    <div class="detail-item full-width">
+                        <div class="detail-label">Macchina</div>
+                        <div class="detail-value">${bollettino.montaggio_macchina || '-'} ${bollettino.matricola ? `(${bollettino.matricola})` : ''}</div>
+                    </div>
+                    <div class="detail-item full-width">
+                        <div class="detail-label">Data Intervento</div>
+                        <div class="detail-value">${dataFormatted}</div>
+                    </div>
+                </div>
+            `;
+            
+            // Reset form
+            document.getElementById('uploaded-ddt-list').innerHTML = '';
+            document.getElementById('invoice-notes').value = '';
+            document.getElementById('btn-complete-invoice').disabled = true;
+            
+            // Mostra modal
+            document.getElementById('modal-fatturazione').classList.add('show');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        // Chiudi modal fatturazione
+        function closeInvoiceModal() {
+            document.getElementById('modal-fatturazione').classList.remove('show');
+            document.body.style.overflow = '';
+            uploadedDDTs = [];
+        }
+        
+        // Gestisci upload DDT
+        async function handleDDTUpload(event) {
+            const files = event.target.files;
+            if (!files || files.length === 0) return;
+            
+            Loader.show('invio', 'Caricamento DDT...');
+            
+            for (const file of files) {
+                if (file.type !== 'application/pdf') {
+                    alert('Solo file PDF sono accettati');
+                    continue;
+                }
+                
+                try {
+                    // Converti in base64
+                    const base64 = await new Promise((resolve, reject) => {
+                        const reader = new FileReader();
+                        reader.onload = () => resolve(reader.result);
+                        reader.onerror = reject;
+                        reader.readAsDataURL(file);
+                    });
+                    
+                    // Carica su Supabase Storage
+                    const fileName = `ddt/DDT_${currentBollettinoId}_${Date.now()}_${file.name}`;
+                    const blob = await fetch(base64).then(r => r.blob());
+                    
+                    const { data, error } = await supabaseClient.storage
+                        .from('bollettini')
+                        .upload(fileName, blob, {
+                            contentType: 'application/pdf',
+                            upsert: true
+                        });
+                    
+                    if (error) throw error;
+                    
+                    // Ottieni URL pubblico
+                    const { data: urlData } = supabaseClient.storage
+                        .from('bollettini')
+                        .getPublicUrl(fileName);
+                    
+                    // Aggiungi alla lista
+                    uploadedDDTs.push({
+                        name: file.name,
+                        url: urlData.publicUrl,
+                        uploaded_at: new Date().toISOString()
+                    });
+                    
+                } catch (e) {
+                    console.error('Errore upload DDT:', e);
+                    alert('Errore caricamento: ' + file.name);
+                }
+            }
+            
+            // Aggiorna UI
+            renderUploadedDDTs();
+            event.target.value = ''; // Reset input
+            
+            Loader.hide();
+        }
+        
+        // Render lista DDT caricati
+        function renderUploadedDDTs() {
+            const container = document.getElementById('uploaded-ddt-list');
+            
+            if (uploadedDDTs.length === 0) {
+                container.innerHTML = '';
+                document.getElementById('btn-complete-invoice').disabled = true;
+                return;
+            }
+            
+            container.innerHTML = uploadedDDTs.map((ddt, i) => `
+                <div class="uploaded-ddt-item">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;color:var(--primary);">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                        <polyline points="14 2 14 8 20 8"/>
+                    </svg>
+                    <span class="file-name">${ddt.name}</span>
+                    <button class="remove-btn" onclick="removeDDT(${i})">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18"/>
+                            <line x1="6" y1="6" x2="18" y2="18"/>
+                        </svg>
+                    </button>
+                </div>
+            `).join('');
+            
+            document.getElementById('btn-complete-invoice').disabled = false;
+        }
+        
+        // Rimuovi DDT dalla lista
+        function removeDDT(index) {
+            uploadedDDTs.splice(index, 1);
+            renderUploadedDDTs();
+        }
+        
+        // Completa fatturazione
+        async function completeInvoice() {
+            if (uploadedDDTs.length === 0) {
+                alert('Carica almeno un DDT');
+                return;
+            }
+            
+            const bollettino = allBollettini.find(b => b.id_bollettino === currentBollettinoId);
+            if (!bollettino) return;
+            
+            try {
+                Loader.show('invio', 'Completamento fatturazione...');
+                
+                const fatturatoDa = `${currentUser.nome || ''} ${currentUser.cognome || ''}`.trim();
+                
+                // Prima genera e salva il PDF finale del bollettino
+                let pdfBollettinoUrl = bollettino.pdf_bollettino_url;
+                if (!pdfBollettinoUrl) {
+                    try {
+                        const pdfDoc = generateBollettinoPDF(bollettino);
+                        pdfBollettinoUrl = await uploadPDFToStorage(pdfDoc, bollettino);
+                    } catch (e) {
+                        console.error('Errore generazione PDF bollettino:', e);
+                    }
+                }
+                
+                // Aggiorna database
+                const { error } = await supabaseClient
+                    .from('BollettiniMontatori')
+                    .update({
+                        fatturato: true,
+                        data_fatturazione: new Date().toISOString(),
+                        fatturato_da: fatturatoDa,
+                        ddt_files: uploadedDDTs,
+                        pdf_bollettino_url: pdfBollettinoUrl,
+                        note_fatturazione: document.getElementById('invoice-notes').value || null
+                    })
+                    .eq('id_bollettino', currentBollettinoId);
+                
+                if (error) throw error;
+                
+                // Invia email al cliente se ha email
+                if (bollettino.email_cliente) {
+                    Loader.updateText('Invio email cliente...');
+                    await sendInvoiceEmail(bollettino, uploadedDDTs, pdfBollettinoUrl);
+                }
+                
+                closeInvoiceModal();
+                closeModalDettaglio();
+                
+                Loader.updateText('Aggiornamento lista...');
+                await loadBollettini(false);
+                
+                Loader.hide();
+                
+            } catch (e) {
+                console.error('Errore fatturazione:', e);
+                Loader.hide();
+                alert('Errore durante la fatturazione');
+            }
+        }
+        
+        // Invia email fatturazione al cliente
+        async function sendInvoiceEmail(bollettinoData, ddtFiles, pdfBollettinoUrl) {
+            if (!EMAILJS_CONFIG.publicKey || EMAILJS_CONFIG.publicKey === 'YOUR_PUBLIC_KEY') {
+                console.warn('EmailJS non configurato');
+                return false;
+            }
+            
+            try {
+                const dataFormatted = new Date(bollettinoData.data).toLocaleDateString('it-IT', {
+                    day: '2-digit', month: 'long', year: 'numeric'
+                });
+                
+                // Prepara HTML per DDT
+                let ddtHtml = '';
+                ddtFiles.forEach((ddt, i) => {
+                    ddtHtml += `<a href="${ddt.url}" style="display:inline-block; background:#10b981; color:#ffffff; padding:10px 20px; border-radius:8px; text-decoration:none; font-weight:bold; margin:4px;">📄 ${ddt.name}</a><br>`;
+                });
+                
+                // Link al PDF bollettino
+                let bollettinoHtml = '';
+                if (pdfBollettinoUrl) {
+                    bollettinoHtml = `<a href="${pdfBollettinoUrl}" style="display:inline-block; background:#dc2626; color:#ffffff; padding:10px 20px; border-radius:8px; text-decoration:none; font-weight:bold; margin:4px;">📋 Bollettino Intervento</a>`;
+                }
+                
+                const response = await emailjs.send(
+                    EMAILJS_CONFIG.serviceId,
+                    EMAILJS_CONFIG.templateClienteId, // Puoi creare un template specifico per fatturazione
+                    {
+                        to_email: bollettinoData.email_cliente,
+                        to_name: 'cliente',
+                        subject: 'Documentazione Intervento - Pro System S.r.l.',
+                        data_intervento: dataFormatted,
+                        tecnico: bollettinoData.tecnico_installatore,
+                        macchina: bollettinoData.montaggio_macchina || 'Non specificata',
+                        matricola: bollettinoData.matricola || 'Non specificata',
+                        ore_lavorate: bollettinoData.ore_totali + ' ore',
+                        orario: `${bollettinoData.orario_inizio || ''} - ${bollettinoData.orario_fine || ''}`,
+                        lavori_eseguiti: bollettinoData.lavori_eseguiti || '-',
+                        note: bollettinoData.note || '-',
+                        firma_html: bollettinoData.nome_firmatario ? `<p>Firmato da: ${bollettinoData.nome_firmatario}</p>` : '',
+                        pdf_link: `${ddtHtml}<br>${bollettinoHtml}`,
+                        is_invoice: true
+                    }
+                );
+                
+                console.log('Email fatturazione inviata:', response);
+                return true;
+            } catch (error) {
+                console.error('Errore invio email fatturazione:', error);
+                return false;
+            }
+        }
+        
+        // =============================================
         // ELIMINA BOLLETTINO (SOFT DELETE)
         // =============================================
         async function deleteBollettino() {
@@ -4567,6 +5267,7 @@
                 // Inizializza
                 loadUserData();
                 await initSupabase();
+                await loadUserPermissions(); // Carica permessi dal DB
                 initEmailJS(); // Inizializza EmailJS
                 preloadLogo(); // Precarica logo per PDF
                 

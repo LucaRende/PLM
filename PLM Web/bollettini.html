@@ -923,6 +923,11 @@
             overflow: hidden;
         }
         
+        .bollettino-matricola {
+            color: var(--primary);
+            font-weight: 500;
+        }
+        
         .bollettino-card-footer {
             display: flex;
             justify-content: space-between;
@@ -2269,6 +2274,10 @@
                             <input type="text" class="form-input" id="bollettino-macchina" placeholder="Tipo macchina / modello">
                         </div>
                         <div class="form-group">
+                            <label class="form-label">Matricola</label>
+                            <input type="text" class="form-input" id="bollettino-matricola" placeholder="Numero matricola macchina">
+                        </div>
+                        <div class="form-group">
                             <label class="form-label">Tecnico</label>
                             <input type="text" class="form-input readonly" id="bollettino-tecnico" readonly>
                         </div>
@@ -2518,6 +2527,28 @@
         let emailResolve = null;
         let selectedAdminEmail = null;
         let adminList = [];
+        
+        // Logo per PDF
+        let logoBase64 = null;
+        
+        // Precarica logo per PDF
+        function preloadLogo() {
+            const img = new Image();
+            img.crossOrigin = 'anonymous';
+            img.onload = function() {
+                const canvas = document.createElement('canvas');
+                canvas.width = img.width;
+                canvas.height = img.height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0);
+                logoBase64 = canvas.toDataURL('image/png');
+                console.log('Logo precaricato per PDF');
+            };
+            img.onerror = function() {
+                console.log('Logo non disponibile, uso placeholder');
+            };
+            img.src = '/PLM/logo-tondo.png';
+        }
         
         // =============================================
         // CONFIGURAZIONE EMAILJS
@@ -3036,7 +3067,7 @@
                         </div>
                         <div class="bollettino-card-body">
                             <div class="bollettino-cliente">${b.cliente || 'Cliente non specificato'}</div>
-                            <div class="bollettino-macchina">${b.montaggio_macchina || 'Macchina non specificata'}</div>
+                            <div class="bollettino-macchina">${b.montaggio_macchina || 'Macchina non specificata'}${b.matricola ? ` <span class="bollettino-matricola">(${b.matricola})</span>` : ''}</div>
                         </div>
                         <div class="bollettino-card-footer">
                             <div class="bollettino-meta">
@@ -3080,6 +3111,7 @@
                 document.getElementById('bollettino-pausa').value = '60';
                 document.getElementById('bollettino-cliente').value = '';
                 document.getElementById('bollettino-macchina').value = '';
+                document.getElementById('bollettino-matricola').value = '';
                 document.getElementById('bollettino-tecnico').value = `${currentUser.nome || ''} ${currentUser.cognome || ''}`.trim();
                 document.getElementById('bollettino-lavori').value = '';
                 document.getElementById('bollettino-note').value = '';
@@ -3240,6 +3272,10 @@
             const img = new Image();
             img.onload = function() {
                 if (firmaCtx) {
+                    // Prima metti sfondo bianco
+                    firmaCtx.fillStyle = '#ffffff';
+                    firmaCtx.fillRect(0, 0, firmaCanvas.width, firmaCanvas.height);
+                    // Poi disegna la firma
                     firmaCtx.drawImage(img, 0, 0, firmaCanvas.width, firmaCanvas.height);
                     hasSignature = true;
                     document.getElementById('firma-wrapper').classList.add('has-signature');
@@ -3326,6 +3362,7 @@
                 ore_totali: oreValue,
                 cliente: document.getElementById('bollettino-cliente').value || null,
                 montaggio_macchina: document.getElementById('bollettino-macchina').value || null,
+                matricola: document.getElementById('bollettino-matricola').value || null,
                 tecnico_installatore: document.getElementById('bollettino-tecnico').value || null,
                 lavori_eseguiti: document.getElementById('bollettino-lavori').value || null,
                 note: document.getElementById('bollettino-note').value || null,
@@ -3500,9 +3537,19 @@
                             <div class="detail-value">${bollettino.montaggio_macchina || '-'}</div>
                         </div>
                         <div class="detail-item full-width">
+                            <div class="detail-label">Matricola</div>
+                            <div class="detail-value">${bollettino.matricola || '-'}</div>
+                        </div>
+                        <div class="detail-item full-width">
                             <div class="detail-label">Tecnico</div>
                             <div class="detail-value">${bollettino.tecnico_installatore || '-'}</div>
                         </div>
+                        ${bollettino.email_cliente ? `
+                        <div class="detail-item full-width">
+                            <div class="detail-label">Email Cliente</div>
+                            <div class="detail-value">${bollettino.email_cliente}</div>
+                        </div>
+                        ` : ''}
                     </div>
                 </div>
                 
@@ -3692,6 +3739,7 @@
             document.getElementById('bollettino-ore').textContent = `${bollettino.ore_totali || 0} h`;
             document.getElementById('bollettino-cliente').value = bollettino.cliente || '';
             document.getElementById('bollettino-macchina').value = bollettino.montaggio_macchina || '';
+            document.getElementById('bollettino-matricola').value = bollettino.matricola || '';
             document.getElementById('bollettino-tecnico').value = bollettino.tecnico_installatore || '';
             document.getElementById('bollettino-lavori').value = bollettino.lavori_eseguiti || '';
             document.getElementById('bollettino-note').value = bollettino.note || '';
@@ -3945,25 +3993,49 @@
             doc.setFillColor(...primaryColor);
             doc.rect(0, 0, 210, 40, 'F');
             
-            doc.setTextColor(255, 255, 255);
-            doc.setFontSize(24);
-            doc.setFont('helvetica', 'bold');
-            doc.text('BOLLETTINO INTERVENTO', 105, 20, { align: 'center' });
+            // Logo a sinistra
+            if (logoBase64) {
+                // Usa logo reale se precaricato
+                try {
+                    doc.addImage(logoBase64, 'PNG', 8, 8, 24, 24);
+                } catch (e) {
+                    // Fallback: cerchio con PS
+                    doc.setFillColor(255, 255, 255);
+                    doc.circle(20, 20, 12, 'F');
+                    doc.setTextColor(...primaryColor);
+                    doc.setFontSize(14);
+                    doc.setFont('helvetica', 'bold');
+                    doc.text('PS', 20, 24, { align: 'center' });
+                }
+            } else {
+                // Cerchio bianco con PS come placeholder
+                doc.setFillColor(255, 255, 255);
+                doc.circle(20, 20, 12, 'F');
+                doc.setTextColor(...primaryColor);
+                doc.setFontSize(14);
+                doc.setFont('helvetica', 'bold');
+                doc.text('PS', 20, 24, { align: 'center' });
+            }
             
-            doc.setFontSize(12);
+            doc.setTextColor(255, 255, 255);
+            doc.setFontSize(22);
+            doc.setFont('helvetica', 'bold');
+            doc.text('BOLLETTINO INTERVENTO', 115, 18, { align: 'center' });
+            
+            doc.setFontSize(11);
             doc.setFont('helvetica', 'normal');
-            doc.text('Pro System S.r.l.', 105, 32, { align: 'center' });
+            doc.text('Pro System S.r.l.', 115, 30, { align: 'center' });
             
             y = 55;
             
-            // Box info principale
+            // Box info principale - espanso per matricola
             doc.setFillColor(...bgColor);
-            doc.roundedRect(15, y - 5, 180, 50, 3, 3, 'F');
+            doc.roundedRect(15, y - 5, 180, 62, 3, 3, 'F');
             
             doc.setTextColor(...textColor);
             doc.setFontSize(11);
             
-            // Riga 1
+            // Riga 1: Data e Tecnico
             doc.setFont('helvetica', 'normal');
             doc.setTextColor(...mutedColor);
             doc.text('DATA', 25, y + 5);
@@ -3974,7 +4046,7 @@
             doc.text(dataFormatted, 25, y + 13);
             doc.text(bollettinoData.tecnico_installatore || '-', 110, y + 13);
             
-            // Riga 2
+            // Riga 2: Cliente e Macchina
             doc.setFont('helvetica', 'normal');
             doc.setTextColor(...mutedColor);
             doc.text('CLIENTE', 25, y + 26);
@@ -3985,7 +4057,16 @@
             doc.text(bollettinoData.cliente || '-', 25, y + 34);
             doc.text(bollettinoData.montaggio_macchina || '-', 110, y + 34);
             
-            y += 60;
+            // Riga 3: Matricola
+            doc.setFont('helvetica', 'normal');
+            doc.setTextColor(...mutedColor);
+            doc.text('MATRICOLA', 25, y + 47);
+            
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(...textColor);
+            doc.text(bollettinoData.matricola || '-', 25, y + 55);
+            
+            y += 72;
             
             // Box orari
             doc.setFillColor(...bgColor);
@@ -4200,10 +4281,11 @@
                     EMAILJS_CONFIG.templateClienteId,
                     {
                         to_email: bollettinoData.email_cliente,
-                        to_name: bollettinoData.cliente,
+                        to_name: 'cliente',  // Fisso "Gentile cliente"
                         data_intervento: dataFormatted,
                         tecnico: bollettinoData.tecnico_installatore,
                         macchina: bollettinoData.montaggio_macchina || 'Non specificata',
+                        matricola: bollettinoData.matricola || 'Non specificata',
                         ore_lavorate: bollettinoData.ore_totali + ' ore',
                         orario: `${bollettinoData.orario_inizio || ''} - ${bollettinoData.orario_fine || ''}`,
                         lavori_eseguiti: bollettinoData.lavori_eseguiti || '-',
@@ -4325,6 +4407,7 @@
                         data_intervento: dataFormatted,
                         tecnico: bollettinoData.tecnico_installatore,
                         macchina: bollettinoData.montaggio_macchina || 'Non specificata',
+                        matricola: bollettinoData.matricola || 'Non specificata',
                         ore_lavorate: bollettinoData.ore_totali + ' ore',
                         lavori_eseguiti: bollettinoData.lavori_eseguiti || '-'
                     }
@@ -4485,6 +4568,7 @@
                 loadUserData();
                 await initSupabase();
                 initEmailJS(); // Inizializza EmailJS
+                preloadLogo(); // Precarica logo per PDF
                 
                 // Carica bollettini SENZA loader interno (usa quello pagina)
                 await loadBollettini(false);

@@ -488,13 +488,33 @@
                     throw error;
                 }
                 
-                // Verifica quanti record ci sono DOPO
-                const { count: countAfter } = await db.from('BollettiniMontatori').select('*', { count: 'exact', head: true });
-                console.log('Record DOPO:', countAfter);
-                
-                if (pendingAction === 'hard' && countAfter === countBefore) {
-                    showStatus('error', '❌ ATTENZIONE: Nessun record eliminato! Probabilmente le RLS di Supabase bloccano l\'operazione. Vai su Supabase → Authentication → Policies e disabilita RLS sulla tabella BollettiniMontatori oppure aggiungi una policy per DELETE.');
-                    return;
+                // Verifica se l'operazione ha avuto effetto
+                if (pendingAction === 'hard') {
+                    const { count: countAfter } = await db.from('BollettiniMontatori').select('*', { count: 'exact', head: true });
+                    console.log('Record DOPO:', countAfter);
+                    
+                    if (countAfter === countBefore) {
+                        showStatus('error', '❌ ATTENZIONE: Nessun record eliminato! Le RLS di Supabase bloccano l\'operazione. Vai su Supabase → Authentication → Policies e aggiungi una policy per DELETE.');
+                        return;
+                    }
+                } else if (pendingAction === 'soft') {
+                    // Verifica soft delete
+                    const { count: eliminatiDopo } = await db.from('BollettiniMontatori').select('*', { count: 'exact', head: true }).eq('eliminato', true);
+                    console.log('Eliminati DOPO:', eliminatiDopo);
+                    
+                    if (eliminatiDopo === 0) {
+                        showStatus('error', '❌ ATTENZIONE: Nessun record modificato! Le RLS di Supabase bloccano l\'UPDATE. Vai su Supabase → Authentication → Policies e aggiungi una policy per UPDATE.');
+                        return;
+                    }
+                } else if (pendingAction === 'reset') {
+                    // Verifica reset - controlla se ci sono ancora record validati
+                    const { count: ancoraValidati } = await db.from('BollettiniMontatori').select('*', { count: 'exact', head: true }).eq('validato', true);
+                    console.log('Ancora validati DOPO:', ancoraValidati);
+                    
+                    if (ancoraValidati > 0) {
+                        showStatus('error', '❌ ATTENZIONE: Reset non riuscito! Le RLS di Supabase bloccano l\'UPDATE. Vai su Supabase → Authentication → Policies e aggiungi una policy per UPDATE.');
+                        return;
+                    }
                 }
                 
                 showStatus('success', `✅ Operazione completata! (${ids.length} record)`);

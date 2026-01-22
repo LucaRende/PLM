@@ -2965,6 +2965,7 @@
         let currentFilterType = 'miei';
         let currentBollettinoId = null;
         let isAdmin = false;
+        let isSuperAdmin = false;  // Solo superAdmin può eliminare bollettini
         let notificheCount = 0;
         
         // Filtri statistiche attivi (cliccando sui box)
@@ -3148,12 +3149,16 @@
             if (currentUser.cognome) document.getElementById('userSurname').textContent = currentUser.cognome;
             if (currentUser.nome) document.getElementById('userFirstName').textContent = currentUser.nome;
             
-            // Check se è admin o manager (possono validare bollettini)
+            // Check se è admin o manager
             const ruolo = (currentUser.ruolo || '').toLowerCase();
             isAdmin = ruolo === 'amministratore' || 
                       ruolo === 'admin' || 
+                      ruolo === 'superadmin' ||
                       ruolo === 'manager' ||
                       currentUser.is_admin === true;
+            
+            // Check se è superAdmin (può eliminare bollettini)
+            isSuperAdmin = ruolo === 'superadmin';
             
             // Carica permessi specifici dal localStorage (saranno aggiornati da loadUserPermissions)
             // NOTA: i permessi vengono SOLO dal campo specifico, NON dal ruolo admin
@@ -4338,15 +4343,12 @@
                     btnValidate.title = '';
                 }
                 
-                // Pulsante Elimina: visibile solo per admin, disabilitato se validato
+                // Pulsante Elimina: visibile SOLO per superAdmin (soft delete)
                 const btnDelete = document.getElementById('btn-delete');
-                btnDelete.style.display = isAdmin ? 'flex' : 'none';
-                btnDelete.disabled = isValidated;
-                if (isValidated) {
-                    btnDelete.title = 'Non puoi eliminare un bollettino validato';
-                } else {
-                    btnDelete.title = '';
-                }
+                btnDelete.style.display = isSuperAdmin ? 'flex' : 'none';
+                // SuperAdmin può eliminare anche bollettini validati (soft delete)
+                btnDelete.disabled = false;
+                btnDelete.title = isSuperAdmin ? 'Elimina bollettino (soft delete)' : '';
                 
                 // Pulsante Fattura: visibile solo se validato E non fatturato E ha permesso
                 const btnInvoice = document.getElementById('btn-invoice');
@@ -5361,9 +5363,16 @@
             
             const bollettino = allBollettini.find(b => b.id_bollettino === currentBollettinoId);
             
-            // Doppio controllo validazione
-            if (bollettino && bollettino.validato === true) {
+            // Solo superAdmin può eliminare bollettini validati
+            if (bollettino && bollettino.validato === true && !isSuperAdmin) {
                 alert('Non puoi eliminare un bollettino già validato.');
+                closeConfirmDialog('delete');
+                return;
+            }
+            
+            // Check permessi: solo superAdmin può eliminare
+            if (!isSuperAdmin) {
+                alert('Solo i Super Admin possono eliminare i bollettini.');
                 closeConfirmDialog('delete');
                 return;
             }

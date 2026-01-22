@@ -2527,6 +2527,7 @@
             serviceId: 'service_6oc4dph',        // Il tuo Service ID
             templateClienteId: 'template_bz6txdk',  // Template per email al cliente
             templateAdminId: 'template_bz6txdk'       // Template per notifica admin
+
         };
         
         // Inizializza EmailJS
@@ -3984,24 +3985,23 @@
             doc.text('LAVORI ESEGUITI', 15, y);
             y += 8;
             
-            // Box lavori con bordo rosso
+            // Box lavori - sfondo grigio chiaro con bordo sinistro rosso
             const lavori = bollettinoData.lavori_eseguiti || '-';
-            const lavoriLines = doc.splitTextToSize(lavori, 170);
-            const lavoriHeight = Math.max(lavoriLines.length * 6 + 10, 25);
+            const lavoriLines = doc.splitTextToSize(lavori, 165);
+            const lavoriHeight = Math.max(lavoriLines.length * 6 + 14, 25);
             
-            doc.setDrawColor(...primaryColor);
-            doc.setFillColor(255, 255, 255);
-            doc.setLineWidth(0.5);
-            doc.roundedRect(15, y - 2, 180, lavoriHeight, 2, 2, 'FD');
+            // Sfondo grigio
+            doc.setFillColor(...bgColor);
+            doc.roundedRect(15, y - 2, 180, lavoriHeight, 2, 2, 'F');
             
-            // Linea rossa a sinistra
+            // Bordo sinistro rosso (sovrapposto)
             doc.setFillColor(...primaryColor);
-            doc.rect(15, y - 2, 4, lavoriHeight, 'F');
+            doc.roundedRect(15, y - 2, 4, lavoriHeight, 2, 0, 'F');
             
             doc.setFont('helvetica', 'normal');
             doc.setFontSize(10);
             doc.setTextColor(...textColor);
-            doc.text(lavoriLines, 25, y + 6);
+            doc.text(lavoriLines, 25, y + 8);
             
             y += lavoriHeight + 15;
             
@@ -4041,16 +4041,20 @@
                 y += 12;
             }
             
-            // Box firma
+            // Box firma - PIÙ GRANDE
+            const firmaWidth = 120;
+            const firmaHeight = 60;
+            
             doc.setDrawColor(200, 200, 200);
             doc.setFillColor(255, 255, 255);
-            doc.setLineWidth(0.3);
-            doc.roundedRect(15, y, 90, 45, 3, 3, 'FD');
+            doc.setLineWidth(0.5);
+            doc.roundedRect(15, y, firmaWidth, firmaHeight, 3, 3, 'FD');
             
-            // Aggiungi immagine firma se presente
+            // Aggiungi immagine firma se presente - PIÙ GRANDE
             if (bollettinoData.firma_cliente && bollettinoData.firma_cliente.data) {
                 try {
-                    doc.addImage(bollettinoData.firma_cliente.data, 'PNG', 17, y + 2, 86, 41);
+                    // Mantieni proporzioni ma riempi il box
+                    doc.addImage(bollettinoData.firma_cliente.data, 'PNG', 18, y + 3, firmaWidth - 6, firmaHeight - 6);
                 } catch (e) {
                     console.error('Errore aggiunta firma al PDF:', e);
                 }

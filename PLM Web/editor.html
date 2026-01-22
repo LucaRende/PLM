@@ -433,7 +433,11 @@
             showStatus('loading', '⏳ Esecuzione...');
             
             try {
-                // Prima prendo tutti i record
+                // Prima conto quanti record ci sono
+                const { count: countBefore } = await db.from('BollettiniMontatori').select('*', { count: 'exact', head: true });
+                console.log('Record PRIMA:', countBefore);
+                
+                // Prendo tutti gli ID
                 const { data: allRecords, error: fetchError } = await db.from('BollettiniMontatori').select('id_bollettino');
                 
                 if (fetchError) throw fetchError;
@@ -444,6 +448,8 @@
                 }
                 
                 const ids = allRecords.map(r => r.id_bollettino);
+                console.log('IDs da modificare:', ids);
+                
                 let error = null;
                 
                 switch(pendingAction) {
@@ -477,13 +483,26 @@
                         break;
                 }
                 
-                if (error) throw error;
+                if (error) {
+                    console.error('Errore operazione:', error);
+                    throw error;
+                }
+                
+                // Verifica quanti record ci sono DOPO
+                const { count: countAfter } = await db.from('BollettiniMontatori').select('*', { count: 'exact', head: true });
+                console.log('Record DOPO:', countAfter);
+                
+                if (pendingAction === 'hard' && countAfter === countBefore) {
+                    showStatus('error', '❌ ATTENZIONE: Nessun record eliminato! Probabilmente le RLS di Supabase bloccano l\'operazione. Vai su Supabase → Authentication → Policies e disabilita RLS sulla tabella BollettiniMontatori oppure aggiungi una policy per DELETE.');
+                    return;
+                }
                 
                 showStatus('success', `✅ Operazione completata! (${ids.length} record)`);
                 loadStats();
                 document.getElementById('results').innerHTML = '';
                 
             } catch (e) {
+                console.error('Errore:', e);
                 showStatus('error', '❌ Errore: ' + (e.message || e));
             }
         }

@@ -3138,7 +3138,7 @@
             firmaCanvas.width = wrapper.offsetWidth;
             firmaCanvas.height = 120;
             
-            firmaCtx.strokeStyle = '#f4f4f5';
+            firmaCtx.strokeStyle = '#1a1a1a';
             firmaCtx.lineWidth = 2;
             firmaCtx.lineCap = 'round';
             firmaCtx.lineJoin = 'round';
@@ -4041,20 +4041,20 @@
                 y += 12;
             }
             
-            // Box firma - PIÙ GRANDE
-            const firmaWidth = 120;
-            const firmaHeight = 60;
+            // Box firma - RIDOTTO (diviso 3)
+            const firmaWidth = 40;
+            const firmaHeight = 20;
             
             doc.setDrawColor(200, 200, 200);
             doc.setFillColor(255, 255, 255);
             doc.setLineWidth(0.5);
             doc.roundedRect(15, y, firmaWidth, firmaHeight, 3, 3, 'FD');
             
-            // Aggiungi immagine firma se presente - PIÙ GRANDE
+            // Aggiungi immagine firma se presente - COMPATTA
             if (bollettinoData.firma_cliente && bollettinoData.firma_cliente.data) {
                 try {
-                    // Mantieni proporzioni ma riempi il box
-                    doc.addImage(bollettinoData.firma_cliente.data, 'PNG', 18, y + 3, firmaWidth - 6, firmaHeight - 6);
+                    // Margini ridotti proporzionalmente
+                    doc.addImage(bollettinoData.firma_cliente.data, 'PNG', 16, y + 1, firmaWidth - 2, firmaHeight - 2);
                 } catch (e) {
                     console.error('Errore aggiunta firma al PDF:', e);
                 }

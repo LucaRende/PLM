@@ -4020,7 +4020,7 @@
             
             doc.setFont('helvetica', 'normal');
             doc.setFontSize(10);
-            doc.setTextColor(bollettinoData.note && bollettinoData.note !== '-' ? textColor : mutedColor);
+            doc.setTextColor(...(bollettinoData.note && bollettinoData.note !== '-' ? textColor : mutedColor));
             doc.text(noteLines, 20, y + 8);
             
             y += noteHeight + 15;

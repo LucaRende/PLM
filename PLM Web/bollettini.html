@@ -1558,6 +1558,27 @@
         }
         
         /* Firma preview */
+        .firmatario-name {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--space-3);
+            background: var(--surface-2);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--space-2);
+        }
+        
+        .firmatario-label {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+        
+        .firmatario-value {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
         .firma-preview {
             background: var(--surface-2);
             border-radius: var(--radius-md);
@@ -2265,6 +2286,12 @@
                     <!-- Sezione Firma -->
                     <div class="form-section">
                         <div class="form-section-title">✍️ Firma Cliente</div>
+                        <!-- Nome Firmatario -->
+                        <div class="form-group">
+                            <label class="form-label">Nome e Cognome Firmatario</label>
+                            <input type="text" class="form-input" id="bollettino-firmatario" placeholder="Nome e cognome di chi firma">
+                        </div>
+                        
                         <div class="firma-container">
                             <div class="firma-header">
                                 <span>Firma qui sotto</span>
@@ -2493,10 +2520,10 @@
         // =============================================
         // IMPORTANTE: Sostituisci questi valori con i tuoi da emailjs.com
         const EMAILJS_CONFIG = {
-            publicKey: 'tCc5YReHVaUOz-Qeq',        // La tua Public Key da EmailJS
-            serviceId: 'service_6oc4dph',        // Il tuo Service ID
-            templateClienteId: 'template_bz6txdk',  // Template per email al cliente
-            templateAdminId: 'template_bz6txdk'       // Template per notifica admin
+            publicKey: 'YOUR_PUBLIC_KEY',        // La tua Public Key da EmailJS
+            serviceId: 'YOUR_SERVICE_ID',        // Il tuo Service ID
+            templateClienteId: 'YOUR_TEMPLATE_CLIENTE',  // Template per email al cliente
+            templateAdminId: 'YOUR_TEMPLATE_ADMIN'       // Template per notifica admin
         };
         
         // Inizializza EmailJS
@@ -3054,6 +3081,7 @@
                 document.getElementById('bollettino-note').value = '';
                 document.getElementById('bollettino-totale-speso').value = '';
                 document.getElementById('bollettino-email').value = '';
+                document.getElementById('bollettino-firmatario').value = '';
                 
                 uploadedPhotos = [];
                 renderPhotosGrid();
@@ -3294,6 +3322,7 @@
                 foto_scontrini: uploadedPhotos.length > 0 ? uploadedPhotos : null,
                 totale_speso: parseFloat(document.getElementById('bollettino-totale-speso').value) || null,
                 email_cliente: document.getElementById('bollettino-email').value || null,
+                nome_firmatario: document.getElementById('bollettino-firmatario').value || null,
                 data_modifica: new Date().toISOString()
             };
             
@@ -3504,6 +3533,12 @@
                 
                 <div class="detail-section">
                     <div class="detail-section-title">✍️ Firma Cliente</div>
+                    ${bollettino.nome_firmatario ? `
+                        <div class="firmatario-name">
+                            <span class="firmatario-label">Firmato da:</span>
+                            <span class="firmatario-value">${bollettino.nome_firmatario}</span>
+                        </div>
+                    ` : ''}
                     ${hasFirma ? `
                         <div class="firma-preview">
                             <img src="${bollettino.firma_cliente.data}" alt="Firma cliente">
@@ -3651,6 +3686,7 @@
             document.getElementById('bollettino-note').value = bollettino.note || '';
             document.getElementById('bollettino-totale-speso').value = bollettino.totale_speso || '';
             document.getElementById('bollettino-email').value = bollettino.email_cliente || '';
+            document.getElementById('bollettino-firmatario').value = bollettino.nome_firmatario || '';
             
             // Carica foto esistenti
             uploadedPhotos = bollettino.foto_scontrini || [];
@@ -3698,7 +3734,7 @@
             document.getElementById('confirm-delete-dialog').classList.add('show');
         }
         
-        async function confirmValidate() {
+        function confirmValidate() {
             const bollettino = allBollettini.find(b => b.id_bollettino === currentBollettinoId);
             if (!bollettino) return;
             
@@ -3715,18 +3751,25 @@
                 return;
             }
             
-            // Mostra selezione admin per notifica email
-            const adminEmail = await showAdminSelectDialog();
-            
-            if (adminEmail) {
-                // Procedi con validazione e invio notifica
-                await validateBollettinoWithNotification(bollettino, adminEmail);
-            }
+            // Mostra dialog conferma
+            document.getElementById('confirm-validate-dialog').classList.add('show');
         }
         
-        // Valida bollettino e invia notifica
-        async function validateBollettinoWithNotification(bollettino, adminEmail) {
+        // Valida bollettino (senza invio email)
+        async function validateBollettino() {
+            if (!currentBollettinoId) return;
+            
+            const bollettino = allBollettini.find(b => b.id_bollettino === currentBollettinoId);
+            
+            // Doppio controllo
+            if (bollettino && bollettino.validato === true) {
+                alert('Questo bollettino è già stato validato.');
+                closeConfirmDialog('validate');
+                return;
+            }
+            
             try {
+                closeConfirmDialog('validate');
                 Loader.show('invio', 'Validazione...');
                 
                 const validatoDa = `${currentUser.nome || ''} ${currentUser.cognome || ''}`.trim();
@@ -3738,15 +3781,9 @@
                         data_validazione: new Date().toISOString(),
                         validato_da: validatoDa
                     })
-                    .eq('id_bollettino', bollettino.id_bollettino);
+                    .eq('id_bollettino', currentBollettinoId);
                 
                 if (error) throw error;
-                
-                // Invia notifica email
-                if (adminEmail && EMAILJS_CONFIG.publicKey !== 'YOUR_PUBLIC_KEY') {
-                    Loader.updateText('Invio notifica...');
-                    await sendValidationNotification(adminEmail, bollettino);
-                }
                 
                 // Aggiorna lista
                 Loader.updateText('Aggiornamento...');
@@ -3761,8 +3798,11 @@
                 
                 Loader.hide();
                 
+                // Mostra messaggio
+                alert('✅ Bollettino validato! Non potrà più essere modificato.');
+                
                 // Riapri dettaglio aggiornato
-                openDettaglio(bollettino.id_bollettino);
+                openDettaglio(currentBollettinoId);
                 
             } catch (error) {
                 console.error('Errore validazione:', error);
@@ -3866,10 +3906,16 @@
                     );
                 }
                 
-                // Prepara HTML firma
-                const firmaHtml = firmaUrl 
-                    ? `<img src="${firmaUrl}" alt="Firma Cliente" style="max-width:300px; border:1px solid #ccc; border-radius:8px; padding:10px; background:#fff;">`
-                    : '<em>Firma non disponibile</em>';
+                // Prepara HTML firma con nome firmatario
+                let firmaHtml = '';
+                if (bollettinoData.nome_firmatario) {
+                    firmaHtml += `<p><strong>Firmato da:</strong> ${bollettinoData.nome_firmatario}</p>`;
+                }
+                if (firmaUrl) {
+                    firmaHtml += `<img src="${firmaUrl}" alt="Firma Cliente" style="max-width:300px; border:1px solid #ccc; border-radius:8px; padding:10px; background:#fff;">`;
+                } else {
+                    firmaHtml += '<em>Firma non disponibile</em>';
+                }
                 
                 console.log('Firma URL:', firmaUrl);
                 

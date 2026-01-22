@@ -806,10 +806,18 @@
                             eliminato: true,
                             data_eliminazione: new Date().toISOString(),
                             eliminato_da: 'Super Admin'
-                        }).neq('eliminato', true).select());
+                        }).not('eliminato', 'eq', true).select());
                         break;
                     case 'hard-delete':
-                        ({ data, error } = await supabaseClient.from('BollettiniMontatori').delete().neq('id_bollettino', -999).select());
+                        // Prima prendo tutti gli ID
+                        const { data: allRecords } = await supabaseClient.from('BollettiniMontatori').select('id_bollettino');
+                        if (allRecords && allRecords.length > 0) {
+                            const ids = allRecords.map(r => r.id_bollettino);
+                            ({ data, error } = await supabaseClient.from('BollettiniMontatori').delete().in('id_bollettino', ids).select());
+                        } else {
+                            data = [];
+                            error = null;
+                        }
                         break;
                     case 'reset-validation':
                         ({ data, error } = await supabaseClient.from('BollettiniMontatori').update({
@@ -819,7 +827,7 @@
                             fatturato: false,
                             data_fatturazione: null,
                             fatturato_da: null
-                        }).neq('id_bollettino', -999).select());
+                        }).not('id_bollettino', 'is', null).select());
                         break;
                 }
                 

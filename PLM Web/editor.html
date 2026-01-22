@@ -543,7 +543,7 @@
         const SUPABASE_URL = 'https://lyvzjcnpniwftrhetkml.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx5dnpqY25wbml3ZnRyaGV0a21sIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDIyMTIyMzgsImV4cCI6MjA1Nzc4ODIzOH0.vPOSVF9Y4MlCNHTgM5rqwFPv7p_I-E1SUXR0UhGv5EA';
         
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         let pendingAction = null;
         
         // Tabs
@@ -564,14 +564,14 @@
         async function loadAllStats() {
             try {
                 // Accounts
-                const { count: totalAccounts } = await supabase.from('accounts').select('*', { count: 'exact', head: true });
-                const { count: activeAccounts } = await supabase.from('accounts').select('*', { count: 'exact', head: true }).eq('attivo', true);
-                const { count: superAdmins } = await supabase.from('accounts').select('*', { count: 'exact', head: true }).ilike('ruolo', 'superadmin');
+                const { count: totalAccounts } = await supabaseClient.from('accounts').select('*', { count: 'exact', head: true });
+                const { count: activeAccounts } = await supabaseClient.from('accounts').select('*', { count: 'exact', head: true }).eq('attivo', true);
+                const { count: superAdmins } = await supabaseClient.from('accounts').select('*', { count: 'exact', head: true }).ilike('ruolo', 'superadmin');
                 
                 // Bollettini
-                const { count: totalBollettini } = await supabase.from('BollettiniMontatori').select('*', { count: 'exact', head: true });
-                const { count: validati } = await supabase.from('BollettiniMontatori').select('*', { count: 'exact', head: true }).eq('validato', true);
-                const { count: fatturati } = await supabase.from('BollettiniMontatori').select('*', { count: 'exact', head: true }).eq('fatturato', true);
+                const { count: totalBollettini } = await supabaseClient.from('BollettiniMontatori').select('*', { count: 'exact', head: true });
+                const { count: validati } = await supabaseClient.from('BollettiniMontatori').select('*', { count: 'exact', head: true }).eq('validato', true);
+                const { count: fatturati } = await supabaseClient.from('BollettiniMontatori').select('*', { count: 'exact', head: true }).eq('fatturato', true);
                 
                 document.getElementById('system-stats').innerHTML = `
                     <div class="stat-card">
@@ -607,7 +607,7 @@
         // Load Accounts
         async function loadAccounts() {
             try {
-                const { data, error } = await supabase.from('accounts')
+                const { data, error } = await supabaseClient.from('accounts')
                     .select('id, nome, cognome, username, email, ruolo, attivo, puo_validare_bollettini, puo_fatturare_bollettini')
                     .order('cognome');
                 
@@ -650,11 +650,11 @@
         // Load Bollettini Stats
         async function loadBollettiniStats() {
             try {
-                const { count: totali } = await supabase.from('BollettiniMontatori').select('*', { count: 'exact', head: true });
-                const { count: firmati } = await supabase.from('BollettiniMontatori').select('*', { count: 'exact', head: true }).not('firma_cliente', 'is', null);
-                const { count: validati } = await supabase.from('BollettiniMontatori').select('*', { count: 'exact', head: true }).eq('validato', true);
-                const { count: fatturati } = await supabase.from('BollettiniMontatori').select('*', { count: 'exact', head: true }).eq('fatturato', true);
-                const { count: eliminati } = await supabase.from('BollettiniMontatori').select('*', { count: 'exact', head: true }).eq('eliminato', true);
+                const { count: totali } = await supabaseClient.from('BollettiniMontatori').select('*', { count: 'exact', head: true });
+                const { count: firmati } = await supabaseClient.from('BollettiniMontatori').select('*', { count: 'exact', head: true }).not('firma_cliente', 'is', null);
+                const { count: validati } = await supabaseClient.from('BollettiniMontatori').select('*', { count: 'exact', head: true }).eq('validato', true);
+                const { count: fatturati } = await supabaseClient.from('BollettiniMontatori').select('*', { count: 'exact', head: true }).eq('fatturato', true);
+                const { count: eliminati } = await supabaseClient.from('BollettiniMontatori').select('*', { count: 'exact', head: true }).eq('eliminato', true);
                 const daFatturare = (validati || 0) - (fatturati || 0);
                 
                 document.getElementById('bollettini-stats').innerHTML = `
@@ -693,7 +693,7 @@
             document.getElementById('bollettini-results').innerHTML = '<div class="loading">Caricamento</div>';
             
             try {
-                const { data, error } = await supabase.from('BollettiniMontatori')
+                const { data, error } = await supabaseClient.from('BollettiniMontatori')
                     .select('id_bollettino, cliente, montaggio_macchina, data, validato, fatturato, eliminato')
                     .order('data_creazione', { ascending: false })
                     .limit(20);
@@ -785,17 +785,17 @@
                 
                 switch(pendingAction) {
                     case 'soft-delete':
-                        result = await supabase.from('BollettiniMontatori').update({
+                        result = await supabaseClient.from('BollettiniMontatori').update({
                             eliminato: true,
                             data_eliminazione: new Date().toISOString(),
                             eliminato_da: 'Super Admin'
                         }).neq('eliminato', true);
                         break;
                     case 'hard-delete':
-                        result = await supabase.from('BollettiniMontatori').delete().gte('id_bollettino', 0);
+                        result = await supabaseClient.from('BollettiniMontatori').delete().gte('id_bollettino', 0);
                         break;
                     case 'reset-validation':
-                        result = await supabase.from('BollettiniMontatori').update({
+                        result = await supabaseClient.from('BollettiniMontatori').update({
                             validato: false,
                             data_validazione: null,
                             validato_da: null,

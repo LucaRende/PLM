@@ -19,6 +19,9 @@
     <!-- EmailJS per invio email in background -->
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     
+    <!-- jsPDF per generazione PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    
     <!-- Stili Globali -->
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="Load/loader.css">
@@ -2520,10 +2523,10 @@
         // =============================================
         // IMPORTANTE: Sostituisci questi valori con i tuoi da emailjs.com
         const EMAILJS_CONFIG = {
-            publicKey: 'tCc5YReHVaUOz-Qeq',        // La tua Public Key da EmailJS
-            serviceId: 'service_6oc4dph',        // Il tuo Service ID
-            templateClienteId: 'template_bz6txdk',  // Template per email al cliente
-            templateAdminId: 'template_bz6txdk'       // Template per notifica admin
+            publicKey: 'YOUR_PUBLIC_KEY',        // La tua Public Key da EmailJS
+            serviceId: 'YOUR_SERVICE_ID',        // Il tuo Service ID
+            templateClienteId: 'YOUR_TEMPLATE_CLIENTE',  // Template per email al cliente
+            templateAdminId: 'YOUR_TEMPLATE_ADMIN'       // Template per notifica admin
         };
         
         // Inizializza EmailJS
@@ -3885,6 +3888,228 @@
             }
         }
         
+        // Genera PDF del bollettino
+        function generateBollettinoPDF(bollettinoData) {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            const dataFormatted = new Date(bollettinoData.data).toLocaleDateString('it-IT', {
+                weekday: 'long', day: '2-digit', month: 'long', year: 'numeric'
+            });
+            
+            // Colori
+            const primaryColor = [220, 38, 38]; // Rosso
+            const textColor = [24, 24, 27];
+            const mutedColor = [113, 113, 122];
+            const bgColor = [250, 250, 250];
+            
+            let y = 20;
+            
+            // Header con sfondo rosso
+            doc.setFillColor(...primaryColor);
+            doc.rect(0, 0, 210, 40, 'F');
+            
+            doc.setTextColor(255, 255, 255);
+            doc.setFontSize(24);
+            doc.setFont('helvetica', 'bold');
+            doc.text('BOLLETTINO INTERVENTO', 105, 20, { align: 'center' });
+            
+            doc.setFontSize(12);
+            doc.setFont('helvetica', 'normal');
+            doc.text('Pro System S.r.l.', 105, 32, { align: 'center' });
+            
+            y = 55;
+            
+            // Box info principale
+            doc.setFillColor(...bgColor);
+            doc.roundedRect(15, y - 5, 180, 50, 3, 3, 'F');
+            
+            doc.setTextColor(...textColor);
+            doc.setFontSize(11);
+            
+            // Riga 1
+            doc.setFont('helvetica', 'normal');
+            doc.setTextColor(...mutedColor);
+            doc.text('DATA', 25, y + 5);
+            doc.text('TECNICO', 110, y + 5);
+            
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(...textColor);
+            doc.text(dataFormatted, 25, y + 13);
+            doc.text(bollettinoData.tecnico_installatore || '-', 110, y + 13);
+            
+            // Riga 2
+            doc.setFont('helvetica', 'normal');
+            doc.setTextColor(...mutedColor);
+            doc.text('CLIENTE', 25, y + 26);
+            doc.text('MACCHINA', 110, y + 26);
+            
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(...textColor);
+            doc.text(bollettinoData.cliente || '-', 25, y + 34);
+            doc.text(bollettinoData.montaggio_macchina || '-', 110, y + 34);
+            
+            y += 60;
+            
+            // Box orari
+            doc.setFillColor(...bgColor);
+            doc.roundedRect(15, y - 5, 180, 30, 3, 3, 'F');
+            
+            doc.setFont('helvetica', 'normal');
+            doc.setTextColor(...mutedColor);
+            doc.setFontSize(10);
+            doc.text('ORARIO INIZIO', 25, y + 5);
+            doc.text('ORARIO FINE', 75, y + 5);
+            doc.text('PAUSA', 125, y + 5);
+            doc.text('ORE TOTALI', 160, y + 5);
+            
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(...textColor);
+            doc.setFontSize(12);
+            doc.text(bollettinoData.orario_inizio || '-', 25, y + 16);
+            doc.text(bollettinoData.orario_fine || '-', 75, y + 16);
+            doc.text((bollettinoData.pausa_minuti || 0) + ' min', 125, y + 16);
+            
+            // Ore totali in rosso
+            doc.setTextColor(...primaryColor);
+            doc.setFontSize(14);
+            doc.text((bollettinoData.ore_totali || 0) + ' h', 160, y + 16);
+            
+            y += 40;
+            
+            // Lavori eseguiti
+            doc.setTextColor(...textColor);
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(12);
+            doc.text('LAVORI ESEGUITI', 15, y);
+            y += 8;
+            
+            // Box lavori con bordo rosso
+            const lavori = bollettinoData.lavori_eseguiti || '-';
+            const lavoriLines = doc.splitTextToSize(lavori, 170);
+            const lavoriHeight = Math.max(lavoriLines.length * 6 + 10, 25);
+            
+            doc.setDrawColor(...primaryColor);
+            doc.setFillColor(255, 255, 255);
+            doc.setLineWidth(0.5);
+            doc.roundedRect(15, y - 2, 180, lavoriHeight, 2, 2, 'FD');
+            
+            // Linea rossa a sinistra
+            doc.setFillColor(...primaryColor);
+            doc.rect(15, y - 2, 4, lavoriHeight, 'F');
+            
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(10);
+            doc.setTextColor(...textColor);
+            doc.text(lavoriLines, 25, y + 6);
+            
+            y += lavoriHeight + 15;
+            
+            // Note (se presenti)
+            if (bollettinoData.note && bollettinoData.note !== '-') {
+                doc.setFont('helvetica', 'bold');
+                doc.setFontSize(12);
+                doc.text('NOTE', 15, y);
+                y += 8;
+                
+                const noteLines = doc.splitTextToSize(bollettinoData.note, 170);
+                const noteHeight = Math.max(noteLines.length * 6 + 10, 20);
+                
+                doc.setFillColor(...bgColor);
+                doc.roundedRect(15, y - 2, 180, noteHeight, 2, 2, 'F');
+                
+                doc.setFont('helvetica', 'normal');
+                doc.setFontSize(10);
+                doc.text(noteLines, 20, y + 6);
+                
+                y += noteHeight + 15;
+            }
+            
+            // Sezione firma
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(12);
+            doc.setTextColor(...textColor);
+            doc.text('FIRMA CLIENTE', 15, y);
+            y += 5;
+            
+            // Nome firmatario
+            if (bollettinoData.nome_firmatario) {
+                doc.setFont('helvetica', 'normal');
+                doc.setFontSize(10);
+                doc.setTextColor(...mutedColor);
+                doc.text('Firmato da: ' + bollettinoData.nome_firmatario, 15, y + 8);
+                y += 12;
+            }
+            
+            // Box firma
+            doc.setDrawColor(200, 200, 200);
+            doc.setFillColor(255, 255, 255);
+            doc.setLineWidth(0.3);
+            doc.roundedRect(15, y, 90, 45, 3, 3, 'FD');
+            
+            // Aggiungi immagine firma se presente
+            if (bollettinoData.firma_cliente && bollettinoData.firma_cliente.data) {
+                try {
+                    doc.addImage(bollettinoData.firma_cliente.data, 'PNG', 17, y + 2, 86, 41);
+                } catch (e) {
+                    console.error('Errore aggiunta firma al PDF:', e);
+                }
+            }
+            
+            // Footer
+            doc.setFillColor(...bgColor);
+            doc.rect(0, 277, 210, 20, 'F');
+            
+            doc.setDrawColor(220, 220, 220);
+            doc.line(0, 277, 210, 277);
+            
+            doc.setTextColor(...mutedColor);
+            doc.setFontSize(8);
+            doc.setFont('helvetica', 'normal');
+            doc.text('Documento generato automaticamente - Pro System S.r.l. - www.prosystemsrl.eu', 105, 285, { align: 'center' });
+            doc.text('Data generazione: ' + new Date().toLocaleString('it-IT'), 105, 291, { align: 'center' });
+            
+            return doc;
+        }
+        
+        // Carica PDF su Supabase Storage
+        async function uploadPDFToStorage(pdfDoc, bollettinoData) {
+            try {
+                // Genera blob dal PDF
+                const pdfBlob = pdfDoc.output('blob');
+                
+                // Nome file
+                const dataFile = bollettinoData.data ? bollettinoData.data.replace(/-/g, '') : 'data';
+                const clienteFile = (bollettinoData.cliente || 'cliente').replace(/[^a-zA-Z0-9]/g, '_');
+                const fileName = `pdf/Bollettino_${clienteFile}_${dataFile}_${Date.now()}.pdf`;
+                
+                // Upload su Supabase Storage
+                const { data, error } = await supabaseClient.storage
+                    .from('bollettini')
+                    .upload(fileName, pdfBlob, {
+                        contentType: 'application/pdf',
+                        upsert: true
+                    });
+                
+                if (error) {
+                    console.error('Errore upload PDF:', error);
+                    return null;
+                }
+                
+                // Ottieni URL pubblico
+                const { data: urlData } = supabaseClient.storage
+                    .from('bollettini')
+                    .getPublicUrl(fileName);
+                
+                console.log('PDF caricato:', urlData.publicUrl);
+                return urlData.publicUrl;
+                
+            } catch (error) {
+                console.error('Errore upload PDF:', error);
+                return null;
+            }
+        }
+        
         // Invia email al cliente
         async function sendEmailToCliente(bollettinoData) {
             if (EMAILJS_CONFIG.publicKey === 'YOUR_PUBLIC_KEY') {
@@ -3906,6 +4131,15 @@
                     );
                 }
                 
+                // Genera PDF e caricalo su Storage
+                let pdfUrl = '';
+                try {
+                    const pdfDoc = generateBollettinoPDF(bollettinoData);
+                    pdfUrl = await uploadPDFToStorage(pdfDoc, bollettinoData);
+                } catch (e) {
+                    console.error('Errore generazione PDF:', e);
+                }
+                
                 // Prepara HTML firma con nome firmatario
                 let firmaHtml = '';
                 if (bollettinoData.nome_firmatario) {
@@ -3917,7 +4151,14 @@
                     firmaHtml += '<em>Firma non disponibile</em>';
                 }
                 
+                // Prepara HTML link PDF
+                let pdfHtml = '';
+                if (pdfUrl) {
+                    pdfHtml = `<a href="${pdfUrl}" style="display:inline-block; background:#dc2626; color:#ffffff; padding:12px 24px; border-radius:8px; text-decoration:none; font-weight:bold;">📄 Scarica PDF Bollettino</a>`;
+                }
+                
                 console.log('Firma URL:', firmaUrl);
+                console.log('PDF URL:', pdfUrl);
                 
                 const response = await emailjs.send(
                     EMAILJS_CONFIG.serviceId,
@@ -3932,8 +4173,8 @@
                         orario: `${bollettinoData.orario_inizio || ''} - ${bollettinoData.orario_fine || ''}`,
                         lavori_eseguiti: bollettinoData.lavori_eseguiti || '-',
                         note: bollettinoData.note || '-',
-                        totale_speso: bollettinoData.totale_speso ? '€ ' + parseFloat(bollettinoData.totale_speso).toFixed(2) : '-',
-                        firma_html: firmaHtml
+                        firma_html: firmaHtml,
+                        pdf_link: pdfHtml
                     }
                 );
                 

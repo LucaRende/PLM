@@ -393,6 +393,37 @@
             color: var(--primary);
         }
         
+        /* Menu Button Super Admin - Stile speciale */
+        .menu-btn-superadmin {
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.15), rgba(220, 38, 38, 0.15));
+            border: 1px solid rgba(168, 85, 247, 0.3);
+        }
+        
+        .menu-btn-superadmin::before {
+            background: linear-gradient(180deg, #a855f7, #dc2626);
+        }
+        
+        .menu-btn-superadmin svg:first-child {
+            color: #a855f7;
+        }
+        
+        .menu-btn-superadmin:hover {
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.25), rgba(220, 38, 38, 0.25));
+            border-color: #a855f7;
+        }
+        
+        .menu-btn-superadmin:hover svg:first-child {
+            color: #c084fc;
+        }
+        
+        .menu-btn-superadmin span {
+            background: linear-gradient(90deg, #a855f7, #dc2626);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 600;
+        }
+        
         /* Footer */
         .footer {
             padding: var(--space-6) var(--space-4);
@@ -616,6 +647,18 @@
                         <polyline points="9 18 15 12 9 6"/>
                     </svg>
                 </a>
+                <!-- SUPER ADMIN - Visibile solo per superAdmin -->
+                <a href="https://lucarende.github.io/PLM/PLM%20Web/editor.html" class="menu-btn menu-btn-superadmin" id="btn-superadmin" style="display: none;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                        <path d="M2 17l10 5 10-5"/>
+                        <path d="M2 12l10 5 10-5"/>
+                    </svg>
+                    <span>Super Admin</span>
+                    <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="9 18 15 12 9 6"/>
+                    </svg>
+                </a>
             </div>
         </main>
         
@@ -629,6 +672,7 @@
         // Variabili globali
         let supabaseClient = null;
         let currentUser = null;
+        let isSuperAdmin = false;
         
         // Init Supabase
         async function initSupabase() {
@@ -654,6 +698,18 @@
             if (currentUser.nome) {
                 document.getElementById('userFirstName').textContent = currentUser.nome;
                 document.getElementById('welcomeName').textContent = currentUser.nome;
+            }
+            
+            // Check se è Super Admin
+            const ruolo = (currentUser.ruolo || '').toLowerCase();
+            isSuperAdmin = ruolo === 'superadmin';
+            
+            // Mostra pulsante Super Admin solo se è superAdmin
+            if (isSuperAdmin) {
+                const btnSuperAdmin = document.getElementById('btn-superadmin');
+                if (btnSuperAdmin) {
+                    btnSuperAdmin.style.display = 'flex';
+                }
             }
             
             // Data corrente formattata bella

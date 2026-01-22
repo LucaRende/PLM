@@ -2878,7 +2878,8 @@
             publicKey: 'tCc5YReHVaUOz-Qeq',        // La tua Public Key da EmailJS
             serviceId: 'service_6oc4dph',        // Il tuo Service ID
             templateClienteId: 'template_bz6txdk',  // Template per email al cliente
-            templateAdminId: 'template_bz6txdk'       // Template per notifica admin
+            templateAdminId: 'template_bz6txdk',      // Template per notifica admin
+            templateFatturazioneId: 'template_vx5mlmb' // Template per email fatturazione
         };
         
         // Inizializza EmailJS
@@ -3011,8 +3012,9 @@
                       currentUser.is_admin === true;
             
             // Carica permessi specifici dal localStorage (saranno aggiornati da loadUserPermissions)
-            canValidate = currentUser.puo_validare_bollettini === true || isAdmin;
-            canInvoice = currentUser.puo_fatturare_bollettini === true || isAdmin;
+            // NOTA: i permessi vengono SOLO dal campo specifico, NON dal ruolo admin
+            canValidate = currentUser.puo_validare_bollettini === true;
+            canInvoice = currentUser.puo_fatturare_bollettini === true;
             
             // Mostra/nascondi filtro operatore e bottone "tutti"
             if (isAdmin) {
@@ -3037,13 +3039,16 @@
                     .single();
                 
                 if (data) {
-                    canValidate = data.puo_validare_bollettini === true || isAdmin;
-                    canInvoice = data.puo_fatturare_bollettini === true || isAdmin;
+                    // I permessi vengono SOLO dal campo specifico nel DB
+                    canValidate = data.puo_validare_bollettini === true;
+                    canInvoice = data.puo_fatturare_bollettini === true;
                     
                     // Aggiorna localStorage per sessioni future
                     currentUser.puo_validare_bollettini = data.puo_validare_bollettini;
                     currentUser.puo_fatturare_bollettini = data.puo_fatturare_bollettini;
                     localStorage.setItem('plm_user', JSON.stringify(currentUser));
+                    
+                    console.log('Permessi caricati - canValidate:', canValidate, 'canInvoice:', canInvoice);
                 }
             } catch (e) {
                 console.log('Errore caricamento permessi:', e);
@@ -5094,7 +5099,7 @@
                 
                 const response = await emailjs.send(
                     EMAILJS_CONFIG.serviceId,
-                    EMAILJS_CONFIG.templateClienteId, // Puoi creare un template specifico per fatturazione
+                    EMAILJS_CONFIG.templateFatturazioneId, // Template specifico per fatturazione
                     {
                         to_email: bollettinoData.email_cliente,
                         to_name: 'cliente',

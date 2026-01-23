@@ -1082,6 +1082,13 @@ async function saveBollettino() {
         
         closeModal();
         
+        // Aggiungi l'id_bollettino al data per l'email
+        if (result && result[0] && result[0].id_bollettino) {
+            data.id_bollettino = result[0].id_bollettino;
+        } else if (id) {
+            data.id_bollettino = parseInt(id);
+        }
+        
         // Aggiorna testo loader
         Loader.updateText('Aggiornamento lista...');
         
@@ -1133,6 +1140,18 @@ async function saveBollettino() {
 // MODAL DETTAGLIO
 // =============================================
 function openDettaglio(id) {
+    // Se siamo in batch mode, gestisci selezione invece di aprire dettaglio
+    if (batchMode) {
+        const bollettino = allBollettini.find(b => b.id_bollettino === id);
+        if (bollettino && bollettino.validato && !bollettino.fatturato) {
+            // È selezionabile - toggle selezione
+            toggleBollettinoSelection(id);
+            return;
+        }
+        // Non è selezionabile (non validato o già fatturato) - non fare nulla o apri dettaglio
+        // Apriamo comunque il dettaglio per i non selezionabili
+    }
+    
     currentBollettinoId = id;
     const bollettino = allBollettini.find(b => b.id_bollettino === id);
     if (!bollettino) return;
@@ -2790,7 +2809,7 @@ function toggleBatchMode() {
 
 function toggleBollettinoSelection(id, event) {
     if (!batchMode) return;
-    event.stopPropagation();
+    if (event) event.stopPropagation();
     
     const bollettino = allBollettini.find(b => b.id_bollettino === id);
     if (!bollettino || !bollettino.validato || bollettino.fatturato) return;
@@ -3064,7 +3083,7 @@ async function sendBatchInvoiceEmail(email, bollettini, ddtFiles, pdfUrls, notes
         
         await emailjs.send(
             EMAILJS_CONFIG.serviceId,
-            EMAILJS_CONFIG.templateIdFatturazioneBatch || EMAILJS_CONFIG.templateId,
+            EMAILJS_CONFIG.templateFatturazioneId,
             templateParams,
             EMAILJS_CONFIG.publicKey
         );

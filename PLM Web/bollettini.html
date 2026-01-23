@@ -92,16 +92,37 @@
                     <span class="filter-badge" id="filter-badge">0</span>
                 </button>
                 
-                <!-- PULSANTE MULTI per fatturazione batch -->
-                <button class="btn-batch-mode" id="btn-batch-mode" onclick="toggleBatchMode()" style="display: none;">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <rect x="3" y="3" width="7" height="7"/>
-                        <rect x="14" y="3" width="7" height="7"/>
-                        <rect x="3" y="14" width="7" height="7"/>
-                        <rect x="14" y="14" width="7" height="7"/>
-                    </svg>
-                    Multi
-                </button>
+                <!-- PULSANTE MULTI per azioni batch (dropdown) -->
+                <div class="batch-dropdown" id="batch-dropdown" style="display: none;">
+                    <button class="btn-batch-mode" id="btn-batch-mode" onclick="toggleBatchDropdown()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="7" height="7"/>
+                            <rect x="14" y="3" width="7" height="7"/>
+                            <rect x="3" y="14" width="7" height="7"/>
+                            <rect x="14" y="14" width="7" height="7"/>
+                        </svg>
+                        Multi
+                        <svg class="dropdown-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"/>
+                        </svg>
+                    </button>
+                    <div class="batch-dropdown-menu" id="batch-dropdown-menu">
+                        <button class="batch-dropdown-item" onclick="startBatchMode('validate')">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                                <polyline points="22 4 12 14.01 9 11.01"/>
+                            </svg>
+                            Valida multipla
+                        </button>
+                        <button class="batch-dropdown-item" onclick="startBatchMode('invoice')">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 2L11 13"/>
+                                <path d="M22 2L15 22L11 13L2 9L22 2Z"/>
+                            </svg>
+                            Fattura multipla
+                        </button>
+                    </div>
+                </div>
                 
                 <button class="btn-new" onclick="openModal(true)" title="Nuovo">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -208,7 +229,14 @@
         </div>
         <div class="batch-selection-actions">
             <button class="btn-batch-cancel" onclick="toggleBatchMode()">Annulla</button>
-            <button class="btn-batch-invoice" id="btn-batch-invoice-action" onclick="openBatchInvoiceModal()" disabled>
+            <button class="btn-batch-validate" id="btn-batch-validate-action" onclick="validateBatchBollettini()" disabled style="display:none;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                    <polyline points="22 4 12 14.01 9 11.01"/>
+                </svg>
+                Valida
+            </button>
+            <button class="btn-batch-invoice" id="btn-batch-invoice-action" onclick="openBatchInvoiceModal()" disabled style="display:none;">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M22 2L11 13"/>
                     <path d="M22 2L15 22L11 13L2 9L22 2Z"/>

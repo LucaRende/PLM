@@ -44,6 +44,39 @@ function formatBollettinoId(id) {
     return '#' + String(id).padStart(4, '0');
 }
 
+// Funzione per comprimere immagini (evita timeout database)
+function compressImage(file, maxWidth = 1024, quality = 0.7) {
+    return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const img = new Image();
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                let width = img.width;
+                let height = img.height;
+                
+                // Ridimensiona se troppo grande
+                if (width > maxWidth) {
+                    height = (height * maxWidth) / width;
+                    width = maxWidth;
+                }
+                
+                canvas.width = width;
+                canvas.height = height;
+                
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+                
+                // Converti in base64 compresso
+                const compressedData = canvas.toDataURL('image/jpeg', quality);
+                resolve(compressedData);
+            };
+            img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    });
+}
+
 // Email
 let pendingEmailData = null;
 let emailResolve = null;
@@ -961,24 +994,21 @@ function loadFirmaToCanvas(firmaObj) {
 // =============================================
 // FOTO SCONTRINI
 // =============================================
-function handlePhotoUpload(event) {
+async function handlePhotoUpload(event) {
     const files = event.target.files;
     if (!files || files.length === 0) return;
     
-    Array.from(files).forEach(file => {
+    for (const file of files) {
         if (file.type.startsWith('image/')) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                uploadedPhotos.push({
-                    data: e.target.result,
-                    name: file.name,
-                    timestamp: new Date().toISOString()
-                });
-                renderPhotosGrid();
-            };
-            reader.readAsDataURL(file);
+            const compressedData = await compressImage(file, 800, 0.6);
+            uploadedPhotos.push({
+                data: compressedData,
+                name: file.name,
+                timestamp: new Date().toISOString()
+            });
+            renderPhotosGrid();
         }
-    });
+    }
     
     // Reset input
     event.target.value = '';
@@ -3323,20 +3353,17 @@ async function sendBatchInvoiceEmail(email, bollettini, ddtFiles, pdfUrls, notes
 // FOTO PRIMA/DOPO INTERVENTO
 // =============================================
 
-function handleFotoPrimaUpload(event) {
+async function handleFotoPrimaUpload(event) {
     const files = event.target.files;
     if (!files) return;
     
-    Array.from(files).forEach(file => {
+    for (const file of files) {
         if (file.type.startsWith('image/')) {
-            const reader = new FileReader();
-            reader.onload = e => {
-                uploadedFotoPrima.push({ data: e.target.result, name: file.name });
-                renderFotoPrimaGrid();
-            };
-            reader.readAsDataURL(file);
+            const compressedData = await compressImage(file);
+            uploadedFotoPrima.push({ data: compressedData, name: file.name });
+            renderFotoPrimaGrid();
         }
-    });
+    }
     event.target.value = '';
 }
 
@@ -3358,20 +3385,17 @@ function renderFotoPrimaGrid() {
     grid.innerHTML = html;
 }
 
-function handleFotoDopoUpload(event) {
+async function handleFotoDopoUpload(event) {
     const files = event.target.files;
     if (!files) return;
     
-    Array.from(files).forEach(file => {
+    for (const file of files) {
         if (file.type.startsWith('image/')) {
-            const reader = new FileReader();
-            reader.onload = e => {
-                uploadedFotoDopo.push({ data: e.target.result, name: file.name });
-                renderFotoDopoGrid();
-            };
-            reader.readAsDataURL(file);
+            const compressedData = await compressImage(file);
+            uploadedFotoDopo.push({ data: compressedData, name: file.name });
+            renderFotoDopoGrid();
         }
-    });
+    }
     event.target.value = '';
 }
 

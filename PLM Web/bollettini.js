@@ -789,6 +789,12 @@ function openModal(isNew = true) {
         uploadedPhotos = [];
         renderPhotosGrid();
         
+        // Reset foto prima/dopo
+        uploadedFotoPrima = [];
+        uploadedFotoDopo = [];
+        renderFotoPrimaGrid();
+        renderFotoDopoGrid();
+        
         // Calcola ore con i valori di default
         setTimeout(calcOre, 100);
     }
@@ -1035,6 +1041,8 @@ async function saveBollettino() {
         note: document.getElementById('bollettino-note').value || null,
         firma_cliente: getFirmaData(),
         foto_scontrini: uploadedPhotos.length > 0 ? uploadedPhotos : null,
+        foto_prima: uploadedFotoPrima.length > 0 ? uploadedFotoPrima : null,
+        foto_dopo: uploadedFotoDopo.length > 0 ? uploadedFotoDopo : null,
         totale_speso: parseFloat(document.getElementById('bollettino-totale-speso').value) || null,
         email_cliente: document.getElementById('bollettino-email').value || null,
         nome_firmatario: document.getElementById('bollettino-firmatario').value || null,
@@ -1501,6 +1509,12 @@ function openModalModifica() {
     // Carica foto esistenti
     uploadedPhotos = bollettino.foto_scontrini || [];
     renderPhotosGrid();
+    
+    // Carica foto prima/dopo esistenti
+    uploadedFotoPrima = bollettino.foto_prima || [];
+    uploadedFotoDopo = bollettino.foto_dopo || [];
+    renderFotoPrimaGrid();
+    renderFotoDopoGrid();
     
     openModal(false);
     
@@ -2988,7 +3002,7 @@ function removeFotoPrima(index) {
 }
 
 function renderFotoPrimaGrid() {
-    const grid = document.getElementById('photos-grid-prima');
+    const grid = document.getElementById('foto-prima-list');
     if (!grid) return;
     
     let html = uploadedFotoPrima.map((photo, i) => 
@@ -3023,7 +3037,7 @@ function removeFotoDopo(index) {
 }
 
 function renderFotoDopoGrid() {
-    const grid = document.getElementById('photos-grid-dopo');
+    const grid = document.getElementById('foto-dopo-list');
     if (!grid) return;
     
     let html = uploadedFotoDopo.map((photo, i) => 

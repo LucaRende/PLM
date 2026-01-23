@@ -635,6 +635,18 @@
                 padding-right: var(--space-6);
             }
             
+            /* Stat grid centrata - 2 box */
+            .stat-grid {
+                display: flex !important;
+                justify-content: center !important;
+                gap: var(--space-4) !important;
+            }
+            
+            .stat-box {
+                width: 280px !important;
+                flex-shrink: 0 !important;
+            }
+            
             .menu-buttons {
                 display: grid !important;
                 grid-template-columns: repeat(3, 1fr) !important;
@@ -670,11 +682,6 @@
                 position: absolute !important;
                 top: 12px !important;
                 right: 12px !important;
-            }
-            
-            /* Stat grid 4 colonne su desktop */
-            .stat-grid {
-                grid-template-columns: repeat(4, 1fr) !important;
             }
         }
     </style>

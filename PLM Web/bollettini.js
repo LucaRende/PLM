@@ -2078,18 +2078,18 @@ async function uploadPDFToStorage(pdfDoc, bollettinoData) {
         // Genera blob dal PDF
         const pdfBlob = pdfDoc.output('blob');
         
-        // Nome file con formato #0001
+        // Nome file con formato #0001 + timestamp per unicità
         const idFormatted = formatBollettinoId(bollettinoData.id_bollettino || 0).replace('#', '');
         const dataFile = bollettinoData.data ? bollettinoData.data.replace(/-/g, '') : 'data';
         const clienteFile = (bollettinoData.cliente || 'cliente').replace(/[^a-zA-Z0-9]/g, '_').substring(0, 20);
-        const fileName = `pdf/Bollettino_${idFormatted}_${clienteFile}_${dataFile}.pdf`;
+        const timestamp = Date.now();
+        const fileName = `pdf/Bollettino_${idFormatted}_${clienteFile}_${dataFile}_${timestamp}.pdf`;
         
         // Upload su Supabase Storage
         const { data, error } = await supabaseClient.storage
             .from('bollettini')
             .upload(fileName, pdfBlob, {
-                contentType: 'application/pdf',
-                upsert: true
+                contentType: 'application/pdf'
             });
         
         if (error) {

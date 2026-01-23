@@ -32,11 +32,81 @@
     
     <!-- Nascondi contenuto finché loader non è attivo -->
     <style id="preload-style">
-        body { background: #030305; }
+        body { background: #ffffff; }
         .page { visibility: hidden; }
     </style>
     
     <style>
+        /* =============================================
+           TEMA CHIARO - OVERRIDE
+           ============================================= */
+        :root {
+            --surface-0: #ffffff !important;
+            --surface-1: #f8f9fa !important;
+            --surface-2: #f1f3f5 !important;
+            --surface-3: #e9ecef !important;
+            --surface-4: #dee2e6 !important;
+            --text-primary: #212529 !important;
+            --text-secondary: #495057 !important;
+            --text-muted: #868e96 !important;
+            --border-default: #dee2e6 !important;
+            --border-subtle: #e9ecef !important;
+            --border-strong: #adb5bd !important;
+        }
+        
+        html, body {
+            background: #ffffff !important;
+        }
+        
+        .page {
+            background: #ffffff !important;
+        }
+        
+        /* Header resta nero */
+        .home-header {
+            background: rgba(3, 3, 5, 0.92) !important;
+        }
+        
+        .home-header .home-user-surname {
+            color: #ffffff !important;
+        }
+        
+        .home-header .home-user-name {
+            color: rgba(255, 255, 255, 0.7) !important;
+        }
+        
+        /* Content sfondo bianco */
+        .home-content {
+            background: #ffffff !important;
+        }
+        
+        /* Stat box per tema chiaro */
+        .stat-box {
+            background: linear-gradient(145deg, #f8f9fa 0%, #ffffff 100%) !important;
+            border-color: #dee2e6 !important;
+        }
+        
+        .stat-box::before {
+            background: linear-gradient(90deg, transparent, #dc2626, transparent) !important;
+        }
+        
+        /* Menu items */
+        .menu-item {
+            background: #f8f9fa !important;
+            border-color: #dee2e6 !important;
+        }
+        
+        .menu-item:active {
+            background: #e9ecef !important;
+        }
+        
+        .menu-item-title {
+            color: #212529 !important;
+        }
+        
+        .menu-item-desc {
+            color: #868e96 !important;
+        }
         /* =============================================
            HOME - SUPER DESIGN IPHONE
            ============================================= */

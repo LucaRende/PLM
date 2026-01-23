@@ -6316,25 +6316,40 @@
             }
             
             try {
-                // Prepara HTML per DDT
-                let ddtHtml = '<p><strong>📄 Documenti di Trasporto:</strong></p>';
+                // Prepara riepilogo interventi come TESTO semplice
+                let riepilogoTesto = bollettini.map(b => {
+                    const dataStr = b.data ? new Date(b.data).toLocaleDateString('it-IT') : '-';
+                    return `• ${dataStr} - ${b.cliente || 'N/D'} - ${b.montaggio_macchina || 'N/D'} (${b.ore_totali || 0}h)`;
+                }).join('\n');
+                
+                // Calcola totale ore
+                const totaleOre = bollettini.reduce((sum, b) => sum + (parseFloat(b.ore_totali) || 0), 0).toFixed(1);
+                
+                // Prepara HTML per DDT (va nel campo pdf_link che supporta HTML)
+                let documentiHtml = '<p style="margin-bottom:10px;"><strong>📄 Documenti di Trasporto:</strong></p>';
                 ddtFiles.forEach((ddt) => {
-                    ddtHtml += `<a href="${ddt.url}" style="display:inline-block; background:#10b981; color:#ffffff; padding:10px 20px; border-radius:8px; text-decoration:none; font-weight:bold; margin:4px;">📄 ${ddt.name}</a><br>`;
+                    documentiHtml += `<a href="${ddt.url}" style="display:inline-block; background:#10b981; color:#ffffff; padding:12px 24px; border-radius:8px; text-decoration:none; font-weight:bold; margin:4px 4px 8px 0;">📄 ${ddt.name}</a><br>`;
                 });
                 
                 // Prepara HTML per i bollettini
-                let bollettiniHtml = '<p><strong>📋 Bollettini Intervento:</strong></p>';
+                documentiHtml += '<p style="margin-top:16px; margin-bottom:10px;"><strong>📋 Bollettini Intervento:</strong></p>';
                 pdfBollettiniUrls.forEach((pdf) => {
-                    bollettiniHtml += `<a href="${pdf.url}" style="display:inline-block; background:#dc2626; color:#ffffff; padding:10px 20px; border-radius:8px; text-decoration:none; font-weight:bold; margin:4px;">📋 ${pdf.cliente || 'Bollettino'}</a><br>`;
+                    const dataStr = bollettini.find(b => b.id_bollettino === pdf.id)?.data;
+                    const dataFormatted = dataStr ? new Date(dataStr).toLocaleDateString('it-IT') : '';
+                    documentiHtml += `<a href="${pdf.url}" style="display:inline-block; background:#dc2626; color:#ffffff; padding:12px 24px; border-radius:8px; text-decoration:none; font-weight:bold; margin:4px 4px 8px 0;">📋 ${pdf.cliente || 'Bollettino'} ${dataFormatted ? '(' + dataFormatted + ')' : ''}</a><br>`;
                 });
                 
-                // Riepilogo interventi
-                let riepilogoHtml = '<p><strong>Riepilogo Interventi:</strong></p><ul>';
-                bollettini.forEach(b => {
-                    const dataStr = b.data ? new Date(b.data).toLocaleDateString('it-IT') : '-';
-                    riepilogoHtml += `<li>${dataStr} - ${b.cliente || 'N/D'} - ${b.montaggio_macchina || 'N/D'} (${b.ore_totali || 0}h)</li>`;
-                });
-                riepilogoHtml += '</ul>';
+                // Lista tecnici unici
+                const tecnici = [...new Set(bollettini.map(b => b.tecnico_installatore).filter(Boolean))].join(', ');
+                
+                // Lista macchine uniche
+                const macchine = [...new Set(bollettini.map(b => b.montaggio_macchina).filter(Boolean))].join(', ');
+                
+                // Data range
+                const date = bollettini.map(b => b.data).filter(Boolean).sort();
+                const dataRange = date.length > 1 
+                    ? `Dal ${new Date(date[0]).toLocaleDateString('it-IT')} al ${new Date(date[date.length-1]).toLocaleDateString('it-IT')}`
+                    : (date[0] ? new Date(date[0]).toLocaleDateString('it-IT') : '-');
                 
                 const response = await emailjs.send(
                     EMAILJS_CONFIG.serviceId,
@@ -6343,16 +6358,16 @@
                         to_email: emailCliente,
                         to_name: 'cliente',
                         subject: `Documentazione Interventi (${bollettini.length}) - Pro System S.r.l.`,
-                        data_intervento: `${bollettini.length} interventi`,
-                        tecnico: bollettini.map(b => b.tecnico_installatore).filter((v, i, a) => a.indexOf(v) === i).join(', '),
-                        macchina: bollettini.map(b => b.montaggio_macchina).filter((v, i, a) => a.indexOf(v) === i).join(', '),
-                        matricola: '-',
-                        ore_lavorate: bollettini.reduce((sum, b) => sum + (parseFloat(b.ore_totali) || 0), 0).toFixed(1) + ' ore totali',
+                        data_intervento: dataRange,
+                        tecnico: tecnici || '-',
+                        macchina: macchine || '-',
+                        matricola: bollettini.length + ' interventi',
+                        ore_lavorate: totaleOre + ' ore totali',
                         orario: '-',
-                        lavori_eseguiti: riepilogoHtml,
+                        lavori_eseguiti: riepilogoTesto,
                         note: '-',
                         firma_html: '',
-                        pdf_link: `${ddtHtml}<br>${bollettiniHtml}`,
+                        pdf_link: documentiHtml,
                         is_invoice: true
                     }
                 );

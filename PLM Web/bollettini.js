@@ -2176,6 +2176,7 @@ async function sendEmailToCliente(bollettinoData) {
             {
                 to_email: bollettinoData.email_cliente,
                 to_name: 'cliente',  // Fisso "Gentile cliente"
+                bollettino_numero: formatBollettinoId(bollettinoData.id_bollettino),
                 data_intervento: dataFormatted,
                 tecnico: bollettinoData.tecnico_installatore,
                 macchina: bollettinoData.montaggio_macchina || 'Non specificata',
@@ -2574,6 +2575,7 @@ async function sendInvoiceEmail(bollettinoData, ddtFiles, pdfBollettinoUrl) {
                 to_email: bollettinoData.email_cliente,
                 to_name: bollettinoData.cliente || 'Cliente',
                 subject: `Bollettino Intervento ${formatBollettinoId(bollettinoData.id_bollettino)} - Pro System S.r.l.`,
+                bollettino_numero: formatBollettinoId(bollettinoData.id_bollettino),
                 data_intervento: dataFormatted,
                 tecnico: bollettinoData.tecnico_installatore || 'Non specificato',
                 macchina: bollettinoData.montaggio_macchina || 'Non specificata',
@@ -3289,6 +3291,7 @@ async function sendBatchInvoiceEmail(email, bollettini, ddtFiles, pdfUrls, notes
             to_email: email,
             to_name: bollettini[0]?.cliente || 'Cliente',
             subject: `Bollettini Intervento ${bollettiniIds} - Pro System S.r.l.`,
+            bollettino_numero: bollettiniIds,
             data_intervento: bollettini.length > 1 
                 ? `${bollettini.length} interventi` 
                 : new Date(bollettini[0]?.data).toLocaleDateString('it-IT', { day: '2-digit', month: 'long', year: 'numeric' }),

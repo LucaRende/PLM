@@ -2528,39 +2528,51 @@ async function sendInvoiceEmail(bollettinoData, ddtFiles, pdfBollettinoUrl) {
     }
     
     try {
-        const dataFormatted = new Date(bollettinoData.data).toLocaleDateString('it-IT', {
-            day: '2-digit', month: 'long', year: 'numeric'
-        });
+        const dataFormatted = bollettinoData.data 
+            ? new Date(bollettinoData.data).toLocaleDateString('it-IT', {
+                day: '2-digit', month: 'long', year: 'numeric'
+            })
+            : 'Data non specificata';
         
         // Prepara HTML per DDT
         let ddtHtml = '';
-        ddtFiles.forEach((ddt, i) => {
-            ddtHtml += `<a href="${ddt.url}" style="display:inline-block; background:#10b981; color:#ffffff; padding:10px 20px; border-radius:8px; text-decoration:none; font-weight:bold; margin:4px;">📄 ${ddt.name}</a><br>`;
-        });
+        if (ddtFiles && ddtFiles.length > 0) {
+            ddtFiles.forEach((ddt, i) => {
+                ddtHtml += `<a href="${ddt.url}" style="display:inline-block; background:#10b981; color:#ffffff; padding:10px 20px; border-radius:8px; text-decoration:none; font-weight:bold; margin:4px;">📄 ${ddt.name}</a><br>`;
+            });
+        }
         
         // Link al PDF bollettino
         let bollettinoHtml = '';
         if (pdfBollettinoUrl) {
-            bollettinoHtml = `<a href="${pdfBollettinoUrl}" style="display:inline-block; background:#dc2626; color:#ffffff; padding:10px 20px; border-radius:8px; text-decoration:none; font-weight:bold; margin:4px;">📋 Bollettino Intervento</a>`;
+            bollettinoHtml = `<a href="${pdfBollettinoUrl}" style="display:inline-block; background:#dc2626; color:#ffffff; padding:10px 20px; border-radius:8px; text-decoration:none; font-weight:bold; margin:4px;">📋 Bollettino ${formatBollettinoId(bollettinoData.id_bollettino)}</a>`;
         }
+        
+        console.log('Email fatturazione - Dati bollettino:', {
+            id: bollettinoData.id_bollettino,
+            data: bollettinoData.data,
+            tecnico: bollettinoData.tecnico_installatore,
+            cliente: bollettinoData.cliente,
+            macchina: bollettinoData.montaggio_macchina
+        });
         
         const response = await emailjs.send(
             EMAILJS_CONFIG.serviceId,
             EMAILJS_CONFIG.templateFatturazioneId, // Template specifico per fatturazione
             {
                 to_email: bollettinoData.email_cliente,
-                to_name: 'cliente',
-                subject: 'Documentazione Intervento - Pro System S.r.l.',
+                to_name: bollettinoData.cliente || 'Cliente',
+                subject: `Documentazione Intervento ${formatBollettinoId(bollettinoData.id_bollettino)} - Pro System S.r.l.`,
                 data_intervento: dataFormatted,
-                tecnico: bollettinoData.tecnico_installatore,
+                tecnico: bollettinoData.tecnico_installatore || 'Non specificato',
                 macchina: bollettinoData.montaggio_macchina || 'Non specificata',
-                matricola: bollettinoData.matricola || 'Non specificata',
-                ore_lavorate: bollettinoData.ore_totali + ' ore',
-                orario: `${bollettinoData.orario_inizio || ''} - ${bollettinoData.orario_fine || ''}`,
-                lavori_eseguiti: bollettinoData.lavori_eseguiti || '-',
+                matricola: bollettinoData.matricola || '-',
+                ore_lavorate: (bollettinoData.ore_totali || 0) + ' ore',
+                orario: `${bollettinoData.orario_inizio || '--:--'} - ${bollettinoData.orario_fine || '--:--'}`,
+                lavori_eseguiti: bollettinoData.lavori_eseguiti || 'Non specificati',
                 note: bollettinoData.note || '-',
                 firma_html: bollettinoData.nome_firmatario ? `<p>Firmato da: ${bollettinoData.nome_firmatario}</p>` : '',
-                pdf_link: `${ddtHtml}<br>${bollettinoHtml}`,
+                pdf_link: ddtHtml + bollettinoHtml,
                 is_invoice: true
             }
         );
@@ -3057,28 +3069,52 @@ async function sendBatchInvoiceEmail(email, bollettini, ddtFiles, pdfUrls, notes
     }
     
     try {
-        let riepilogo = '';
+        // Costruisci riepilogo interventi
+        let riepilogoHtml = '<ul style="margin:0; padding-left:20px;">';
         let totaleOre = 0;
+        let tecnici = new Set();
+        let macchine = new Set();
         
         bollettini.forEach(b => {
-            const dataFormatted = new Date(b.data).toLocaleDateString('it-IT', { day: '2-digit', month: '2-digit' });
-            riepilogo += '• ' + formatBollettinoId(b.id_bollettino) + ' - ' + dataFormatted + ' - ' + b.cliente + ' (' + (b.ore_totali || 0) + 'h)\n';
+            const dataFormatted = new Date(b.data).toLocaleDateString('it-IT', { day: '2-digit', month: '2-digit', year: 'numeric' });
+            riepilogoHtml += `<li><strong>${formatBollettinoId(b.id_bollettino)}</strong> - ${dataFormatted} - ${b.cliente} (${b.ore_totali || 0}h)</li>`;
             totaleOre += parseFloat(b.ore_totali) || 0;
+            if (b.tecnico_installatore) tecnici.add(b.tecnico_installatore);
+            if (b.montaggio_macchina) macchine.add(b.montaggio_macchina);
+        });
+        riepilogoHtml += '</ul>';
+        
+        // Costruisci link PDF
+        let pdfLinksHtml = '';
+        pdfUrls.forEach(pdf => {
+            if (pdf.url) {
+                pdfLinksHtml += `<p><a href="${pdf.url}" style="color:#dc2626;">📄 Bollettino ${formatBollettinoId(pdf.id)}</a></p>`;
+            }
         });
         
-        let bollettiniLinks = pdfUrls.map(pdf => '📋 ' + formatBollettinoId(pdf.id) + ': ' + pdf.url).join('\n');
-        let ddtLinks = ddtFiles.map(ddt => '📄 ' + ddt.name + ': ' + ddt.url).join('\n');
+        // Costruisci link DDT
+        let ddtLinksHtml = '';
+        ddtFiles.forEach(ddt => {
+            if (ddt.url) {
+                ddtLinksHtml += `<p><a href="${ddt.url}" style="color:#10b981;">📦 ${ddt.name}</a></p>`;
+            }
+        });
         
+        // Usa i nomi parametri che il template si aspetta
         const templateParams = {
             to_email: email,
-            subject: 'Documentazione Interventi ' + bollettini.map(b => formatBollettinoId(b.id_bollettino)).join(', ') + ' - Pro System S.r.l.',
-            riepilogo_interventi: riepilogo,
-            totale_ore: totaleOre.toFixed(1),
-            num_interventi: bollettini.length,
-            bollettini_links: bollettiniLinks,
-            ddt_links: ddtLinks,
-            note: notes || 'Nessuna nota',
-            data_invio: new Date().toLocaleString('it-IT')
+            to_name: bollettini[0]?.cliente || 'Cliente',
+            data_intervento: bollettini.length > 1 
+                ? `${bollettini.length} interventi` 
+                : new Date(bollettini[0]?.data).toLocaleDateString('it-IT', { day: '2-digit', month: 'long', year: 'numeric' }),
+            tecnico: Array.from(tecnici).join(', ') || '-',
+            macchina: Array.from(macchine).join(', ') || '-',
+            matricola: bollettini.map(b => b.matricola).filter(Boolean).join(', ') || '-',
+            ore_lavorate: totaleOre.toFixed(1) + ' ore totali',
+            lavori_eseguiti: riepilogoHtml,
+            note: notes || '-',
+            firma_html: '', // Non c'è firma nella fatturazione batch
+            pdf_link: pdfLinksHtml + ddtLinksHtml
         };
         
         await emailjs.send(

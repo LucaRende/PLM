@@ -3553,6 +3553,11 @@
         // Logo per PDF
         let logoBase64 = null;
         
+        // Formatta ID bollettino a 4 cifre con #
+        function formatBollettinoId(id) {
+            return '#' + String(id).padStart(4, '0');
+        }
+        
         // Precarica logo per PDF
         function preloadLogo() {
             const img = new Image();
@@ -5274,9 +5279,10 @@
             }
             
             doc.setTextColor(255, 255, 255);
-            doc.setFontSize(22);
+            doc.setFontSize(20);
             doc.setFont('helvetica', 'bold');
-            doc.text('BOLLETTINO INTERVENTO', 115, 18, { align: 'center' });
+            const bollettinoIdFormatted = formatBollettinoId(bollettinoData.id_bollettino);
+            doc.text(`BOLLETTINO INTERVENTO ${bollettinoIdFormatted}`, 115, 18, { align: 'center' });
             
             doc.setFontSize(11);
             doc.setFont('helvetica', 'normal');
@@ -5450,10 +5456,11 @@
                 // Genera blob dal PDF
                 const pdfBlob = pdfDoc.output('blob');
                 
-                // Nome file
+                // Nome file con ID formattato (es: Bollettino_#0006_Cariba_20260123.pdf)
+                const idFormatted = formatBollettinoId(bollettinoData.id_bollettino).replace('#', '');
                 const dataFile = bollettinoData.data ? bollettinoData.data.replace(/-/g, '') : 'data';
                 const clienteFile = (bollettinoData.cliente || 'cliente').replace(/[^a-zA-Z0-9]/g, '_');
-                const fileName = `pdf/Bollettino_${clienteFile}_${dataFile}_${Date.now()}.pdf`;
+                const fileName = `pdf/Bollettino_${idFormatted}_${clienteFile}_${dataFile}.pdf`;
                 
                 // Upload su Supabase Storage
                 const { data, error } = await supabaseClient.storage
@@ -5494,6 +5501,9 @@
                     day: '2-digit', month: 'long', year: 'numeric'
                 });
                 
+                // ID formattato
+                const idFormatted = formatBollettinoId(bollettinoData.id_bollettino);
+                
                 // Carica firma su Storage e ottieni URL pubblico
                 let firmaUrl = '';
                 if (bollettinoData.firma_cliente && bollettinoData.firma_cliente.data) {
@@ -5523,10 +5533,10 @@
                     firmaHtml += '<em>Firma non disponibile</em>';
                 }
                 
-                // Prepara HTML link PDF
+                // Prepara HTML link PDF con ID
                 let pdfHtml = '';
                 if (pdfUrl) {
-                    pdfHtml = `<a href="${pdfUrl}" style="display:inline-block; background:#dc2626; color:#ffffff; padding:12px 24px; border-radius:8px; text-decoration:none; font-weight:bold;">📄 Scarica PDF Bollettino</a>`;
+                    pdfHtml = `<a href="${pdfUrl}" style="display:inline-block; background:#dc2626; color:#ffffff; padding:12px 24px; border-radius:8px; text-decoration:none; font-weight:bold;">📄 Scarica PDF Bollettino ${idFormatted}</a>`;
                 }
                 
                 console.log('Firma URL:', firmaUrl);
@@ -5538,6 +5548,7 @@
                     {
                         to_email: bollettinoData.email_cliente,
                         to_name: 'cliente',  // Fisso "Gentile cliente"
+                        subject: `Bollettino Intervento ${idFormatted} - Pro System S.r.l.`,
                         data_intervento: dataFormatted,
                         tecnico: bollettinoData.tecnico_installatore,
                         macchina: bollettinoData.montaggio_macchina || 'Non specificata',
@@ -5918,16 +5929,19 @@
                     day: '2-digit', month: 'long', year: 'numeric'
                 });
                 
+                // ID formattato
+                const idFormatted = formatBollettinoId(bollettinoData.id_bollettino);
+                
                 // Prepara HTML per DDT
                 let ddtHtml = '';
                 ddtFiles.forEach((ddt, i) => {
                     ddtHtml += `<a href="${ddt.url}" style="display:inline-block; background:#10b981; color:#ffffff; padding:10px 20px; border-radius:8px; text-decoration:none; font-weight:bold; margin:4px;">📄 ${ddt.name}</a><br>`;
                 });
                 
-                // Link al PDF bollettino
+                // Link al PDF bollettino con ID
                 let bollettinoHtml = '';
                 if (pdfBollettinoUrl) {
-                    bollettinoHtml = `<a href="${pdfBollettinoUrl}" style="display:inline-block; background:#dc2626; color:#ffffff; padding:10px 20px; border-radius:8px; text-decoration:none; font-weight:bold; margin:4px;">📋 Bollettino Intervento</a>`;
+                    bollettinoHtml = `<a href="${pdfBollettinoUrl}" style="display:inline-block; background:#dc2626; color:#ffffff; padding:10px 20px; border-radius:8px; text-decoration:none; font-weight:bold; margin:4px;">📋 Bollettino Intervento ${idFormatted}</a>`;
                 }
                 
                 const response = await emailjs.send(
@@ -5936,7 +5950,7 @@
                     {
                         to_email: bollettinoData.email_cliente,
                         to_name: 'cliente',
-                        subject: 'Documentazione Intervento - Pro System S.r.l.',
+                        subject: `Documentazione Intervento ${idFormatted} - Pro System S.r.l.`,
                         data_intervento: dataFormatted,
                         tecnico: bollettinoData.tecnico_installatore,
                         macchina: bollettinoData.montaggio_macchina || 'Non specificata',
@@ -6051,10 +6065,11 @@
                 const b = allBollettini.find(x => x.id_bollettino === id);
                 if (b) {
                     const dataStr = b.data ? new Date(b.data).toLocaleDateString('it-IT', { day: '2-digit', month: 'short' }) : '-';
+                    const idFormatted = formatBollettinoId(b.id_bollettino);
                     html += `
                         <div class="batch-bollettino-item" data-id="${b.id_bollettino}">
                             <div class="batch-bollettino-info">
-                                <div class="batch-bollettino-cliente">${b.cliente || 'N/D'}</div>
+                                <div class="batch-bollettino-cliente"><strong>${idFormatted}</strong> - ${b.cliente || 'N/D'}</div>
                                 <div class="batch-bollettino-meta">${dataStr} • ${b.montaggio_macchina || 'N/D'}</div>
                             </div>
                             <button class="batch-bollettino-remove" onclick="removeBollettinFromBatch(${b.id_bollettino})">
@@ -6316,14 +6331,18 @@
             }
             
             try {
-                // Prepara riepilogo interventi come TESTO semplice
+                // Prepara riepilogo interventi come TESTO semplice CON ID
                 let riepilogoTesto = bollettini.map(b => {
                     const dataStr = b.data ? new Date(b.data).toLocaleDateString('it-IT') : '-';
-                    return `• ${dataStr} - ${b.cliente || 'N/D'} - ${b.montaggio_macchina || 'N/D'} (${b.ore_totali || 0}h)`;
+                    const idFormatted = formatBollettinoId(b.id_bollettino);
+                    return `• ${idFormatted} - ${dataStr} - ${b.cliente || 'N/D'} - ${b.montaggio_macchina || 'N/D'} (${b.ore_totali || 0}h)`;
                 }).join('\n');
                 
                 // Calcola totale ore
                 const totaleOre = bollettini.reduce((sum, b) => sum + (parseFloat(b.ore_totali) || 0), 0).toFixed(1);
+                
+                // Lista ID per il subject
+                const idsFormatted = bollettini.map(b => formatBollettinoId(b.id_bollettino)).join(', ');
                 
                 // Prepara HTML per DDT (va nel campo pdf_link che supporta HTML)
                 let documentiHtml = '<p style="margin-bottom:10px;"><strong>📄 Documenti di Trasporto:</strong></p>';
@@ -6331,12 +6350,13 @@
                     documentiHtml += `<a href="${ddt.url}" style="display:inline-block; background:#10b981; color:#ffffff; padding:12px 24px; border-radius:8px; text-decoration:none; font-weight:bold; margin:4px 4px 8px 0;">📄 ${ddt.name}</a><br>`;
                 });
                 
-                // Prepara HTML per i bollettini
+                // Prepara HTML per i bollettini CON ID
                 documentiHtml += '<p style="margin-top:16px; margin-bottom:10px;"><strong>📋 Bollettini Intervento:</strong></p>';
                 pdfBollettiniUrls.forEach((pdf) => {
-                    const dataStr = bollettini.find(b => b.id_bollettino === pdf.id)?.data;
-                    const dataFormatted = dataStr ? new Date(dataStr).toLocaleDateString('it-IT') : '';
-                    documentiHtml += `<a href="${pdf.url}" style="display:inline-block; background:#dc2626; color:#ffffff; padding:12px 24px; border-radius:8px; text-decoration:none; font-weight:bold; margin:4px 4px 8px 0;">📋 ${pdf.cliente || 'Bollettino'} ${dataFormatted ? '(' + dataFormatted + ')' : ''}</a><br>`;
+                    const bollettino = bollettini.find(b => b.id_bollettino === pdf.id);
+                    const idFormatted = formatBollettinoId(pdf.id);
+                    const dataStr = bollettino?.data ? new Date(bollettino.data).toLocaleDateString('it-IT') : '';
+                    documentiHtml += `<a href="${pdf.url}" style="display:inline-block; background:#dc2626; color:#ffffff; padding:12px 24px; border-radius:8px; text-decoration:none; font-weight:bold; margin:4px 4px 8px 0;">📋 ${idFormatted} - ${pdf.cliente || 'Bollettino'} ${dataStr ? '(' + dataStr + ')' : ''}</a><br>`;
                 });
                 
                 // Lista tecnici unici
@@ -6357,7 +6377,7 @@
                     {
                         to_email: emailCliente,
                         to_name: 'cliente',
-                        subject: `Documentazione Interventi (${bollettini.length}) - Pro System S.r.l.`,
+                        subject: `Documentazione Interventi ${idsFormatted} - Pro System S.r.l.`,
                         data_intervento: dataRange,
                         tecnico: tecnici || '-',
                         macchina: macchine || '-',

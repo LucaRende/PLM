@@ -2212,259 +2212,6 @@
             height: 18px;
         }
         
-        /* =============================================
-           FATTURAZIONE MULTIPLA / SELEZIONE BATCH
-           ============================================= */
-        
-        /* Barra selezione multipla fissa */
-        .batch-selection-bar {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            z-index: 1001;
-            padding: 16px;
-            padding-bottom: calc(env(safe-area-inset-bottom) + 16px);
-            background: linear-gradient(180deg, rgba(3,3,5,0.95) 0%, rgba(3,3,5,1) 100%);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-top: 1px solid rgba(168, 85, 247, 0.3);
-            display: none;
-            flex-direction: column;
-            gap: 12px;
-            transform: translateY(100%);
-            transition: transform 0.3s ease;
-        }
-        
-        .batch-selection-bar.show {
-            display: flex;
-            transform: translateY(0);
-        }
-        
-        .batch-selection-info {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .batch-selection-count {
-            font-size: 15px;
-            font-weight: 600;
-            color: var(--primary);
-        }
-        
-        .batch-selection-actions {
-            display: flex;
-            gap: 8px;
-        }
-        
-        .btn-batch-cancel {
-            padding: 10px 16px;
-            background: var(--surface-2);
-            border: 1px solid var(--border-default);
-            border-radius: 10px;
-            color: var(--text-secondary);
-            font-size: 14px;
-            font-weight: 500;
-            cursor: pointer;
-        }
-        
-        .btn-batch-invoice {
-            padding: 10px 20px;
-            background: linear-gradient(135deg, #a855f7 0%, #7c3aed 100%);
-            border: none;
-            border-radius: 10px;
-            color: white;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .btn-batch-invoice:disabled {
-            background: var(--surface-3);
-            color: var(--text-muted);
-            cursor: not-allowed;
-        }
-        
-        .btn-batch-invoice svg {
-            width: 18px;
-            height: 18px;
-        }
-        
-        /* Bottone attiva selezione multipla */
-        .btn-batch-mode {
-            display: none;
-            padding: 10px 14px;
-            background: rgba(168, 85, 247, 0.1);
-            border: 1px solid rgba(168, 85, 247, 0.3);
-            border-radius: 10px;
-            color: var(--primary);
-            font-size: 13px;
-            font-weight: 500;
-            cursor: pointer;
-            white-space: nowrap;
-        }
-        
-        .btn-batch-mode.visible {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        
-        .btn-batch-mode svg {
-            width: 16px;
-            height: 16px;
-        }
-        
-        .btn-batch-mode.active {
-            background: var(--primary);
-            color: white;
-        }
-        
-        /* Checkbox sulle card in modalità selezione */
-        .bollettino-card.selectable {
-            position: relative;
-        }
-        
-        .bollettino-checkbox {
-            position: absolute;
-            top: 12px;
-            right: 12px;
-            width: 24px;
-            height: 24px;
-            background: var(--surface-2);
-            border: 2px solid var(--border-default);
-            border-radius: 6px;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 10;
-            transition: all 0.2s ease;
-        }
-        
-        .batch-mode .bollettino-checkbox {
-            display: flex;
-        }
-        
-        .bollettino-checkbox.checked {
-            background: var(--primary);
-            border-color: var(--primary);
-        }
-        
-        .bollettino-checkbox svg {
-            width: 14px;
-            height: 14px;
-            stroke: white;
-            opacity: 0;
-            transition: opacity 0.2s ease;
-        }
-        
-        .bollettino-checkbox.checked svg {
-            opacity: 1;
-        }
-        
-        .bollettino-card.selected {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 2px rgba(168, 85, 247, 0.3);
-        }
-        
-        /* Campo email nel modale fatturazione */
-        .invoice-email-section {
-            margin-bottom: 16px;
-        }
-        
-        .invoice-email-label {
-            font-size: 12px;
-            font-weight: 500;
-            color: var(--text-muted);
-            margin-bottom: 8px;
-            display: block;
-        }
-        
-        .invoice-email-input {
-            width: 100%;
-            padding: 12px 14px;
-            background: var(--surface-0);
-            border: 1px solid var(--border-default);
-            border-radius: 10px;
-            color: var(--text-primary);
-            font-size: 15px;
-            font-family: var(--font-sans);
-        }
-        
-        .invoice-email-input:focus {
-            outline: none;
-            border-color: var(--primary);
-        }
-        
-        .invoice-email-input::placeholder {
-            color: var(--text-muted);
-        }
-        
-        /* Lista bollettini nel modale batch */
-        .batch-bollettini-list {
-            max-height: 200px;
-            overflow-y: auto;
-            margin-bottom: 16px;
-            border: 1px solid var(--border-default);
-            border-radius: 10px;
-            background: var(--surface-0);
-        }
-        
-        .batch-bollettino-item {
-            padding: 12px;
-            border-bottom: 1px solid var(--border-default);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .batch-bollettino-item:last-child {
-            border-bottom: none;
-        }
-        
-        .batch-bollettino-info {
-            flex: 1;
-            min-width: 0;
-        }
-        
-        .batch-bollettino-cliente {
-            font-size: 14px;
-            font-weight: 500;
-            color: var(--text-primary);
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        
-        .batch-bollettino-meta {
-            font-size: 12px;
-            color: var(--text-muted);
-        }
-        
-        .batch-bollettino-remove {
-            width: 28px;
-            height: 28px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: rgba(239, 68, 68, 0.1);
-            border: none;
-            border-radius: 6px;
-            color: var(--error);
-            cursor: pointer;
-            flex-shrink: 0;
-            margin-left: 8px;
-        }
-        
-        .batch-bollettino-remove svg {
-            width: 14px;
-            height: 14px;
-        }
-
         /* Footer modal con pulsanti admin */
         .modal-footer-admin {
             display: flex;
@@ -2920,16 +2667,6 @@
                         <line x1="5" y1="12" x2="19" y2="12"/>
                     </svg>
                 </button>
-                <!-- Bottone Fatturazione Multipla (solo per chi può validare) -->
-                <button class="btn-batch-mode" id="btn-batch-mode" onclick="toggleBatchMode()" title="Fatturazione Multipla">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <rect x="3" y="3" width="7" height="7"/>
-                        <rect x="14" y="3" width="7" height="7"/>
-                        <rect x="14" y="14" width="7" height="7"/>
-                        <rect x="3" y="14" width="7" height="7"/>
-                    </svg>
-                    Multi
-                </button>
             </div>
             
             <!-- Pannello Filtri Espandibile -->
@@ -3111,9 +2848,14 @@
                             <input type="text" class="form-input" id="bollettino-cliente" placeholder="Nome cliente">
                         </div>
                         <div class="form-group">
-                            <label class="form-label">📧 Email Cliente</label>
+                            <label class="form-label">📧 Email Destinatario Bollettino</label>
                             <input type="email" class="form-input" id="bollettino-email" placeholder="email@cliente.it">
                             <p class="form-hint">Per inviare copia del bollettino firmato</p>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">📧 Email Destinatario DDT/Fatturazione</label>
+                            <input type="email" class="form-input" id="bollettino-email-fatturazione" placeholder="email@amministrazione.it">
+                            <p class="form-hint">Per invio DDT e documentazione (se diversa)</p>
                         </div>
                         <div class="form-group">
                             <label class="form-label">Macchina</label>
@@ -3160,6 +2902,77 @@
                                 <canvas class="firma-canvas" id="firma-canvas"></canvas>
                                 <div class="firma-placeholder">Firma qui con il dito</div>
                             </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Sezione Foto Intervento -->
+                    <div class="form-section">
+                        <div class="form-section-title">📷 Foto Intervento</div>
+                        
+                        <!-- Foto PRIMA -->
+                        <div class="photos-section" style="margin-bottom: var(--space-4);">
+                            <div class="photos-header">
+                                <span class="photos-title">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                                        <circle cx="8.5" cy="8.5" r="1.5"/>
+                                        <polyline points="21 15 16 10 5 21"/>
+                                    </svg>
+                                    Foto PRIMA
+                                </span>
+                                <button class="btn-add-photo" onclick="document.getElementById('foto-prima-input').click()">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <line x1="12" y1="5" x2="12" y2="19"/>
+                                        <line x1="5" y1="12" x2="19" y2="12"/>
+                                    </svg>
+                                    Aggiungi
+                                </button>
+                            </div>
+                            <div class="photos-grid" id="photos-grid-prima">
+                                <div class="photo-item photo-add-placeholder" onclick="document.getElementById('foto-prima-input').click()">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                                        <line x1="12" y1="8" x2="12" y2="16"/>
+                                        <line x1="8" y1="12" x2="16" y2="12"/>
+                                    </svg>
+                                    <span>Aggiungi</span>
+                                </div>
+                            </div>
+                            <input type="file" id="foto-prima-input" accept="image/*" multiple onchange="handleFotoPrimaUpload(event)">
+                            <p class="form-hint" style="margin-top: var(--space-2);">Situazione PRIMA dell'intervento</p>
+                        </div>
+                        
+                        <!-- Foto DOPO -->
+                        <div class="photos-section">
+                            <div class="photos-header">
+                                <span class="photos-title" style="color: #10b981;">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                                        <circle cx="8.5" cy="8.5" r="1.5"/>
+                                        <polyline points="21 15 16 10 5 21"/>
+                                    </svg>
+                                    Foto DOPO
+                                </span>
+                                <button class="btn-add-photo" style="background: rgba(16, 185, 129, 0.1); border-color: rgba(16, 185, 129, 0.3); color: #10b981;" onclick="document.getElementById('foto-dopo-input').click()">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <line x1="12" y1="5" x2="12" y2="19"/>
+                                        <line x1="5" y1="12" x2="19" y2="12"/>
+                                    </svg>
+                                    Aggiungi
+                                </button>
+                            </div>
+                            <div class="photos-grid" id="photos-grid-dopo">
+                                <div class="photo-item photo-add-placeholder" onclick="document.getElementById('foto-dopo-input').click()">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                                        <line x1="12" y1="8" x2="12" y2="16"/>
+                                        <line x1="8" y1="12" x2="16" y2="12"/>
+                                    </svg>
+                                    <span>Aggiungi</span>
+                                </div>
+                            </div>
+                            <input type="file" id="foto-dopo-input" accept="image/*" multiple onchange="handleFotoDopoUpload(event)">
+                            <p class="form-hint" style="margin-top: var(--space-2);">Situazione DOPO l'intervento</p>
                         </div>
                     </div>
                     
@@ -3387,9 +3200,10 @@
                 </div>
                 
                 <!-- Email Cliente -->
-                <div class="invoice-email-section">
-                    <label class="invoice-email-label">📧 Email Cliente (per invio documentazione)</label>
-                    <input type="email" class="invoice-email-input" id="invoice-email-cliente" placeholder="email@cliente.it">
+                <div class="invoice-section">
+                    <label class="invoice-note-label">📧 Email Cliente * (obbligatoria)</label>
+                    <input type="email" class="invoice-note-input" id="invoice-email-cliente" placeholder="email@cliente.it" style="height: 44px; padding: 0 12px;">
+                    <p style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">Per invio documentazione fatturazione</p>
                 </div>
                 
                 <!-- Upload DDT -->
@@ -3427,85 +3241,6 @@
         </div>
     </div>
     
-    <!-- Barra Selezione Multipla (fissa in basso) -->
-    <div class="batch-selection-bar" id="batch-selection-bar">
-        <div class="batch-selection-info">
-            <span class="batch-selection-count" id="batch-selection-count">0 selezionati</span>
-            <div class="batch-selection-actions">
-                <button class="btn-batch-cancel" onclick="exitBatchMode()">Annulla</button>
-                <button class="btn-batch-invoice" id="btn-open-batch-invoice" onclick="openBatchInvoiceModal()" disabled>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M22 2L11 13"/>
-                        <path d="M22 2L15 22L11 13L2 9L22 2Z"/>
-                    </svg>
-                    Fattura
-                </button>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Modal Fatturazione Multipla -->
-    <div class="modal-overlay" id="modal-fatturazione-batch">
-        <div class="modal-container modal-fattura">
-            <div class="modal-header modal-header-fattura">
-                <div class="modal-header-content">
-                    <h2 class="modal-title">📦 Fatturazione Multipla</h2>
-                </div>
-                <button class="modal-close" onclick="closeBatchInvoiceModal()">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <line x1="18" y1="6" x2="6" y2="18"/>
-                        <line x1="6" y1="6" x2="18" y2="18"/>
-                    </svg>
-                </button>
-            </div>
-            <div class="modal-body invoice-modal-body">
-                <!-- Lista Bollettini Selezionati -->
-                <div class="invoice-section">
-                    <div class="invoice-section-title">📋 Bollettini Selezionati (<span id="batch-count">0</span>)</div>
-                    <div class="batch-bollettini-list" id="batch-bollettini-list"></div>
-                </div>
-                
-                <!-- Email Cliente -->
-                <div class="invoice-email-section">
-                    <label class="invoice-email-label">📧 Email Cliente (per invio documentazione)</label>
-                    <input type="email" class="invoice-email-input" id="batch-email-cliente" placeholder="email@cliente.it">
-                </div>
-                
-                <!-- Upload DDT -->
-                <div class="invoice-section">
-                    <div class="invoice-section-title">📄 Carica DDT (unico per tutti)</div>
-                    <div class="ddt-upload-box" onclick="document.getElementById('batch-ddt-file-input').click()">
-                        <svg class="ddt-upload-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                            <polyline points="17 8 12 3 7 8"/>
-                            <line x1="12" y1="3" x2="12" y2="15"/>
-                        </svg>
-                        <span class="ddt-upload-label">Tocca per caricare PDF</span>
-                    </div>
-                    <input type="file" id="batch-ddt-file-input" accept=".pdf" multiple style="display: none;" onchange="handleBatchDDTUpload(event)">
-                    
-                    <!-- Lista DDT caricati -->
-                    <div class="ddt-files-list" id="batch-uploaded-ddt-list"></div>
-                </div>
-                
-                <!-- Note (opzionale) -->
-                <div class="invoice-section">
-                    <label class="invoice-note-label">Note (opzionale)</label>
-                    <textarea class="invoice-note-input" id="batch-invoice-notes" placeholder="Note aggiuntive per tutti i bollettini..." rows="2"></textarea>
-                </div>
-            </div>
-            <div class="invoice-footer">
-                <button class="invoice-submit-btn" id="btn-complete-batch-invoice" onclick="completeBatchInvoice()" disabled>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M22 2L11 13"/>
-                        <path d="M22 2L15 22L11 13L2 9L22 2Z"/>
-                    </svg>
-                    Completa e Invia Tutto
-                </button>
-            </div>
-        </div>
-    </div>
-    
     <script>
         // =============================================
         // VARIABILI GLOBALI
@@ -3535,14 +3270,11 @@
         
         // Foto scontrini
         let uploadedPhotos = [];
+        let uploadedFotoPrima = [];
+        let uploadedFotoDopo = [];
         
         // DDT per fatturazione
         let uploadedDDTs = [];
-        
-        // Batch mode (fatturazione multipla)
-        let isBatchMode = false;
-        let selectedBollettiniIds = new Set();
-        let batchUploadedDDTs = [];
         
         // Email
         let pendingEmailData = null;
@@ -3552,11 +3284,6 @@
         
         // Logo per PDF
         let logoBase64 = null;
-        
-        // Formatta ID bollettino a 4 cifre con #
-        function formatBollettinoId(id) {
-            return '#' + String(id).padStart(4, '0');
-        }
         
         // Precarica logo per PDF
         function preloadLogo() {
@@ -3760,16 +3487,6 @@
                     localStorage.setItem('plm_user', JSON.stringify(currentUser));
                     
                     console.log('Permessi caricati - canValidate:', canValidate, 'canInvoice:', canInvoice);
-                    
-                    // Mostra/nascondi bottone fatturazione multipla
-                    const btnBatchMode = document.getElementById('btn-batch-mode');
-                    if (btnBatchMode) {
-                        if (canValidate || canInvoice) {
-                            btnBatchMode.classList.add('visible');
-                        } else {
-                            btnBatchMode.classList.remove('visible');
-                        }
-                    }
                 }
             } catch (e) {
                 console.log('Errore caricamento permessi:', e);
@@ -4208,10 +3925,6 @@
                 const isInvoiced = b.fatturato === true;
                 const hasFirma = b.firma_cliente && b.firma_cliente.data;
                 
-                // Può essere selezionato per batch: validato ma NON fatturato
-                const canBeSelected = isValidated && !isInvoiced;
-                const isSelected = selectedBollettiniIds.has(b.id_bollettino);
-                
                 let badge = '<span class="bollettino-badge pending">In attesa</span>';
                 if (isInvoiced) {
                     badge = '<span class="bollettino-badge completed">✓ Completo</span>';
@@ -4221,20 +3934,8 @@
                     badge = '<span class="bollettino-badge signed">Firmato</span>';
                 }
                 
-                // Checkbox HTML (visibile solo in batch mode)
-                const checkboxHtml = canBeSelected ? `
-                    <div class="bollettino-checkbox ${isSelected ? 'checked' : ''}" data-id="${b.id_bollettino}">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                            <polyline points="20 6 9 17 4 12"/>
-                        </svg>
-                    </div>
-                ` : '';
-                
                 html += `
-                    <div class="bollettino-card ${canBeSelected ? 'selectable' : ''} ${isSelected ? 'selected' : ''}" 
-                         data-id="${b.id_bollettino}"
-                         onclick="handleCardClick(${b.id_bollettino}, ${canBeSelected})">
-                        ${checkboxHtml}
+                    <div class="bollettino-card" onclick="openDettaglio(${b.id_bollettino})">
                         <div class="bollettino-card-header">
                             <div class="bollettino-date-block">
                                 <div class="bollettino-date">${dateStr}</div>
@@ -4294,10 +3995,15 @@
                 document.getElementById('bollettino-note').value = '';
                 document.getElementById('bollettino-totale-speso').value = '';
                 document.getElementById('bollettino-email').value = '';
+                document.getElementById('bollettino-email-fatturazione').value = '';
                 document.getElementById('bollettino-firmatario').value = '';
                 
                 uploadedPhotos = [];
+                uploadedFotoPrima = [];
+                uploadedFotoDopo = [];
                 renderPhotosGrid();
+                renderFotoPrimaGrid();
+                renderFotoDopoGrid();
                 
                 // Calcola ore con i valori di default
                 setTimeout(calcOre, 100);
@@ -4523,6 +4229,124 @@
         }
         
         // =============================================
+        // FOTO PRIMA INTERVENTO
+        // =============================================
+        function handleFotoPrimaUpload(event) {
+            const files = event.target.files;
+            if (!files || files.length === 0) return;
+            
+            Array.from(files).forEach(file => {
+                if (file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        uploadedFotoPrima.push({
+                            data: e.target.result,
+                            name: file.name,
+                            timestamp: new Date().toISOString()
+                        });
+                        renderFotoPrimaGrid();
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+            event.target.value = '';
+        }
+        
+        function removeFotoPrima(index) {
+            uploadedFotoPrima.splice(index, 1);
+            renderFotoPrimaGrid();
+        }
+        
+        function renderFotoPrimaGrid() {
+            const grid = document.getElementById('photos-grid-prima');
+            if (!grid) return;
+            
+            let html = uploadedFotoPrima.map((photo, index) => `
+                <div class="photo-item">
+                    <img src="${photo.data}" alt="Foto Prima">
+                    <button class="photo-remove" onclick="event.stopPropagation(); removeFotoPrima(${index})">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18"/>
+                            <line x1="6" y1="6" x2="18" y2="18"/>
+                        </svg>
+                    </button>
+                </div>
+            `).join('');
+            
+            html += `
+                <div class="photo-item photo-add-placeholder" onclick="document.getElementById('foto-prima-input').click()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                        <line x1="12" y1="8" x2="12" y2="16"/>
+                        <line x1="8" y1="12" x2="16" y2="12"/>
+                    </svg>
+                    <span>Aggiungi</span>
+                </div>
+            `;
+            
+            grid.innerHTML = html;
+        }
+        
+        // =============================================
+        // FOTO DOPO INTERVENTO
+        // =============================================
+        function handleFotoDopoUpload(event) {
+            const files = event.target.files;
+            if (!files || files.length === 0) return;
+            
+            Array.from(files).forEach(file => {
+                if (file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        uploadedFotoDopo.push({
+                            data: e.target.result,
+                            name: file.name,
+                            timestamp: new Date().toISOString()
+                        });
+                        renderFotoDopoGrid();
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+            event.target.value = '';
+        }
+        
+        function removeFotoDopo(index) {
+            uploadedFotoDopo.splice(index, 1);
+            renderFotoDopoGrid();
+        }
+        
+        function renderFotoDopoGrid() {
+            const grid = document.getElementById('photos-grid-dopo');
+            if (!grid) return;
+            
+            let html = uploadedFotoDopo.map((photo, index) => `
+                <div class="photo-item">
+                    <img src="${photo.data}" alt="Foto Dopo">
+                    <button class="photo-remove" onclick="event.stopPropagation(); removeFotoDopo(${index})">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18"/>
+                            <line x1="6" y1="6" x2="18" y2="18"/>
+                        </svg>
+                    </button>
+                </div>
+            `).join('');
+            
+            html += `
+                <div class="photo-item photo-add-placeholder" onclick="document.getElementById('foto-dopo-input').click()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                        <line x1="12" y1="8" x2="12" y2="16"/>
+                        <line x1="8" y1="12" x2="16" y2="12"/>
+                    </svg>
+                    <span>Aggiungi</span>
+                </div>
+            `;
+            
+            grid.innerHTML = html;
+        }
+        
+        // =============================================
         // SALVA BOLLETTINO
         // =============================================
         async function saveBollettino() {
@@ -4545,8 +4369,11 @@
                 note: document.getElementById('bollettino-note').value || null,
                 firma_cliente: getFirmaData(),
                 foto_scontrini: uploadedPhotos.length > 0 ? uploadedPhotos : null,
+                foto_prima: uploadedFotoPrima.length > 0 ? uploadedFotoPrima : null,
+                foto_dopo: uploadedFotoDopo.length > 0 ? uploadedFotoDopo : null,
                 totale_speso: parseFloat(document.getElementById('bollettino-totale-speso').value) || null,
                 email_cliente: document.getElementById('bollettino-email').value || null,
+                email_fatturazione: document.getElementById('bollettino-email-fatturazione').value || null,
                 nome_firmatario: document.getElementById('bollettino-firmatario').value || null,
                 data_modifica: new Date().toISOString()
             };
@@ -4646,6 +4473,8 @@
             
             const hasFirma = bollettino.firma_cliente && bollettino.firma_cliente.data;
             const hasPhotos = bollettino.foto_scontrini && bollettino.foto_scontrini.length > 0;
+            const hasFotoPrima = bollettino.foto_prima && bollettino.foto_prima.length > 0;
+            const hasFotoDopo = bollettino.foto_dopo && bollettino.foto_dopo.length > 0;
             const isValidated = bollettino.validato === true;
             const isInvoiced = bollettino.fatturato === true;
             const hasDDT = bollettino.ddt_files && bollettino.ddt_files.length > 0;
@@ -4709,7 +4538,7 @@
                                 </svg>
                                 <div>
                                     <div>✅ Completo - Fatturato</div>
-                                    ${bollettino.data_fatturazione ? `<div class="invoice-info">Fatturato il ${new Date(bollettino.data_fatturazione).toLocaleDateString('it-IT')}${bollettino.fatturato_da ? ` da ${bollettino.fatturato_da}` : ''}</div>` : ''}
+                                    ${bollettino.data_fatturazione ? `<div class="invoice-info">Fatturato il ${new Date(bollettino.data_fatturazione).toLocaleDateString('it-IT')} alle ${new Date(bollettino.data_fatturazione).toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' })}${bollettino.fatturato_da ? ` da ${bollettino.fatturato_da}` : ''}</div>` : ''}
                                 </div>
                             </div>
                         ` : `
@@ -4808,6 +4637,32 @@
                         <div class="no-firma">⚠️ Firma non presente</div>
                     `}
                 </div>
+                
+                ${hasFotoPrima ? `
+                <div class="detail-section">
+                    <div class="detail-section-title">📷 Foto PRIMA (${bollettino.foto_prima.length})</div>
+                    <div class="detail-photos">
+                        ${bollettino.foto_prima.map((photo, i) => `
+                            <div class="detail-photo" onclick="openPhotoModal('${photo.data}')">
+                                <img src="${photo.data}" alt="Prima ${i + 1}">
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+                ` : ''}
+                
+                ${hasFotoDopo ? `
+                <div class="detail-section">
+                    <div class="detail-section-title" style="color: #10b981;">📷 Foto DOPO (${bollettino.foto_dopo.length})</div>
+                    <div class="detail-photos">
+                        ${bollettino.foto_dopo.map((photo, i) => `
+                            <div class="detail-photo" onclick="openPhotoModal('${photo.data}')">
+                                <img src="${photo.data}" alt="Dopo ${i + 1}">
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+                ` : ''}
                 
                 ${hasPhotos || bollettino.totale_speso ? `
                 <div class="detail-section">
@@ -5006,11 +4861,16 @@
             document.getElementById('bollettino-note').value = bollettino.note || '';
             document.getElementById('bollettino-totale-speso').value = bollettino.totale_speso || '';
             document.getElementById('bollettino-email').value = bollettino.email_cliente || '';
+            document.getElementById('bollettino-email-fatturazione').value = bollettino.email_fatturazione || '';
             document.getElementById('bollettino-firmatario').value = bollettino.nome_firmatario || '';
             
             // Carica foto esistenti
             uploadedPhotos = bollettino.foto_scontrini || [];
+            uploadedFotoPrima = bollettino.foto_prima || [];
+            uploadedFotoDopo = bollettino.foto_dopo || [];
             renderPhotosGrid();
+            renderFotoPrimaGrid();
+            renderFotoDopoGrid();
             
             openModal(false);
             
@@ -5279,10 +5139,9 @@
             }
             
             doc.setTextColor(255, 255, 255);
-            doc.setFontSize(20);
+            doc.setFontSize(22);
             doc.setFont('helvetica', 'bold');
-            const bollettinoIdFormatted = formatBollettinoId(bollettinoData.id_bollettino);
-            doc.text(`BOLLETTINO INTERVENTO ${bollettinoIdFormatted}`, 115, 18, { align: 'center' });
+            doc.text('BOLLETTINO INTERVENTO', 115, 18, { align: 'center' });
             
             doc.setFontSize(11);
             doc.setFont('helvetica', 'normal');
@@ -5444,6 +5303,100 @@
                 }
             }
             
+            y += firmaHeight + 10;
+            
+            // =============================================
+            // FOTO PRIMA INTERVENTO
+            // =============================================
+            if (bollettinoData.foto_prima && bollettinoData.foto_prima.length > 0) {
+                checkPageBreak(50);
+                
+                // Titolo sezione
+                doc.setFillColor(...primaryColor);
+                doc.rect(15, y, 180, 8, 'F');
+                doc.setTextColor(255, 255, 255);
+                doc.setFontSize(10);
+                doc.setFont('helvetica', 'bold');
+                doc.text('FOTO PRIMA INTERVENTO (' + bollettinoData.foto_prima.length + ')', 20, y + 6);
+                y += 12;
+                
+                // Griglia foto (2 per riga)
+                const photoWidth = 85;
+                const photoHeight = 55;
+                const gap = 10;
+                
+                for (let i = 0; i < bollettinoData.foto_prima.length; i++) {
+                    const photo = bollettinoData.foto_prima[i];
+                    const col = i % 2;
+                    
+                    if (col === 0 && i > 0) {
+                        y += photoHeight + gap;
+                    }
+                    
+                    checkPageBreak(photoHeight + gap);
+                    
+                    const x = col === 0 ? 15 : 15 + photoWidth + gap;
+                    
+                    try {
+                        doc.addImage(photo.data, 'JPEG', x, y, photoWidth, photoHeight);
+                    } catch (e) {
+                        doc.setFillColor(...bgColor);
+                        doc.rect(x, y, photoWidth, photoHeight, 'F');
+                        doc.setTextColor(...mutedColor);
+                        doc.setFontSize(8);
+                        doc.text('Foto non disponibile', x + photoWidth/2, y + photoHeight/2, { align: 'center' });
+                    }
+                }
+                
+                y += photoHeight + 12;
+            }
+            
+            // =============================================
+            // FOTO DOPO INTERVENTO
+            // =============================================
+            if (bollettinoData.foto_dopo && bollettinoData.foto_dopo.length > 0) {
+                checkPageBreak(50);
+                
+                // Titolo sezione (verde)
+                doc.setFillColor(16, 185, 129);
+                doc.rect(15, y, 180, 8, 'F');
+                doc.setTextColor(255, 255, 255);
+                doc.setFontSize(10);
+                doc.setFont('helvetica', 'bold');
+                doc.text('FOTO DOPO INTERVENTO (' + bollettinoData.foto_dopo.length + ')', 20, y + 6);
+                y += 12;
+                
+                // Griglia foto (2 per riga)
+                const photoWidth = 85;
+                const photoHeight = 55;
+                const gap = 10;
+                
+                for (let i = 0; i < bollettinoData.foto_dopo.length; i++) {
+                    const photo = bollettinoData.foto_dopo[i];
+                    const col = i % 2;
+                    
+                    if (col === 0 && i > 0) {
+                        y += photoHeight + gap;
+                    }
+                    
+                    checkPageBreak(photoHeight + gap);
+                    
+                    const x = col === 0 ? 15 : 15 + photoWidth + gap;
+                    
+                    try {
+                        doc.addImage(photo.data, 'JPEG', x, y, photoWidth, photoHeight);
+                    } catch (e) {
+                        doc.setFillColor(...bgColor);
+                        doc.rect(x, y, photoWidth, photoHeight, 'F');
+                        doc.setTextColor(...mutedColor);
+                        doc.setFontSize(8);
+                        doc.text('Foto non disponibile', x + photoWidth/2, y + photoHeight/2, { align: 'center' });
+                    }
+                }
+                
+                y += photoHeight + 12;
+            }
+            
             // Footer finale
             addFooter();
             
@@ -5456,11 +5409,10 @@
                 // Genera blob dal PDF
                 const pdfBlob = pdfDoc.output('blob');
                 
-                // Nome file con ID formattato (es: Bollettino_#0006_Cariba_20260123.pdf)
-                const idFormatted = formatBollettinoId(bollettinoData.id_bollettino).replace('#', '');
+                // Nome file
                 const dataFile = bollettinoData.data ? bollettinoData.data.replace(/-/g, '') : 'data';
                 const clienteFile = (bollettinoData.cliente || 'cliente').replace(/[^a-zA-Z0-9]/g, '_');
-                const fileName = `pdf/Bollettino_${idFormatted}_${clienteFile}_${dataFile}.pdf`;
+                const fileName = `pdf/Bollettino_${clienteFile}_${dataFile}_${Date.now()}.pdf`;
                 
                 // Upload su Supabase Storage
                 const { data, error } = await supabaseClient.storage
@@ -5501,9 +5453,6 @@
                     day: '2-digit', month: 'long', year: 'numeric'
                 });
                 
-                // ID formattato
-                const idFormatted = formatBollettinoId(bollettinoData.id_bollettino);
-                
                 // Carica firma su Storage e ottieni URL pubblico
                 let firmaUrl = '';
                 if (bollettinoData.firma_cliente && bollettinoData.firma_cliente.data) {
@@ -5533,10 +5482,10 @@
                     firmaHtml += '<em>Firma non disponibile</em>';
                 }
                 
-                // Prepara HTML link PDF con ID
+                // Prepara HTML link PDF
                 let pdfHtml = '';
                 if (pdfUrl) {
-                    pdfHtml = `<a href="${pdfUrl}" style="display:inline-block; background:#dc2626; color:#ffffff; padding:12px 24px; border-radius:8px; text-decoration:none; font-weight:bold;">📄 Scarica PDF Bollettino ${idFormatted}</a>`;
+                    pdfHtml = `<a href="${pdfUrl}" style="display:inline-block; background:#dc2626; color:#ffffff; padding:12px 24px; border-radius:8px; text-decoration:none; font-weight:bold;">📄 Scarica PDF Bollettino</a>`;
                 }
                 
                 console.log('Firma URL:', firmaUrl);
@@ -5548,7 +5497,6 @@
                     {
                         to_email: bollettinoData.email_cliente,
                         to_name: 'cliente',  // Fisso "Gentile cliente"
-                        subject: `Bollettino Intervento ${idFormatted} - Pro System S.r.l.`,
                         data_intervento: dataFormatted,
                         tecnico: bollettinoData.tecnico_installatore,
                         macchina: bollettinoData.montaggio_macchina || 'Non specificata',
@@ -5709,8 +5657,8 @@
             document.getElementById('invoice-macchina').textContent = bollettino.montaggio_macchina + (bollettino.matricola ? ` (${bollettino.matricola})` : '') || '-';
             document.getElementById('invoice-data').textContent = dataFormatted;
             
-            // Popola email cliente (se presente nel bollettino)
-            document.getElementById('invoice-email-cliente').value = bollettino.email_cliente || '';
+            // Popola email (usa email_fatturazione se presente, altrimenti email_cliente)
+            document.getElementById('invoice-email-cliente').value = bollettino.email_fatturazione || bollettino.email_cliente || '';
             
             // Reset form
             document.getElementById('uploaded-ddt-list').innerHTML = '';
@@ -5831,17 +5779,30 @@
             console.log('=== COMPLETE INVOICE START ===');
             console.log('DDT caricati:', uploadedDDTs.length, uploadedDDTs);
             
+            // Controllo email obbligatoria
+            const emailCliente = document.getElementById('invoice-email-cliente').value.trim();
+            if (!emailCliente) {
+                alert('⚠️ Email obbligatoria!\n\nInserisci l\'email del cliente per inviare la documentazione.');
+                document.getElementById('invoice-email-cliente').focus();
+                return;
+            }
+            
+            // Validazione formato email
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(emailCliente)) {
+                alert('⚠️ Email non valida!\n\nInserisci un indirizzo email valido.');
+                document.getElementById('invoice-email-cliente').focus();
+                return;
+            }
+            
             if (uploadedDDTs.length === 0) {
                 alert('Carica almeno un DDT');
                 return;
             }
             
             const bollettino = allBollettini.find(b => b.id_bollettino === currentBollettinoId);
-            
-            // Prendi email dal campo input (può essere modificata dall'utente)
-            const emailCliente = document.getElementById('invoice-email-cliente').value.trim();
             console.log('Bollettino trovato:', bollettino);
-            console.log('Email cliente (da input):', emailCliente);
+            console.log('Email cliente:', emailCliente);
             
             if (!bollettino) return;
             
@@ -5862,25 +5823,18 @@
                     }
                 }
                 
-                // Aggiorna database (salva anche l'email se diversa)
+                // Aggiorna database
                 console.log('Aggiornamento database...');
-                const updateData = {
-                    fatturato: true,
-                    data_fatturazione: new Date().toISOString(),
-                    fatturato_da: fatturatoDa,
-                    ddt_files: uploadedDDTs,
-                    pdf_bollettino_url: pdfBollettinoUrl,
-                    note_fatturazione: document.getElementById('invoice-notes').value || null
-                };
-                
-                // Se l'email è stata modificata, aggiornala anche nel bollettino
-                if (emailCliente && emailCliente !== bollettino.email_cliente) {
-                    updateData.email_cliente = emailCliente;
-                }
-                
                 const { error } = await supabaseClient
                     .from('BollettiniMontatori')
-                    .update(updateData)
+                    .update({
+                        fatturato: true,
+                        data_fatturazione: new Date().toISOString(),
+                        fatturato_da: fatturatoDa,
+                        ddt_files: uploadedDDTs,
+                        pdf_bollettino_url: pdfBollettinoUrl,
+                        note_fatturazione: document.getElementById('invoice-notes').value || null
+                    })
                     .eq('id_bollettino', currentBollettinoId);
                 
                 if (error) {
@@ -5889,17 +5843,12 @@
                 }
                 console.log('Database aggiornato OK');
                 
-                // Invia email al cliente se ha email
-                if (emailCliente) {
-                    console.log('Invio email a:', emailCliente);
-                    Loader.updateText('Invio email cliente...');
-                    // Crea una copia del bollettino con l'email aggiornata per l'invio
-                    const bollettinoConEmail = { ...bollettino, email_cliente: emailCliente };
-                    const emailResult = await sendInvoiceEmail(bollettinoConEmail, uploadedDDTs, pdfBollettinoUrl);
-                    console.log('Risultato email:', emailResult);
-                } else {
-                    console.log('Nessuna email cliente, skip invio');
-                }
+                // Invia email al cliente (già validata come obbligatoria)
+                console.log('Invio email a:', emailCliente);
+                Loader.updateText('Invio email cliente...');
+                const bollettinoConEmail = { ...bollettino, email_cliente: emailCliente };
+                const emailResult = await sendInvoiceEmail(bollettinoConEmail, uploadedDDTs, pdfBollettinoUrl);
+                console.log('Risultato email:', emailResult);
                 
                 closeInvoiceModal();
                 closeModalDettaglio();
@@ -5929,19 +5878,16 @@
                     day: '2-digit', month: 'long', year: 'numeric'
                 });
                 
-                // ID formattato
-                const idFormatted = formatBollettinoId(bollettinoData.id_bollettino);
-                
                 // Prepara HTML per DDT
                 let ddtHtml = '';
                 ddtFiles.forEach((ddt, i) => {
                     ddtHtml += `<a href="${ddt.url}" style="display:inline-block; background:#10b981; color:#ffffff; padding:10px 20px; border-radius:8px; text-decoration:none; font-weight:bold; margin:4px;">📄 ${ddt.name}</a><br>`;
                 });
                 
-                // Link al PDF bollettino con ID
+                // Link al PDF bollettino
                 let bollettinoHtml = '';
                 if (pdfBollettinoUrl) {
-                    bollettinoHtml = `<a href="${pdfBollettinoUrl}" style="display:inline-block; background:#dc2626; color:#ffffff; padding:10px 20px; border-radius:8px; text-decoration:none; font-weight:bold; margin:4px;">📋 Bollettino Intervento ${idFormatted}</a>`;
+                    bollettinoHtml = `<a href="${pdfBollettinoUrl}" style="display:inline-block; background:#dc2626; color:#ffffff; padding:10px 20px; border-radius:8px; text-decoration:none; font-weight:bold; margin:4px;">📋 Bollettino Intervento</a>`;
                 }
                 
                 const response = await emailjs.send(
@@ -5950,7 +5896,7 @@
                     {
                         to_email: bollettinoData.email_cliente,
                         to_name: 'cliente',
-                        subject: `Documentazione Intervento ${idFormatted} - Pro System S.r.l.`,
+                        subject: 'Documentazione Intervento - Pro System S.r.l.',
                         data_intervento: dataFormatted,
                         tecnico: bollettinoData.tecnico_installatore,
                         macchina: bollettinoData.montaggio_macchina || 'Non specificata',
@@ -5969,433 +5915,6 @@
                 return true;
             } catch (error) {
                 console.error('Errore invio email fatturazione:', error);
-                return false;
-            }
-        }
-        
-        // =============================================
-        // FATTURAZIONE MULTIPLA (BATCH)
-        // =============================================
-        
-        // Gestisce il click sulla card
-        function handleCardClick(bollettinoId, canBeSelected) {
-            if (isBatchMode && canBeSelected) {
-                toggleBollettinoSelection(bollettinoId);
-            } else {
-                openDettaglio(bollettinoId);
-            }
-        }
-        
-        // Attiva/disattiva modalità batch
-        function toggleBatchMode() {
-            isBatchMode = !isBatchMode;
-            const btn = document.getElementById('btn-batch-mode');
-            const list = document.getElementById('bollettini-list');
-            const bar = document.getElementById('batch-selection-bar');
-            
-            if (isBatchMode) {
-                btn.classList.add('active');
-                list.classList.add('batch-mode');
-                bar.classList.add('show');
-                selectedBollettiniIds.clear();
-                updateBatchSelectionUI();
-            } else {
-                exitBatchMode();
-            }
-        }
-        
-        // Esce dalla modalità batch
-        function exitBatchMode() {
-            isBatchMode = false;
-            selectedBollettiniIds.clear();
-            
-            const btn = document.getElementById('btn-batch-mode');
-            const list = document.getElementById('bollettini-list');
-            const bar = document.getElementById('batch-selection-bar');
-            
-            btn.classList.remove('active');
-            list.classList.remove('batch-mode');
-            bar.classList.remove('show');
-            
-            // Rimuovi selezione visiva
-            document.querySelectorAll('.bollettino-card.selected').forEach(card => {
-                card.classList.remove('selected');
-            });
-            document.querySelectorAll('.bollettino-checkbox.checked').forEach(cb => {
-                cb.classList.remove('checked');
-            });
-        }
-        
-        // Seleziona/deseleziona un bollettino
-        function toggleBollettinoSelection(bollettinoId) {
-            const card = document.querySelector(`.bollettino-card[data-id="${bollettinoId}"]`);
-            const checkbox = card?.querySelector('.bollettino-checkbox');
-            
-            if (selectedBollettiniIds.has(bollettinoId)) {
-                selectedBollettiniIds.delete(bollettinoId);
-                card?.classList.remove('selected');
-                checkbox?.classList.remove('checked');
-            } else {
-                selectedBollettiniIds.add(bollettinoId);
-                card?.classList.add('selected');
-                checkbox?.classList.add('checked');
-            }
-            
-            updateBatchSelectionUI();
-        }
-        
-        // Aggiorna UI selezione batch
-        function updateBatchSelectionUI() {
-            const count = selectedBollettiniIds.size;
-            document.getElementById('batch-selection-count').textContent = `${count} selezionat${count === 1 ? 'o' : 'i'}`;
-            document.getElementById('btn-open-batch-invoice').disabled = count === 0;
-        }
-        
-        // Apre il modale fatturazione batch
-        function openBatchInvoiceModal() {
-            if (selectedBollettiniIds.size === 0) return;
-            
-            batchUploadedDDTs = [];
-            
-            // Popola lista bollettini selezionati
-            const listContainer = document.getElementById('batch-bollettini-list');
-            let html = '';
-            
-            selectedBollettiniIds.forEach(id => {
-                const b = allBollettini.find(x => x.id_bollettino === id);
-                if (b) {
-                    const dataStr = b.data ? new Date(b.data).toLocaleDateString('it-IT', { day: '2-digit', month: 'short' }) : '-';
-                    const idFormatted = formatBollettinoId(b.id_bollettino);
-                    html += `
-                        <div class="batch-bollettino-item" data-id="${b.id_bollettino}">
-                            <div class="batch-bollettino-info">
-                                <div class="batch-bollettino-cliente"><strong>${idFormatted}</strong> - ${b.cliente || 'N/D'}</div>
-                                <div class="batch-bollettino-meta">${dataStr} • ${b.montaggio_macchina || 'N/D'}</div>
-                            </div>
-                            <button class="batch-bollettino-remove" onclick="removeBollettinFromBatch(${b.id_bollettino})">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <line x1="18" y1="6" x2="6" y2="18"/>
-                                    <line x1="6" y1="6" x2="18" y2="18"/>
-                                </svg>
-                            </button>
-                        </div>
-                    `;
-                }
-            });
-            
-            listContainer.innerHTML = html;
-            document.getElementById('batch-count').textContent = selectedBollettiniIds.size;
-            
-            // Reset form
-            document.getElementById('batch-email-cliente').value = '';
-            document.getElementById('batch-uploaded-ddt-list').innerHTML = '';
-            document.getElementById('batch-invoice-notes').value = '';
-            document.getElementById('btn-complete-batch-invoice').disabled = true;
-            
-            // Mostra modal
-            document.getElementById('modal-fatturazione-batch').classList.add('show');
-            document.body.style.overflow = 'hidden';
-        }
-        
-        // Chiudi modal fatturazione batch
-        function closeBatchInvoiceModal() {
-            document.getElementById('modal-fatturazione-batch').classList.remove('show');
-            document.body.style.overflow = '';
-            batchUploadedDDTs = [];
-        }
-        
-        // Rimuovi bollettino dalla selezione batch (dal modale)
-        function removeBollettinFromBatch(bollettinoId) {
-            selectedBollettiniIds.delete(bollettinoId);
-            
-            // Rimuovi dalla lista nel modale
-            const item = document.querySelector(`.batch-bollettino-item[data-id="${bollettinoId}"]`);
-            if (item) item.remove();
-            
-            // Aggiorna conteggio
-            document.getElementById('batch-count').textContent = selectedBollettiniIds.size;
-            
-            // Aggiorna anche la card nella lista principale
-            const card = document.querySelector(`.bollettino-card[data-id="${bollettinoId}"]`);
-            const checkbox = card?.querySelector('.bollettino-checkbox');
-            card?.classList.remove('selected');
-            checkbox?.classList.remove('checked');
-            
-            updateBatchSelectionUI();
-            
-            // Se non ci sono più bollettini, chiudi il modale
-            if (selectedBollettiniIds.size === 0) {
-                closeBatchInvoiceModal();
-            }
-        }
-        
-        // Gestisci upload DDT per batch
-        async function handleBatchDDTUpload(event) {
-            const files = event.target.files;
-            if (!files || files.length === 0) return;
-            
-            Loader.show('invio', 'Caricamento DDT...');
-            
-            for (const file of files) {
-                if (file.type !== 'application/pdf') {
-                    alert('Solo file PDF sono accettati');
-                    continue;
-                }
-                
-                try {
-                    // Converti in base64
-                    const base64 = await new Promise((resolve, reject) => {
-                        const reader = new FileReader();
-                        reader.onload = () => resolve(reader.result);
-                        reader.onerror = reject;
-                        reader.readAsDataURL(file);
-                    });
-                    
-                    // Carica su Supabase Storage
-                    const fileName = `ddt/DDT_BATCH_${Date.now()}_${file.name}`;
-                    const blob = await fetch(base64).then(r => r.blob());
-                    
-                    const { data, error } = await supabaseClient.storage
-                        .from('bollettini')
-                        .upload(fileName, blob, {
-                            contentType: 'application/pdf',
-                            upsert: true
-                        });
-                    
-                    if (error) throw error;
-                    
-                    // Ottieni URL pubblico
-                    const { data: urlData } = supabaseClient.storage
-                        .from('bollettini')
-                        .getPublicUrl(fileName);
-                    
-                    // Aggiungi alla lista
-                    batchUploadedDDTs.push({
-                        name: file.name,
-                        url: urlData.publicUrl,
-                        uploaded_at: new Date().toISOString()
-                    });
-                    
-                } catch (e) {
-                    console.error('Errore upload DDT batch:', e);
-                    alert('Errore caricamento: ' + file.name);
-                }
-            }
-            
-            // Aggiorna UI
-            renderBatchUploadedDDTs();
-            event.target.value = ''; // Reset input
-            
-            Loader.hide();
-        }
-        
-        // Render lista DDT batch caricati
-        function renderBatchUploadedDDTs() {
-            const container = document.getElementById('batch-uploaded-ddt-list');
-            
-            if (batchUploadedDDTs.length === 0) {
-                container.innerHTML = '';
-                document.getElementById('btn-complete-batch-invoice').disabled = true;
-                return;
-            }
-            
-            container.innerHTML = batchUploadedDDTs.map((ddt, i) => `
-                <div class="ddt-file-item">
-                    <div class="ddt-file-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                            <polyline points="14 2 14 8 20 8"/>
-                        </svg>
-                    </div>
-                    <span class="ddt-file-name">${ddt.name}</span>
-                    <button class="ddt-file-remove" onclick="removeBatchDDT(${i})">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <line x1="18" y1="6" x2="6" y2="18"/>
-                            <line x1="6" y1="6" x2="18" y2="18"/>
-                        </svg>
-                    </button>
-                </div>
-            `).join('');
-            
-            document.getElementById('btn-complete-batch-invoice').disabled = false;
-        }
-        
-        // Rimuovi DDT dalla lista batch
-        function removeBatchDDT(index) {
-            batchUploadedDDTs.splice(index, 1);
-            renderBatchUploadedDDTs();
-        }
-        
-        // Completa fatturazione batch
-        async function completeBatchInvoice() {
-            console.log('=== COMPLETE BATCH INVOICE START ===');
-            
-            if (batchUploadedDDTs.length === 0) {
-                alert('Carica almeno un DDT');
-                return;
-            }
-            
-            if (selectedBollettiniIds.size === 0) {
-                alert('Nessun bollettino selezionato');
-                return;
-            }
-            
-            const emailCliente = document.getElementById('batch-email-cliente').value.trim();
-            const notes = document.getElementById('batch-invoice-notes').value.trim();
-            
-            try {
-                Loader.show('invio', 'Fatturazione in corso...');
-                
-                const fatturatoDa = `${currentUser.nome || ''} ${currentUser.cognome || ''}`.trim();
-                const idsArray = Array.from(selectedBollettiniIds);
-                const bollettiniDaFatturare = allBollettini.filter(b => idsArray.includes(b.id_bollettino));
-                
-                // Array per salvare gli URL dei PDF dei bollettini
-                let pdfBollettiniUrls = [];
-                
-                // Genera e salva PDF per ogni bollettino
-                for (let i = 0; i < bollettiniDaFatturare.length; i++) {
-                    const bollettino = bollettiniDaFatturare[i];
-                    Loader.updateText(`Generazione PDF ${i + 1}/${bollettiniDaFatturare.length}...`);
-                    
-                    let pdfUrl = bollettino.pdf_bollettino_url;
-                    if (!pdfUrl) {
-                        try {
-                            const pdfDoc = generateBollettinoPDF(bollettino);
-                            pdfUrl = await uploadPDFToStorage(pdfDoc, bollettino);
-                        } catch (e) {
-                            console.error('Errore generazione PDF:', e);
-                        }
-                    }
-                    
-                    if (pdfUrl) {
-                        pdfBollettiniUrls.push({
-                            id: bollettino.id_bollettino,
-                            cliente: bollettino.cliente,
-                            url: pdfUrl
-                        });
-                    }
-                }
-                
-                // Aggiorna tutti i bollettini nel database
-                Loader.updateText('Aggiornamento database...');
-                
-                for (const id of idsArray) {
-                    const pdfInfo = pdfBollettiniUrls.find(p => p.id === id);
-                    
-                    const { error } = await supabaseClient
-                        .from('BollettiniMontatori')
-                        .update({
-                            fatturato: true,
-                            data_fatturazione: new Date().toISOString(),
-                            fatturato_da: fatturatoDa,
-                            ddt_files: batchUploadedDDTs,
-                            pdf_bollettino_url: pdfInfo?.url || null,
-                            note_fatturazione: notes || null
-                        })
-                        .eq('id_bollettino', id);
-                    
-                    if (error) {
-                        console.error('Errore aggiornamento bollettino:', id, error);
-                    }
-                }
-                
-                // Invia email unica con tutti i bollettini e DDT
-                if (emailCliente) {
-                    Loader.updateText('Invio email...');
-                    await sendBatchInvoiceEmail(emailCliente, bollettiniDaFatturare, batchUploadedDDTs, pdfBollettiniUrls);
-                }
-                
-                // Chiudi tutto e ricarica
-                closeBatchInvoiceModal();
-                exitBatchMode();
-                
-                Loader.updateText('Aggiornamento lista...');
-                await loadBollettini(false);
-                
-                Loader.hide();
-                console.log('=== COMPLETE BATCH INVOICE DONE ===');
-                
-            } catch (e) {
-                console.error('Errore fatturazione batch:', e);
-                Loader.hide();
-                alert('Errore durante la fatturazione: ' + e.message);
-            }
-        }
-        
-        // Invia email batch con tutti i bollettini
-        async function sendBatchInvoiceEmail(emailCliente, bollettini, ddtFiles, pdfBollettiniUrls) {
-            if (!EMAILJS_CONFIG.publicKey || EMAILJS_CONFIG.publicKey === 'YOUR_PUBLIC_KEY') {
-                console.warn('EmailJS non configurato');
-                return false;
-            }
-            
-            try {
-                // Prepara riepilogo interventi come TESTO semplice CON ID
-                let riepilogoTesto = bollettini.map(b => {
-                    const dataStr = b.data ? new Date(b.data).toLocaleDateString('it-IT') : '-';
-                    const idFormatted = formatBollettinoId(b.id_bollettino);
-                    return `• ${idFormatted} - ${dataStr} - ${b.cliente || 'N/D'} - ${b.montaggio_macchina || 'N/D'} (${b.ore_totali || 0}h)`;
-                }).join('\n');
-                
-                // Calcola totale ore
-                const totaleOre = bollettini.reduce((sum, b) => sum + (parseFloat(b.ore_totali) || 0), 0).toFixed(1);
-                
-                // Lista ID per il subject
-                const idsFormatted = bollettini.map(b => formatBollettinoId(b.id_bollettino)).join(', ');
-                
-                // Prepara HTML per DDT (va nel campo pdf_link che supporta HTML)
-                let documentiHtml = '<p style="margin-bottom:10px;"><strong>📄 Documenti di Trasporto:</strong></p>';
-                ddtFiles.forEach((ddt) => {
-                    documentiHtml += `<a href="${ddt.url}" style="display:inline-block; background:#10b981; color:#ffffff; padding:12px 24px; border-radius:8px; text-decoration:none; font-weight:bold; margin:4px 4px 8px 0;">📄 ${ddt.name}</a><br>`;
-                });
-                
-                // Prepara HTML per i bollettini CON ID
-                documentiHtml += '<p style="margin-top:16px; margin-bottom:10px;"><strong>📋 Bollettini Intervento:</strong></p>';
-                pdfBollettiniUrls.forEach((pdf) => {
-                    const bollettino = bollettini.find(b => b.id_bollettino === pdf.id);
-                    const idFormatted = formatBollettinoId(pdf.id);
-                    const dataStr = bollettino?.data ? new Date(bollettino.data).toLocaleDateString('it-IT') : '';
-                    documentiHtml += `<a href="${pdf.url}" style="display:inline-block; background:#dc2626; color:#ffffff; padding:12px 24px; border-radius:8px; text-decoration:none; font-weight:bold; margin:4px 4px 8px 0;">📋 ${idFormatted} - ${pdf.cliente || 'Bollettino'} ${dataStr ? '(' + dataStr + ')' : ''}</a><br>`;
-                });
-                
-                // Lista tecnici unici
-                const tecnici = [...new Set(bollettini.map(b => b.tecnico_installatore).filter(Boolean))].join(', ');
-                
-                // Lista macchine uniche
-                const macchine = [...new Set(bollettini.map(b => b.montaggio_macchina).filter(Boolean))].join(', ');
-                
-                // Data range
-                const date = bollettini.map(b => b.data).filter(Boolean).sort();
-                const dataRange = date.length > 1 
-                    ? `Dal ${new Date(date[0]).toLocaleDateString('it-IT')} al ${new Date(date[date.length-1]).toLocaleDateString('it-IT')}`
-                    : (date[0] ? new Date(date[0]).toLocaleDateString('it-IT') : '-');
-                
-                const response = await emailjs.send(
-                    EMAILJS_CONFIG.serviceId,
-                    EMAILJS_CONFIG.templateFatturazioneId,
-                    {
-                        to_email: emailCliente,
-                        to_name: 'cliente',
-                        subject: `Documentazione Interventi ${idsFormatted} - Pro System S.r.l.`,
-                        data_intervento: dataRange,
-                        tecnico: tecnici || '-',
-                        macchina: macchine || '-',
-                        matricola: bollettini.length + ' interventi',
-                        ore_lavorate: totaleOre + ' ore totali',
-                        orario: '-',
-                        lavori_eseguiti: riepilogoTesto,
-                        note: '-',
-                        firma_html: '',
-                        pdf_link: documentiHtml,
-                        is_invoice: true
-                    }
-                );
-                
-                console.log('Email fatturazione batch inviata:', response);
-                return true;
-            } catch (error) {
-                console.error('Errore invio email fatturazione batch:', error);
                 return false;
             }
         }

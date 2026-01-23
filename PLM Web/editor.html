@@ -429,6 +429,7 @@
                 return;
             }
             
+            const action = pendingAction; // Salva PRIMA che closeModal lo azzeri
             closeModal();
             showStatus('loading', '⏳ Esecuzione...');
             
@@ -454,7 +455,7 @@
                 
                 let result;
                 
-                switch(pendingAction) {
+                switch(action) {
                     case 'soft':
                         result = await db.from('BollettiniMontatori')
                             .update({
@@ -500,7 +501,7 @@
                 }
                 
                 // Verifica se l'operazione ha avuto effetto
-                if (pendingAction === 'hard') {
+                if (action === 'hard') {
                     const { count: countAfter } = await db.from('BollettiniMontatori').select('*', { count: 'exact', head: true });
                     console.log('Record DOPO:', countAfter);
                     
@@ -508,7 +509,7 @@
                         showStatus('error', '❌ ATTENZIONE: Nessun record eliminato! Le RLS di Supabase bloccano l\'operazione. Vai su Supabase → Authentication → Policies e aggiungi una policy per DELETE.');
                         return;
                     }
-                } else if (pendingAction === 'soft') {
+                } else if (action === 'soft') {
                     // Verifica soft delete
                     const { count: eliminatiDopo } = await db.from('BollettiniMontatori').select('*', { count: 'exact', head: true }).eq('eliminato', true);
                     console.log('Eliminati DOPO:', eliminatiDopo);
@@ -517,7 +518,7 @@
                         showStatus('error', '❌ ATTENZIONE: Nessun record modificato! Le RLS di Supabase bloccano l\'UPDATE. Vai su Supabase → Authentication → Policies e aggiungi una policy per UPDATE.');
                         return;
                     }
-                } else if (pendingAction === 'reset') {
+                } else if (action === 'reset') {
                     // Verifica reset - controlla se ci sono ancora record validati
                     const { count: ancoraValidati } = await db.from('BollettiniMontatori').select('*', { count: 'exact', head: true }).eq('validato', true);
                     console.log('Ancora validati DOPO:', ancoraValidati);

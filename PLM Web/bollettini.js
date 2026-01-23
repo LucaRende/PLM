@@ -1290,6 +1290,32 @@ function openDettaglio(id) {
         </div>
         ` : ''}
         
+        ${bollettino.foto_prima && bollettino.foto_prima.length > 0 ? `
+        <div class="detail-section">
+            <div class="detail-section-title">📸 Foto PRIMA (${bollettino.foto_prima.length})</div>
+            <div class="detail-photos">
+                ${bollettino.foto_prima.map((photo, i) => `
+                    <div class="detail-photo" onclick="openPhotoModal('${photo.data}')">
+                        <img src="${photo.data}" alt="Prima ${i + 1}">
+                    </div>
+                `).join('')}
+            </div>
+        </div>
+        ` : ''}
+        
+        ${bollettino.foto_dopo && bollettino.foto_dopo.length > 0 ? `
+        <div class="detail-section">
+            <div class="detail-section-title">📸 Foto DOPO (${bollettino.foto_dopo.length})</div>
+            <div class="detail-photos">
+                ${bollettino.foto_dopo.map((photo, i) => `
+                    <div class="detail-photo" onclick="openPhotoModal('${photo.data}')">
+                        <img src="${photo.data}" alt="Dopo ${i + 1}">
+                    </div>
+                `).join('')}
+            </div>
+        </div>
+        ` : ''}
+        
         <div class="detail-section">
             <div class="detail-section-title">✍️ Firma Cliente</div>
             ${bollettino.nome_firmatario ? `
@@ -1785,11 +1811,15 @@ function generateBollettinoPDF(bollettinoData) {
     doc.setTextColor(255, 255, 255);
     doc.setFontSize(22);
     doc.setFont('helvetica', 'bold');
-    doc.text('BOLLETTINO INTERVENTO', 115, 18, { align: 'center' });
+    doc.text('BOLLETTINO INTERVENTO', 115, 15, { align: 'center' });
+    
+    // ID bollettino formattato
+    doc.setFontSize(14);
+    doc.text(formatBollettinoId(bollettinoData.id_bollettino || 0), 115, 25, { align: 'center' });
     
     doc.setFontSize(11);
     doc.setFont('helvetica', 'normal');
-    doc.text('Pro System S.r.l.', 115, 30, { align: 'center' });
+    doc.text('Pro System S.r.l.', 115, 35, { align: 'center' });
     
     y = 55;
     
@@ -1912,6 +1942,76 @@ function generateBollettinoPDF(bollettinoData) {
     
     y += noteHeight + 15;
     
+    // Foto PRIMA intervento
+    if (bollettinoData.foto_prima && bollettinoData.foto_prima.length > 0) {
+        checkPageBreak(60);
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(12);
+        doc.setTextColor(...textColor);
+        doc.text('FOTO PRIMA INTERVENTO (' + bollettinoData.foto_prima.length + ')', 15, y);
+        y += 8;
+        
+        let xPos = 15;
+        const photoWidth = 40;
+        const photoHeight = 40;
+        const maxPerRow = 4;
+        
+        for (let i = 0; i < bollettinoData.foto_prima.length; i++) {
+            if (i > 0 && i % maxPerRow === 0) {
+                y += photoHeight + 5;
+                xPos = 15;
+                checkPageBreak(photoHeight + 10);
+            }
+            
+            try {
+                doc.addImage(bollettinoData.foto_prima[i].data, 'JPEG', xPos, y, photoWidth, photoHeight);
+            } catch (e) {
+                doc.setFillColor(...bgColor);
+                doc.rect(xPos, y, photoWidth, photoHeight, 'F');
+                doc.setFontSize(8);
+                doc.setTextColor(...mutedColor);
+                doc.text('Foto ' + (i + 1), xPos + photoWidth/2, y + photoHeight/2, { align: 'center' });
+            }
+            xPos += photoWidth + 5;
+        }
+        y += photoHeight + 15;
+    }
+    
+    // Foto DOPO intervento
+    if (bollettinoData.foto_dopo && bollettinoData.foto_dopo.length > 0) {
+        checkPageBreak(60);
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(12);
+        doc.setTextColor(...textColor);
+        doc.text('FOTO DOPO INTERVENTO (' + bollettinoData.foto_dopo.length + ')', 15, y);
+        y += 8;
+        
+        let xPos = 15;
+        const photoWidth = 40;
+        const photoHeight = 40;
+        const maxPerRow = 4;
+        
+        for (let i = 0; i < bollettinoData.foto_dopo.length; i++) {
+            if (i > 0 && i % maxPerRow === 0) {
+                y += photoHeight + 5;
+                xPos = 15;
+                checkPageBreak(photoHeight + 10);
+            }
+            
+            try {
+                doc.addImage(bollettinoData.foto_dopo[i].data, 'JPEG', xPos, y, photoWidth, photoHeight);
+            } catch (e) {
+                doc.setFillColor(...bgColor);
+                doc.rect(xPos, y, photoWidth, photoHeight, 'F');
+                doc.setFontSize(8);
+                doc.setTextColor(...mutedColor);
+                doc.text('Foto ' + (i + 1), xPos + photoWidth/2, y + photoHeight/2, { align: 'center' });
+            }
+            xPos += photoWidth + 5;
+        }
+        y += photoHeight + 15;
+    }
+    
     // Sezione firma
     checkPageBreak(50);
     doc.setFont('helvetica', 'bold');
@@ -1959,10 +2059,11 @@ async function uploadPDFToStorage(pdfDoc, bollettinoData) {
         // Genera blob dal PDF
         const pdfBlob = pdfDoc.output('blob');
         
-        // Nome file
+        // Nome file con formato #0001
+        const idFormatted = formatBollettinoId(bollettinoData.id_bollettino || 0).replace('#', '');
         const dataFile = bollettinoData.data ? bollettinoData.data.replace(/-/g, '') : 'data';
-        const clienteFile = (bollettinoData.cliente || 'cliente').replace(/[^a-zA-Z0-9]/g, '_');
-        const fileName = `pdf/Bollettino_${clienteFile}_${dataFile}_${Date.now()}.pdf`;
+        const clienteFile = (bollettinoData.cliente || 'cliente').replace(/[^a-zA-Z0-9]/g, '_').substring(0, 20);
+        const fileName = `pdf/Bollettino_${idFormatted}_${clienteFile}_${dataFile}.pdf`;
         
         // Upload su Supabase Storage
         const { data, error } = await supabaseClient.storage

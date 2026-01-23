@@ -1,6 +1,20 @@
 /* =============================================
-   BOLLETTINI - MOBILE FIRST DESIGN
+   BOLLETTINI - MOBILE FIRST DESIGN (LIGHT THEME)
    ============================================= */
+
+/* Override variabili per tema chiaro */
+html:root {
+    --surface-0: #ffffff !important;
+    --surface-1: #f8f9fa !important;
+    --surface-2: #f1f3f5 !important;
+    --surface-3: #e9ecef !important;
+    --surface-4: #dee2e6 !important;
+    --text-primary: #212529 !important;
+    --text-secondary: #495057 !important;
+    --text-muted: #868e96 !important;
+    --border-default: #dee2e6 !important;
+    --border-subtle: #e9ecef !important;
+}
 
 /* Fix scroll */
 html, body {
@@ -8,6 +22,11 @@ html, body {
     -webkit-overflow-scrolling: touch;
     height: auto !important;
     min-height: 100%;
+    background: #ffffff !important;
+}
+
+.page {
+    background: #ffffff !important;
 }
 
 .page {

@@ -29,6 +29,139 @@ html, body {
     background: #ffffff !important;
 }
 
+/* =============================================
+   FIX TESTO SU HEADER NERO
+   ============================================= */
+.page-header .page-user-surname,
+.page-header .page-user-name,
+.page-title-bar .page-title {
+    color: #ffffff !important;
+}
+
+.page-header .page-user-name {
+    color: rgba(255, 255, 255, 0.7) !important;
+}
+
+/* =============================================
+   FIX INPUT/FORM NEI MODAL
+   ============================================= */
+.modal-content {
+    background: #ffffff !important;
+}
+
+.modal-content input,
+.modal-content select,
+.modal-content textarea {
+    background: #f8f9fa !important;
+    color: #212529 !important;
+    border-color: #dee2e6 !important;
+}
+
+.modal-content input::placeholder,
+.modal-content textarea::placeholder {
+    color: #868e96 !important;
+}
+
+.modal-content label,
+.modal-content .form-label,
+.modal-content .section-title,
+.modal-content .field-label {
+    color: #495057 !important;
+}
+
+.modal-header {
+    background: #f8f9fa !important;
+    border-bottom: 1px solid #dee2e6 !important;
+}
+
+.modal-header .modal-title {
+    color: #212529 !important;
+}
+
+.modal-body {
+    background: #ffffff !important;
+}
+
+/* Fix ore totali box */
+.ore-display {
+    background: linear-gradient(135deg, #dc2626, #b91c1c) !important;
+    color: #ffffff !important;
+}
+
+/* Fix sezioni colorate nel form */
+.form-section-title {
+    color: #dc2626 !important;
+}
+
+/* =============================================
+   FIX INPUT DATE/TIME PER TEMA CHIARO
+   ============================================= */
+input[type="time"],
+input[type="date"] {
+    color-scheme: light !important;
+    color: #212529 !important;
+    background: #f1f3f5 !important;
+}
+
+input[type="time"]::-webkit-date-and-time-value,
+input[type="date"]::-webkit-date-and-time-value {
+    color: #212529 !important;
+}
+
+input[type="time"]::-webkit-datetime-edit,
+input[type="date"]::-webkit-datetime-edit {
+    color: #212529 !important;
+}
+
+input[type="time"]::-webkit-datetime-edit-fields-wrapper,
+input[type="date"]::-webkit-datetime-edit-fields-wrapper {
+    color: #212529 !important;
+}
+
+input[type="time"]::-webkit-datetime-edit-text,
+input[type="time"]::-webkit-datetime-edit-hour-field,
+input[type="time"]::-webkit-datetime-edit-minute-field,
+input[type="date"]::-webkit-datetime-edit-text,
+input[type="date"]::-webkit-datetime-edit-day-field,
+input[type="date"]::-webkit-datetime-edit-month-field,
+input[type="date"]::-webkit-datetime-edit-year-field {
+    color: #212529 !important;
+}
+
+input[type="time"]::-webkit-calendar-picker-indicator,
+input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: none !important;
+    opacity: 0.6;
+}
+
+/* Fix tutti gli input nel modal */
+.modal-content .form-input,
+.modal-content .form-select,
+.modal-content .form-textarea,
+.modal-content input[type="text"],
+.modal-content input[type="email"],
+.modal-content input[type="number"] {
+    background: #f1f3f5 !important;
+    color: #212529 !important;
+    border-color: #dee2e6 !important;
+}
+
+.modal-content .form-input::placeholder,
+.modal-content input::placeholder,
+.modal-content textarea::placeholder {
+    color: #868e96 !important;
+}
+
+/* Fix label form */
+.modal-content .form-label {
+    color: #495057 !important;
+}
+
+/* Fix hint */
+.modal-content .form-hint {
+    color: #868e96 !important;
+}
+
 .page {
     min-height: 100vh;
     overflow: visible !important;

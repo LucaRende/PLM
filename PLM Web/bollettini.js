@@ -2556,7 +2556,7 @@ async function sendInvoiceEmail(bollettinoData, ddtFiles, pdfBollettinoUrl) {
         let bollettinoHtml = '';
         if (pdfBollettinoUrl) {
             bollettinoHtml = '<p><strong>📋 BOLLETTINO INTERVENTO:</strong></p>';
-            bollettinoHtml += `<p><a href="${pdfBollettinoUrl}" style="display:inline-block; background:#dc2626; color:#ffffff; padding:10px 20px; border-radius:8px; text-decoration:none; font-weight:bold;">📋 Bollettino ${formatBollettinoId(bollettinoData.id_bollettino)}</a></p>`;
+            bollettinoHtml += `<p><a href="${pdfBollettinoUrl}" style="display:inline-block; background:#dc2626; color:#ffffff; padding:10px 20px; border-radius:8px; text-decoration:none; font-weight:bold;">📋 Bollettino Intervento ${formatBollettinoId(bollettinoData.id_bollettino)}</a></p>`;
         }
         
         console.log('Email fatturazione - Dati bollettino:', {
@@ -2573,7 +2573,7 @@ async function sendInvoiceEmail(bollettinoData, ddtFiles, pdfBollettinoUrl) {
             {
                 to_email: bollettinoData.email_cliente,
                 to_name: bollettinoData.cliente || 'Cliente',
-                subject: `Documentazione Intervento ${formatBollettinoId(bollettinoData.id_bollettino)} - Pro System S.r.l.`,
+                subject: `Bollettino Intervento ${formatBollettinoId(bollettinoData.id_bollettino)} - Pro System S.r.l.`,
                 data_intervento: dataFormatted,
                 tecnico: bollettinoData.tecnico_installatore || 'Non specificato',
                 macchina: bollettinoData.montaggio_macchina || 'Non specificata',
@@ -3245,20 +3245,19 @@ async function sendBatchInvoiceEmail(email, bollettini, ddtFiles, pdfUrls, notes
     }
     
     try {
-        // Costruisci riepilogo interventi
-        let riepilogoHtml = '<ul style="margin:0; padding-left:20px;">';
+        // Costruisci riepilogo interventi come TESTO semplice (no HTML)
+        let riepilogoTesto = '';
         let totaleOre = 0;
         let tecnici = new Set();
         let macchine = new Set();
         
         bollettini.forEach(b => {
             const dataFormatted = new Date(b.data).toLocaleDateString('it-IT', { day: '2-digit', month: '2-digit', year: 'numeric' });
-            riepilogoHtml += `<li><strong>${formatBollettinoId(b.id_bollettino)}</strong> - ${dataFormatted} - ${b.cliente} (${b.ore_totali || 0}h)</li>`;
+            riepilogoTesto += `• ${formatBollettinoId(b.id_bollettino)} - ${dataFormatted} - ${b.cliente} (${b.ore_totali || 0}h)\n`;
             totaleOre += parseFloat(b.ore_totali) || 0;
             if (b.tecnico_installatore) tecnici.add(b.tecnico_installatore);
             if (b.montaggio_macchina) macchine.add(b.montaggio_macchina);
         });
-        riepilogoHtml += '</ul>';
         
         // Costruisci link DDT (separati)
         let ddtLinksHtml = '';
@@ -3277,15 +3276,19 @@ async function sendBatchInvoiceEmail(email, bollettini, ddtFiles, pdfUrls, notes
             pdfLinksHtml = '<p><strong>📋 BOLLETTINI INTERVENTO:</strong></p>';
             pdfUrls.forEach(pdf => {
                 if (pdf.url) {
-                    pdfLinksHtml += `<p><a href="${pdf.url}" style="display:inline-block; background:#dc2626; color:#ffffff; padding:10px 20px; border-radius:8px; text-decoration:none; font-weight:bold;">📋 Bollettino ${formatBollettinoId(pdf.id)}</a></p>`;
+                    pdfLinksHtml += `<p><a href="${pdf.url}" style="display:inline-block; background:#dc2626; color:#ffffff; padding:10px 20px; border-radius:8px; text-decoration:none; font-weight:bold;">📋 Bollettino Intervento ${formatBollettinoId(pdf.id)}</a></p>`;
                 }
             });
         }
+        
+        // Genera lista ID bollettini per subject
+        const bollettiniIds = bollettini.map(b => formatBollettinoId(b.id_bollettino)).join(', ');
         
         // Usa i nomi parametri che il template si aspetta
         const templateParams = {
             to_email: email,
             to_name: bollettini[0]?.cliente || 'Cliente',
+            subject: `Bollettini Intervento ${bollettiniIds} - Pro System S.r.l.`,
             data_intervento: bollettini.length > 1 
                 ? `${bollettini.length} interventi` 
                 : new Date(bollettini[0]?.data).toLocaleDateString('it-IT', { day: '2-digit', month: 'long', year: 'numeric' }),
@@ -3293,7 +3296,7 @@ async function sendBatchInvoiceEmail(email, bollettini, ddtFiles, pdfUrls, notes
             macchina: Array.from(macchine).join(', ') || '-',
             matricola: bollettini.map(b => b.matricola).filter(Boolean).join(', ') || '-',
             ore_lavorate: totaleOre.toFixed(1) + ' ore totali',
-            lavori_eseguiti: riepilogoHtml,
+            lavori_eseguiti: riepilogoTesto.trim(),
             note: notes || '-',
             firma_html: '',
             pdf_link: ddtLinksHtml + pdfLinksHtml

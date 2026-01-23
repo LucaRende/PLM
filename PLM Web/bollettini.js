@@ -313,14 +313,24 @@ function setFilterType(type) {
 function resetFilters() {
     document.getElementById('search-input').value = '';
     document.getElementById('btn-clear-search').classList.remove('show');
-    document.getElementById('filter-operatore').value = '';
-    document.getElementById('filter-cliente').value = '';
-    document.getElementById('filter-macchina').value = '';
-    document.getElementById('filter-durata-min').value = '';
-    document.getElementById('filter-durata-max').value = '';
-    document.getElementById('filter-stato').value = '';
-    document.getElementById('filter-data-da').value = '';
-    document.getElementById('filter-data-a').value = '';
+    
+    const filterOp = document.getElementById('filter-operatore');
+    if (filterOp) filterOp.value = '';
+    
+    const filterCl = document.getElementById('filter-cliente');
+    if (filterCl) filterCl.value = '';
+    
+    const filterDurMin = document.getElementById('filter-durata-min');
+    if (filterDurMin) filterDurMin.value = '';
+    
+    const filterDurMax = document.getElementById('filter-durata-max');
+    if (filterDurMax) filterDurMax.value = '';
+    
+    const filterDataDa = document.getElementById('filter-data-da');
+    if (filterDataDa) filterDataDa.value = '';
+    
+    const filterDataA = document.getElementById('filter-data-a');
+    if (filterDataA) filterDataA.value = '';
     
     setFilterType('miei');
     updateFilterBadge();
@@ -338,26 +348,18 @@ function clearSingleFilter(filterName) {
 
 function updateActiveFiltersChips() {
     const container = document.getElementById('active-filters');
+    if (!container) return; // Container non esiste nell'HTML attuale
+    
     let chips = [];
     
-    const search = document.getElementById('search-input').value;
-    if (search) {
-        chips.push(`<span class="filter-chip">Cerca: "${search}" <button onclick="clearSearch()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></span>`);
+    const search = document.getElementById('search-input');
+    if (search && search.value) {
+        chips.push(`<span class="filter-chip">Cerca: "${search.value}" <button onclick="clearSearch()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></span>`);
     }
     
     const cliente = document.getElementById('filter-cliente');
-    if (cliente.value) {
+    if (cliente && cliente.value) {
         chips.push(`<span class="filter-chip">Cliente: ${cliente.value} <button onclick="clearSingleFilter('filter-cliente')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></span>`);
-    }
-    
-    const macchina = document.getElementById('filter-macchina');
-    if (macchina.value) {
-        chips.push(`<span class="filter-chip">Macchina: ${macchina.value} <button onclick="clearSingleFilter('filter-macchina')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></span>`);
-    }
-    
-    const stato = document.getElementById('filter-stato');
-    if (stato.value) {
-        chips.push(`<span class="filter-chip">Stato: ${stato.options[stato.selectedIndex].text} <button onclick="clearSingleFilter('filter-stato')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></span>`);
     }
     
     container.innerHTML = chips.join('');
@@ -385,14 +387,18 @@ function updateContentPadding() {
 
 function applyFilters() {
     const search = document.getElementById('search-input').value.toLowerCase().trim();
-    const operatore = document.getElementById('filter-operatore').value;
-    const cliente = document.getElementById('filter-cliente').value;
-    const macchina = document.getElementById('filter-macchina').value;
-    const durataMin = parseFloat(document.getElementById('filter-durata-min').value) || 0;
-    const durataMax = parseFloat(document.getElementById('filter-durata-max').value) || 999;
-    const stato = document.getElementById('filter-stato').value;
-    const dataDa = document.getElementById('filter-data-da').value;
-    const dataA = document.getElementById('filter-data-a').value;
+    const filterOp = document.getElementById('filter-operatore');
+    const operatore = filterOp ? filterOp.value : '';
+    const filterCl = document.getElementById('filter-cliente');
+    const cliente = filterCl ? filterCl.value.toLowerCase().trim() : '';
+    const filterDurMin = document.getElementById('filter-durata-min');
+    const durataMin = filterDurMin ? (parseFloat(filterDurMin.value) || 0) : 0;
+    const filterDurMax = document.getElementById('filter-durata-max');
+    const durataMax = filterDurMax ? (parseFloat(filterDurMax.value) || 999) : 999;
+    const filterDataDa = document.getElementById('filter-data-da');
+    const dataDa = filterDataDa ? filterDataDa.value : '';
+    const filterDataA = document.getElementById('filter-data-a');
+    const dataA = filterDataA ? filterDataA.value : '';
     
     const tecnicoCorrente = `${currentUser.nome || ''} ${currentUser.cognome || ''}`.trim();
     const tecnicoCorrenteAlt = `${currentUser.cognome || ''} ${currentUser.nome || ''}`.trim();
@@ -422,26 +428,12 @@ function applyFilters() {
         // Filtro operatore (solo admin)
         if (operatore && b.tecnico_installatore !== operatore) return false;
         
-        // Filtro cliente
-        if (cliente && b.cliente !== cliente) return false;
-        
-        // Filtro macchina
-        if (macchina && b.montaggio_macchina !== macchina) return false;
+        // Filtro cliente (ricerca parziale - è un input text)
+        if (cliente && !(b.cliente || '').toLowerCase().includes(cliente)) return false;
         
         // Filtro durata
         const ore = parseFloat(b.ore_totali) || 0;
         if (ore < durataMin || ore > durataMax) return false;
-        
-        // Filtro stato
-        if (stato) {
-            const isValidato = b.validato === true;
-            const hasFirma = b.firma_cliente && b.firma_cliente.data;
-            
-            if (stato === 'validato' && !isValidato) return false;
-            if (stato === 'non-validato' && isValidato) return false;
-            if (stato === 'firmato' && !hasFirma) return false;
-            if (stato === 'non-firmato' && hasFirma) return false;
-        }
         
         // Filtro date
         if (dataDa && b.data < dataDa) return false;
@@ -539,18 +531,29 @@ function updateFilterBadge() {
     let count = 0;
     
     // Non contare la ricerca nel badge, è già visibile
-    if (document.getElementById('filter-operatore').value) count++;
-    if (document.getElementById('filter-cliente').value) count++;
-    if (document.getElementById('filter-macchina').value) count++;
-    if (document.getElementById('filter-durata-min').value) count++;
-    if (document.getElementById('filter-durata-max').value) count++;
-    if (document.getElementById('filter-stato').value) count++;
-    if (document.getElementById('filter-data-da').value) count++;
-    if (document.getElementById('filter-data-a').value) count++;
+    const filterOp = document.getElementById('filter-operatore');
+    if (filterOp && filterOp.value) count++;
+    
+    const filterCl = document.getElementById('filter-cliente');
+    if (filterCl && filterCl.value) count++;
+    
+    const filterDurMin = document.getElementById('filter-durata-min');
+    if (filterDurMin && filterDurMin.value) count++;
+    
+    const filterDurMax = document.getElementById('filter-durata-max');
+    if (filterDurMax && filterDurMax.value) count++;
+    
+    const filterDataDa = document.getElementById('filter-data-da');
+    if (filterDataDa && filterDataDa.value) count++;
+    
+    const filterDataA = document.getElementById('filter-data-a');
+    if (filterDataA && filterDataA.value) count++;
     
     const badge = document.getElementById('filter-badge');
-    badge.textContent = count;
-    badge.classList.toggle('show', count > 0);
+    if (badge) {
+        badge.textContent = count;
+        badge.classList.toggle('show', count > 0);
+    }
 }
 
 // =============================================
@@ -605,23 +608,16 @@ async function loadBollettini(showLoader = true) {
 }
 
 function populateFilterDropdowns() {
-    // Operatori (unici)
+    // Operatori (unici) - questo è un SELECT
     const operatori = [...new Set(allBollettini.map(b => b.tecnico_installatore).filter(Boolean))].sort();
     const selectOp = document.getElementById('filter-operatore');
-    selectOp.innerHTML = '<option value="">Tutti</option>' + 
-        operatori.map(o => `<option value="${o}">${o}</option>`).join('');
+    if (selectOp) {
+        selectOp.innerHTML = '<option value="">Tutti</option>' + 
+            operatori.map(o => `<option value="${o}">${o}</option>`).join('');
+    }
     
-    // Clienti (unici)
-    const clienti = [...new Set(allBollettini.map(b => b.cliente).filter(Boolean))].sort();
-    const selectCl = document.getElementById('filter-cliente');
-    selectCl.innerHTML = '<option value="">Tutti</option>' + 
-        clienti.map(c => `<option value="${c}">${c}</option>`).join('');
-    
-    // Macchine (uniche)
-    const macchine = [...new Set(allBollettini.map(b => b.montaggio_macchina).filter(Boolean))].sort();
-    const selectMa = document.getElementById('filter-macchina');
-    selectMa.innerHTML = '<option value="">Tutte</option>' + 
-        macchine.map(m => `<option value="${m}">${m}</option>`).join('');
+    // filter-cliente è un INPUT TEXT, non un SELECT - non va popolato
+    // filter-macchina e filter-stato non esistono nell'HTML attuale
 }
 
 function updateStats() {

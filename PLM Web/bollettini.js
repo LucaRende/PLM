@@ -33,8 +33,9 @@ let uploadedFotoDopo = [];
 // DDT per fatturazione
 let uploadedDDTs = [];
 
-// Fatturazione Batch
+// Fatturazione/Validazione Batch
 let batchMode = false;
+let batchAction = 'invoice'; // 'invoice' o 'validate'
 let selectedBollettiniIds = new Set();
 let batchUploadedDDTs = [];
 
@@ -225,9 +226,9 @@ function loadUserData() {
     if (isAdmin) {
         document.getElementById('filter-operatore-group').style.display = 'flex';
         document.getElementById('btn-tutti').style.display = 'block';
-        // Mostra pulsante Multi per fatturazione batch
-        if (canInvoice) {
-            document.getElementById('btn-batch-mode').style.display = 'flex';
+        // Mostra dropdown Multi se può validare o fatturare
+        if (canInvoice || canValidate) {
+            document.getElementById('batch-dropdown').style.display = 'block';
         }
         // Admin parte con "Tutti" di default
         currentFilterType = 'tutti';
@@ -1143,13 +1144,21 @@ function openDettaglio(id) {
     // Se siamo in batch mode, gestisci selezione invece di aprire dettaglio
     if (batchMode) {
         const bollettino = allBollettini.find(b => b.id_bollettino === id);
-        if (bollettino && bollettino.validato && !bollettino.fatturato) {
-            // È selezionabile - toggle selezione
+        if (!bollettino) return;
+        
+        let selectable = false;
+        if (batchAction === 'invoice') {
+            selectable = bollettino.validato && !bollettino.fatturato;
+        } else if (batchAction === 'validate') {
+            const hasFirma = bollettino.firma_cliente && bollettino.firma_cliente.data;
+            selectable = hasFirma && !bollettino.validato;
+        }
+        
+        if (selectable) {
             toggleBollettinoSelection(id);
             return;
         }
-        // Non è selezionabile (non validato o già fatturato) - non fare nulla o apri dettaglio
-        // Apriamo comunque il dettaglio per i non selezionabili
+        // Non è selezionabile - apri comunque il dettaglio
     }
     
     currentBollettinoId = id;
@@ -2534,18 +2543,20 @@ async function sendInvoiceEmail(bollettinoData, ddtFiles, pdfBollettinoUrl) {
             })
             : 'Data non specificata';
         
-        // Prepara HTML per DDT
+        // Prepara HTML per DDT (separato)
         let ddtHtml = '';
         if (ddtFiles && ddtFiles.length > 0) {
+            ddtHtml = '<p><strong>📦 DOCUMENTO DI TRASPORTO:</strong></p>';
             ddtFiles.forEach((ddt, i) => {
-                ddtHtml += `<a href="${ddt.url}" style="display:inline-block; background:#10b981; color:#ffffff; padding:10px 20px; border-radius:8px; text-decoration:none; font-weight:bold; margin:4px;">📄 ${ddt.name}</a><br>`;
+                ddtHtml += `<p><a href="${ddt.url}" style="display:inline-block; background:#10b981; color:#ffffff; padding:10px 20px; border-radius:8px; text-decoration:none; font-weight:bold;">📄 ${ddt.name}</a></p>`;
             });
         }
         
-        // Link al PDF bollettino
+        // Link al PDF bollettino (separato)
         let bollettinoHtml = '';
         if (pdfBollettinoUrl) {
-            bollettinoHtml = `<a href="${pdfBollettinoUrl}" style="display:inline-block; background:#dc2626; color:#ffffff; padding:10px 20px; border-radius:8px; text-decoration:none; font-weight:bold; margin:4px;">📋 Bollettino ${formatBollettinoId(bollettinoData.id_bollettino)}</a>`;
+            bollettinoHtml = '<p><strong>📋 BOLLETTINO INTERVENTO:</strong></p>';
+            bollettinoHtml += `<p><a href="${pdfBollettinoUrl}" style="display:inline-block; background:#dc2626; color:#ffffff; padding:10px 20px; border-radius:8px; text-decoration:none; font-weight:bold;">📋 Bollettino ${formatBollettinoId(bollettinoData.id_bollettino)}</a></p>`;
         }
         
         console.log('Email fatturazione - Dati bollettino:', {
@@ -2558,7 +2569,7 @@ async function sendInvoiceEmail(bollettinoData, ddtFiles, pdfBollettinoUrl) {
         
         const response = await emailjs.send(
             EMAILJS_CONFIG.serviceId,
-            EMAILJS_CONFIG.templateFatturazioneId, // Template specifico per fatturazione
+            EMAILJS_CONFIG.templateFatturazioneId,
             {
                 to_email: bollettinoData.email_cliente,
                 to_name: bollettinoData.cliente || 'Cliente',
@@ -2779,34 +2790,92 @@ document.addEventListener('DOMContentLoaded', async function() {
 });
 
 // =============================================
-// FATTURAZIONE BATCH - FUNZIONI
+// FATTURAZIONE/VALIDAZIONE BATCH - FUNZIONI
 // =============================================
 
-function toggleBatchMode() {
-    batchMode = !batchMode;
+function toggleBatchDropdown() {
+    const menu = document.getElementById('batch-dropdown-menu');
+    menu.classList.toggle('show');
+}
+
+function startBatchMode(action) {
+    // Chiudi dropdown
+    document.getElementById('batch-dropdown-menu').classList.remove('show');
+    // Avvia batch mode con l'azione specificata
+    toggleBatchMode(action);
+}
+
+// Chiudi dropdown quando clicchi fuori
+document.addEventListener('click', function(e) {
+    const dropdown = document.getElementById('batch-dropdown');
+    if (dropdown && !dropdown.contains(e.target)) {
+        document.getElementById('batch-dropdown-menu')?.classList.remove('show');
+    }
+});
+
+function toggleBatchMode(action = 'invoice') {
+    // Se già in batch mode e clicco di nuovo, esci
+    if (batchMode && (batchAction === action || action === 'exit')) {
+        batchMode = false;
+    } else {
+        batchMode = true;
+        batchAction = action;
+    }
+    
     selectedBollettiniIds.clear();
     
+    const dropdown = document.getElementById('batch-dropdown');
     const btn = document.getElementById('btn-batch-mode');
     const content = document.getElementById('page-content');
     
     if (batchMode) {
-        btn.classList.add('active');
-        btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Annulla';
+        dropdown.classList.add('batch-active');
+        btn.innerHTML = `
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="18" y1="6" x2="6" y2="18"/>
+                <line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+            Annulla
+        `;
+        btn.onclick = function() { toggleBatchMode('exit'); };
         content.classList.add('batch-mode');
         
-        // Segna card selezionabili (solo validati non fatturati)
+        // Segna card selezionabili in base all'azione
         document.querySelectorAll('.bollettino-card').forEach(card => {
             const id = parseInt(card.dataset.id);
             const bollettino = allBollettini.find(b => b.id_bollettino === id);
-            if (bollettino && bollettino.validato && !bollettino.fatturato) {
+            
+            let selectable = false;
+            if (batchAction === 'invoice') {
+                // Fatturazione: validati ma non fatturati
+                selectable = bollettino && bollettino.validato && !bollettino.fatturato;
+            } else if (batchAction === 'validate') {
+                // Validazione: firmati ma non validati
+                const hasFirma = bollettino && bollettino.firma_cliente && bollettino.firma_cliente.data;
+                selectable = bollettino && hasFirma && !bollettino.validato;
+            }
+            
+            if (selectable) {
                 card.classList.remove('not-selectable');
             } else {
                 card.classList.add('not-selectable');
             }
         });
     } else {
-        btn.classList.remove('active');
-        btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg> Multi';
+        dropdown.classList.remove('batch-active');
+        btn.innerHTML = `
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="7" height="7"/>
+                <rect x="14" y="3" width="7" height="7"/>
+                <rect x="3" y="14" width="7" height="7"/>
+                <rect x="14" y="14" width="7" height="7"/>
+            </svg>
+            Multi
+            <svg class="dropdown-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="6 9 12 15 18 9"/>
+            </svg>
+        `;
+        btn.onclick = toggleBatchDropdown;
         content.classList.remove('batch-mode');
         document.querySelectorAll('.bollettino-card').forEach(card => {
             card.classList.remove('not-selectable', 'selected');
@@ -2824,7 +2893,18 @@ function toggleBollettinoSelection(id, event) {
     if (event) event.stopPropagation();
     
     const bollettino = allBollettini.find(b => b.id_bollettino === id);
-    if (!bollettino || !bollettino.validato || bollettino.fatturato) return;
+    if (!bollettino) return;
+    
+    // Verifica se selezionabile in base all'azione
+    let selectable = false;
+    if (batchAction === 'invoice') {
+        selectable = bollettino.validato && !bollettino.fatturato;
+    } else if (batchAction === 'validate') {
+        const hasFirma = bollettino.firma_cliente && bollettino.firma_cliente.data;
+        selectable = hasFirma && !bollettino.validato;
+    }
+    
+    if (!selectable) return;
     
     const card = document.querySelector('.bollettino-card[data-id="' + id + '"]');
     const checkbox = card.querySelector('.card-checkbox');
@@ -2846,11 +2926,36 @@ function updateBatchSelectionBar() {
     const bar = document.getElementById('batch-selection-bar');
     const count = document.getElementById('batch-count');
     const invoiceBtn = document.getElementById('btn-batch-invoice-action');
+    const validateBtn = document.getElementById('btn-batch-validate-action');
     
     if (batchMode && selectedBollettiniIds.size > 0) {
         bar.classList.add('show');
         count.textContent = selectedBollettiniIds.size;
-        invoiceBtn.disabled = false;
+        
+        // Mostra pulsante corretto in base all'azione
+        if (batchAction === 'invoice') {
+            invoiceBtn.style.display = 'flex';
+            invoiceBtn.disabled = false;
+            validateBtn.style.display = 'none';
+        } else if (batchAction === 'validate') {
+            validateBtn.style.display = 'flex';
+            validateBtn.disabled = false;
+            invoiceBtn.style.display = 'none';
+        }
+    } else if (batchMode) {
+        bar.classList.add('show');
+        count.textContent = '0';
+        invoiceBtn.disabled = true;
+        validateBtn.disabled = true;
+        
+        // Mostra entrambi disabilitati o nascondi
+        if (batchAction === 'invoice') {
+            invoiceBtn.style.display = 'flex';
+            validateBtn.style.display = 'none';
+        } else {
+            validateBtn.style.display = 'flex';
+            invoiceBtn.style.display = 'none';
+        }
     } else {
         bar.classList.remove('show');
     }
@@ -2976,6 +3081,77 @@ function removeBatchDDT(index) {
     renderBatchDDTList();
 }
 
+// =============================================
+// VALIDAZIONE BATCH
+// =============================================
+async function validateBatchBollettini() {
+    if (selectedBollettiniIds.size === 0) return;
+    
+    const bollettiniDaValidare = allBollettini.filter(b => selectedBollettiniIds.has(b.id_bollettino));
+    
+    // Conferma
+    const conferma = confirm(
+        `Stai per validare ${bollettiniDaValidare.length} bollettini:\n\n` +
+        bollettiniDaValidare.map(b => `• ${formatBollettinoId(b.id_bollettino)} - ${b.cliente}`).join('\n') +
+        '\n\nConfermi la validazione?'
+    );
+    
+    if (!conferma) return;
+    
+    try {
+        Loader.show('invio', 'Validazione bollettini...');
+        
+        const validatoDa = `${currentUser.nome || ''} ${currentUser.cognome || ''}`.trim();
+        const dataValidazione = new Date().toISOString();
+        
+        let successCount = 0;
+        let errorCount = 0;
+        
+        for (const bollettino of bollettiniDaValidare) {
+            try {
+                Loader.updateText(`Validazione ${formatBollettinoId(bollettino.id_bollettino)}...`);
+                
+                const { error } = await supabaseClient
+                    .from('BollettiniMontatori')
+                    .update({
+                        validato: true,
+                        data_validazione: dataValidazione,
+                        validato_da: validatoDa
+                    })
+                    .eq('id_bollettino', bollettino.id_bollettino);
+                
+                if (error) throw error;
+                successCount++;
+                
+            } catch (e) {
+                console.error(`Errore validazione bollettino ${bollettino.id_bollettino}:`, e);
+                errorCount++;
+            }
+        }
+        
+        // Esci dal batch mode
+        toggleBatchMode();
+        
+        // Ricarica lista
+        Loader.updateText('Aggiornamento lista...');
+        await loadBollettini(false);
+        
+        Loader.hide();
+        
+        // Messaggio risultato
+        if (errorCount === 0) {
+            alert(`✅ Validati ${successCount} bollettini con successo!`);
+        } else {
+            alert(`⚠️ Validati ${successCount} bollettini.\n${errorCount} errori durante la validazione.`);
+        }
+        
+    } catch (e) {
+        console.error('Errore validazione batch:', e);
+        Loader.hide();
+        alert('Errore durante la validazione: ' + e.message);
+    }
+}
+
 async function completeBatchInvoice() {
     const emailCliente = document.getElementById('batch-email-cliente').value.trim();
     
@@ -3084,21 +3260,27 @@ async function sendBatchInvoiceEmail(email, bollettini, ddtFiles, pdfUrls, notes
         });
         riepilogoHtml += '</ul>';
         
-        // Costruisci link PDF
-        let pdfLinksHtml = '';
-        pdfUrls.forEach(pdf => {
-            if (pdf.url) {
-                pdfLinksHtml += `<p><a href="${pdf.url}" style="color:#dc2626;">📄 Bollettino ${formatBollettinoId(pdf.id)}</a></p>`;
-            }
-        });
-        
-        // Costruisci link DDT
+        // Costruisci link DDT (separati)
         let ddtLinksHtml = '';
-        ddtFiles.forEach(ddt => {
-            if (ddt.url) {
-                ddtLinksHtml += `<p><a href="${ddt.url}" style="color:#10b981;">📦 ${ddt.name}</a></p>`;
-            }
-        });
+        if (ddtFiles && ddtFiles.length > 0) {
+            ddtLinksHtml = '<p><strong>📦 DOCUMENTI DI TRASPORTO:</strong></p>';
+            ddtFiles.forEach(ddt => {
+                if (ddt.url) {
+                    ddtLinksHtml += `<p><a href="${ddt.url}" style="display:inline-block; background:#10b981; color:#ffffff; padding:10px 20px; border-radius:8px; text-decoration:none; font-weight:bold;">📄 ${ddt.name}</a></p>`;
+                }
+            });
+        }
+        
+        // Costruisci link PDF Bollettini (separati)
+        let pdfLinksHtml = '';
+        if (pdfUrls && pdfUrls.length > 0) {
+            pdfLinksHtml = '<p><strong>📋 BOLLETTINI INTERVENTO:</strong></p>';
+            pdfUrls.forEach(pdf => {
+                if (pdf.url) {
+                    pdfLinksHtml += `<p><a href="${pdf.url}" style="display:inline-block; background:#dc2626; color:#ffffff; padding:10px 20px; border-radius:8px; text-decoration:none; font-weight:bold;">📋 Bollettino ${formatBollettinoId(pdf.id)}</a></p>`;
+                }
+            });
+        }
         
         // Usa i nomi parametri che il template si aspetta
         const templateParams = {
@@ -3113,8 +3295,8 @@ async function sendBatchInvoiceEmail(email, bollettini, ddtFiles, pdfUrls, notes
             ore_lavorate: totaleOre.toFixed(1) + ' ore totali',
             lavori_eseguiti: riepilogoHtml,
             note: notes || '-',
-            firma_html: '', // Non c'è firma nella fatturazione batch
-            pdf_link: pdfLinksHtml + ddtLinksHtml
+            firma_html: '',
+            pdf_link: ddtLinksHtml + pdfLinksHtml
         };
         
         await emailjs.send(

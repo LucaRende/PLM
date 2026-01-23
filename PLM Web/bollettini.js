@@ -501,9 +501,11 @@ function updateStatFiltersUI() {
         }
     });
     
-    // Mostra/nascondi barra filtri attivi
+    // Mostra/nascondi barra filtri attivi (potrebbe non esistere)
     const filtersBar = document.getElementById('stat-filters-active');
     const chipsContainer = document.getElementById('stat-filters-chips');
+    
+    if (!filtersBar || !chipsContainer) return;
     
     if (activeStatFilters.size > 0) {
         filtersBar.style.display = 'flex';
@@ -594,12 +596,15 @@ async function loadBollettini(showLoader = true) {
         
     } catch (error) {
         console.error('Errore caricamento:', error);
-        document.getElementById('bollettini-list').innerHTML = `
-            <div class="empty-state">
-                <div class="empty-state-icon">❌</div>
-                <p class="empty-state-text">Errore nel caricamento: ${error.message}</p>
-            </div>
-        `;
+        const listEl = document.getElementById('bollettini-list');
+        if (listEl) {
+            listEl.innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-state-icon">❌</div>
+                    <p class="empty-state-text">Errore nel caricamento: ${error.message}</p>
+                </div>
+            `;
+        }
     } finally {
         if (showLoader) {
             Loader.hide();
@@ -628,32 +633,44 @@ function updateStats() {
     const fatturati = filteredBollettini.filter(b => b.fatturato === true).length;
     const daFatturare = filteredBollettini.filter(b => b.validato === true && b.fatturato !== true).length;
     
-    document.getElementById('stat-totali').textContent = totali;
-    document.getElementById('stat-ore').textContent = oreTotali.toFixed(1) + 'h';
-    document.getElementById('stat-firmati').textContent = firmati;
-    document.getElementById('stat-validati').textContent = validati;
-    document.getElementById('stat-da-fatturare').textContent = daFatturare;
-    document.getElementById('stat-fatturati').textContent = fatturati;
+    // Null check su tutti gli elementi (alcuni potrebbero non esistere nell'HTML)
+    const elTotali = document.getElementById('stat-totali');
+    if (elTotali) elTotali.textContent = totali;
+    
+    const elOre = document.getElementById('stat-ore');
+    if (elOre) elOre.textContent = oreTotali.toFixed(1) + 'h';
+    
+    const elFirmati = document.getElementById('stat-firmati');
+    if (elFirmati) elFirmati.textContent = firmati;
+    
+    const elValidati = document.getElementById('stat-validati');
+    if (elValidati) elValidati.textContent = validati;
+    
+    const elDaFatturare = document.getElementById('stat-da-fatturare');
+    if (elDaFatturare) elDaFatturare.textContent = daFatturare;
+    
+    const elFatturati = document.getElementById('stat-fatturati');
+    if (elFatturati) elFatturati.textContent = fatturati;
     
     // Aggiorna stat notifiche
     const notificheChip = document.getElementById('stat-notifiche-chip');
     const notificheValue = document.getElementById('stat-notifiche');
     const notificheLabel = document.getElementById('stat-notifiche-label');
     
-    if (notificheCount > 0) {
+    if (notificheChip && notificheCount > 0) {
         notificheChip.style.display = 'flex';
-        notificheValue.textContent = notificheCount;
+        if (notificheValue) notificheValue.textContent = notificheCount;
         
         if (isAdmin) {
             notificheChip.classList.add('admin');
             notificheChip.classList.remove('user');
-            notificheLabel.textContent = 'Da validare';
+            if (notificheLabel) notificheLabel.textContent = 'Da validare';
         } else {
             notificheChip.classList.add('user');
             notificheChip.classList.remove('admin');
-            notificheLabel.textContent = 'Nuovi';
+            if (notificheLabel) notificheLabel.textContent = 'Nuovi';
         }
-    } else {
+    } else if (notificheChip) {
         notificheChip.style.display = 'none';
     }
 }

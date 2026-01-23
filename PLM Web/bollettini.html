@@ -361,6 +361,77 @@
                         </div>
                     </div>
                     
+                    <!-- Sezione Foto Prima/Dopo Intervento -->
+                    <div class="form-section">
+                        <div class="form-section-title">📸 Foto Intervento</div>
+                        
+                        <!-- Foto PRIMA -->
+                        <div class="photos-section">
+                            <div class="photos-header">
+                                <span class="photos-title">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                                        <circle cx="8.5" cy="8.5" r="1.5"/>
+                                        <polyline points="21 15 16 10 5 21"/>
+                                    </svg>
+                                    Foto PRIMA
+                                </span>
+                                <button class="btn-add-photo" onclick="document.getElementById('foto-prima-input').click()">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <line x1="12" y1="5" x2="12" y2="19"/>
+                                        <line x1="5" y1="12" x2="19" y2="12"/>
+                                    </svg>
+                                    Aggiungi
+                                </button>
+                            </div>
+                            <div class="photos-grid" id="foto-prima-list">
+                                <div class="photo-item photo-add-placeholder" onclick="document.getElementById('foto-prima-input').click()">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                                        <line x1="12" y1="8" x2="12" y2="16"/>
+                                        <line x1="8" y1="12" x2="16" y2="12"/>
+                                    </svg>
+                                    <span>Aggiungi</span>
+                                </div>
+                            </div>
+                            <input type="file" id="foto-prima-input" accept="image/*" multiple style="display:none;" onchange="handleFotoPrimaUpload(event)">
+                        </div>
+                        
+                        <!-- Foto DOPO -->
+                        <div class="photos-section" style="margin-top: var(--space-4);">
+                            <div class="photos-header">
+                                <span class="photos-title">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                                        <circle cx="8.5" cy="8.5" r="1.5"/>
+                                        <polyline points="21 15 16 10 5 21"/>
+                                    </svg>
+                                    Foto DOPO
+                                </span>
+                                <button class="btn-add-photo" onclick="document.getElementById('foto-dopo-input').click()">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <line x1="12" y1="5" x2="12" y2="19"/>
+                                        <line x1="5" y1="12" x2="19" y2="12"/>
+                                    </svg>
+                                    Aggiungi
+                                </button>
+                            </div>
+                            <div class="photos-grid" id="foto-dopo-list">
+                                <div class="photo-item photo-add-placeholder" onclick="document.getElementById('foto-dopo-input').click()">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                                        <line x1="12" y1="8" x2="12" y2="16"/>
+                                        <line x1="8" y1="12" x2="16" y2="12"/>
+                                    </svg>
+                                    <span>Aggiungi</span>
+                                </div>
+                            </div>
+                            <input type="file" id="foto-dopo-input" accept="image/*" multiple style="display:none;" onchange="handleFotoDopoUpload(event)">
+                        </div>
+                        
+                        <p class="form-hint" style="margin-top: var(--space-2);">Documenta l'intervento con foto prima e dopo</p>
+                    </div>
+                    
                     <!-- Sezione Firma -->
                     <div class="form-section">
                         <div class="form-section-title">✍️ Firma Cliente</div>

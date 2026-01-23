@@ -3325,3 +3325,52 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     border-color: rgba(16, 185, 129, 0.3) !important;
     color: #10b981 !important;
 }
+
+/* =============================================
+   TEMA CHIARO - OVERRIDE FINALI (MASSIMA PRIORITÀ)
+   ============================================= */
+
+/* Input date e time - FORZA TESTO SCURO */
+input[type="time"],
+input[type="date"] {
+    color-scheme: light !important;
+    color: #212529 !important;
+    background: #f1f3f5 !important;
+    -webkit-text-fill-color: #212529 !important;
+}
+
+input[type="time"]::-webkit-date-and-time-value,
+input[type="date"]::-webkit-date-and-time-value {
+    color: #212529 !important;
+    -webkit-text-fill-color: #212529 !important;
+}
+
+input[type="time"]::-webkit-datetime-edit,
+input[type="date"]::-webkit-datetime-edit {
+    color: #212529 !important;
+    -webkit-text-fill-color: #212529 !important;
+}
+
+input[type="time"]::-webkit-datetime-edit-fields-wrapper,
+input[type="date"]::-webkit-datetime-edit-fields-wrapper {
+    color: #212529 !important;
+    -webkit-text-fill-color: #212529 !important;
+}
+
+input[type="time"]::-webkit-datetime-edit-text,
+input[type="time"]::-webkit-datetime-edit-hour-field,
+input[type="time"]::-webkit-datetime-edit-minute-field,
+input[type="time"]::-webkit-datetime-edit-ampm-field,
+input[type="date"]::-webkit-datetime-edit-text,
+input[type="date"]::-webkit-datetime-edit-day-field,
+input[type="date"]::-webkit-datetime-edit-month-field,
+input[type="date"]::-webkit-datetime-edit-year-field {
+    color: #212529 !important;
+    -webkit-text-fill-color: #212529 !important;
+}
+
+input[type="time"]::-webkit-calendar-picker-indicator,
+input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: none !important;
+    opacity: 0.7 !important;
+}

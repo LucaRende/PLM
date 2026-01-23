@@ -623,6 +623,60 @@
                 padding-top: calc(80px + env(safe-area-inset-top));
             }
         }
+        
+        /* =============================================
+           DESKTOP - 3 COLONNE PER AREE DI LAVORO
+           ============================================= */
+        @media (min-width: 768px) {
+            .home-content {
+                max-width: 1200px;
+                margin: 0 auto;
+                padding-left: var(--space-6);
+                padding-right: var(--space-6);
+            }
+            
+            .menu-buttons {
+                display: grid !important;
+                grid-template-columns: repeat(3, 1fr) !important;
+                gap: var(--space-3) !important;
+            }
+            
+            .menu-btn {
+                flex-direction: column !important;
+                text-align: center !important;
+                padding: var(--space-5) var(--space-4) !important;
+                min-height: 120px !important;
+            }
+            
+            .menu-btn svg:first-child {
+                width: 32px !important;
+                height: 32px !important;
+                margin-bottom: var(--space-2) !important;
+            }
+            
+            .menu-btn span {
+                font-size: 14px !important;
+            }
+            
+            .menu-btn .arrow {
+                position: absolute !important;
+                top: 12px !important;
+                right: 12px !important;
+                width: 16px !important;
+                height: 16px !important;
+            }
+            
+            .menu-btn .lock-icon {
+                position: absolute !important;
+                top: 12px !important;
+                right: 12px !important;
+            }
+            
+            /* Stat grid 4 colonne su desktop */
+            .stat-grid {
+                grid-template-columns: repeat(4, 1fr) !important;
+            }
+        }
     </style>
     
     <script src="Load/loader.js"></script>

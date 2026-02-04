@@ -2,552 +2,658 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>PRO SYSTEM S.r.l. — Protezioni Industriali & Automazione</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@300;400;500&family=Manrope:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@300;400;500&family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
-:root{
-  --bg:#050709;--surface:#0c0f17;--primary:#0af;--warm:#ff6a2f;--green:#3ddc84;
-  --text:#dce0ea;--muted:#5c6280;--dim:#181d30;--glass:rgba(12,15,23,.55);
-}
-html{background:var(--bg)}
-body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+:root{--bg:#050709;--primary:#0af;--warm:#ff6a2f;--green:#3ddc84;--text:#e8ecf2;--muted:#8890a8;--dim:#181d30;--glass:rgba(8,10,16,.88)}
+html{background:var(--bg);overscroll-behavior:none}
+body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;overflow-x:hidden;-webkit-font-smoothing:antialiased;-webkit-text-size-adjust:100%}
 ::-webkit-scrollbar{width:0}
 
-#scene{position:fixed;inset:0;z-index:0}
-.vig{position:fixed;inset:0;background:radial-gradient(ellipse at 50% 50%,transparent 35%,rgba(5,7,9,.75));pointer-events:none;z-index:1}
-.grain{position:fixed;inset:0;pointer-events:none;z-index:2;opacity:.022;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+#c{position:fixed;inset:0;z-index:0}
+.vig{position:fixed;inset:0;background:radial-gradient(ellipse at 50% 50%,transparent 40%,rgba(5,7,9,.7));pointer-events:none;z-index:1}
+#spacer{height:1500vh;position:relative;z-index:-1}
 
-#spacer{height:900vh;position:relative;z-index:-1}
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:200;padding:20px 40px;display:flex;justify-content:space-between;align-items:center;backdrop-filter:blur(16px);background:rgba(5,7,9,.4);border-bottom:1px solid rgba(255,255,255,.04)}
+.logo{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:5px;color:var(--text)}.logo b{color:var(--primary)}
+.nav-r{display:flex;gap:28px;list-style:none}
+.nav-r a{font-family:'IBM Plex Mono',monospace;font-size:.6rem;font-weight:400;letter-spacing:2.5px;text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color .3s}.nav-r a:hover{color:var(--primary)}
 
-/* Nav */
-nav{position:fixed;top:0;left:0;right:0;z-index:200;padding:28px 52px;display:flex;justify-content:space-between;align-items:center;backdrop-filter:blur(16px);background:rgba(5,7,9,.35);border-bottom:1px solid rgba(255,255,255,.04)}
-.logo{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:5px;color:var(--text)}.logo b{color:var(--primary)}
-.nav-r{display:flex;gap:32px;list-style:none}
-.nav-r a{font-family:'IBM Plex Mono',monospace;font-size:.62rem;font-weight:400;letter-spacing:2.5px;text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color .35s}.nav-r a:hover{color:var(--primary)}
-
-/* Progress */
-.prog{position:fixed;right:36px;top:50%;transform:translateY(-50%);z-index:200;display:flex;flex-direction:column;align-items:center;gap:10px}
-.prog-dot{width:5px;height:5px;border-radius:50%;background:var(--primary);box-shadow:0 0 12px var(--primary)}
-.prog-bar{width:1px;height:100px;background:var(--dim);position:relative;overflow:hidden;border-radius:1px}
-.prog-fill{position:absolute;top:0;left:0;width:100%;height:0%;background:var(--primary);box-shadow:0 0 6px var(--primary);border-radius:1px}
-.prog-num{font-family:'IBM Plex Mono',monospace;font-size:.5rem;letter-spacing:2px;color:var(--muted);writing-mode:vertical-rl;transform:rotate(180deg)}
+/* PROGRESS */
+.prog{position:fixed;right:28px;top:50%;transform:translateY(-50%);z-index:200;display:flex;flex-direction:column;align-items:center;gap:8px}
+.prog-dot{width:5px;height:5px;border-radius:50%;background:var(--primary);box-shadow:0 0 10px var(--primary)}
+.prog-bar{width:1px;height:80px;background:var(--dim);position:relative;overflow:hidden;border-radius:1px}
+.prog-fill{position:absolute;top:0;left:0;width:100%;height:0%;background:var(--primary);border-radius:1px}
+.prog-num{font-family:'IBM Plex Mono',monospace;font-size:.45rem;letter-spacing:2px;color:var(--muted);writing-mode:vertical-rl;transform:rotate(180deg)}
 
 /* HUD */
-.hud{position:fixed;bottom:28px;left:52px;z-index:200;font-family:'IBM Plex Mono',monospace;font-size:.55rem;letter-spacing:3px;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:10px}
-.hud-dot{width:5px;height:5px;border-radius:50%;background:var(--primary);box-shadow:0 0 8px var(--primary)}
+.hud{position:fixed;bottom:20px;left:40px;z-index:200;font-family:'IBM Plex Mono',monospace;font-size:.5rem;letter-spacing:3px;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:8px}
+.hud-dot{width:4px;height:4px;border-radius:50%;background:var(--primary);box-shadow:0 0 6px var(--primary)}
 
-/* Upload overlay */
-.upload-hint{position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;background:rgba(5,7,9,.88);border:3px dashed rgba(0,170,255,.35);pointer-events:none;opacity:0;transition:opacity .25s;backdrop-filter:blur(10px)}
-.upload-hint.show{opacity:1}
-.upload-hint h3{font-family:'Bebas Neue',sans-serif;font-size:3rem;letter-spacing:4px;color:var(--primary)}
-.upload-hint p{font-family:'IBM Plex Mono',monospace;font-size:.7rem;color:var(--muted);letter-spacing:2px}
-.upload-hint .fmts{display:flex;gap:10px;margin-top:8px}
-.upload-hint .fmt{padding:5px 14px;border-radius:8px;font-family:'IBM Plex Mono',monospace;font-size:.55rem;letter-spacing:1.5px;border:1px solid var(--dim);color:var(--primary);background:rgba(0,170,255,.04)}
+/* ═══ PANELS ═══ */
+.p{position:fixed;inset:0;z-index:10;display:flex;align-items:center;justify-content:center;pointer-events:none;opacity:0;padding:80px 40px 40px}
+.p.on{pointer-events:auto}
 
-/* Panels */
-.p{position:fixed;inset:0;z-index:10;display:flex;align-items:center;pointer-events:none;opacity:0}.p.on{pointer-events:auto}
-.hero-wrap{width:100%;text-align:center;padding:0 48px}
-.hero-badge{display:inline-flex;align-items:center;gap:10px;padding:8px 20px;border:1px solid rgba(0,170,255,.15);border-radius:100px;font-family:'IBM Plex Mono',monospace;font-size:.6rem;letter-spacing:3.5px;text-transform:uppercase;color:var(--primary);margin-bottom:36px;backdrop-filter:blur(8px);background:rgba(0,170,255,.03)}
+/* ═══ CONTENT BOX — the key to readability ═══ */
+.cb{background:var(--glass);border:1px solid rgba(255,255,255,.06);border-radius:20px;padding:48px;backdrop-filter:blur(28px);max-width:1200px;width:100%}
+
+/* HERO */
+.hero{text-align:center;background:none;border:none;backdrop-filter:none}
+.hero-badge{display:inline-flex;align-items:center;gap:10px;padding:8px 20px;border:1px solid rgba(0,170,255,.18);border-radius:100px;font-family:'IBM Plex Mono',monospace;font-size:.65rem;letter-spacing:3.5px;text-transform:uppercase;color:var(--primary);margin-bottom:32px;backdrop-filter:blur(8px);background:rgba(0,170,255,.04)}
 .hero-badge i{width:5px;height:5px;border-radius:50%;background:var(--primary);box-shadow:0 0 8px var(--primary);animation:blink 2.5s ease infinite}
-.hero-h{font-family:'Bebas Neue',sans-serif;font-size:clamp(4.5rem,13vw,12rem);line-height:.9;letter-spacing:3px;color:var(--text);margin-bottom:24px}
-.hero-h span{display:block;background:linear-gradient(90deg,var(--primary),var(--warm));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.hero-sub{font-weight:300;font-size:1.05rem;color:var(--muted);max-width:500px;margin:0 auto;line-height:1.8}
-.scroll-cue{position:absolute;bottom:48px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px}
+.hero h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(4rem,12vw,11rem);line-height:.88;letter-spacing:4px;color:#fff;margin-bottom:20px}
+.hero h1 span{display:block;background:linear-gradient(90deg,var(--primary),var(--warm));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero>p{font-weight:400;font-size:clamp(1rem,2.2vw,1.2rem);color:var(--muted);max-width:540px;margin:0 auto;line-height:1.8}
+.scroll-cue{position:fixed;bottom:40px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;z-index:20}
 .scroll-cue span{font-family:'IBM Plex Mono',monospace;font-size:.5rem;letter-spacing:4px;text-transform:uppercase;color:var(--muted)}
-.scroll-line{width:1px;height:36px;overflow:hidden;position:relative}.scroll-line::after{content:'';position:absolute;top:-100%;left:0;width:100%;height:100%;background:linear-gradient(to bottom,transparent,var(--primary));animation:slide 2.2s ease infinite}
+.scroll-line{width:1px;height:32px;overflow:hidden;position:relative}
+.scroll-line::after{content:'';position:absolute;top:-100%;left:0;width:100%;height:100%;background:linear-gradient(to bottom,transparent,var(--primary));animation:sld 2s ease infinite}
 
-.row{width:100%;padding:0 80px;display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center}
-.sec-tag{font-family:'IBM Plex Mono',monospace;font-size:.58rem;letter-spacing:4px;color:var(--primary);text-transform:uppercase;margin-bottom:22px;display:flex;align-items:center;gap:12px}
-.sec-tag::after{content:'';flex:1;height:1px;background:var(--dim);max-width:50px}
-.sec-h{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.8rem,5.5vw,5.5rem);letter-spacing:2px;line-height:.93;color:var(--text)}.sec-h em{font-style:normal;color:var(--primary)}
-.col-r p{font-weight:300;font-size:.95rem;color:var(--muted);line-height:1.85;margin-bottom:28px}
+/* ROW LAYOUT */
+.row{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:start}
+.sec-tag{font-family:'IBM Plex Mono',monospace;font-size:.65rem;letter-spacing:4px;color:var(--primary);text-transform:uppercase;margin-bottom:18px;display:flex;align-items:center;gap:10px}
+.sec-tag::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.08);max-width:50px}
+.sec-h{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.8rem,5vw,5rem);letter-spacing:2px;line-height:.92;color:#fff;margin-bottom:16px}
+.sec-h em{font-style:normal;color:var(--primary)}
+.body-text{font-weight:400;font-size:clamp(.95rem,1.6vw,1.08rem);color:var(--muted);line-height:1.85;margin-bottom:24px}
 
-.stats{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-.st{padding:18px 20px;border:1px solid var(--dim);border-radius:10px;background:var(--glass);backdrop-filter:blur(8px)}
-.st-v{font-family:'Bebas Neue',sans-serif;font-size:2.2rem;color:var(--text);line-height:1}.st-v b{color:var(--primary);font-weight:400}
-.st-l{font-family:'IBM Plex Mono',monospace;font-size:.5rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-top:4px}
+/* STATS */
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.st{padding:18px;border:1px solid rgba(255,255,255,.06);border-radius:12px;background:rgba(255,255,255,.02)}
+.st-v{font-family:'Bebas Neue',sans-serif;font-size:2rem;color:#fff;line-height:1}.st-v b{color:var(--primary);font-weight:400}
+.st-l{font-family:'IBM Plex Mono',monospace;font-size:.55rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-top:4px}
+.st-alt{font-family:'IBM Plex Mono',monospace;font-size:1rem;color:var(--primary);font-weight:500;line-height:1.2}
 
-.pgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.pcard{padding:22px 20px;border:1px solid var(--dim);border-radius:12px;background:var(--glass);backdrop-filter:blur(8px);transition:border-color .35s,transform .35s}
-.pcard:hover{border-color:rgba(0,170,255,.18);transform:translateY(-3px)}
-.pcard h4{font-family:'Manrope',sans-serif;font-weight:700;font-size:.88rem;color:var(--text);margin-bottom:6px}
-.pcard p{font-size:.72rem;color:var(--muted);line-height:1.55;font-weight:300}
-.ptag{display:inline-block;margin-top:10px;padding:3px 9px;border-radius:100px;font-family:'IBM Plex Mono',monospace;font-size:.48rem;letter-spacing:1.5px;text-transform:uppercase;border:1px solid}
-.tc{color:var(--primary);border-color:rgba(0,170,255,.2);background:rgba(0,170,255,.04)}
-.tw{color:var(--warm);border-color:rgba(255,106,47,.2);background:rgba(255,106,47,.04)}
-.tg{color:var(--green);border-color:rgba(61,220,132,.2);background:rgba(61,220,132,.04)}
+/* CARDS */
+.pgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.pcard{padding:20px;border:1px solid rgba(255,255,255,.06);border-radius:12px;background:rgba(255,255,255,.02);transition:border-color .3s,transform .3s}
+.pcard:hover{border-color:rgba(0,170,255,.15);transform:translateY(-2px)}
+.pcard h4{font-weight:700;font-size:.9rem;color:#fff;margin-bottom:5px}
+.pcard p{font-size:.78rem;color:var(--muted);line-height:1.6;font-weight:400}
+.ptag{display:inline-block;margin-top:8px;padding:3px 9px;border-radius:100px;font-family:'IBM Plex Mono',monospace;font-size:.5rem;letter-spacing:1.5px;text-transform:uppercase;border:1px solid}
+.tc{color:var(--primary);border-color:rgba(0,170,255,.2)}
+.tw{color:var(--warm);border-color:rgba(255,106,47,.2)}
+.tg{color:var(--green);border-color:rgba(61,220,132,.2)}
 
-.certs{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:24px}
-.cert{padding:10px 16px;border:1px solid var(--dim);border-radius:10px;background:var(--glass);backdrop-filter:blur(8px);font-family:'IBM Plex Mono',monospace;font-size:.6rem;letter-spacing:1px;color:var(--text)}.cert:hover{border-color:rgba(0,170,255,.2)}
-.cert small{display:block;font-size:.48rem;color:var(--muted);margin-top:2px;letter-spacing:1.5px;text-transform:uppercase}
+/* CERTS */
+.certs{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:20px}
+.cert{padding:10px 16px;border:1px solid rgba(255,255,255,.06);border-radius:10px;background:rgba(255,255,255,.02);font-family:'IBM Plex Mono',monospace;font-size:.65rem;letter-spacing:1px;color:#fff}
+.cert small{display:block;font-size:.5rem;color:var(--muted);margin-top:2px;letter-spacing:1.5px;text-transform:uppercase}
 
-.cta-wrap{width:100%;text-align:center;padding:0 48px}
-.cta-wrap h2{font-family:'Bebas Neue',sans-serif;font-size:clamp(3.5rem,10vw,9rem);letter-spacing:3px;line-height:.92;color:var(--text);margin-bottom:20px}
-.cta-wrap h2 em{font-style:normal;background:linear-gradient(90deg,var(--primary),var(--green));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.cta-wrap>p{font-weight:300;font-size:1rem;color:var(--muted);max-width:420px;margin:0 auto 44px;line-height:1.7}
-.cta-btn{display:inline-flex;align-items:center;gap:12px;padding:16px 40px;border:1px solid var(--primary);border-radius:60px;background:rgba(0,170,255,.05);color:var(--primary);font-family:'IBM Plex Mono',monospace;font-size:.68rem;letter-spacing:3px;text-transform:uppercase;text-decoration:none;transition:all .4s cubic-bezier(.16,1,.3,1);backdrop-filter:blur(8px);cursor:pointer}
-.cta-btn:hover{transform:translateY(-3px);box-shadow:0 12px 40px rgba(0,170,255,.18);background:rgba(0,170,255,.1)}
-.cta-addr{font-family:'IBM Plex Mono',monospace;font-size:.55rem;letter-spacing:2px;color:var(--muted);margin-top:32px}
+/* CTA */
+.cta{text-align:center;background:none;border:none;backdrop-filter:none}
+.cta h2{font-family:'Bebas Neue',sans-serif;font-size:clamp(3.5rem,10vw,9rem);letter-spacing:3px;line-height:.92;color:#fff;margin-bottom:20px}
+.cta h2 em{font-style:normal;background:linear-gradient(90deg,var(--primary),var(--green));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.cta>p{font-weight:400;font-size:1.05rem;color:var(--muted);max-width:420px;margin:0 auto 40px;line-height:1.7}
+.cta-btn{display:inline-flex;align-items:center;gap:12px;padding:16px 40px;border:1px solid var(--primary);border-radius:60px;background:rgba(0,170,255,.06);color:var(--primary);font-family:'IBM Plex Mono',monospace;font-size:.72rem;letter-spacing:3px;text-transform:uppercase;text-decoration:none;transition:all .4s;cursor:pointer}
+.cta-btn:hover{transform:translateY(-3px);box-shadow:0 12px 40px rgba(0,170,255,.18);background:rgba(0,170,255,.12)}
+.cta-addr{font-family:'IBM Plex Mono',monospace;font-size:.6rem;letter-spacing:2px;color:var(--muted);margin-top:28px}
 
-.foot{position:fixed;bottom:0;left:0;right:0;z-index:50;padding:20px 52px;display:flex;justify-content:space-between;opacity:0;transition:opacity .5s;pointer-events:none;font-family:'IBM Plex Mono',monospace;font-size:.5rem;letter-spacing:2px;color:var(--muted)}.foot.on{opacity:1;pointer-events:auto}
+.foot{position:fixed;bottom:0;left:0;right:0;z-index:50;padding:16px 40px;display:flex;justify-content:space-between;opacity:0;transition:opacity .5s;pointer-events:none;font-family:'IBM Plex Mono',monospace;font-size:.5rem;letter-spacing:2px;color:var(--muted)}.foot.on{opacity:1}
 
-/* Toast notification */
-.toast{position:fixed;top:100px;left:50%;transform:translateX(-50%);z-index:9999;padding:14px 28px;background:rgba(5,7,9,.9);border:1px solid var(--primary);border-radius:12px;font-family:'IBM Plex Mono',monospace;font-size:.68rem;letter-spacing:1.5px;color:var(--primary);backdrop-filter:blur(16px);opacity:0;transition:all .4s cubic-bezier(.16,1,.3,1);pointer-events:none;white-space:nowrap}
-.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+@keyframes sld{0%{top:-100%}100%{top:200%}}
 
-@keyframes blink{0%,100%{opacity:1}50%{opacity:.35}}
-@keyframes slide{0%{top:-100%}100%{top:200%}}
-
+/* ═══ MOBILE ═══ */
 @media(max-width:900px){
-  nav{padding:20px 24px}.nav-r{display:none}
-  .row{grid-template-columns:1fr;padding:0 28px;gap:36px}
-  .pgrid,.stats{grid-template-columns:1fr}
-  .prog{right:14px}.hud{left:24px}
-  .hero-wrap,.cta-wrap{padding:0 24px}
+  nav{padding:16px 20px;padding-top:calc(16px + env(safe-area-inset-top))}.nav-r{display:none}
+  .p{padding:70px 16px 30px}
+  .cb{padding:28px 22px;border-radius:16px}
+  .row{grid-template-columns:1fr;gap:28px}
+  .pgrid{grid-template-columns:1fr}
+  .stats{grid-template-columns:1fr 1fr}
+  .hero h1{font-size:clamp(3.2rem,15vw,5rem)}
+  .sec-h{font-size:clamp(2.2rem,8vw,3.5rem)}
+  .body-text{font-size:1rem}
+  .prog{right:12px}
+  .hud{left:16px;bottom:calc(12px + env(safe-area-inset-bottom))}
+  .vig{display:none}
+  .scroll-cue{bottom:calc(30px + env(safe-area-inset-bottom))}
+  .foot{padding:12px 20px;padding-bottom:calc(12px + env(safe-area-inset-bottom))}
+}
+@media(max-width:500px){
+  .cb{padding:22px 18px;border-radius:14px}
+  .stats{gap:10px}
+  .st{padding:14px}
+  .st-v{font-size:1.6rem}
+  .pcard{padding:16px}
+  .pcard h4{font-size:.82rem}
 }
 </style>
 </head>
 <body>
-
-<canvas id="scene"></canvas>
+<canvas id="c"></canvas>
 <div class="vig"></div>
-<div class="grain"></div>
 <div id="spacer"></div>
-
-<!-- Drag overlay -->
-<div class="upload-hint" id="upload-hint">
-  <h3>RILASCIA IL TUO MODELLO 3D</h3>
-  <p>Le particelle si trasformeranno nella forma del tuo file</p>
-  <div class="fmts">
-    <span class="fmt">.GLB</span><span class="fmt">.GLTF</span><span class="fmt">.OBJ</span><span class="fmt">.STL</span>
-  </div>
-</div>
-
-<!-- Toast -->
-<div class="toast" id="toast"></div>
 
 <nav>
   <div class="logo"><b>PRO</b>SYSTEM</div>
   <ul class="nav-r">
-    <li><a href="#" data-go=".15">Chi Siamo</a></li>
-    <li><a href="#" data-go=".35">Prodotti</a></li>
-    <li><a href="#" data-go=".55">Macchine</a></li>
-    <li><a href="#" data-go=".75">Tecnologia</a></li>
-    <li><a href="#" data-go=".92">Contatti</a></li>
+    <li><a href="#" data-go=".14">Chi Siamo</a></li>
+    <li><a href="#" data-go=".29">Prodotti</a></li>
+    <li><a href="#" data-go=".44">Macchine</a></li>
+    <li><a href="#" data-go=".59">Lean</a></li>
+    <li><a href="#" data-go=".74">Stampa 3D</a></li>
+    <li><a href="#" data-go=".90">Contatti</a></li>
   </ul>
 </nav>
 
-<div class="prog">
-  <div class="prog-dot"></div>
-  <div class="prog-bar"><div class="prog-fill" id="pf"></div></div>
-  <div class="prog-num" id="pn">00</div>
-</div>
+<div class="prog"><div class="prog-dot"></div><div class="prog-bar"><div class="prog-fill" id="pf"></div></div><div class="prog-num" id="pn">00</div></div>
+<div class="hud"><span class="hud-dot"></span><span id="ht">logo.prosystem</span></div>
 
-<div class="hud"><span class="hud-dot"></span><span id="hud-t">field.init</span></div>
-
-<!-- ═══ PANELS ═══ -->
+<!-- ═══ P0: HERO ═══ -->
 <div class="p" id="p0">
- <div class="hero-wrap">
+ <div class="cb hero">
   <div class="hero-badge"><i></i> Since 2001 — Anzola dell'Emilia (BO)</div>
-  <h1 class="hero-h">PROTEZIONE<span>& AUTOMAZIONE</span></h1>
-  <p class="hero-sub">Progettiamo e produciamo protezioni anti-infortunistiche per macchine automatiche. Ripari di sicurezza, macchine cartonatrici, nastri trasportatori e stampa 3D industriale.</p>
-  <div class="scroll-cue"><span>Scroll</span><div class="scroll-line"></div></div>
+  <h1>PROTEZIONE<span>& AUTOMAZIONE</span></h1>
+  <p>Progettiamo e produciamo protezioni anti-infortunistiche per macchine automatiche. Ripari di sicurezza, cartonatrici, nastri trasportatori e stampa 3D industriale.</p>
  </div>
+ <div class="scroll-cue" id="sc"><span>Scroll</span><div class="scroll-line"></div></div>
 </div>
 
+<!-- ═══ P1: CHI SIAMO ═══ -->
 <div class="p" id="p1">
- <div class="row">
-  <div><div class="sec-tag">01 — Chi Siamo</div><h2 class="sec-h">DA BORGO PANIGALE<br>ALLA <em>PACKAGING<br>VALLEY</em></h2></div>
-  <div class="col-r">
-   <p>Da oltre vent'anni Pro System S.r.l. è punto di riferimento nel settore delle protezioni anti-infortunistiche per macchine automatiche, con specializzazione nei sistemi di automazione industriale su misura. Fondata da De Marco Daniele e Rende Gianni, oggi operiamo nel nuovo stabilimento di 5.000 m² ad Anzola dell'Emilia.</p>
-   <div class="stats">
-    <div class="st"><div class="st-v">1500<b>+</b></div><div class="st-l">Ripari installati</div></div>
-    <div class="st"><div class="st-v">35</div><div class="st-l">Collaboratori</div></div>
-    <div class="st"><div class="st-v">5000<b>m²</b></div><div class="st-l">Nuovo stabilimento</div></div>
-    <div class="st"><div class="st-v">20<b>+</b></div><div class="st-l">Anni esperienza</div></div>
+ <div class="cb">
+  <div class="row">
+   <div>
+    <div class="sec-tag">01 — Chi Siamo</div>
+    <h2 class="sec-h">DAL 2001 NEL CUORE<br>DELLA <em>PACKAGING<br>VALLEY</em></h2>
+   </div>
+   <div>
+    <p class="body-text">Da oltre vent'anni Pro System S.r.l. è punto di riferimento nella produzione di protezioni anti-infortunistiche per macchine automatiche e nei sistemi di automazione industriale su misura. Fondata da De Marco Daniele e Rende Gianni, oggi operiamo nel nuovo stabilimento di 5.000 m² ad Anzola dell'Emilia, nel cuore della Packaging Valley bolognese.</p>
+    <div class="stats">
+     <div class="st"><div class="st-v">1500<b>+</b></div><div class="st-l">Ripari installati</div></div>
+     <div class="st"><div class="st-v">35</div><div class="st-l">Collaboratori</div></div>
+     <div class="st"><div class="st-v">5000<b>m²</b></div><div class="st-l">Stabilimento</div></div>
+     <div class="st"><div class="st-v">20<b>+</b></div><div class="st-l">Anni esperienza</div></div>
+    </div>
    </div>
   </div>
  </div>
 </div>
 
+<!-- ═══ P2: RIPARI ═══ -->
 <div class="p" id="p2">
- <div class="row">
-  <div><div class="sec-tag">02 — Ripari di Sicurezza</div><h2 class="sec-h">PROTEZIONI<br><em>SU MISURA</em><br>PER OGNI MACCHINA</h2></div>
-  <div class="col-r">
-   <div class="pgrid">
-    <div class="pcard"><h4>Sportelli & Portelloni</h4><p>Cerniere industriali ad alta resistenza, molle a gas integrate, predisposizione sensori di sicurezza.</p><span class="ptag tc">Accesso</span></div>
-    <div class="pcard"><h4>Scorrevoli su Binario</h4><p>Guide ad alta scorrevolezza, sistema di bloccaggio sicuro, compatibilità interblocco.</p><span class="ptag tw">Movimentazione</span></div>
-    <div class="pcard"><h4>Carter & Pannelli</h4><p>Lamiera, policarbonato o compositi. Fissi o asportabili per manutenzione rapida.</p><span class="ptag tg">Sicurezza</span></div>
-    <div class="pcard"><h4>Profilati Alluminio</h4><p>Profili Q25/Q30, cornici, ad L, piatti. Anodizzazione grigia o elox.</p><span class="ptag tc">Struttura</span></div>
+ <div class="cb">
+  <div class="row">
+   <div>
+    <div class="sec-tag">02 — Ripari di Sicurezza</div>
+    <h2 class="sec-h">PROTEZIONI<br><em>SU MISURA</em><br>PER OGNI MACCHINA</h2>
+    <p class="body-text">Il nostro core business: ripari certificati in profilati di alluminio Q25/Q30, pannelli in policarbonato, lamiera o compositi. Ogni protezione è progettata ad-hoc per il macchinario del cliente.</p>
+   </div>
+   <div>
+    <div class="pgrid">
+     <div class="pcard"><h4>Sportelli & Portelloni</h4><p>Cerniere industriali, molle a gas, predisposizione sensori di sicurezza.</p><span class="ptag tc">Accesso</span></div>
+     <div class="pcard"><h4>Scorrevoli su Binario</h4><p>Guide ad alta scorrevolezza, bloccaggio sicuro, interblocco.</p><span class="ptag tw">Movimentazione</span></div>
+     <div class="pcard"><h4>Carter & Pannelli</h4><p>Lamiera, policarbonato o compositi. Fissi o asportabili.</p><span class="ptag tg">Copertura</span></div>
+     <div class="pcard"><h4>Profilati Alluminio</h4><p>Serie Q25/Q30, cornici, L, piatti. Anodizzazione grigia o elox.</p><span class="ptag tc">Struttura</span></div>
+    </div>
    </div>
   </div>
  </div>
 </div>
 
+<!-- ═══ P3: MACCHINE ═══ -->
 <div class="p" id="p3">
- <div class="row">
-  <div><div class="sec-tag">03 — Macchine Automatiche</div><h2 class="sec-h">F50-MAXI<br>& F50-MI<br><em>CARTONATRICI</em></h2></div>
-  <div class="col-r">
-   <p>La F50-MAXI è la nostra cartonatrice automatica per sacchetti di capsule caffè: braccio a ventosa su guida lineare, ingresso fino a 1.000 sacchetti/min, chiusura con colla a caldo o scotch, produttività di 5 scatole/min. La F50-MI gestisce astucci di dimensioni variabili.</p>
-   <div class="stats">
-    <div class="st"><div class="st-v">1000<b>/min</b></div><div class="st-l">Sacchetti ingresso</div></div>
-    <div class="st"><div class="st-v">5<b>/min</b></div><div class="st-l">Scatole chiuse</div></div>
-    <div class="st"><div class="st-v" style="font-size:1.2rem;font-family:'IBM Plex Mono',monospace;color:var(--primary)">COLLA · SCOTCH</div><div class="st-l">Chiusura personalizzabile</div></div>
-    <div class="st"><div class="st-v" style="font-size:1.2rem;font-family:'IBM Plex Mono',monospace;color:var(--warm)">VENTOSA</div><div class="st-l">Presa a vuoto</div></div>
+ <div class="cb">
+  <div class="row">
+   <div>
+    <div class="sec-tag">03 — Macchine Automatiche</div>
+    <h2 class="sec-h">F50-MAXI<br>& F50-MI<br><em>CARTONATRICI</em></h2>
+   </div>
+   <div>
+    <p class="body-text">La F50-MAXI è la nostra cartonatrice automatica per sacchetti di capsule caffè: braccio a ventosa su guida lineare, ingresso fino a 1.000 sacchetti/min, chiusura colla a caldo o scotch, produttività di 5 scatole/min. La F50-MI gestisce astucci di dimensioni variabili.</p>
+    <div class="stats">
+     <div class="st"><div class="st-v">1000<b>/min</b></div><div class="st-l">Sacchetti ingresso</div></div>
+     <div class="st"><div class="st-v">5<b>/min</b></div><div class="st-l">Scatole chiuse</div></div>
+     <div class="st"><div class="st-alt">COLLA · SCOTCH</div><div class="st-l">Chiusura</div></div>
+     <div class="st"><div class="st-alt" style="color:var(--warm)">VENTOSA</div><div class="st-l">Presa a vuoto</div></div>
+    </div>
    </div>
   </div>
  </div>
 </div>
 
+<!-- ═══ P4: LEAN / KANBAN ═══ -->
 <div class="p" id="p4">
- <div class="row">
-  <div><div class="sec-tag">04 — Tecnologia & Stampa 3D</div><h2 class="sec-h">CNC, LEAN<br>& ADDITIVE<br><em>MANUFACTURING</em></h2></div>
-  <div class="col-r">
-   <div class="certs">
-    <div class="cert">ISO 9001<small>Qualità</small></div>
-    <div class="cert">ISO 14001<small>Ambiente</small></div>
-    <div class="cert">ISO 45001<small>Sicurezza</small></div>
+ <div class="cb">
+  <div class="row">
+   <div>
+    <div class="sec-tag">04 — Lean Production</div>
+    <h2 class="sec-h">KANBAN,<br>NASTRI &<br><em>ERGONOMIA</em></h2>
+    <p class="body-text">Scaffalature Kanban inclinabili con rulliere a gravità, banchi ergonomici motorizzati con altezza regolabile e 4 posizioni di memoria. Nastri trasportatori lineari, curvi, inclinati e multipiano in alluminio o acciaio.</p>
    </div>
-   <p>Stratasys F170 per stampa FDM con Nylon, Onyx, fibra di carbonio e Kevlar. Stampa SLS a polvere e resina ad alta precisione. CNC SCM Morbidelli X200 di ultima generazione. Sistemi Kanban e banchi ergonomici motorizzati.</p>
-   <div class="pgrid">
-    <div class="pcard"><h4>Stampa FDM</h4><p>PLA, Nylon, Onyx, Fibra di carbonio, Kevlar, Vetro HSHT.</p><span class="ptag tc">Filamento</span></div>
-    <div class="pcard"><h4>Stampa SLS</h4><p>Nylon 11/12 CF, Nylon 12 GF, TPU 90A. Senza supporti.</p><span class="ptag tw">Polvere</span></div>
-    <div class="pcard"><h4>Stampa Resina</h4><p>Rigid 10K, Elastic 50A, High Temp, Castable Wax.</p><span class="ptag tg">Alta precisione</span></div>
-    <div class="pcard"><h4>Nastri Trasportatori</h4><p>Lineari, curvi, inclinati, multipiano. Alluminio o acciaio.</p><span class="ptag tc">Trasporto</span></div>
+   <div>
+    <div class="pgrid">
+     <div class="pcard"><h4>Scaffali Kanban</h4><p>Struttura in profili alluminio, rulliere a gravità, inclinazione regolabile.</p><span class="ptag tc">Logistica</span></div>
+     <div class="pcard"><h4>Banchi Ergonomici</h4><p>Motorizzati, altezza regolabile, 4 posizioni memoria.</p><span class="ptag tw">Postazione</span></div>
+     <div class="pcard"><h4>Nastri Trasportatori</h4><p>Lineari, curvi, inclinati, multipiano. Modulari con sensori.</p><span class="ptag tg">Trasporto</span></div>
+     <div class="pcard"><h4>Sistemi Modulari</h4><p>Componenti standard combinabili per layout personalizzati.</p><span class="ptag tc">Flessibilità</span></div>
+    </div>
    </div>
   </div>
  </div>
 </div>
 
+<!-- ═══ P5: STAMPA 3D ═══ -->
 <div class="p" id="p5">
- <div class="cta-wrap">
-  <h2>PROTEGGIAMO<br>IL TUO <em>FUTURO</em></h2>
-  <p>Ogni soluzione è progettata su misura. Parliamo del tuo prossimo impianto.</p>
-  <a href="mailto:info@prosystemsrl.eu" class="cta-btn"><span>Richiedi Preventivo</span> →</a>
-  <div class="cta-addr">Via Carlo Nepoti 1 — Anzola dell'Emilia (BO) — www.prosystemsrl.eu</div>
+ <div class="cb">
+  <div class="row">
+   <div>
+    <div class="sec-tag">05 — Stampa 3D & CNC</div>
+    <h2 class="sec-h">ADDITIVE<br><em>MANUFACTURING</em><br>& CNC</h2>
+   </div>
+   <div>
+    <div class="certs">
+     <div class="cert">ISO 9001<small>Qualità</small></div>
+     <div class="cert">ISO 14001<small>Ambiente</small></div>
+     <div class="cert">ISO 45001<small>Sicurezza</small></div>
+    </div>
+    <p class="body-text">Stratasys F170 per stampa FDM con Nylon, Onyx, fibra di carbonio e Kevlar. Stampante SLS a polvere e resina ad alta precisione. CNC SCM Morbidelli X200 di ultima generazione.</p>
+    <div class="pgrid">
+     <div class="pcard"><h4>FDM</h4><p>PLA, Nylon, Onyx, Carbonio, Kevlar, HSHT.</p><span class="ptag tc">Filamento</span></div>
+     <div class="pcard"><h4>SLS</h4><p>Nylon 11/12 CF, Nylon 12 GF, TPU 90A.</p><span class="ptag tw">Polvere</span></div>
+     <div class="pcard"><h4>Resina SLA</h4><p>Rigid 10K, Elastic 50A, High Temp, Castable Wax.</p><span class="ptag tg">Precisione</span></div>
+     <div class="pcard"><h4>CNC</h4><p>SCM Morbidelli X200 (2025). Fresatura alta velocità.</p><span class="ptag tc">Sottrattivo</span></div>
+    </div>
+   </div>
+  </div>
  </div>
 </div>
 
-<div class="foot" id="foot">
- <span>© 2026 PRO SYSTEM S.R.L.</span>
- <span>ANZOLA DELL'EMILIA (BO) — ITALIA</span>
+<!-- ═══ P6: CTA ═══ -->
+<div class="p" id="p6">
+ <div class="cb cta">
+  <h2>PROTEGGIAMO<br>IL TUO <em>FUTURO</em></h2>
+  <p>Ogni soluzione è progettata su misura per le tue esigenze. Parliamo del tuo prossimo impianto.</p>
+  <a href="mailto:info@prosystemsrl.eu" class="cta-btn"><span>Richiedi Preventivo</span> →</a>
+  <div class="cta-addr">Via Carlo Nepoti 1 — 40011 Anzola dell'Emilia (BO) — www.prosystemsrl.eu</div>
+ </div>
 </div>
+
+<div class="foot" id="foot"><span>© 2026 PRO SYSTEM S.R.L.</span><span>PACKAGING VALLEY — ITALIA</span></div>
 
 <script>
-// =====================================================
-// UTILS
-// =====================================================
-const W=()=>window.innerWidth, H=()=>window.innerHeight;
+/* ═══════════════════════════════════════
+   SETUP
+   ═══════════════════════════════════════ */
+const W=()=>innerWidth,H=()=>innerHeight;
+const isMob=/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)||W()<768;
+const N=isMob?2500:5000;
 const ease=t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 const lerp=(a,b,t)=>a+(b-a)*t;
 const mapR=(v,a,b,c,d)=>clamp((v-a)/(b-a),0,1)*(d-c)+c;
 
-function toast(msg,dur=3000){
-  const el=document.getElementById('toast');
-  el.textContent=msg;el.classList.add('show');
-  setTimeout(()=>el.classList.remove('show'),dur);
-}
-
-// =====================================================
-// THREE.JS
-// =====================================================
-const canvas=document.getElementById('scene');
-const renderer=new THREE.WebGLRenderer({canvas,antialias:true});
-renderer.setSize(W(),H());
-renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
-renderer.setClearColor(0x050709);
-
+const canvas=document.getElementById('c');
+const ren=new THREE.WebGLRenderer({canvas,antialias:!isMob});
+ren.setSize(W(),H());ren.setPixelRatio(Math.min(devicePixelRatio,isMob?2:2));ren.setClearColor(0x050709);
 const scene=new THREE.Scene();
-scene.fog=new THREE.FogExp2(0x050709,.015);
-const camera=new THREE.PerspectiveCamera(50,W()/H(),.1,300);
-camera.position.set(0,0,14);
+scene.fog=new THREE.FogExp2(0x050709,isMob?.012:.014);
+const cam=new THREE.PerspectiveCamera(50,W()/H(),.1,300);
+cam.position.set(0,0,14);
 
-function sharpTex(){
-  const c=document.createElement('canvas');c.width=32;c.height=32;
-  const ctx=c.getContext('2d');
-  ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(16,16,11,0,Math.PI*2);ctx.fill();
-  return new THREE.CanvasTexture(c);
+function sharpTex(){const c=document.createElement('canvas');c.width=32;c.height=32;const x=c.getContext('2d');x.fillStyle='#fff';x.beginPath();x.arc(16,16,12,0,Math.PI*2);x.fill();return new THREE.CanvasTexture(c)}
+
+/* ═══════════════════════════════════════
+   BOX-BASED SHAPE GENERATOR
+   ═══════════════════════════════════════ */
+function genBoxes(n,boxes){
+  const pos=new Float32Array(n*3),col=new Float32Array(n*3);
+  const vols=boxes.map(b=>(b[1]-b[0])*(b[3]-b[2])*(b[5]-b[4]));
+  const tot=vols.reduce((a,b)=>a+b,0);
+  for(let i=0;i<n;i++){
+    let r=Math.random()*tot,cum=0,bi=0;
+    for(let j=0;j<boxes.length;j++){cum+=vols[j];if(cum>=r){bi=j;break}}
+    const b=boxes[bi];
+    pos[i*3]=b[0]+Math.random()*(b[1]-b[0]);
+    pos[i*3+1]=b[2]+Math.random()*(b[3]-b[2]);
+    pos[i*3+2]=b[4]+Math.random()*(b[5]-b[4]);
+    col[i*3]=b[6];col[i*3+1]=b[7];col[i*3+2]=b[8];
+  }
+  return{positions:pos,colors:col};
 }
 
-// =====================================================
-// SHAPE GENERATORS
-// =====================================================
-const N=4500;
+function sortShape(d,n){
+  const idx=Array.from({length:n},(_,i)=>i);
+  idx.sort((a,b)=>Math.atan2(d.positions[a*3+1],d.positions[a*3])-Math.atan2(d.positions[b*3+1],d.positions[b*3]));
+  const sp=new Float32Array(n*3),sc=new Float32Array(n*3);
+  idx.forEach((o,i)=>{sp[i*3]=d.positions[o*3];sp[i*3+1]=d.positions[o*3+1];sp[i*3+2]=d.positions[o*3+2];sc[i*3]=d.colors[o*3];sc[i*3+1]=d.colors[o*3+1];sc[i*3+2]=d.colors[o*3+2]});
+  return{positions:sp,colors:sc};
+}
 
-function genSphere(n){const p=new Float32Array(n*3);for(let i=0;i<n;i++){const a=Math.random()*Math.PI*2,b=Math.acos(2*Math.random()-1),r=4*(.88+Math.random()*.12);p[i*3]=r*Math.sin(b)*Math.cos(a);p[i*3+1]=r*Math.sin(b)*Math.sin(a);p[i*3+2]=r*Math.cos(b)}return p}
+/* ═══════════════════════════════════════
+   SHAPE 0: PS LOGO (Isometric 3D letterform)
+   Colors: steel blue top ~(.38,.46,.50) · silver front ~(.72,.75,.78)
+   ═══════════════════════════════════════ */
+const SB=[.30,.38,.42], SV=[.62,.66,.70]; // steel blue, silver (dimmed for additive)
+function genLogo(n){
+  return genBoxes(n,[
+    // Left vertical bar (tall, silver)
+    [-3.0,-2.1, -3,3, -.4,.4, SV[0],SV[1],SV[2]],
+    // Top horizontal bar (steel blue)
+    [-3,2.8, 2.2,3, -.4,.4, SB[0],SB[1],SB[2]],
+    // Top bar front face (silver, thin)
+    [-3,2.8, 1.6,2.2, .2,.4, SV[0],SV[1],SV[2]],
+    // Middle horizontal bar (steel blue top)
+    [-1.5,2.8, .1,.7, -.4,.4, SB[0],SB[1],SB[2]],
+    // Middle bar front face (silver)
+    [-1.5,2.8, -.5,.1, .2,.4, SV[0],SV[1],SV[2]],
+    // Right vertical upper (silver)
+    [2.1,2.8, .7,2.2, -.4,.4, SV[0],SV[1],SV[2]],
+    // Right vertical lower (silver, back layer)
+    [2.1,2.8, -3,-.5, -.4,.1, SV[0],SV[1],SV[2]],
+    // Bottom horizontal bar (steel blue, back layer)
+    [-.5,2.8, -3,-2.3, -.4,.1, SB[0],SB[1],SB[2]],
+  ]);
+}
 
-function genGuard(n){const p=new Float32Array(n*3),GW=7,GH=5,sp=.45,th=.35;for(let i=0;i<n;i++){const c=Math.random();if(c<.35){const col=Math.floor(Math.random()*(GW/sp+1)),x=-GW/2+col*sp;p[i*3]=x+(Math.random()-.5)*.06;p[i*3+1]=-GH/2+Math.random()*GH;p[i*3+2]=(Math.random()-.5)*th}else if(c<.7){const row=Math.floor(Math.random()*(GH/sp+1)),y=-GH/2+row*sp;p[i*3]=-GW/2+Math.random()*GW;p[i*3+1]=y+(Math.random()-.5)*.06;p[i*3+2]=(Math.random()-.5)*th}else{const s=Math.floor(Math.random()*4);let x,y;if(s===0){x=-GW/2;y=-GH/2+Math.random()*GH}else if(s===1){x=GW/2;y=-GH/2+Math.random()*GH}else if(s===2){x=-GW/2+Math.random()*GW;y=-GH/2}else{x=-GW/2+Math.random()*GW;y=GH/2}p[i*3]=x+(Math.random()-.5)*.15;p[i*3+1]=y+(Math.random()-.5)*.15;p[i*3+2]=(Math.random()-.5)*th}}return p}
+/* ═══════════════════════════════════════
+   SHAPE 1: BUILDING (Capannone with RED totems)
+   ═══════════════════════════════════════ */
+function genBuilding(n){
+  const DG=[.25,.28,.32], LR=[.55,.58,.62], RD=[.70,.10,.08], BR=[.42,.33,.22], GN=[.15,.50,.15];
+  return genBoxes(n,[
+    // Main warehouse body (dark gray)
+    [-1,5, -.5,1.8, -2.5,2.5, DG[0],DG[1],DG[2]],
+    // Office section left (slightly lighter)
+    [-4.5,-1, -.5,2.8, -1.8,1.8, .30,.33,.37],
+    // Roof (light gray, wider)
+    [-1.3,5.3, 1.8,2.1, -2.8,2.8, LR[0],LR[1],LR[2]],
+    // Office roof
+    [-4.8,-.7, 2.8,3.1, -2,2, LR[0],LR[1],LR[2]],
+    // ──── RED TOTEMS ──── (the key visual!)
+    [-4.7,-4.1, -.5,3.2, 1.6,2, RD[0],RD[1],RD[2]],  // totem left
+    [1.5,2.1, -.5,2.6, 2.3,2.7, RD[0],RD[1],RD[2]],   // totem center
+    [4.5,5.1, -.5,2.6, 2.3,2.7, RD[0],RD[1],RD[2]],   // totem right
+    // Ground (brown)
+    [-6,7, -1.2,-.5, -4,4, BR[0],BR[1],BR[2]],
+    // Windows on office (lighter spots)
+    [-4,-3.5, .5,1.5, 1.7,1.85, .50,.52,.56],
+    [-3.2,-2.7, .5,1.5, 1.7,1.85, .50,.52,.56],
+    [-4,-3.5, 1.8,2.5, 1.7,1.85, .50,.52,.56],
+    [-3.2,-2.7, 1.8,2.5, 1.7,1.85, .50,.52,.56],
+    // Green entrance
+    [-1.3,-.5, -.5,.1, 1.8,2, GN[0],GN[1],GN[2]],
+  ]);
+}
 
-function genMachine(n){const p=new Float32Array(n*3);const P=[{fn:(i,p)=>{p[i*3]=(Math.random()-.5)*4;p[i*3+1]=(Math.random()-.5)*3-.5;p[i*3+2]=(Math.random()-.5)*2},w:.35},{fn:(i,p)=>{p[i*3]=-3+Math.random()*8;p[i*3+1]=-2.2+(Math.random()-.5)*.15;p[i*3+2]=(Math.random()-.5)*.6},w:.18},{fn:(i,p)=>{const t=Math.random();p[i*3]=1+t*2.5;p[i*3+1]=.5+t*2.2;p[i*3+2]=(Math.random()-.5)*.35},w:.12},{fn:(i,p)=>{const a=Math.random()*Math.PI*2,r=Math.random()*.4;p[i*3]=3.5+Math.cos(a)*r;p[i*3+1]=2.7+Math.sin(a)*r;p[i*3+2]=(Math.random()-.5)*.3},w:.08},{fn:(i,p)=>{p[i*3]=3+Math.random()*2;p[i*3+1]=-1.5+(Math.random()-.5)*1.2;p[i*3+2]=(Math.random()-.5)*1},w:.12},{fn:(i,p)=>{p[i*3]=-3.5+(Math.random()-.5)*.6;p[i*3+1]=.5+Math.random()*2.5;p[i*3+2]=1+(Math.random()-.5)*.3},w:.08},{fn:(i,p)=>{const ci=Math.floor(Math.random()*6),cx=-2.5+ci,a=Math.random()*Math.PI*2;p[i*3]=cx+(Math.random()-.5)*.15;p[i*3+1]=-2.2+Math.sin(a)*.22;p[i*3+2]=Math.cos(a)*.22},w:.07}];const tw=P.reduce((a,x)=>a+x.w,0);for(let i=0;i<n;i++){let r=Math.random()*tw,c=0;for(const pt of P){c+=pt.w;if(c>=r){pt.fn(i,p);break}}}return p}
+/* ═══════════════════════════════════════
+   SHAPE 2: SAFETY GUARD (Grid pattern)
+   Aluminum profiles + polycarbonate
+   ═══════════════════════════════════════ */
+function genGuard(n){
+  const AL=[.50,.53,.57], FR=[.38,.42,.45], PC=[.30,.48,.62];
+  const boxes=[];
+  // Frame border (darker)
+  boxes.push([-3.8,3.8, 2.5,2.7, -.2,.2, FR[0],FR[1],FR[2]]);
+  boxes.push([-3.8,3.8, -2.7,-2.5, -.2,.2, FR[0],FR[1],FR[2]]);
+  boxes.push([-3.8,-3.5, -2.5,2.5, -.2,.2, FR[0],FR[1],FR[2]]);
+  boxes.push([3.5,3.8, -2.5,2.5, -.2,.2, FR[0],FR[1],FR[2]]);
+  // Vertical bars
+  for(let x=-3.5;x<=3.5;x+=.5)boxes.push([x-.025,x+.025, -2.5,2.5, -.12,.12, AL[0],AL[1],AL[2]]);
+  // Horizontal bars
+  for(let y=-2.5;y<=2.5;y+=.5)boxes.push([-3.5,3.5, y-.025,y+.025, -.12,.12, AL[0],AL[1],AL[2]]);
+  // Polycarbonate panel (center, bluish)
+  boxes.push([-2.5,2.5, -1.5,1.5, -.03,.03, PC[0],PC[1],PC[2]]);
+  return genBoxes(n,boxes);
+}
 
-function genConveyor(n){const p=new Float32Array(n*3),L=8,CW=2.5;for(let i=0;i<n;i++){const c=Math.random();if(c<.3){p[i*3]=(Math.random()-.5)*L;p[i*3+1]=(Math.random()-.5)*.06;p[i*3+2]=(Math.random()-.5)*CW}else if(c<.55){const s=Math.random()>.5?1:-1;p[i*3]=(Math.random()-.5)*L;p[i*3+1]=Math.random()*1.2;p[i*3+2]=s*CW/2+(Math.random()-.5)*.08}else if(c<.72){const lx=(Math.random()>.5?-1:1)*(L/2-.3),lz=(Math.random()>.5?-1:1)*(CW/2-.2);p[i*3]=lx+(Math.random()-.5)*.12;p[i*3+1]=-Math.random()*2;p[i*3+2]=lz+(Math.random()-.5)*.12}else if(c<.88){const rx=-L/2+Math.floor(Math.random()*8)*(L/7),a=Math.random()*Math.PI*2;p[i*3]=rx+(Math.random()-.5)*.08;p[i*3+1]=-.15+Math.sin(a)*.15;p[i*3+2]=Math.cos(a)*(CW/2*.42)}else{p[i*3]=-L/2+Math.random()*L;p[i*3+1]=.15+Math.random()*.45;p[i*3+2]=(Math.random()-.5)*CW*.6}}return p}
+/* ═══════════════════════════════════════
+   SHAPE 3: F50-MAXI (Cartoning machine)
+   White body, glass panels, conveyor output
+   ═══════════════════════════════════════ */
+function genF50(n){
+  const WH=[.65,.67,.70], GL=[.40,.55,.68], DK=[.22,.25,.28], TN=[.55,.45,.30];
+  return genBoxes(n,[
+    // Main body base
+    [-4.5,3.5, -2.5,.5, -1.5,1.5, WH[0],WH[1],WH[2]],
+    // Left enclosure (glass panels - taller)
+    [-4.5,-1, .5,2.8, -1.5,1.5, GL[0],GL[1],GL[2]],
+    // Center processing (white)
+    [-1,2, .5,2.2, -1.5,1.5, WH[0],WH[1],WH[2]],
+    // Right enclosure (glass)
+    [2,3.5, .5,2.2, -1.5,1.5, GL[0],GL[1],GL[2]],
+    // Control tower on top
+    [.5,1.5, 2.2,4.2, -.4,.4, DK[0],DK[1],DK[2]],
+    // Output conveyor
+    [3.5,6, -2.5,-1.5, -.6,.6, DK[0],DK[1],DK[2]],
+    // Boxes on output conveyor (tan/cardboard)
+    [4,4.8, -1.5,-.5, -.4,.4, TN[0],TN[1],TN[2]],
+    [5.2,5.8, -1.5,-.5, -.4,.4, TN[0],TN[1],TN[2]],
+    // Feed conveyor (left)
+    [-4.5,-4, -2.5,-1.8, -.8,.8, DK[0],DK[1],DK[2]],
+    // Sliding door rails (subtle)
+    [-4.5,-1, 2.6,2.8, 1.4,1.55, .35,.38,.42],
+  ]);
+}
 
-function gen3DPrint(n){const p=new Float32Array(n*3);for(let i=0;i<n;i++){const c=Math.random();if(c<.6){const l=Math.floor(Math.random()*40),y=-2+l*.12,rB=2.2-Math.abs(y)*.3,r=Math.max(.3,rB)*(.92+Math.random()*.08),a=Math.random()*Math.PI*2,d=Math.random()>.3?r:r*Math.random();p[i*3]=Math.cos(a)*d;p[i*3+1]=y;p[i*3+2]=Math.sin(a)*d}else if(c<.8){p[i*3]=(Math.random()-.5)*5;p[i*3+1]=-2.1+(Math.random()-.5)*.06;p[i*3+2]=(Math.random()-.5)*5}else{const t=Math.random();p[i*3]=-2.5+t*5;p[i*3+1]=3+(Math.random()-.5)*.1;p[i*3+2]=(Math.random()-.5)*.1}}return p}
-
-function srt(pos,n){const idx=Array.from({length:n},(_,i)=>i);idx.sort((a,b)=>Math.atan2(pos[a*3+1],pos[a*3])-Math.atan2(pos[b*3+1],pos[b*3]));const s=new Float32Array(n*3);idx.forEach((o,i)=>{s[i*3]=pos[o*3];s[i*3+1]=pos[o*3+1];s[i*3+2]=pos[o*3+2]});return s}
-
-// ── shape[0] = shape[5] → seamless loop ──
-const sphereSeed=genSphere(N);
-const shapes=[
-  srt(new Float32Array(sphereSeed),N), // 0 start
-  srt(genGuard(N),N),                  // 1 riparo
-  srt(genMachine(N),N),                // 2 F50
-  srt(genConveyor(N),N),               // 3 nastro
-  srt(gen3DPrint(N),N),                // 4 stampa3d
-  srt(new Float32Array(sphereSeed),N), // 5 end = start!
-];
-const shapeLabels=['field.sphere','model.riparo','machine.f50','transport.nastro','tech.stampa3d','field.sphere'];
-
-// =====================================================
-// MESH SURFACE SAMPLER — for loading real 3D models
-// =====================================================
-function sampleMeshSurface(object, count){
-  // Collect all geometries
-  const geoms=[];
-  object.traverse(c=>{if(c.isMesh && c.geometry){
-    c.updateMatrixWorld(true);
-    const g=c.geometry.clone();
-    g.applyMatrix4(c.matrixWorld);
-    if(!g.index){
-      const posA=g.attributes.position;
-      const idx=[];for(let i=0;i<posA.count;i++)idx.push(i);
-      g.setIndex(idx);
+/* ═══════════════════════════════════════
+   SHAPE 4: KANBAN SHELVING (from catalog image)
+   Aluminum frame + yellow rollers
+   ═══════════════════════════════════════ */
+function genKanban(n){
+  const AL=[.55,.57,.60], YL=[.60,.58,.15], DK=[.30,.32,.35];
+  const boxes=[];
+  // 3 vertical frames (posts)
+  for(let x of[-3.5,0,3.5]){
+    boxes.push([x-.15,x+.15, -3,3.5, -2,2, AL[0],AL[1],AL[2]]);
+  }
+  // 4 shelves with inclined yellow rollers
+  for(let y of[-2,-.3,1.4,3]){
+    // Shelf frame
+    boxes.push([-3.5,3.5, y-.08,y+.08, -2,2, AL[0],AL[1],AL[2]]);
+    // Yellow rollers on each shelf (inclined slightly)
+    for(let z=-1.5;z<=1.5;z+=.35){
+      boxes.push([-3.3,3.3, y-.12,y+.2, z-.06,z+.06, YL[0],YL[1],YL[2]]);
     }
-    geoms.push(g);
-  }});
-  if(!geoms.length)return null;
-
-  // Merge into single geometry
-  const allPos=[],allIdx=[];
-  let offset=0;
-  for(const g of geoms){
-    const p=g.attributes.position;
-    for(let i=0;i<p.count;i++){allPos.push(p.getX(i),p.getY(i),p.getZ(i))}
-    const idx=g.index;
-    for(let i=0;i<idx.count;i++)allIdx.push(idx.getX(i)+offset);
-    offset+=p.count;
   }
-
-  const triCount=allIdx.length/3;
-  // Triangle area weighted sampling
-  const areas=new Float64Array(triCount);
-  let totalArea=0;
-  const vA=new THREE.Vector3(),vB=new THREE.Vector3(),vC=new THREE.Vector3();
-  for(let t=0;t<triCount;t++){
-    const i0=allIdx[t*3],i1=allIdx[t*3+1],i2=allIdx[t*3+2];
-    vA.set(allPos[i0*3],allPos[i0*3+1],allPos[i0*3+2]);
-    vB.set(allPos[i1*3],allPos[i1*3+1],allPos[i1*3+2]);
-    vC.set(allPos[i2*3],allPos[i2*3+1],allPos[i2*3+2]);
-    const ab=new THREE.Vector3().subVectors(vB,vA);
-    const ac=new THREE.Vector3().subVectors(vC,vA);
-    areas[t]=ab.cross(ac).length()*.5;
-    totalArea+=areas[t];
+  // Top frame
+  boxes.push([-3.5,3.5, 3.4,3.6, -2,2, AL[0],AL[1],AL[2]]);
+  // Feet
+  for(let x of[-3.5,0,3.5])for(let z of[-1.8,1.8]){
+    boxes.push([x-.2,x+.2, -3.3,-3, z-.2,z+.2, DK[0],DK[1],DK[2]]);
   }
-
-  const result=new Float32Array(count*3);
-  for(let i=0;i<count;i++){
-    let r=Math.random()*totalArea,cum=0,tri=0;
-    for(let t=0;t<triCount;t++){cum+=areas[t];if(cum>=r){tri=t;break}}
-    const i0=allIdx[tri*3],i1=allIdx[tri*3+1],i2=allIdx[tri*3+2];
-    vA.set(allPos[i0*3],allPos[i0*3+1],allPos[i0*3+2]);
-    vB.set(allPos[i1*3],allPos[i1*3+1],allPos[i1*3+2]);
-    vC.set(allPos[i2*3],allPos[i2*3+1],allPos[i2*3+2]);
-    let u=Math.random(),v=Math.random();
-    if(u+v>1){u=1-u;v=1-v}
-    const w=1-u-v;
-    result[i*3]=vA.x*w+vB.x*u+vC.x*v;
-    result[i*3+1]=vA.y*w+vB.y*u+vC.y*v;
-    result[i*3+2]=vA.z*w+vB.z*u+vC.z*v;
-  }
-
-  // Center & normalize to fit ~7 units
-  let mnx=Infinity,mxx=-Infinity,mny=Infinity,mxy=-Infinity,mnz=Infinity,mxz=-Infinity;
-  for(let i=0;i<count;i++){
-    mnx=Math.min(mnx,result[i*3]);mxx=Math.max(mxx,result[i*3]);
-    mny=Math.min(mny,result[i*3+1]);mxy=Math.max(mxy,result[i*3+1]);
-    mnz=Math.min(mnz,result[i*3+2]);mxz=Math.max(mxz,result[i*3+2]);
-  }
-  const cx=(mnx+mxx)/2,cy=(mny+mxy)/2,cz=(mnz+mxz)/2;
-  const span=Math.max(mxx-mnx,mxy-mny,mxz-mnz);
-  const sc=7/span;
-  for(let i=0;i<count;i++){
-    result[i*3]=(result[i*3]-cx)*sc;
-    result[i*3+1]=(result[i*3+1]-cy)*sc;
-    result[i*3+2]=(result[i*3+2]-cz)*sc;
-  }
-  return srt(result,count);
+  return genBoxes(n,boxes);
 }
 
-// =====================================================
-// DRAG & DROP 3D FILES
-// =====================================================
-const uploadHint=document.getElementById('upload-hint');
-let dragCount=0, nextSlot=1;
-
-document.addEventListener('dragenter',e=>{e.preventDefault();dragCount++;uploadHint.classList.add('show')});
-document.addEventListener('dragleave',e=>{e.preventDefault();dragCount--;if(dragCount<=0){uploadHint.classList.remove('show');dragCount=0}});
-document.addEventListener('dragover',e=>e.preventDefault());
-document.addEventListener('drop',e=>{
-  e.preventDefault();dragCount=0;uploadHint.classList.remove('show');
-  const file=e.dataTransfer.files[0];
-  if(!file)return;
-  const name=file.name.toLowerCase();
-  const url=URL.createObjectURL(file);
-  const slot=nextSlot;
-  nextSlot=slot>=4?1:slot+1;
-
-  toast('⏳ Caricamento: '+file.name);
-
-  if(name.endsWith('.glb')||name.endsWith('.gltf')){
-    import('https://cdn.jsdelivr.net/npm/three@0.128.0/examples/jsm/loaders/GLTFLoader.js').then(m=>{
-      new m.GLTFLoader().load(url,gltf=>{injectModel(gltf.scene,slot,file.name)},null,err=>toast('❌ Errore: '+err.message))
-    });
-  }else if(name.endsWith('.obj')){
-    import('https://cdn.jsdelivr.net/npm/three@0.128.0/examples/jsm/loaders/OBJLoader.js').then(m=>{
-      new m.OBJLoader().load(url,obj=>{injectModel(obj,slot,file.name)},null,err=>toast('❌ Errore: '+err.message))
-    });
-  }else if(name.endsWith('.stl')){
-    import('https://cdn.jsdelivr.net/npm/three@0.128.0/examples/jsm/loaders/STLLoader.js').then(m=>{
-      new m.STLLoader().load(url,geo=>{
-        const mesh=new THREE.Mesh(geo);
-        injectModel(mesh,slot,file.name);
-      },null,err=>toast('❌ Errore: '+err.message))
-    });
-  }else{
-    toast('❌ Formato non supportato. Usa .GLB .OBJ .STL');
-  }
-});
-
-function injectModel(object,slot,filename){
-  const sampled=sampleMeshSurface(object,N);
-  if(!sampled){toast('❌ Nessuna geometria trovata');return}
-  shapes[slot]=sampled;
-  const sectionNames=['','Ripari','Macchine','Nastri','Tecnologia'];
-  shapeLabels[slot]='custom.'+filename.replace(/\.[^.]+$/,'');
-  toast('✦ '+filename+' → sezione '+sectionNames[slot]+' (slot '+slot+')');
+/* ═══════════════════════════════════════
+   SHAPE 5: 3D PRINT (SLA resin - hanging parts)
+   Blue resin parts, orange platform, steel frame
+   ═══════════════════════════════════════ */
+function gen3DPrint(n){
+  const BL=[.18,.45,.68], OR=[.72,.40,.08], LB=[.40,.60,.72], ST=[.28,.30,.33];
+  return genBoxes(n,[
+    // Build plate (top, orange)
+    [-2.5,2.5, 3,3.4, -2.5,2.5, OR[0],OR[1],OR[2]],
+    // Printed part A (blue resin, left)
+    [-2,-0.5, -.5,3, -1,1, BL[0],BL[1],BL[2]],
+    // Printed part B (blue resin, right)
+    [.5,2, -.5,3, -1,1, BL[0],BL[1],BL[2]],
+    // Printed part C (center, smaller)
+    [-.5,.5, .5,3, -.6,.6, BL[0],BL[1],BL[2]],
+    // Support lattice (light blue, thin)
+    [-1.5,1.5, 1.5,3, -.15,.15, LB[0],LB[1],LB[2]],
+    [-.15,.15, 1.5,3, -1.5,1.5, LB[0],LB[1],LB[2]],
+    // Frame pillars (steel)
+    [-3,-2.5, -2.5,3.5, -3,-2.5, ST[0],ST[1],ST[2]],
+    [2.5,3, -2.5,3.5, -3,-2.5, ST[0],ST[1],ST[2]],
+    [-3,-2.5, -2.5,3.5, 2.5,3, ST[0],ST[1],ST[2]],
+    [2.5,3, -2.5,3.5, 2.5,3, ST[0],ST[1],ST[2]],
+    // Base (dark)
+    [-3,3, -2.8,-2.5, -3,3, ST[0],ST[1],ST[2]],
+    // Resin pool (blue at bottom)
+    [-2.5,2.5, -2.5,-1.5, -2.5,2.5, .12,.32,.50],
+  ]);
 }
 
-// =====================================================
-// PARTICLE SYSTEM
-// =====================================================
+/* ═══════════════════════════════════════
+   GENERATE ALL SHAPES
+   ═══════════════════════════════════════ */
+const raw0=genLogo(N);
+const shapeData=[
+  sortShape(raw0,N),                       // 0: PS Logo
+  sortShape(genBuilding(N),N),             // 1: Building
+  sortShape(genGuard(N),N),                // 2: Safety Guard
+  sortShape(genF50(N),N),                  // 3: F50-MAXI
+  sortShape(genKanban(N),N),               // 4: Kanban
+  sortShape(gen3DPrint(N),N),              // 5: 3D Print
+  {positions:new Float32Array(raw0.positions), // 6: = Logo copy for loop
+   colors:new Float32Array(raw0.colors)},
+];
+// Sort the loop copy the same way
+const s6=sortShape(shapeData[6],N);
+shapeData[6]=s6;
+
+const labels=['logo.prosystem','sede.capannone','prod.riparo','machine.f50_maxi','lean.kanban','tech.stampa3d','logo.prosystem'];
+
+/* ═══════════════════════════════════════
+   PARTICLE SYSTEM
+   ═══════════════════════════════════════ */
 const geo=new THREE.BufferGeometry();
 const pos=new Float32Array(N*3),col=new Float32Array(N*3),prev=new Float32Array(N*3);
-for(let i=0;i<N*3;i++){pos[i]=shapes[0][i];prev[i]=shapes[0][i]}
+for(let i=0;i<N*3;i++){pos[i]=shapeData[0].positions[i];prev[i]=pos[i];col[i]=shapeData[0].colors[i]}
 geo.setAttribute('position',new THREE.BufferAttribute(pos,3));
 geo.setAttribute('color',new THREE.BufferAttribute(col,3));
 
-const mat=new THREE.PointsMaterial({size:.12,map:sharpTex(),vertexColors:true,transparent:true,opacity:.95,blending:THREE.AdditiveBlending,sizeAttenuation:true,depthWrite:false});
+const mat=new THREE.PointsMaterial({
+  size:isMob?.14:.12,map:sharpTex(),vertexColors:true,transparent:true,
+  opacity:.85,blending:THREE.AdditiveBlending,sizeAttenuation:true,depthWrite:false
+});
 const pts=new THREE.Points(geo,mat);scene.add(pts);
 
 // Dust
-const dN=500,dG=new THREE.BufferGeometry(),dP=new Float32Array(dN*3);
-for(let i=0;i<dN;i++){dP[i*3]=(Math.random()-.5)*60;dP[i*3+1]=(Math.random()-.5)*60;dP[i*3+2]=(Math.random()-.5)*60}
-dG.setAttribute('position',new THREE.BufferAttribute(dP,3));
-scene.add(new THREE.Points(dG,new THREE.PointsMaterial({size:.025,color:0x1e2540,transparent:true,opacity:.45,blending:THREE.AdditiveBlending,depthWrite:false})));
+if(!isMob){
+  const dN=400,dG=new THREE.BufferGeometry(),dP=new Float32Array(dN*3);
+  for(let i=0;i<dN;i++){dP[i*3]=(Math.random()-.5)*60;dP[i*3+1]=(Math.random()-.5)*60;dP[i*3+2]=(Math.random()-.5)*60}
+  dG.setAttribute('position',new THREE.BufferAttribute(dP,3));
+  scene.add(new THREE.Points(dG,new THREE.PointsMaterial({size:.02,color:0x1e2540,transparent:true,opacity:.4,blending:THREE.AdditiveBlending,depthWrite:false})));
+}
 
-// =====================================================
-// SCROLL — SEAMLESS INFINITE LOOP
-// =====================================================
-const transitions=[
-  {start:.10,end:.18,from:0,to:1},  // sphere → guard
-  {start:.28,end:.36,from:1,to:2},  // guard → machine
-  {start:.48,end:.56,from:2,to:3},  // machine → conveyor
-  {start:.66,end:.74,from:3,to:4},  // conveyor → 3dprint
-  {start:.86,end:.94,from:4,to:5},  // 3dprint → sphere again!
+/* ═══════════════════════════════════════
+   SCROLL — GENEROUS PACING + SEAMLESS LOOP
+   1500vh total → each section ~10% = 150vh
+   ═══════════════════════════════════════ */
+const TR=[
+  {s:.07,e:.12,from:0,to:1},  // logo → building
+  {s:.22,e:.27,from:1,to:2},  // building → guard
+  {s:.37,e:.42,from:2,to:3},  // guard → F50
+  {s:.52,e:.57,from:3,to:4},  // F50 → kanban
+  {s:.67,e:.72,from:4,to:5},  // kanban → 3dprint
+  {s:.87,e:.92,from:5,to:6},  // 3dprint → logo (LOOP)
+];
+const PN=[
+  {id:'p0',in:0,  pk:.03,out:.06},
+  {id:'p1',in:.13,pk:.17,out:.21},
+  {id:'p2',in:.28,pk:.32,out:.36},
+  {id:'p3',in:.43,pk:.47,out:.51},
+  {id:'p4',in:.58,pk:.62,out:.66},
+  {id:'p5',in:.73,pk:.79,out:.86},
+  {id:'p6',in:.88,pk:.94,out:.965},
 ];
 
-const panels=[
-  {id:'p0',in:0,  peak:.03,out:.08},
-  {id:'p1',in:.14,peak:.22,out:.26},
-  {id:'p2',in:.32,peak:.40,out:.46},
-  {id:'p3',in:.52,peak:.60,out:.64},
-  {id:'p4',in:.70,peak:.78,out:.84},
-  {id:'p5',in:.86,peak:.93,out:.965},
-];
-
-const baseCol={r:0,g:.45,b:.72},fastCol={r:1,g:.42,b:.17};
-let scroll=0,mxT=0,myT=0,mx=0,my=0;
-let loopLock=false;
-
-document.addEventListener('mousemove',e=>{mxT=(e.clientX/W()-.5)*2;myT=(e.clientY/H()-.5)*2});
+let scroll=0,mxT=0,myT=0,mx=0,my=0,loopLock=false;
+if(!isMob)document.addEventListener('mousemove',e=>{mxT=(e.clientX/W()-.5)*2;myT=(e.clientY/H()-.5)*2});
 
 function tick(){
-  const spacer=document.getElementById('spacer');
-  const maxS=spacer.offsetHeight-H();
-  scroll=clamp(window.scrollY/maxS,0,1);
+  const sp=document.getElementById('spacer');
+  const maxS=sp.offsetHeight-H();
+  scroll=clamp(scrollY/maxS,0,1);
 
   // ── SEAMLESS LOOP ──
-  // Shape[5] is identical to Shape[0], so at scroll=.97
-  // particles are already in sphere position → safe to jump
-  if(!loopLock && scroll>.97){
+  if(!loopLock&&scroll>.965){
     loopLock=true;
-    // Snap particles to shape[0] for safety
-    for(let i=0;i<N*3;i++){pos[i]=shapes[0][i];prev[i]=shapes[0][i]}
-    geo.attributes.position.needsUpdate=true;
-    // Jump scroll to beginning (hero visible zone)
-    window.scrollTo(0, maxS*.03);
-    scroll=.03;
-    requestAnimationFrame(()=>{loopLock=false});
+    for(let i=0;i<N*3;i++){pos[i]=shapeData[0].positions[i];prev[i]=pos[i];col[i]=shapeData[0].colors[i]}
+    geo.attributes.position.needsUpdate=true;geo.attributes.color.needsUpdate=true;
+    scrollTo(0,maxS*.03);scroll=.03;
+    requestAnimationFrame(()=>loopLock=false);
     return;
   }
 
+  // Progress
   document.getElementById('pf').style.height=(scroll*100)+'%';
   document.getElementById('pn').textContent=String(Math.floor(scroll*100)).padStart(2,'0');
 
-  panels.forEach(z=>{
+  // Scroll cue fade
+  const sc=document.getElementById('sc');
+  if(sc)sc.style.opacity=scroll<.04?1-scroll/.04:0;
+
+  // Panels
+  PN.forEach(z=>{
     const el=document.getElementById(z.id);
     let o=0;
-    if(scroll>=z.in&&scroll<=z.out)o=scroll<z.peak?mapR(scroll,z.in,z.peak,0,1):mapR(scroll,z.peak,z.out,1,0);
+    if(scroll>=z.in&&scroll<=z.out)o=scroll<z.pk?mapR(scroll,z.in,z.pk,0,1):mapR(scroll,z.pk,z.out,1,0);
     el.style.opacity=o;el.classList.toggle('on',o>.1);
   });
+  document.getElementById('foot').classList.toggle('on',scroll>.88&&scroll<.96);
 
-  document.getElementById('foot').classList.toggle('on',scroll>.88&&scroll<.97);
-
+  // Shape morph
   let fromS=0,toS=0,tw=0,inTr=false;
-  for(const tr of transitions){
-    if(scroll>=tr.start&&scroll<=tr.end){fromS=tr.from;toS=tr.to;tw=ease((scroll-tr.start)/(tr.end-tr.start));inTr=true;break}
-    if(scroll>tr.end){fromS=tr.to;toS=tr.to}
+  for(const tr of TR){
+    if(scroll>=tr.s&&scroll<=tr.e){fromS=tr.from;toS=tr.to;tw=ease((scroll-tr.s)/(tr.e-tr.s));inTr=true;break}
+    if(scroll>tr.e){fromS=tr.to;toS=tr.to}
+  }
+  document.getElementById('ht').textContent=labels[inTr?toS:fromS];
+
+  const A=shapeData[fromS],B=inTr?shapeData[toS]:A;
+  const t=inTr?tw:0;
+
+  // Morph positions AND colors
+  for(let i=0;i<N*3;i++){
+    prev[i]=pos[i];
+    pos[i]=lerp(A.positions[i],B.positions[i],t);
+    col[i]=lerp(A.colors[i],B.colors[i],t);
   }
 
-  document.getElementById('hud-t').textContent=shapeLabels[inTr?toS:fromS];
+  // Velocity glow boost during transitions
+  if(inTr){
+    let maxSpd=0;const spd=new Float32Array(N);
+    for(let i=0;i<N;i++){
+      const dx=pos[i*3]-prev[i*3],dy=pos[i*3+1]-prev[i*3+1],dz=pos[i*3+2]-prev[i*3+2];
+      spd[i]=Math.sqrt(dx*dx+dy*dy+dz*dz);if(spd[i]>maxSpd)maxSpd=spd[i];
+    }
+    if(maxSpd>.0005){
+      for(let i=0;i<N;i++){
+        const g=clamp(spd[i]/(maxSpd*.4),0,1)*.25; // subtle white glow
+        col[i*3]=Math.min(1,col[i*3]+g);
+        col[i*3+1]=Math.min(1,col[i*3+1]+g);
+        col[i*3+2]=Math.min(1,col[i*3+2]+g);
+      }
+    }
+  }
 
-  const A=shapes[fromS],B=inTr?shapes[toS]:A,t=inTr?tw:0;
-  for(let i=0;i<N*3;i++){prev[i]=pos[i];pos[i]=lerp(A[i],B[i],t)}
   geo.attributes.position.needsUpdate=true;
-
-  let maxSpd=0;const spd=new Float32Array(N);
-  for(let i=0;i<N;i++){const dx=pos[i*3]-prev[i*3],dy=pos[i*3+1]-prev[i*3+1],dz=pos[i*3+2]-prev[i*3+2];spd[i]=Math.sqrt(dx*dx+dy*dy+dz*dz);if(spd[i]>maxSpd)maxSpd=spd[i]}
-  if(maxSpd<.0005)maxSpd=.0005;
-  for(let i=0;i<N;i++){const s=clamp(spd[i]/(maxSpd*.5),0,1),s2=s*s;col[i*3]=lerp(baseCol.r,fastCol.r,s2);col[i*3+1]=lerp(baseCol.g,fastCol.g,s2);col[i*3+2]=lerp(baseCol.b,fastCol.b,s2)}
   geo.attributes.color.needsUpdate=true;
-
-  mat.size=inTr?lerp(.12,.18,Math.sin(tw*Math.PI)):.12;
+  mat.size=inTr?lerp(isMob?.14:.12,isMob?.20:.18,Math.sin(tw*Math.PI)):isMob?.14:.12;
 }
 
-window.addEventListener('scroll',tick,{passive:true});
-document.querySelectorAll('.nav-r a').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const ms=document.getElementById('spacer').offsetHeight-H();window.scrollTo({top:parseFloat(a.dataset.go)*ms,behavior:'smooth'})}));
+addEventListener('scroll',tick,{passive:true});
 
+// Nav links
+document.querySelectorAll('.nav-r a').forEach(a=>a.addEventListener('click',e=>{
+  e.preventDefault();const ms=document.getElementById('spacer').offsetHeight-H();
+  scrollTo({top:parseFloat(a.dataset.go)*ms,behavior:'smooth'});
+}));
+
+/* ═══════════════════════════════════════
+   RENDER LOOP
+   ═══════════════════════════════════════ */
 function animate(){
   requestAnimationFrame(animate);
-  mx+=(mxT-mx)*.035;my+=(myT-my)*.035;
-  camera.position.x=mx*1.2;camera.position.y=-my*.8;camera.lookAt(0,0,0);
+  if(!isMob){mx+=(mxT-mx)*.03;my+=(myT-my)*.03;cam.position.x=mx*1.1;cam.position.y=-my*.7}
+  cam.lookAt(0,0,0);
   const t=performance.now()*.001;
-  pts.rotation.y=t*.025+scroll*.4;
-  pts.rotation.x=Math.sin(t*.015)*.05;
-  renderer.render(scene,camera);
+  pts.rotation.y=t*.02+scroll*.4;
+  pts.rotation.x=Math.sin(t*.012)*.04;
+  ren.render(scene,cam);
 }
 animate();tick();
 
-window.addEventListener('resize',()=>{renderer.setSize(W(),H());camera.aspect=W()/H();camera.updateProjectionMatrix()});
-
-document.querySelectorAll('.pcard').forEach(c=>{
-  c.addEventListener('mousemove',e=>{const r=c.getBoundingClientRect();c.style.background=`radial-gradient(circle at ${((e.clientX-r.left)/r.width*100)}% ${((e.clientY-r.top)/r.height*100)}%,rgba(0,170,255,.055) 0%,rgba(12,15,23,.55) 60%)`});
-  c.addEventListener('mouseleave',()=>c.style.background='var(--glass)');
-});
+addEventListener('resize',()=>{ren.setSize(W(),H());cam.aspect=W()/H();cam.updateProjectionMatrix()});
 </script>
 </body>
 </html>

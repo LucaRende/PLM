@@ -3,1286 +3,668 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PRO SYSTEM — Automazione Industriale</title>
+<title>PRO SYSTEM S.r.l. — Protezioni Industriali & Automazione</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=JetBrains+Mono:wght@300;400;500&family=Outfit:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@300;400;500&family=Manrope:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-
-:root {
-  --bg: #060810;
-  --surface: #0d111d;
-  --primary: #00d4ff;
-  --secondary: #ff6b2b;
-  --green: #2aff8a;
-  --text: #c8cdd8;
-  --muted: #4a5068;
-  --dim: #1e2235;
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#050709;
+  --surface:#0c0f17;
+  --primary:#0af;
+  --warm:#ff6a2f;
+  --green:#3ddc84;
+  --text:#dce0ea;
+  --muted:#5c6280;
+  --dim:#181d30;
+  --glass:rgba(12,15,23,.55);
 }
-
-html { background: var(--bg); }
-
-body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: 'Outfit', sans-serif;
-  overflow-x: hidden;
-  -webkit-font-smoothing: antialiased;
-}
-
-::-webkit-scrollbar { width: 0; }
-
-/* Fixed Canvas */
-#bg {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100vw; height: 100vh;
-  z-index: 0;
-}
-
-/* Atmospheric Overlays */
-.vignette {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  background: radial-gradient(ellipse at center, transparent 40%, rgba(6,8,16,0.7) 100%);
-  pointer-events: none;
-  z-index: 1;
-}
-
-.noise {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  pointer-events: none;
-  z-index: 2;
-  opacity: 0.025;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-}
-
-.scanlines {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  pointer-events: none;
-  z-index: 2;
-  background: repeating-linear-gradient(
-    0deg,
-    transparent,
-    transparent 2px,
-    rgba(0,0,0,0.015) 2px,
-    rgba(0,0,0,0.015) 4px
-  );
-}
-
-/* Scroll Spacer */
-#scroll-spacer {
-  height: 600vh;
-  position: relative;
-  z-index: -1;
-}
-
-/* Navigation */
-nav {
-  position: fixed;
-  top: 0; left: 0; right: 0;
-  z-index: 100;
-  padding: 32px 48px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  transition: opacity 0.5s ease;
-}
-
-.nav-logo {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 1.6rem;
-  letter-spacing: 6px;
-  color: var(--text);
-}
-
-.nav-logo span {
-  color: var(--primary);
-}
-
-.nav-links {
-  display: flex;
-  gap: 36px;
-  list-style: none;
-}
-
-.nav-links a {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.65rem;
-  font-weight: 400;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: var(--muted);
-  text-decoration: none;
-  transition: color 0.4s ease;
-  position: relative;
-}
-
-.nav-links a:hover { color: var(--primary); }
-
-/* Progress Bar */
-.progress-track {
-  position: fixed;
-  right: 32px;
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 100;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
-}
-
-.progress-line {
-  width: 1px;
-  height: 120px;
-  background: var(--dim);
-  position: relative;
-  border-radius: 1px;
-  overflow: hidden;
-}
-
-.progress-fill {
-  position: absolute;
-  top: 0; left: 0;
-  width: 100%;
-  height: 0%;
-  background: var(--primary);
-  transition: height 0.1s linear;
-  border-radius: 1px;
-  box-shadow: 0 0 8px var(--primary);
-}
-
-.progress-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.55rem;
-  letter-spacing: 2px;
-  color: var(--muted);
-  writing-mode: vertical-rl;
-  text-orientation: mixed;
-  transform: rotate(180deg);
-  transition: color 0.3s ease;
-}
-
-.progress-dot {
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: var(--primary);
-  box-shadow: 0 0 10px var(--primary), 0 0 20px rgba(0,212,255,0.3);
-  animation: progressPulse 2s ease infinite;
-}
-
-/* Panels */
-.panel {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100vw;
-  height: 100vh;
-  z-index: 10;
-  display: flex;
-  align-items: center;
-  pointer-events: none;
-  opacity: 0;
-  transition: none;
-}
-
-.panel.active { pointer-events: auto; }
-
-/* Hero Panel */
-.hero-content {
-  width: 100%;
-  text-align: center;
-  padding: 0 48px;
-}
-
-.hero-tag {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.65rem;
-  letter-spacing: 4px;
-  text-transform: uppercase;
-  color: var(--primary);
-  margin-bottom: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-}
-
-.hero-tag .pulse-dot {
-  width: 6px;
-  height: 6px;
-  background: var(--primary);
-  border-radius: 50%;
-  animation: progressPulse 2s ease infinite;
-  box-shadow: 0 0 8px var(--primary);
-}
-
-.hero-title {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: clamp(4rem, 12vw, 11rem);
-  letter-spacing: 4px;
-  line-height: 0.92;
-  color: var(--text);
-  margin-bottom: 28px;
-}
-
-.hero-title .line2 {
-  display: block;
-  background: linear-gradient(90deg, var(--primary), var(--secondary));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.hero-sub {
-  font-family: 'Outfit', sans-serif;
-  font-weight: 300;
-  font-size: 1.1rem;
-  color: var(--muted);
-  max-width: 440px;
-  margin: 0 auto;
-  line-height: 1.7;
-}
-
-.scramble-char {
-  color: var(--primary);
-  opacity: 0.6;
-}
-
-.scroll-hint {
-  position: absolute;
-  bottom: 48px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-}
-
-.scroll-hint span {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.55rem;
-  letter-spacing: 4px;
-  text-transform: uppercase;
-  color: var(--muted);
-}
-
-.scroll-arrow {
-  width: 1px;
-  height: 40px;
-  position: relative;
-  overflow: hidden;
-}
-
-.scroll-arrow::after {
-  content: '';
-  position: absolute;
-  top: -100%;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(to bottom, transparent, var(--primary));
-  animation: scrollDown 2s ease infinite;
-}
-
-/* Info Panels (About, Services, Tech) */
-.info-layout {
-  width: 100%;
-  padding: 0 80px;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 80px;
-  align-items: center;
-}
-
-.info-left .section-num {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.6rem;
-  letter-spacing: 4px;
-  color: var(--primary);
-  text-transform: uppercase;
-  margin-bottom: 24px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.info-left .section-num::after {
-  content: '';
-  flex: 1;
-  height: 1px;
-  background: var(--dim);
-  max-width: 60px;
-}
-
-.info-left h2 {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: clamp(3rem, 6vw, 5.5rem);
-  letter-spacing: 2px;
-  line-height: 0.95;
-  color: var(--text);
-  margin-bottom: 0;
-}
-
-.info-left h2 em {
-  font-style: normal;
-  color: var(--primary);
-}
-
-.info-right {
-  padding-top: 40px;
-}
-
-.info-right p {
-  font-weight: 300;
-  font-size: 1rem;
-  color: var(--muted);
-  line-height: 1.8;
-  margin-bottom: 32px;
-}
-
-.info-stats {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 24px;
-}
-
-.stat {
-  padding: 20px;
-  border: 1px solid var(--dim);
-  border-radius: 12px;
-  background: rgba(13,17,29,0.5);
-  backdrop-filter: blur(10px);
-}
-
-.stat-value {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 2.5rem;
-  letter-spacing: 1px;
-  color: var(--text);
-  line-height: 1;
-}
-
-.stat-value span { color: var(--primary); }
-
-.stat-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.55rem;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: var(--muted);
-  margin-top: 6px;
-}
-
-/* Services Grid */
-.services-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 16px;
-}
-
-.service-card {
-  padding: 28px 24px;
-  border: 1px solid var(--dim);
-  border-radius: 14px;
-  background: rgba(13,17,29,0.4);
-  backdrop-filter: blur(10px);
-  transition: border-color 0.4s ease, transform 0.4s ease;
-  cursor: default;
-}
-
-.service-card:hover {
-  border-color: rgba(0,212,255,0.2);
-  transform: translateY(-4px);
-}
-
-.service-icon {
-  font-size: 1.4rem;
-  margin-bottom: 16px;
-}
-
-.service-card h4 {
-  font-family: 'Outfit', sans-serif;
-  font-weight: 600;
-  font-size: 0.95rem;
-  color: var(--text);
-  margin-bottom: 8px;
-}
-
-.service-card p {
-  font-size: 0.78rem;
-  color: var(--muted);
-  line-height: 1.6;
-  font-weight: 300;
-}
-
-.service-tag {
-  display: inline-block;
-  margin-top: 12px;
-  padding: 4px 10px;
-  border-radius: 100px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.5rem;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  border: 1px solid;
-}
-
-.tag-cyan { color: var(--primary); border-color: rgba(0,212,255,0.2); background: rgba(0,212,255,0.05); }
-.tag-orange { color: var(--secondary); border-color: rgba(255,107,43,0.2); background: rgba(255,107,43,0.05); }
-.tag-green { color: var(--green); border-color: rgba(42,255,138,0.2); background: rgba(42,255,138,0.05); }
-
-/* Contact Panel */
-.contact-content {
-  width: 100%;
-  text-align: center;
-  padding: 0 48px;
-}
-
-.contact-content h2 {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: clamp(3.5rem, 10vw, 9rem);
-  letter-spacing: 4px;
-  line-height: 0.92;
-  color: var(--text);
-  margin-bottom: 24px;
-}
-
-.contact-content h2 em {
-  font-style: normal;
-  background: linear-gradient(90deg, var(--primary), var(--green));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.contact-content p {
-  font-weight: 300;
-  font-size: 1.05rem;
-  color: var(--muted);
-  max-width: 420px;
-  margin: 0 auto 48px;
-  line-height: 1.7;
-}
-
-.cta-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 12px;
-  padding: 18px 44px;
-  border: 1px solid var(--primary);
-  border-radius: 60px;
-  background: rgba(0,212,255,0.06);
-  color: var(--primary);
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.72rem;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  text-decoration: none;
-  cursor: pointer;
-  transition: all 0.4s cubic-bezier(0.16,1,0.3,1);
-  backdrop-filter: blur(10px);
-  position: relative;
-  overflow: hidden;
-}
-
-.cta-btn::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: var(--primary);
-  opacity: 0;
-  transition: opacity 0.4s ease;
-}
-
-.cta-btn:hover::before { opacity: 0.12; }
-
-.cta-btn:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 12px 40px rgba(0,212,255,0.2);
-  border-color: var(--primary);
-}
-
-.cta-btn span { position: relative; z-index: 1; }
-
-.cta-arrow {
-  position: relative;
-  z-index: 1;
-  transition: transform 0.3s ease;
-}
-
-.cta-btn:hover .cta-arrow { transform: translateX(4px); }
-
-/* Footer */
-.site-footer {
-  position: fixed;
-  bottom: 0; left: 0; right: 0;
-  z-index: 10;
-  padding: 24px 48px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  opacity: 0;
-  transition: opacity 0.5s ease;
-  pointer-events: none;
-}
-
-.site-footer.visible { opacity: 1; pointer-events: auto; }
-
-.footer-text {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.55rem;
-  letter-spacing: 2px;
-  color: var(--muted);
-}
-
-/* Shape Label */
-.shape-label {
-  position: fixed;
-  bottom: 32px;
-  left: 48px;
-  z-index: 50;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.55rem;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  color: var(--muted);
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  transition: opacity 0.4s ease;
-}
-
-.shape-label .indicator {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--primary);
-  box-shadow: 0 0 8px var(--primary);
-}
-
-/* Keyframes */
-@keyframes progressPulse {
-  0%, 100% { opacity: 1; box-shadow: 0 0 10px var(--primary), 0 0 20px rgba(0,212,255,0.3); }
-  50% { opacity: 0.5; box-shadow: 0 0 5px var(--primary), 0 0 10px rgba(0,212,255,0.1); }
-}
-
-@keyframes scrollDown {
-  0% { top: -100%; }
-  100% { top: 200%; }
-}
-
-/* Responsive */
-@media (max-width: 900px) {
-  nav { padding: 20px 24px; }
-  .nav-links { display: none; }
-  .info-layout { grid-template-columns: 1fr; padding: 0 28px; gap: 40px; }
-  .info-right { padding-top: 0; }
-  .services-grid { grid-template-columns: 1fr; }
-  .progress-track { right: 16px; }
-  .hero-content, .contact-content { padding: 0 24px; }
-  .shape-label { left: 24px; bottom: 24px; }
-  .info-stats { grid-template-columns: 1fr; }
+html{background:var(--bg)}
+body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+::-webkit-scrollbar{width:0}
+
+/* ── Canvas ── */
+#scene{position:fixed;inset:0;z-index:0}
+
+/* ── Atmosphere ── */
+.vig{position:fixed;inset:0;background:radial-gradient(ellipse at 50% 50%,transparent 35%,rgba(5,7,9,.75) 100%);pointer-events:none;z-index:1}
+.grain{position:fixed;inset:0;pointer-events:none;z-index:2;opacity:.022;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+/* ── Spacer ── */
+#spacer{height:900vh;position:relative;z-index:-1}
+
+/* ── Nav ── */
+nav{position:fixed;top:0;left:0;right:0;z-index:200;padding:28px 52px;display:flex;justify-content:space-between;align-items:center;backdrop-filter:blur(16px);background:rgba(5,7,9,.35);border-bottom:1px solid rgba(255,255,255,.04);transition:all .45s ease}
+.logo{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:5px;color:var(--text)}
+.logo b{color:var(--primary)}
+.nav-r{display:flex;gap:32px;list-style:none}
+.nav-r a{font-family:'IBM Plex Mono',monospace;font-size:.62rem;font-weight:400;letter-spacing:2.5px;text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color .35s}
+.nav-r a:hover{color:var(--primary)}
+
+/* ── Progress ── */
+.prog{position:fixed;right:36px;top:50%;transform:translateY(-50%);z-index:200;display:flex;flex-direction:column;align-items:center;gap:10px}
+.prog-dot{width:5px;height:5px;border-radius:50%;background:var(--primary);box-shadow:0 0 12px var(--primary)}
+.prog-bar{width:1px;height:100px;background:var(--dim);position:relative;overflow:hidden;border-radius:1px}
+.prog-fill{position:absolute;top:0;left:0;width:100%;height:0%;background:var(--primary);box-shadow:0 0 6px var(--primary);border-radius:1px}
+.prog-num{font-family:'IBM Plex Mono',monospace;font-size:.5rem;letter-spacing:2px;color:var(--muted);writing-mode:vertical-rl;transform:rotate(180deg)}
+
+/* ── Shape HUD ── */
+.hud{position:fixed;bottom:28px;left:52px;z-index:200;font-family:'IBM Plex Mono',monospace;font-size:.55rem;letter-spacing:3px;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:10px}
+.hud-dot{width:5px;height:5px;border-radius:50%;background:var(--primary);box-shadow:0 0 8px var(--primary)}
+
+/* ── Panels ── */
+.p{position:fixed;inset:0;z-index:10;display:flex;align-items:center;pointer-events:none;opacity:0}
+.p.on{pointer-events:auto}
+
+/* ── Hero ── */
+.hero-wrap{width:100%;text-align:center;padding:0 48px}
+.hero-badge{display:inline-flex;align-items:center;gap:10px;padding:8px 20px;border:1px solid rgba(0,170,255,.15);border-radius:100px;font-family:'IBM Plex Mono',monospace;font-size:.6rem;letter-spacing:3.5px;text-transform:uppercase;color:var(--primary);margin-bottom:36px;backdrop-filter:blur(8px);background:rgba(0,170,255,.03)}
+.hero-badge i{width:5px;height:5px;border-radius:50%;background:var(--primary);box-shadow:0 0 8px var(--primary);animation:blink 2.5s ease infinite}
+.hero-h{font-family:'Bebas Neue',sans-serif;font-size:clamp(4.5rem,13vw,12rem);line-height:.9;letter-spacing:3px;color:var(--text);margin-bottom:24px}
+.hero-h span{display:block;background:linear-gradient(90deg,var(--primary),var(--warm));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-sub{font-weight:300;font-size:1.05rem;color:var(--muted);max-width:500px;margin:0 auto;line-height:1.8}
+.scroll-cue{position:absolute;bottom:48px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px}
+.scroll-cue span{font-family:'IBM Plex Mono',monospace;font-size:.5rem;letter-spacing:4px;text-transform:uppercase;color:var(--muted)}
+.scroll-line{width:1px;height:36px;overflow:hidden;position:relative}
+.scroll-line::after{content:'';position:absolute;top:-100%;left:0;width:100%;height:100%;background:linear-gradient(to bottom,transparent,var(--primary));animation:slide 2.2s ease infinite}
+
+/* ── Info Layout ── */
+.row{width:100%;padding:0 80px;display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center}
+.sec-tag{font-family:'IBM Plex Mono',monospace;font-size:.58rem;letter-spacing:4px;color:var(--primary);text-transform:uppercase;margin-bottom:22px;display:flex;align-items:center;gap:12px}
+.sec-tag::after{content:'';flex:1;height:1px;background:var(--dim);max-width:50px}
+.sec-h{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.8rem,5.5vw,5.5rem);letter-spacing:2px;line-height:.93;color:var(--text)}
+.sec-h em{font-style:normal;color:var(--primary)}
+.col-r p{font-weight:300;font-size:.95rem;color:var(--muted);line-height:1.85;margin-bottom:28px}
+
+/* ── Stats ── */
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.st{padding:18px 20px;border:1px solid var(--dim);border-radius:10px;background:var(--glass);backdrop-filter:blur(8px)}
+.st-v{font-family:'Bebas Neue',sans-serif;font-size:2.2rem;color:var(--text);line-height:1}
+.st-v b{color:var(--primary);font-weight:400}
+.st-l{font-family:'IBM Plex Mono',monospace;font-size:.5rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-top:4px}
+
+/* ── Product Grid ── */
+.pgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.pcard{padding:22px 20px;border:1px solid var(--dim);border-radius:12px;background:var(--glass);backdrop-filter:blur(8px);transition:border-color .35s,transform .35s}
+.pcard:hover{border-color:rgba(0,170,255,.18);transform:translateY(-3px)}
+.pcard h4{font-family:'Manrope',sans-serif;font-weight:700;font-size:.88rem;color:var(--text);margin-bottom:6px}
+.pcard p{font-size:.72rem;color:var(--muted);line-height:1.55;font-weight:300}
+.ptag{display:inline-block;margin-top:10px;padding:3px 9px;border-radius:100px;font-family:'IBM Plex Mono',monospace;font-size:.48rem;letter-spacing:1.5px;text-transform:uppercase;border:1px solid}
+.tc{color:var(--primary);border-color:rgba(0,170,255,.2);background:rgba(0,170,255,.04)}
+.tw{color:var(--warm);border-color:rgba(255,106,47,.2);background:rgba(255,106,47,.04)}
+.tg{color:var(--green);border-color:rgba(61,220,132,.2);background:rgba(61,220,132,.04)}
+
+/* ── Cert badges ── */
+.certs{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:24px}
+.cert{padding:10px 16px;border:1px solid var(--dim);border-radius:10px;background:var(--glass);backdrop-filter:blur(8px);font-family:'IBM Plex Mono',monospace;font-size:.6rem;letter-spacing:1px;color:var(--text);transition:border-color .3s}
+.cert:hover{border-color:rgba(0,170,255,.2)}
+.cert small{display:block;font-size:.48rem;color:var(--muted);margin-top:2px;letter-spacing:1.5px;text-transform:uppercase}
+
+/* ── CTA ── */
+.cta-wrap{width:100%;text-align:center;padding:0 48px}
+.cta-wrap h2{font-family:'Bebas Neue',sans-serif;font-size:clamp(3.5rem,10vw,9rem);letter-spacing:3px;line-height:.92;color:var(--text);margin-bottom:20px}
+.cta-wrap h2 em{font-style:normal;background:linear-gradient(90deg,var(--primary),var(--green));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.cta-wrap p{font-weight:300;font-size:1rem;color:var(--muted);max-width:420px;margin:0 auto 44px;line-height:1.7}
+.cta-btn{display:inline-flex;align-items:center;gap:12px;padding:16px 40px;border:1px solid var(--primary);border-radius:60px;background:rgba(0,170,255,.05);color:var(--primary);font-family:'IBM Plex Mono',monospace;font-size:.68rem;letter-spacing:3px;text-transform:uppercase;text-decoration:none;transition:all .4s cubic-bezier(.16,1,.3,1);backdrop-filter:blur(8px);cursor:pointer}
+.cta-btn:hover{transform:translateY(-3px);box-shadow:0 12px 40px rgba(0,170,255,.18);background:rgba(0,170,255,.1)}
+.cta-addr{font-family:'IBM Plex Mono',monospace;font-size:.55rem;letter-spacing:2px;color:var(--muted);margin-top:32px}
+
+/* ── Footer ── */
+.foot{position:fixed;bottom:0;left:0;right:0;z-index:50;padding:20px 52px;display:flex;justify-content:space-between;opacity:0;transition:opacity .5s;pointer-events:none;font-family:'IBM Plex Mono',monospace;font-size:.5rem;letter-spacing:2px;color:var(--muted)}
+.foot.on{opacity:1;pointer-events:auto}
+
+/* ── Keyframes ── */
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.35}}
+@keyframes slide{0%{top:-100%}100%{top:200%}}
+
+/* ── Responsive ── */
+@media(max-width:900px){
+  nav{padding:20px 24px}
+  .nav-r{display:none}
+  .row{grid-template-columns:1fr;padding:0 28px;gap:36px}
+  .pgrid{grid-template-columns:1fr}
+  .stats{grid-template-columns:1fr}
+  .prog{right:14px}
+  .hud{left:24px}
+  .hero-wrap,.cta-wrap{padding:0 24px}
+  .certs{gap:6px}
 }
 </style>
 </head>
 <body>
 
-<canvas id="bg"></canvas>
-<div class="vignette"></div>
-<div class="noise"></div>
-<div class="scanlines"></div>
+<canvas id="scene"></canvas>
+<div class="vig"></div>
+<div class="grain"></div>
+<div id="spacer"></div>
 
-<!-- Navigation -->
+<!-- Nav -->
 <nav>
-  <div class="nav-logo">PRO<span>.</span>SYSTEM</div>
-  <ul class="nav-links">
-    <li><a href="#" data-target="0.22">Chi Siamo</a></li>
-    <li><a href="#" data-target="0.42">Servizi</a></li>
-    <li><a href="#" data-target="0.62">Tecnologia</a></li>
-    <li><a href="#" data-target="0.88">Contatti</a></li>
+  <div class="logo"><b>PRO</b>SYSTEM</div>
+  <ul class="nav-r">
+    <li><a href="#" data-go=".15">Chi Siamo</a></li>
+    <li><a href="#" data-go=".35">Prodotti</a></li>
+    <li><a href="#" data-go=".55">Macchine</a></li>
+    <li><a href="#" data-go=".75">Tecnologia</a></li>
+    <li><a href="#" data-go=".92">Contatti</a></li>
   </ul>
 </nav>
 
 <!-- Progress -->
-<div class="progress-track">
-  <div class="progress-dot"></div>
-  <div class="progress-line"><div class="progress-fill" id="progress-fill"></div></div>
-  <div class="progress-label" id="progress-label">00</div>
+<div class="prog">
+  <div class="prog-dot"></div>
+  <div class="prog-bar"><div class="prog-fill" id="pf"></div></div>
+  <div class="prog-num" id="pn">00</div>
 </div>
 
-<!-- Shape Label -->
-<div class="shape-label" id="shape-label">
-  <span class="indicator"></span>
-  <span id="shape-name">particles.init</span>
+<!-- HUD -->
+<div class="hud"><span class="hud-dot"></span><span id="hud-t">field.init</span></div>
+
+<!-- ═══ PANELS ═══ -->
+
+<!-- 0 Hero -->
+<div class="p" id="p0">
+ <div class="hero-wrap">
+  <div class="hero-badge"><i></i> Since 2001 — Anzola dell'Emilia (BO)</div>
+  <h1 class="hero-h">PROTEZIONE<span>& AUTOMAZIONE</span></h1>
+  <p class="hero-sub">Progettiamo e produciamo protezioni anti-infortunistiche per macchine automatiche. Ripari di sicurezza, macchine cartonatrici, nastri trasportatori e stampa 3D industriale.</p>
+  <div class="scroll-cue"><span>Scroll</span><div class="scroll-line"></div></div>
+ </div>
 </div>
 
-<!-- Scroll Spacer -->
-<div id="scroll-spacer"></div>
-
-<!-- ===== PANELS ===== -->
-
-<!-- Hero -->
-<div class="panel" id="panel-hero">
-  <div class="hero-content">
-    <div class="hero-tag"><span class="pulse-dot"></span> Automazione Industriale 4.0</div>
-    <h1 class="hero-title">
-      <span class="line1" id="hero-line1">AUTOMAZIONE</span>
-      <span class="line2" id="hero-line2">SENZA CONFINI</span>
-    </h1>
-    <p class="hero-sub">Progettiamo, installiamo e integriamo macchinari industriali all'avanguardia. Dall'idea alla produzione, con precisione assoluta.</p>
-    <div class="scroll-hint">
-      <span>Scroll</span>
-      <div class="scroll-arrow"></div>
-    </div>
+<!-- 1 Chi Siamo -->
+<div class="p" id="p1">
+ <div class="row">
+  <div>
+   <div class="sec-tag">01 — Chi Siamo</div>
+   <h2 class="sec-h">DA BORGO PANIGALE<br>ALLA <em>PACKAGING<br>VALLEY</em></h2>
   </div>
-</div>
-
-<!-- About -->
-<div class="panel" id="panel-about">
-  <div class="info-layout">
-    <div class="info-left">
-      <div class="section-num">01 — Chi Siamo</div>
-      <h2>INGEGNERIA<br>CHE SUPERA<br>I <em>LIMITI</em></h2>
-    </div>
-    <div class="info-right">
-      <p>Da oltre 15 anni progettiamo e installiamo sistemi di automazione industriale su misura. Ogni impianto è una sfida ingegneristica, ogni soluzione è unica. Trasformiamo le linee produttive in ecosistemi intelligenti.</p>
-      <div class="info-stats">
-        <div class="stat">
-          <div class="stat-value">250<span>+</span></div>
-          <div class="stat-label">Impianti installati</div>
-        </div>
-        <div class="stat">
-          <div class="stat-value">98<span>%</span></div>
-          <div class="stat-label">Soddisfazione</div>
-        </div>
-        <div class="stat">
-          <div class="stat-value">15<span>y</span></div>
-          <div class="stat-label">Esperienza</div>
-        </div>
-        <div class="stat">
-          <div class="stat-value">24<span>/7</span></div>
-          <div class="stat-label">Assistenza</div>
-        </div>
-      </div>
-    </div>
+  <div class="col-r">
+   <p>Da oltre vent'anni Pro System S.r.l. è punto di riferimento nel settore delle protezioni anti-infortunistiche per macchine automatiche, con specializzazione nei sistemi di automazione industriale su misura. Fondata da De Marco Daniele e Rende Gianni, oggi l'azienda opera nel nuovo stabilimento di 5.000 m² ad Anzola dell'Emilia.</p>
+   <div class="stats">
+    <div class="st"><div class="st-v">1500<b>+</b></div><div class="st-l">Ripari installati</div></div>
+    <div class="st"><div class="st-v">35</div><div class="st-l">Collaboratori</div></div>
+    <div class="st"><div class="st-v">5000<b>m²</b></div><div class="st-l">Nuovo stabilimento</div></div>
+    <div class="st"><div class="st-v">20<b>+</b></div><div class="st-l">Anni esperienza</div></div>
+   </div>
   </div>
+ </div>
 </div>
 
-<!-- Services -->
-<div class="panel" id="panel-services">
-  <div class="info-layout">
-    <div class="info-left">
-      <div class="section-num">02 — Servizi</div>
-      <h2>SOLUZIONI<br><em>COMPLETE</em><br>PER L'INDUSTRIA</h2>
-    </div>
-    <div class="info-right">
-      <div class="services-grid">
-        <div class="service-card">
-          <div class="service-icon">⚙️</div>
-          <h4>Cobot Integration</h4>
-          <p>Robot collaborativi per assemblaggio, saldatura e pick & place di precisione.</p>
-          <span class="service-tag tag-cyan">Robotica</span>
-        </div>
-        <div class="service-card">
-          <div class="service-icon">🔧</div>
-          <h4>CNC Programming</h4>
-          <p>Programmazione e ottimizzazione centri di lavoro multi-asse.</p>
-          <span class="service-tag tag-orange">Produzione</span>
-        </div>
-        <div class="service-card">
-          <div class="service-icon">📡</div>
-          <h4>IoT Monitoring</h4>
-          <p>Sensori connessi e dashboard real-time per il controllo totale.</p>
-          <span class="service-tag tag-green">Industry 4.0</span>
-        </div>
-        <div class="service-card">
-          <div class="service-icon">🛡️</div>
-          <h4>Manutenzione AI</h4>
-          <p>Algoritmi predittivi che anticipano guasti e ottimizzano fermi macchina.</p>
-          <span class="service-tag tag-cyan">AI</span>
-        </div>
-        <div class="service-card">
-          <div class="service-icon">✂️</div>
-          <h4>Taglio Laser</h4>
-          <p>Sistemi di taglio ad alta precisione con ottimizzazione nesting avanzata.</p>
-          <span class="service-tag tag-orange">Precisione</span>
-        </div>
-        <div class="service-card">
-          <div class="service-icon">🏭</div>
-          <h4>Digital Twin</h4>
-          <p>Replica digitale dell'impianto con simulazione e analytics in tempo reale.</p>
-          <span class="service-tag tag-green">Simulazione</span>
-        </div>
-      </div>
-    </div>
+<!-- 2 Prodotti / Ripari -->
+<div class="p" id="p2">
+ <div class="row">
+  <div>
+   <div class="sec-tag">02 — Ripari di Sicurezza</div>
+   <h2 class="sec-h">PROTEZIONI<br><em>SU MISURA</em><br>PER OGNI MACCHINA</h2>
   </div>
-</div>
-
-<!-- Tech -->
-<div class="panel" id="panel-tech">
-  <div class="info-layout">
-    <div class="info-left">
-      <div class="section-num">03 — Tecnologia</div>
-      <h2>SMART<br><em>FACTORY</em><br>ECOSYSTEM</h2>
-    </div>
-    <div class="info-right">
-      <p>La nostra piattaforma integra ogni livello dell'automazione: dalla sensoristica edge ai sistemi SCADA, dall'analisi predittiva al controllo remoto. Un ecosistema completo, pensato per scalare.</p>
-      <div class="info-stats">
-        <div class="stat">
-          <div class="stat-value" style="font-size:1.4rem; font-family:'JetBrains Mono',monospace; color:var(--primary); letter-spacing:1px;">PLC · SCADA</div>
-          <div class="stat-label">Controllo</div>
-        </div>
-        <div class="stat">
-          <div class="stat-value" style="font-size:1.4rem; font-family:'JetBrains Mono',monospace; color:var(--secondary); letter-spacing:1px;">ML · EDGE AI</div>
-          <div class="stat-label">Intelligenza</div>
-        </div>
-        <div class="stat">
-          <div class="stat-value" style="font-size:1.4rem; font-family:'JetBrains Mono',monospace; color:var(--green); letter-spacing:1px;">MQTT · OPC-UA</div>
-          <div class="stat-label">Protocolli</div>
-        </div>
-        <div class="stat">
-          <div class="stat-value" style="font-size:1.4rem; font-family:'JetBrains Mono',monospace; color:var(--text); letter-spacing:1px;">ISO 9001</div>
-          <div class="stat-label">Certificazione</div>
-        </div>
-      </div>
-    </div>
+  <div class="col-r">
+   <div class="pgrid">
+    <div class="pcard"><h4>Sportelli & Portelloni</h4><p>Cerniere industriali ad alta resistenza, molle a gas integrate, predisposizione sensori di sicurezza.</p><span class="ptag tc">Accesso</span></div>
+    <div class="pcard"><h4>Scorrevoli su Binario</h4><p>Guide ad alta scorrevolezza, sistema di bloccaggio sicuro, compatibilità interblocco.</p><span class="ptag tw">Movimentazione</span></div>
+    <div class="pcard"><h4>Carter & Pannelli</h4><p>Protezioni in lamiera, policarbonato o compositi. Fissi o asportabili per manutenzione rapida.</p><span class="ptag tg">Sicurezza</span></div>
+    <div class="pcard"><h4>Profilati in Alluminio</h4><p>Catalogo completo: profili Q25/Q30, cornici, profili ad L, piatti. Anodizzazione grigia o elox.</p><span class="ptag tc">Struttura</span></div>
+   </div>
   </div>
+ </div>
 </div>
 
-<!-- Contact -->
-<div class="panel" id="panel-contact">
-  <div class="contact-content">
-    <h2>COSTRUIAMO<br>IL <em>FUTURO</em></h2>
-    <p>Il prossimo passo della tua produzione inizia con una conversazione. Parliamone.</p>
-    <a href="mailto:info@prosystem.it" class="cta-btn">
-      <span>Richiedi Preventivo</span>
-      <span class="cta-arrow">→</span>
-    </a>
+<!-- 3 Macchine Automatiche -->
+<div class="p" id="p3">
+ <div class="row">
+  <div>
+   <div class="sec-tag">03 — Macchine Automatiche</div>
+   <h2 class="sec-h">F50-MAXI<br>& F50-MI<br><em>CARTONATRICI</em></h2>
   </div>
+  <div class="col-r">
+   <p>La F50-MAXI è la nostra cartonatrice automatica per sacchetti di capsule caffè: braccio a ventosa su guida lineare, ingresso fino a 1.000 sacchetti/min, chiusura con colla a caldo o scotch, produttività di 5 scatole/min. La F50-MI è la versione versatile per astucci di dimensioni variabili.</p>
+   <div class="stats">
+    <div class="st"><div class="st-v">1000<b>/min</b></div><div class="st-l">Sacchetti ingresso</div></div>
+    <div class="st"><div class="st-v">5<b>/min</b></div><div class="st-l">Scatole chiuse</div></div>
+    <div class="st"><div class="st-v" style="font-size:1.2rem;font-family:'IBM Plex Mono',monospace;color:var(--primary)">COLLA · SCOTCH</div><div class="st-l">Chiusura personalizzabile</div></div>
+    <div class="st"><div class="st-v" style="font-size:1.2rem;font-family:'IBM Plex Mono',monospace;color:var(--warm)">VENTOSA</div><div class="st-l">Presa a vuoto</div></div>
+   </div>
+  </div>
+ </div>
 </div>
 
-<!-- Footer -->
-<div class="site-footer" id="site-footer">
-  <span class="footer-text">© 2026 PRO SYSTEM S.R.L.</span>
-  <span class="footer-text">MODENA, ITALY</span>
+<!-- 4 Tecnologia -->
+<div class="p" id="p4">
+ <div class="row">
+  <div>
+   <div class="sec-tag">04 — Tecnologia & Stampa 3D</div>
+   <h2 class="sec-h">CNC, LEAN<br>& ADDITIVE<br><em>MANUFACTURING</em></h2>
+  </div>
+  <div class="col-r">
+   <div class="certs">
+    <div class="cert">ISO 9001<small>Qualità</small></div>
+    <div class="cert">ISO 14001<small>Ambiente</small></div>
+    <div class="cert">ISO 45001<small>Sicurezza</small></div>
+   </div>
+   <p>Stratasys F170 per stampa FDM con Nylon, Onyx, fibra di carbonio e Kevlar. Stampa SLS a polvere e resina ad alta precisione. CNC SCM Morbidelli X200 di ultima generazione. Sistemi Kanban e banchi ergonomici motorizzati per lean production.</p>
+   <div class="pgrid">
+    <div class="pcard"><h4>Stampa FDM</h4><p>PLA, Nylon, Onyx, Fibra di carbonio, Kevlar, Vetro HSHT.</p><span class="ptag tc">Filamento</span></div>
+    <div class="pcard"><h4>Stampa SLS</h4><p>Nylon 11/12 CF, Nylon 12 GF, TPU 90A. Senza supporti.</p><span class="ptag tw">Polvere</span></div>
+    <div class="pcard"><h4>Stampa Resina</h4><p>Rigid 10K, Elastic 50A, High Temp, Castable Wax.</p><span class="ptag tg">Alta precisione</span></div>
+    <div class="pcard"><h4>Nastri Trasportatori</h4><p>Lineari, curvi, inclinati, multipiano. Strutture alluminio o acciaio.</p><span class="ptag tc">Trasporto</span></div>
+   </div>
+  </div>
+ </div>
+</div>
+
+<!-- 5 CTA -->
+<div class="p" id="p5">
+ <div class="cta-wrap">
+  <h2>PROTEGGIAMO<br>IL TUO <em>FUTURO</em></h2>
+  <p>Ogni soluzione è progettata su misura. Parliamo del tuo prossimo impianto.</p>
+  <a href="mailto:info@prosystemsrl.eu" class="cta-btn"><span>Richiedi Preventivo</span> →</a>
+  <div class="cta-addr">Via Carlo Nepoti 1 — Anzola dell'Emilia (BO) — www.prosystemsrl.eu</div>
+ </div>
+</div>
+
+<div class="foot" id="foot">
+ <span>© 2026 PRO SYSTEM S.R.L.</span>
+ <span>ANZOLA DELL'EMILIA (BO) — ITALIA</span>
 </div>
 
 <script>
 // =====================================================
-// THREE.JS SETUP
+// THREE.JS
 // =====================================================
-const canvas = document.getElementById('bg');
-const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false });
-renderer.setSize(window.innerWidth, window.innerHeight);
+const canvas = document.getElementById('scene');
+const W = () => window.innerWidth, H = () => window.innerHeight;
+const renderer = new THREE.WebGLRenderer({canvas, antialias: true});
+renderer.setSize(W(), H());
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-renderer.setClearColor(0x060810, 1);
+renderer.setClearColor(0x050709);
 
 const scene = new THREE.Scene();
-scene.fog = new THREE.FogExp2(0x060810, 0.025);
+scene.fog = new THREE.FogExp2(0x050709, 0.015);
+const camera = new THREE.PerspectiveCamera(50, W()/H(), .1, 300);
+camera.position.set(0, 0, 14);
 
-const camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 200);
-camera.position.set(0, 0, 12);
+// ── Sharp square particle texture ──
+function sharpTex() {
+  const c = document.createElement('canvas');
+  c.width = 32; c.height = 32;
+  const ctx = c.getContext('2d');
+  // Crisp bright center with hard edge
+  ctx.fillStyle = '#fff';
+  ctx.beginPath();
+  ctx.arc(16, 16, 12, 0, Math.PI*2);
+  ctx.fill();
+  // Outer glow ring
+  const g = ctx.createRadialGradient(16,16,8,16,16,16);
+  g.addColorStop(0,'rgba(255,255,255,0)');
+  g.addColorStop(.6,'rgba(255,255,255,0)');
+  g.addColorStop(1,'rgba(255,255,255,0)');
+  ctx.fillStyle = g;
+  ctx.fillRect(0,0,32,32);
+  return new THREE.CanvasTexture(c);
+}
 
-// =====================================================
-// SHAPE GENERATORS
-// =====================================================
-const COUNT = 5000;
+// ── Shape generators ──
+const N = 4500;
 
-function genSphere(n, radius) {
-  const p = new Float32Array(n * 3);
-  for (let i = 0; i < n; i++) {
-    const theta = Math.random() * Math.PI * 2;
-    const phi = Math.acos(2 * Math.random() - 1);
-    const r = radius * (0.85 + Math.random() * 0.15);
-    p[i*3]   = r * Math.sin(phi) * Math.cos(theta);
-    p[i*3+1] = r * Math.sin(phi) * Math.sin(theta);
-    p[i*3+2] = r * Math.cos(phi);
+function genCloud(n) {
+  const p = new Float32Array(n*3);
+  for (let i=0;i<n;i++) {
+    const a=Math.random()*Math.PI*2, b=Math.acos(2*Math.random()-1);
+    const r=4*(0.88+Math.random()*0.12);
+    p[i*3]=r*Math.sin(b)*Math.cos(a);
+    p[i*3+1]=r*Math.sin(b)*Math.sin(a);
+    p[i*3+2]=r*Math.cos(b);
   }
   return p;
 }
 
-function genRobotArm(n) {
-  const p = new Float32Array(n * 3);
-  const segs = [
-    { s:[0,-3.5,0], e:[0,-2,0], w:1.0 },
-    { s:[0,-2,0], e:[0,0,0], w:0.55 },
-    { s:[0,0,0], e:[0,0.3,0], w:0.7 },
-    { s:[0,0.3,0], e:[2,2.2,0], w:0.4 },
-    { s:[2,2.2,0], e:[2,2.5,0], w:0.55 },
-    { s:[2,2.5,0], e:[4,1.8,0], w:0.32 },
-    { s:[4,1.8,0], e:[4,2.1,0], w:0.4 },
-    { s:[4,2.1,0], e:[5,1.5,0.4], w:0.18 },
-    { s:[4,2.1,0], e:[5,2.5,-0.4], w:0.18 },
+// Safety guard grid (riparo di sicurezza)
+function genGuard(n) {
+  const p = new Float32Array(n*3);
+  const W=7, H=5, sp=0.45, thick=0.35;
+  for (let i=0;i<n;i++) {
+    const ch = Math.random();
+    if (ch < 0.35) {
+      // Vertical bars
+      const col = Math.floor(Math.random()*(W/sp+1));
+      const x = -W/2 + col*sp;
+      const y = -H/2 + Math.random()*H;
+      p[i*3]=x+(Math.random()-.5)*.06;
+      p[i*3+1]=y;
+      p[i*3+2]=(Math.random()-.5)*thick;
+    } else if (ch < 0.7) {
+      // Horizontal bars
+      const row = Math.floor(Math.random()*(H/sp+1));
+      const y = -H/2 + row*sp;
+      const x = -W/2 + Math.random()*W;
+      p[i*3]=x;
+      p[i*3+1]=y+(Math.random()-.5)*.06;
+      p[i*3+2]=(Math.random()-.5)*thick;
+    } else if (ch < 0.85) {
+      // Frame border
+      const side = Math.floor(Math.random()*4);
+      let x,y;
+      if(side===0){x=-W/2;y=-H/2+Math.random()*H}
+      else if(side===1){x=W/2;y=-H/2+Math.random()*H}
+      else if(side===2){x=-W/2+Math.random()*W;y=-H/2}
+      else{x=-W/2+Math.random()*W;y=H/2}
+      p[i*3]=x+(Math.random()-.5)*.15;
+      p[i*3+1]=y+(Math.random()-.5)*.15;
+      p[i*3+2]=(Math.random()-.5)*thick;
+    } else {
+      // Corner brackets
+      const cx = (Math.random()>.5?1:-1)*W/2;
+      const cy = (Math.random()>.5?1:-1)*H/2;
+      const t = Math.random()*0.6;
+      const isH = Math.random()>.5;
+      p[i*3]=cx+(isH?(Math.random()>.5?t:-t):0)+(Math.random()-.5)*.1;
+      p[i*3+1]=cy+(isH?0:(Math.random()>.5?t:-t))+(Math.random()-.5)*.1;
+      p[i*3+2]=(Math.random()-.5)*thick*.6;
+    }
+  }
+  return p;
+}
+
+// Cartoning machine silhouette (F50-MAXI like)
+function genMachine(n) {
+  const p = new Float32Array(n*3);
+  const parts = [
+    // Main body (box)
+    {fn:(i,p)=>{p[i*3]=(Math.random()-.5)*4;p[i*3+1]=(Math.random()-.5)*3-0.5;p[i*3+2]=(Math.random()-.5)*2},w:0.35},
+    // Conveyor belt (horizontal line)
+    {fn:(i,p)=>{p[i*3]=-3+Math.random()*8;p[i*3+1]=-2.2+(Math.random()-.5)*.15;p[i*3+2]=(Math.random()-.5)*.6},w:0.18},
+    // Arm (diagonal)
+    {fn:(i,p)=>{const t=Math.random();p[i*3]=1+t*2.5;p[i*3+1]=0.5+t*2.2;p[i*3+2]=(Math.random()-.5)*.35},w:0.12},
+    // Suction head
+    {fn:(i,p)=>{const a=Math.random()*Math.PI*2;const r=Math.random()*.4;p[i*3]=3.5+Math.cos(a)*r;p[i*3+1]=2.7+Math.sin(a)*r;p[i*3+2]=(Math.random()-.5)*.3},w:0.08},
+    // Box output
+    {fn:(i,p)=>{p[i*3]=3+Math.random()*2;p[i*3+1]=-1.5+(Math.random()-.5)*1.2;p[i*3+2]=(Math.random()-.5)*1},w:0.12},
+    // Control panel
+    {fn:(i,p)=>{p[i*3]=-3.5+(Math.random()-.5)*.6;p[i*3+1]=0.5+Math.random()*2.5;p[i*3+2]=1+(Math.random()-.5)*.3},w:0.08},
+    // Rollers
+    {fn:(i,p)=>{const ci=Math.floor(Math.random()*6);const cx=-2.5+ci*1;const a=Math.random()*Math.PI*2;p[i*3]=cx+(Math.random()-.5)*.15;p[i*3+1]=-2.2+Math.sin(a)*.22;p[i*3+2]=Math.cos(a)*.22},w:0.07},
   ];
-  const totalW = segs.reduce((a,s) => {
-    const dx=s.e[0]-s.s[0], dy=s.e[1]-s.s[1], dz=s.e[2]-s.s[2];
-    return a + Math.sqrt(dx*dx+dy*dy+dz*dz) * s.w;
-  }, 0);
-  for (let i = 0; i < n; i++) {
-    let r = Math.random() * totalW, cumul = 0, seg = segs[0];
-    for (const s of segs) {
-      const dx=s.e[0]-s.s[0], dy=s.e[1]-s.s[1], dz=s.e[2]-s.s[2];
-      const len = Math.sqrt(dx*dx+dy*dy+dz*dz) * s.w;
-      cumul += len;
-      if (cumul >= r) { seg = s; break; }
-    }
-    const t = Math.random();
-    const w = seg.w * (1 - t * 0.15);
-    p[i*3]   = seg.s[0]+(seg.e[0]-seg.s[0])*t + (Math.random()-0.5)*w;
-    p[i*3+1] = seg.s[1]+(seg.e[1]-seg.s[1])*t + (Math.random()-0.5)*w;
-    p[i*3+2] = seg.s[2]+(seg.e[2]-seg.s[2])*t + (Math.random()-0.5)*w;
+  const tw=parts.reduce((a,x)=>a+x.w,0);
+  for(let i=0;i<n;i++){
+    let r=Math.random()*tw,c=0;
+    for(const pt of parts){c+=pt.w;if(c>=r){pt.fn(i,p);break}}
   }
   return p;
 }
 
-function genGear(n) {
-  const p = new Float32Array(n * 3);
-  const teeth = 18, innerR = 2.2, outerR = 3.2, toothH = 0.9, thick = 0.6;
-  for (let i = 0; i < n; i++) {
-    const chance = Math.random();
-    if (chance < 0.1) {
-      const a = Math.random() * Math.PI * 2;
-      const r = Math.random() * 0.6;
-      p[i*3] = Math.cos(a)*r;
-      p[i*3+1] = Math.sin(a)*r;
-      p[i*3+2] = (Math.random()-0.5)*thick*0.5;
-    } else if (chance < 0.2) {
-      const spoke = Math.floor(Math.random()*6);
-      const a = (spoke/6)*Math.PI*2;
-      const t = 0.6 + Math.random() * (innerR - 0.6);
-      p[i*3] = Math.cos(a)*t + (Math.random()-0.5)*0.12;
-      p[i*3+1] = Math.sin(a)*t + (Math.random()-0.5)*0.12;
-      p[i*3+2] = (Math.random()-0.5)*thick*0.3;
+// Conveyor belt
+function genConveyor(n) {
+  const p = new Float32Array(n*3);
+  const L=8, W=2.5;
+  for (let i=0;i<n;i++) {
+    const ch=Math.random();
+    if(ch<0.3){
+      // Belt surface
+      p[i*3]=(Math.random()-.5)*L;
+      p[i*3+1]=(Math.random()-.5)*.06;
+      p[i*3+2]=(Math.random()-.5)*W;
+    } else if(ch<0.55){
+      // Side rails
+      const side=Math.random()>.5?1:-1;
+      p[i*3]=(Math.random()-.5)*L;
+      p[i*3+1]=Math.random()*1.2;
+      p[i*3+2]=side*W/2+(Math.random()-.5)*.08;
+    } else if(ch<0.72){
+      // Legs
+      const lx=(Math.random()>.5?-1:1)*(L/2-0.3);
+      const lz=(Math.random()>.5?-1:1)*(W/2-0.2);
+      p[i*3]=lx+(Math.random()-.5)*.12;
+      p[i*3+1]=-Math.random()*2;
+      p[i*3+2]=lz+(Math.random()-.5)*.12;
+    } else if(ch<0.88){
+      // Rollers
+      const rx=-L/2+Math.floor(Math.random()*8)*(L/7);
+      const a=Math.random()*Math.PI*2;
+      const r=W/2*.42;
+      p[i*3]=rx+(Math.random()-.5)*.08;
+      p[i*3+1]=-0.15+Math.sin(a)*r*.3;
+      p[i*3+2]=Math.cos(a)*r;
     } else {
-      const a = Math.random() * Math.PI * 2;
-      const ta = (Math.PI*2)/teeth;
-      const phase = ((a % ta) / ta);
-      const isTooth = phase < 0.4;
-      let r;
-      if (isTooth) {
-        r = outerR + Math.random() * toothH;
-      } else {
-        r = innerR + Math.random() * (outerR - innerR);
-      }
-      r += (Math.random()-0.5)*0.15;
-      p[i*3] = Math.cos(a)*r;
-      p[i*3+1] = Math.sin(a)*r;
-      p[i*3+2] = (Math.random()-0.5)*thick;
+      // Items on belt
+      const bx=-L/2+Math.random()*L;
+      const bz=(Math.random()-.5)*W*.6;
+      p[i*3]=bx;
+      p[i*3+1]=0.15+Math.random()*.45;
+      p[i*3+2]=bz;
     }
   }
   return p;
 }
 
-function genCircuit(n) {
-  const p = new Float32Array(n * 3);
-  const size = 7;
-  const step = 0.55;
-  for (let i = 0; i < n; i++) {
-    const chance = Math.random();
-    if (chance < 0.6) {
-      const gx = Math.round((Math.random()-0.5)*size/step)*step;
-      const gy = Math.round((Math.random()-0.5)*size/step)*step;
-      p[i*3] = gx + (Math.random()-0.5)*0.08;
-      p[i*3+1] = gy + (Math.random()-0.5)*0.08;
-      p[i*3+2] = (Math.random()-0.5)*0.12;
-    } else if (chance < 0.85) {
-      const isH = Math.random() > 0.5;
-      const linePos = Math.round((Math.random()-0.5)*size/step)*step;
-      const t = (Math.random()-0.5)*size;
-      p[i*3] = isH ? t : linePos;
-      p[i*3+1] = isH ? linePos : t;
-      p[i*3+2] = (Math.random()-0.5)*0.06;
+// 3D printed object (layered)
+function gen3DPrint(n) {
+  const p = new Float32Array(n*3);
+  for (let i=0;i<n;i++) {
+    const ch=Math.random();
+    if(ch<0.6){
+      // Layered cylinder (printed object)
+      const layer=Math.floor(Math.random()*40);
+      const y=-2+layer*0.12;
+      const rBase=2.2-Math.abs(y)*0.3;
+      const r=Math.max(0.3,rBase)*(0.92+Math.random()*.08);
+      const a=Math.random()*Math.PI*2;
+      // Only surface (shell)
+      const onSurface=Math.random()>0.3;
+      const dist=onSurface?r:r*Math.random();
+      p[i*3]=Math.cos(a)*dist;
+      p[i*3+1]=y;
+      p[i*3+2]=Math.sin(a)*dist;
+    } else if(ch<0.8){
+      // Print bed
+      p[i*3]=(Math.random()-.5)*5;
+      p[i*3+1]=-2.1+(Math.random()-.5)*.06;
+      p[i*3+2]=(Math.random()-.5)*5;
     } else {
-      const cx = Math.round((Math.random()-0.5)*4/step)*step;
-      const cy = Math.round((Math.random()-0.5)*4/step)*step;
-      const a = Math.random()*Math.PI*2;
-      const r = 0.2 + Math.random()*0.15;
-      p[i*3] = cx + Math.cos(a)*r;
-      p[i*3+1] = cy + Math.sin(a)*r;
-      p[i*3+2] = (Math.random()-0.5)*0.1;
+      // Nozzle & gantry
+      const t=Math.random();
+      p[i*3]=-2.5+t*5;
+      p[i*3+1]=3+(Math.random()-.5)*.1;
+      p[i*3+2]=(Math.random()-.5)*.1;
     }
   }
   return p;
 }
 
 function genDisperse(n) {
-  const p = new Float32Array(n * 3);
-  for (let i = 0; i < n; i++) {
-    const theta = Math.random()*Math.PI*2;
-    const phi = Math.acos(2*Math.random()-1);
-    const r = 10 + Math.random()*20;
-    p[i*3]   = r*Math.sin(phi)*Math.cos(theta);
-    p[i*3+1] = r*Math.sin(phi)*Math.sin(theta);
-    p[i*3+2] = r*Math.cos(phi);
+  const p = new Float32Array(n*3);
+  for (let i=0;i<n;i++){
+    const a=Math.random()*Math.PI*2,b=Math.acos(2*Math.random()-1),r=12+Math.random()*25;
+    p[i*3]=r*Math.sin(b)*Math.cos(a);
+    p[i*3+1]=r*Math.sin(b)*Math.sin(a);
+    p[i*3+2]=r*Math.cos(b);
   }
   return p;
 }
 
-// Sort by angle for coherent morphing
-function sortByAngle(pos, n) {
-  const idx = Array.from({length:n}, (_,i)=>i);
-  idx.sort((a,b) => {
-    const aa = Math.atan2(pos[a*3+1], pos[a*3]) + Math.PI;
-    const ba = Math.atan2(pos[b*3+1], pos[b*3]) + Math.PI;
-    return aa - ba;
+// Coherent ordering
+function sortPos(pos,n){
+  const idx=Array.from({length:n},(_,i)=>i);
+  idx.sort((a,b)=>{
+    const aa=Math.atan2(pos[a*3+1],pos[a*3]);
+    const ba=Math.atan2(pos[b*3+1],pos[b*3]);
+    return aa-ba;
   });
-  const sorted = new Float32Array(n*3);
-  idx.forEach((orig, ni) => {
-    sorted[ni*3]   = pos[orig*3];
-    sorted[ni*3+1] = pos[orig*3+1];
-    sorted[ni*3+2] = pos[orig*3+2];
-  });
-  return sorted;
+  const s=new Float32Array(n*3);
+  idx.forEach((o,i)=>{s[i*3]=pos[o*3];s[i*3+1]=pos[o*3+1];s[i*3+2]=pos[o*3+2]});
+  return s;
 }
 
-const shapes = [
-  sortByAngle(genSphere(COUNT, 4), COUNT),
-  sortByAngle(genRobotArm(COUNT), COUNT),
-  sortByAngle(genGear(COUNT), COUNT),
-  sortByAngle(genCircuit(COUNT), COUNT),
-  sortByAngle(genDisperse(COUNT), COUNT),
+const shapes=[
+  sortPos(genCloud(N),N),
+  sortPos(genGuard(N),N),
+  sortPos(genMachine(N),N),
+  sortPos(genConveyor(N),N),
+  sortPos(gen3DPrint(N),N),
+  sortPos(genDisperse(N),N),
 ];
+const shapeLabels=['field.sphere','model.riparo_sicurezza','machine.f50_maxi','transport.nastro','tech.stampa_3d','field.disperse'];
 
-const shapeNames = ['particles.sphere', 'model.cobot_arm', 'model.gear_drive', 'layout.smart_circuit', 'particles.disperse'];
+// ── Particle system ──
+const geo = new THREE.BufferGeometry();
+const pos = new Float32Array(N*3);
+const col = new Float32Array(N*3);
+const prev = new Float32Array(N*3);
+for(let i=0;i<N*3;i++){pos[i]=shapes[0][i];prev[i]=shapes[0][i]}
+geo.setAttribute('position',new THREE.BufferAttribute(pos,3));
+geo.setAttribute('color',new THREE.BufferAttribute(col,3));
 
-// =====================================================
-// PARTICLE SYSTEM
-// =====================================================
-function createParticleTexture() {
-  const c = document.createElement('canvas');
-  c.width = 64; c.height = 64;
-  const ctx = c.getContext('2d');
-  const g = ctx.createRadialGradient(32,32,0,32,32,32);
-  g.addColorStop(0, 'rgba(255,255,255,1)');
-  g.addColorStop(0.15, 'rgba(255,255,255,0.9)');
-  g.addColorStop(0.5, 'rgba(255,255,255,0.3)');
-  g.addColorStop(1, 'rgba(255,255,255,0)');
-  ctx.fillStyle = g;
-  ctx.fillRect(0,0,64,64);
-  return new THREE.CanvasTexture(c);
-}
-
-const geometry = new THREE.BufferGeometry();
-const positions = new Float32Array(COUNT * 3);
-const colors = new Float32Array(COUNT * 3);
-const prevPositions = new Float32Array(COUNT * 3);
-
-// Initialize to first shape
-for (let i = 0; i < COUNT * 3; i++) {
-  positions[i] = shapes[0][i];
-  prevPositions[i] = shapes[0][i];
-  colors[i] = 0;
-}
-
-geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-
-const material = new THREE.PointsMaterial({
-  size: 0.07,
-  map: createParticleTexture(),
+const mat = new THREE.PointsMaterial({
+  size: .12,
+  map: sharpTex(),
   vertexColors: true,
   transparent: true,
-  opacity: 0.92,
+  opacity: .95,
   blending: THREE.AdditiveBlending,
   sizeAttenuation: true,
   depthWrite: false,
 });
+const pts = new THREE.Points(geo, mat);
+scene.add(pts);
 
-const particles = new THREE.Points(geometry, material);
-scene.add(particles);
-
-// Ambient particles (background dust)
-const dustCount = 800;
-const dustGeo = new THREE.BufferGeometry();
-const dustPos = new Float32Array(dustCount * 3);
-for (let i = 0; i < dustCount; i++) {
-  dustPos[i*3]   = (Math.random()-0.5) * 50;
-  dustPos[i*3+1] = (Math.random()-0.5) * 50;
-  dustPos[i*3+2] = (Math.random()-0.5) * 50;
-}
-dustGeo.setAttribute('position', new THREE.BufferAttribute(dustPos, 3));
-const dustMat = new THREE.PointsMaterial({
-  size: 0.02,
-  color: 0x2a3555,
-  transparent: true,
-  opacity: 0.5,
-  blending: THREE.AdditiveBlending,
-  depthWrite: false,
-});
-const dust = new THREE.Points(dustGeo, dustMat);
-scene.add(dust);
+// Background dust
+const dN=500, dG=new THREE.BufferGeometry(), dP=new Float32Array(dN*3);
+for(let i=0;i<dN;i++){dP[i*3]=(Math.random()-.5)*60;dP[i*3+1]=(Math.random()-.5)*60;dP[i*3+2]=(Math.random()-.5)*60}
+dG.setAttribute('position',new THREE.BufferAttribute(dP,3));
+scene.add(new THREE.Points(dG,new THREE.PointsMaterial({size:.025,color:0x1e2540,transparent:true,opacity:.45,blending:THREE.AdditiveBlending,depthWrite:false})));
 
 // =====================================================
-// SCROLL STATE
+// SCROLL LOGIC — generous spacing
 // =====================================================
-let scrollProgress = 0;
-let currentShapeIdx = 0;
-let morphProgress = 0;
-
-const transitions = [
-  { start: 0.13, end: 0.22, from: 0, to: 1 },
-  { start: 0.33, end: 0.42, from: 1, to: 2 },
-  { start: 0.53, end: 0.62, from: 2, to: 3 },
-  { start: 0.76, end: 0.86, from: 3, to: 4 },
+// Transitions happen LATER and with more scroll room
+const transitions=[
+  {start:.10,end:.18,from:0,to:1},   // cloud → guard
+  {start:.28,end:.36,from:1,to:2},   // guard → machine
+  {start:.48,end:.56,from:2,to:3},   // machine → conveyor
+  {start:.66,end:.74,from:3,to:4},   // conveyor → 3dprint
+  {start:.82,end:.90,from:4,to:5},   // 3dprint → disperse
 ];
 
-const panelZones = [
-  { id: 'panel-hero',     in: 0.0,  peak: 0.04, out: 0.11 },
-  { id: 'panel-about',    in: 0.19, peak: 0.26, out: 0.31 },
-  { id: 'panel-services', in: 0.39, peak: 0.46, out: 0.51 },
-  { id: 'panel-tech',     in: 0.59, peak: 0.68, out: 0.74 },
-  { id: 'panel-contact',  in: 0.84, peak: 0.92, out: 1.01 },
+const panels=[
+  {id:'p0',in:0,   peak:.03, out:.08},
+  {id:'p1',in:.14, peak:.22, out:.26},
+  {id:'p2',in:.32, peak:.40, out:.46},
+  {id:'p3',in:.52, peak:.60, out:.64},
+  {id:'p4',in:.70, peak:.78, out:.80},
+  {id:'p5',in:.86, peak:.94, out:1.01},
 ];
 
-// Base colors (R,G,B in 0-1)
-const baseColor   = { r: 0.0, g: 0.5, b: 0.7 };   // cool teal
-const fastColor   = { r: 1.0, g: 0.42, b: 0.17 };  // hot orange
-const accentColor = { r: 0.0, g: 0.83, b: 1.0 };   // electric cyan
+const ease=t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const lerp=(a,b,t)=>a+(b-a)*t;
+const mapR=(v,a,b,c,d)=>clamp((v-a)/(b-a),0,1)*(d-c)+c;
 
-// =====================================================
-// EASING
-// =====================================================
-function easeInOutCubic(t) {
-  return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t+2, 3)/2;
-}
+const baseCol={r:0,g:.45,b:.72};
+const fastCol={r:1,g:.42,b:.17};
 
-function lerp(a, b, t) { return a + (b - a) * t; }
+let scroll=0, mxT=0, myT=0, mx=0, my=0;
 
-function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
+document.addEventListener('mousemove',e=>{mxT=(e.clientX/W()-.5)*2;myT=(e.clientY/H()-.5)*2});
 
-function mapRange(val, inMin, inMax, outMin, outMax) {
-  return clamp((val - inMin) / (inMax - inMin), 0, 1) * (outMax - outMin) + outMin;
-}
-
-// =====================================================
-// MOUSE
-// =====================================================
-let mouseX = 0, mouseY = 0;
-let targetMX = 0, targetMY = 0;
-
-document.addEventListener('mousemove', e => {
-  targetMX = (e.clientX / window.innerWidth - 0.5) * 2;
-  targetMY = (e.clientY / window.innerHeight - 0.5) * 2;
-});
-
-// =====================================================
-// TEXT SCRAMBLE
-// =====================================================
-class TextScramble {
-  constructor(el) {
-    this.el = el;
-    this.chars = '!<>-_\\/[]{}—=+*^?#▓▒░';
-    this.frameReq = null;
-  }
-  setText(text) {
-    const old = this.el.textContent;
-    const len = Math.max(old.length, text.length);
-    const promise = new Promise(r => this.resolve = r);
-    this.queue = [];
-    for (let i = 0; i < len; i++) {
-      const from = old[i] || '';
-      const to = text[i] || '';
-      const start = Math.floor(Math.random() * 30);
-      const end = start + Math.floor(Math.random() * 30);
-      this.queue.push({from, to, start, end});
-    }
-    cancelAnimationFrame(this.frameReq);
-    this.frame = 0;
-    this.update();
-    return promise;
-  }
-  update() {
-    let output = '', complete = 0;
-    for (let i = 0; i < this.queue.length; i++) {
-      let {from, to, start, end, char} = this.queue[i];
-      if (this.frame >= end) { complete++; output += to; }
-      else if (this.frame >= start) {
-        if (!char || Math.random() < 0.28) {
-          char = this.chars[Math.floor(Math.random()*this.chars.length)];
-          this.queue[i].char = char;
-        }
-        output += `<span class="scramble-char">${char}</span>`;
-      } else output += from;
-    }
-    this.el.innerHTML = output;
-    if (complete === this.queue.length) this.resolve();
-    else { this.frameReq = requestAnimationFrame(() => this.update()); this.frame++; }
-  }
-}
-
-// Init hero text scramble
-const scramble1 = new TextScramble(document.getElementById('hero-line1'));
-const scramble2 = new TextScramble(document.getElementById('hero-line2'));
-setTimeout(() => scramble1.setText('AUTOMAZIONE'), 500);
-setTimeout(() => scramble2.setText('SENZA CONFINI'), 900);
-
-// =====================================================
-// SCROLL HANDLER
-// =====================================================
-const spacer = document.getElementById('scroll-spacer');
-
-function updateScroll() {
-  const maxScroll = spacer.offsetHeight - window.innerHeight;
-  scrollProgress = clamp(window.scrollY / maxScroll, 0, 1);
+function tick(){
+  const maxS=document.getElementById('spacer').offsetHeight-H();
+  scroll=clamp(window.scrollY/maxS,0,1);
   
-  // Progress bar
-  document.getElementById('progress-fill').style.height = (scrollProgress * 100) + '%';
-  document.getElementById('progress-label').textContent = String(Math.floor(scrollProgress * 100)).padStart(2, '0');
+  // Progress
+  document.getElementById('pf').style.height=(scroll*100)+'%';
+  document.getElementById('pn').textContent=String(Math.floor(scroll*100)).padStart(2,'0');
   
-  // Panel visibility
-  panelZones.forEach(zone => {
-    const el = document.getElementById(zone.id);
-    let opacity = 0;
-    if (scrollProgress >= zone.in && scrollProgress <= zone.out) {
-      if (scrollProgress < zone.peak) {
-        opacity = mapRange(scrollProgress, zone.in, zone.peak, 0, 1);
-      } else {
-        opacity = mapRange(scrollProgress, zone.peak, zone.out, 1, 0);
-      }
+  // Panels
+  panels.forEach(z=>{
+    const el=document.getElementById(z.id);
+    let o=0;
+    if(scroll>=z.in&&scroll<=z.out){
+      o=scroll<z.peak?mapR(scroll,z.in,z.peak,0,1):mapR(scroll,z.peak,z.out,1,0);
     }
-    el.style.opacity = opacity;
-    el.classList.toggle('active', opacity > 0.1);
+    el.style.opacity=o;
+    el.classList.toggle('on',o>.1);
   });
-
-  // Footer
-  document.getElementById('site-footer').classList.toggle('visible', scrollProgress > 0.88);
-
-  // Determine shape state
-  let fromShape = 0, toShape = 0, tween = 0;
-  let inTransition = false;
-
-  for (const tr of transitions) {
-    if (scrollProgress >= tr.start && scrollProgress <= tr.end) {
-      fromShape = tr.from;
-      toShape = tr.to;
-      tween = easeInOutCubic((scrollProgress - tr.start) / (tr.end - tr.start));
-      inTransition = true;
-      break;
-    }
-    if (scrollProgress > tr.end) {
-      fromShape = tr.to;
-      toShape = tr.to;
-    }
+  
+  document.getElementById('foot').classList.toggle('on',scroll>.88);
+  
+  // Shape morph
+  let fromS=0,toS=0,tw=0,inTr=false;
+  for(const tr of transitions){
+    if(scroll>=tr.start&&scroll<=tr.end){fromS=tr.from;toS=tr.to;tw=ease((scroll-tr.start)/(tr.end-tr.start));inTr=true;break}
+    if(scroll>tr.end){fromS=tr.to;toS=tr.to}
   }
-
-  currentShapeIdx = inTransition ? toShape : fromShape;
-  morphProgress = tween;
-
-  // Update shape label
-  const labelIdx = inTransition ? toShape : fromShape;
-  document.getElementById('shape-name').textContent = shapeNames[labelIdx];
-
-  // Morph particles
-  const fromArr = shapes[fromShape];
-  const toArr = inTransition ? shapes[toShape] : fromArr;
-  const t = inTransition ? tween : 0;
-
-  for (let i = 0; i < COUNT * 3; i++) {
-    prevPositions[i] = positions[i];
-    positions[i] = lerp(fromArr[i], toArr[i], t);
+  
+  document.getElementById('hud-t').textContent=shapeLabels[inTr?toS:fromS];
+  
+  const A=shapes[fromS], B=inTr?shapes[toS]:A, t=inTr?tw:0;
+  
+  for(let i=0;i<N*3;i++){
+    prev[i]=pos[i];
+    pos[i]=lerp(A[i],B[i],t);
   }
-  geometry.attributes.position.needsUpdate = true;
-
-  // Speed-based coloring
-  let maxSpeed = 0;
-  const speeds = new Float32Array(COUNT);
-  for (let i = 0; i < COUNT; i++) {
-    const dx = positions[i*3] - prevPositions[i*3];
-    const dy = positions[i*3+1] - prevPositions[i*3+1];
-    const dz = positions[i*3+2] - prevPositions[i*3+2];
-    speeds[i] = Math.sqrt(dx*dx + dy*dy + dz*dz);
-    if (speeds[i] > maxSpeed) maxSpeed = speeds[i];
+  geo.attributes.position.needsUpdate=true;
+  
+  // Speed coloring
+  let maxSpd=0;
+  const spd=new Float32Array(N);
+  for(let i=0;i<N;i++){
+    const dx=pos[i*3]-prev[i*3],dy=pos[i*3+1]-prev[i*3+1],dz=pos[i*3+2]-prev[i*3+2];
+    spd[i]=Math.sqrt(dx*dx+dy*dy+dz*dz);
+    if(spd[i]>maxSpd)maxSpd=spd[i];
   }
-  if (maxSpeed < 0.001) maxSpeed = 0.001;
-
-  for (let i = 0; i < COUNT; i++) {
-    const s = clamp(speeds[i] / (maxSpeed * 0.6), 0, 1);
-    const s2 = s * s;
-    colors[i*3]   = lerp(lerp(baseColor.r, accentColor.r, 0.5), fastColor.r, s2);
-    colors[i*3+1] = lerp(lerp(baseColor.g, accentColor.g, 0.5), fastColor.g, s2);
-    colors[i*3+2] = lerp(lerp(baseColor.b, accentColor.b, 0.5), fastColor.b, s2);
+  if(maxSpd<.0005)maxSpd=.0005;
+  
+  for(let i=0;i<N;i++){
+    const s=clamp(spd[i]/(maxSpd*.5),0,1);
+    const s2=s*s;
+    col[i*3]=lerp(baseCol.r,fastCol.r,s2);
+    col[i*3+1]=lerp(baseCol.g,fastCol.g,s2);
+    col[i*3+2]=lerp(baseCol.b,fastCol.b,s2);
   }
-  geometry.attributes.color.needsUpdate = true;
-
-  // Dynamic particle size based on transition
-  material.size = inTransition ? lerp(0.07, 0.12, Math.sin(tween * Math.PI)) : 0.07;
+  geo.attributes.color.needsUpdate=true;
+  
+  // Dynamic size: bigger during morph
+  mat.size = inTr ? lerp(.12,.18,Math.sin(tw*Math.PI)) : .12;
 }
 
-window.addEventListener('scroll', updateScroll, { passive: true });
+window.addEventListener('scroll',tick,{passive:true});
 
-// Nav link scroll
-document.querySelectorAll('.nav-links a').forEach(a => {
-  a.addEventListener('click', e => {
-    e.preventDefault();
-    const target = parseFloat(a.dataset.target);
-    const maxScroll = spacer.offsetHeight - window.innerHeight;
-    window.scrollTo({ top: target * maxScroll, behavior: 'smooth' });
-  });
-});
+// Nav
+document.querySelectorAll('.nav-r a').forEach(a=>a.addEventListener('click',e=>{
+  e.preventDefault();
+  const t=parseFloat(a.dataset.go);
+  const ms=document.getElementById('spacer').offsetHeight-H();
+  window.scrollTo({top:t*ms,behavior:'smooth'});
+}));
 
-// =====================================================
-// ANIMATION LOOP
-// =====================================================
-const clock = new THREE.Clock();
-
-function animate() {
+// ── Render loop ──
+function animate(){
   requestAnimationFrame(animate);
-  const time = clock.getElapsedTime();
-
-  // Smooth mouse
-  mouseX += (targetMX - mouseX) * 0.04;
-  mouseY += (targetMY - mouseY) * 0.04;
-
-  // Camera
-  camera.position.x = mouseX * 1.5;
-  camera.position.y = -mouseY * 1.0;
-  camera.lookAt(0, 0, 0);
-
-  // Gentle particle rotation
-  particles.rotation.y = time * 0.04 + scrollProgress * 0.5;
-  particles.rotation.x = Math.sin(time * 0.02) * 0.08;
-
-  // Dust rotation
-  dust.rotation.y = time * 0.01;
-  dust.rotation.x = time * 0.005;
-
-  renderer.render(scene, camera);
+  mx+=(mxT-mx)*.035;
+  my+=(myT-my)*.035;
+  camera.position.x=mx*1.2;
+  camera.position.y=-my*.8;
+  camera.lookAt(0,0,0);
+  const t=performance.now()*.001;
+  pts.rotation.y=t*.025+scroll*.4;
+  pts.rotation.x=Math.sin(t*.015)*.05;
+  renderer.render(scene,camera);
 }
 animate();
+tick();
 
-// Initial scroll update
-updateScroll();
-
-// =====================================================
-// RESIZE
-// =====================================================
-window.addEventListener('resize', () => {
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  camera.aspect = window.innerWidth / window.innerHeight;
+window.addEventListener('resize',()=>{
+  renderer.setSize(W(),H());
+  camera.aspect=W()/H();
   camera.updateProjectionMatrix();
 });
 
-// =====================================================
-// SERVICE CARD HOVER GLOW
-// =====================================================
-document.querySelectorAll('.service-card').forEach(card => {
-  card.addEventListener('mousemove', e => {
-    const r = card.getBoundingClientRect();
-    const x = ((e.clientX - r.left) / r.width) * 100;
-    const y = ((e.clientY - r.top) / r.height) * 100;
-    card.style.background = `radial-gradient(circle at ${x}% ${y}%, rgba(0,212,255,0.06) 0%, rgba(13,17,29,0.4) 60%)`;
+// Card glow
+document.querySelectorAll('.pcard').forEach(c=>{
+  c.addEventListener('mousemove',e=>{
+    const r=c.getBoundingClientRect();
+    c.style.background=`radial-gradient(circle at ${((e.clientX-r.left)/r.width*100)}% ${((e.clientY-r.top)/r.height*100)}%,rgba(0,170,255,.055) 0%,rgba(12,15,23,.55) 60%)`;
   });
-  card.addEventListener('mouseleave', () => {
-    card.style.background = 'rgba(13,17,29,0.4)';
-  });
+  c.addEventListener('mouseleave',()=>c.style.background='var(--glass)');
 });
 </script>
 </body>

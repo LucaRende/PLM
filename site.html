@@ -1,0 +1,1521 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PRO SYSTEM — Industrial Innovation</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg-primary: #08080c;
+  --bg-secondary: #0f0f16;
+  --accent-cyan: #00f0ff;
+  --accent-magenta: #ff00aa;
+  --accent-gold: #ffcc00;
+  --text-primary: #f0f0f5;
+  --text-secondary: #8888a0;
+  --glass-bg: rgba(15, 15, 25, 0.6);
+  --glass-border: rgba(255, 255, 255, 0.06);
+}
+
+html {
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+  scrollbar-color: var(--accent-cyan) var(--bg-primary);
+}
+
+body {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: 'DM Sans', sans-serif;
+  overflow-x: hidden;
+  cursor: none;
+}
+
+/* Custom Cursor */
+.cursor-dot {
+  position: fixed;
+  width: 8px;
+  height: 8px;
+  background: var(--accent-cyan);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 99999;
+  transition: transform 0.1s ease;
+  mix-blend-mode: difference;
+}
+
+.cursor-ring {
+  position: fixed;
+  width: 40px;
+  height: 40px;
+  border: 1.5px solid var(--accent-cyan);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 99998;
+  transition: transform 0.15s ease, width 0.3s ease, height 0.3s ease, border-color 0.3s ease;
+  transform: translate(-50%, -50%);
+}
+
+.cursor-ring.hover {
+  width: 60px;
+  height: 60px;
+  border-color: var(--accent-magenta);
+}
+
+/* Noise Overlay */
+.noise-overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+}
+
+/* Three.js Canvas */
+#three-canvas {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: 0;
+}
+
+/* Navigation */
+nav {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%;
+  z-index: 1000;
+  padding: 28px 48px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  backdrop-filter: blur(20px);
+  background: rgba(8, 8, 12, 0.4);
+  border-bottom: 1px solid var(--glass-border);
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+nav.scrolled {
+  padding: 16px 48px;
+  background: rgba(8, 8, 12, 0.85);
+}
+
+.logo {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: 1.4rem;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  background: linear-gradient(135deg, var(--accent-cyan), var(--accent-magenta));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.logo span {
+  font-weight: 400;
+  opacity: 0.6;
+  -webkit-text-fill-color: var(--text-secondary);
+}
+
+.nav-links {
+  display: flex;
+  gap: 40px;
+  list-style: none;
+}
+
+.nav-links a {
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.75rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  position: relative;
+  transition: color 0.3s ease;
+}
+
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  bottom: -6px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: var(--accent-cyan);
+  transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.nav-links a:hover {
+  color: var(--text-primary);
+}
+
+.nav-links a:hover::after {
+  width: 100%;
+}
+
+/* Sections */
+section {
+  position: relative;
+  z-index: 1;
+}
+
+/* Hero */
+.hero {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 0 48px;
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 20px;
+  border: 1px solid rgba(0, 240, 255, 0.2);
+  border-radius: 100px;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--accent-cyan);
+  margin-bottom: 40px;
+  opacity: 0;
+  animation: fadeSlideUp 1s 0.3s forwards;
+  backdrop-filter: blur(10px);
+  background: rgba(0, 240, 255, 0.03);
+}
+
+.hero-badge .dot {
+  width: 6px;
+  height: 6px;
+  background: var(--accent-cyan);
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+
+.hero h1 {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: clamp(3rem, 8vw, 8rem);
+  line-height: 0.95;
+  letter-spacing: -3px;
+  margin-bottom: 30px;
+  opacity: 0;
+  animation: fadeSlideUp 1s 0.5s forwards;
+}
+
+.hero h1 .line {
+  display: block;
+}
+
+.hero h1 .gradient-text {
+  background: linear-gradient(135deg, var(--accent-cyan) 0%, var(--accent-magenta) 50%, var(--accent-gold) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  background-size: 200% 200%;
+  animation: gradientShift 5s ease infinite;
+}
+
+.hero p {
+  font-size: 1.15rem;
+  color: var(--text-secondary);
+  max-width: 520px;
+  line-height: 1.7;
+  margin-bottom: 50px;
+  opacity: 0;
+  animation: fadeSlideUp 1s 0.7s forwards;
+  font-weight: 300;
+}
+
+.hero-cta {
+  display: flex;
+  gap: 20px;
+  opacity: 0;
+  animation: fadeSlideUp 1s 0.9s forwards;
+}
+
+.btn-primary {
+  padding: 16px 40px;
+  background: linear-gradient(135deg, var(--accent-cyan), #00c8ff);
+  color: var(--bg-primary);
+  border: none;
+  border-radius: 60px;
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  font-size: 0.9rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  cursor: none;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.btn-primary::before {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%;
+  width: 100%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+  transition: left 0.6s ease;
+}
+
+.btn-primary:hover::before {
+  left: 100%;
+}
+
+.btn-primary:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 15px 40px rgba(0, 240, 255, 0.3);
+}
+
+.btn-secondary {
+  padding: 16px 40px;
+  background: transparent;
+  color: var(--text-primary);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 60px;
+  font-family: 'Syne', sans-serif;
+  font-weight: 600;
+  font-size: 0.9rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  cursor: none;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.btn-secondary:hover {
+  border-color: var(--accent-cyan);
+  background: rgba(0, 240, 255, 0.05);
+  transform: translateY(-3px);
+}
+
+.scroll-indicator {
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  opacity: 0;
+  animation: fadeIn 1s 1.5s forwards;
+}
+
+.scroll-indicator span {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.scroll-line {
+  width: 1px;
+  height: 50px;
+  background: linear-gradient(to bottom, var(--accent-cyan), transparent);
+  animation: scrollPulse 2s infinite;
+}
+
+/* Marquee */
+.marquee-section {
+  padding: 20px 0;
+  border-top: 1px solid var(--glass-border);
+  border-bottom: 1px solid var(--glass-border);
+  overflow: hidden;
+  background: rgba(0, 240, 255, 0.02);
+}
+
+.marquee-track {
+  display: flex;
+  animation: marquee 30s linear infinite;
+  width: max-content;
+}
+
+.marquee-item {
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  padding: 0 40px;
+  display: flex;
+  align-items: center;
+  gap: 40px;
+}
+
+.marquee-item .sep {
+  width: 6px;
+  height: 6px;
+  background: var(--accent-cyan);
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* About / Features */
+.features {
+  padding: 160px 48px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.section-header {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  margin-bottom: 100px;
+  align-items: end;
+}
+
+.section-number {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 4px;
+  color: var(--accent-cyan);
+  text-transform: uppercase;
+  margin-bottom: 20px;
+}
+
+.section-title {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  line-height: 1.05;
+  letter-spacing: -2px;
+}
+
+.section-desc {
+  color: var(--text-secondary);
+  font-size: 1.05rem;
+  line-height: 1.8;
+  font-weight: 300;
+  align-self: end;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.feature-card {
+  padding: 48px 36px;
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: none;
+}
+
+.feature-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: radial-gradient(circle at var(--mx, 50%) var(--my, 50%), rgba(0, 240, 255, 0.08) 0%, transparent 60%);
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.feature-card:hover::before {
+  opacity: 1;
+}
+
+.feature-card:hover {
+  border-color: rgba(0, 240, 255, 0.2);
+  transform: translateY(-8px);
+}
+
+.feature-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 28px;
+  font-size: 1.5rem;
+  position: relative;
+}
+
+.feature-icon.cyan { background: rgba(0, 240, 255, 0.1); border: 1px solid rgba(0, 240, 255, 0.15); }
+.feature-icon.magenta { background: rgba(255, 0, 170, 0.1); border: 1px solid rgba(255, 0, 170, 0.15); }
+.feature-icon.gold { background: rgba(255, 204, 0, 0.1); border: 1px solid rgba(255, 204, 0, 0.15); }
+
+.feature-card h3 {
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  font-size: 1.3rem;
+  margin-bottom: 14px;
+  letter-spacing: -0.5px;
+}
+
+.feature-card p {
+  color: var(--text-secondary);
+  font-size: 0.92rem;
+  line-height: 1.7;
+  font-weight: 300;
+}
+
+.feature-tag {
+  display: inline-block;
+  margin-top: 20px;
+  padding: 6px 14px;
+  border-radius: 100px;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.feature-tag.cyan { background: rgba(0, 240, 255, 0.08); color: var(--accent-cyan); border: 1px solid rgba(0, 240, 255, 0.15); }
+.feature-tag.magenta { background: rgba(255, 0, 170, 0.08); color: var(--accent-magenta); border: 1px solid rgba(255, 0, 170, 0.15); }
+.feature-tag.gold { background: rgba(255, 204, 0, 0.08); color: var(--accent-gold); border: 1px solid rgba(255, 204, 0, 0.15); }
+
+/* 3D Viewer Section */
+.viewer-section {
+  padding: 160px 48px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.viewer-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+  align-items: center;
+}
+
+.viewer-box {
+  aspect-ratio: 1;
+  border: 1px solid var(--glass-border);
+  border-radius: 24px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  overflow: hidden;
+  position: relative;
+}
+
+#viewer-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.viewer-overlay {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  right: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.viewer-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--accent-cyan);
+  padding: 8px 16px;
+  background: rgba(8, 8, 12, 0.8);
+  border-radius: 100px;
+  border: 1px solid rgba(0, 240, 255, 0.15);
+  backdrop-filter: blur(10px);
+}
+
+.viewer-controls {
+  display: flex;
+  gap: 8px;
+}
+
+.viewer-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(8, 8, 12, 0.8);
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  cursor: none;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.viewer-btn:hover {
+  border-color: var(--accent-cyan);
+  background: rgba(0, 240, 255, 0.1);
+}
+
+.viewer-info h2 {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: clamp(2rem, 4vw, 3.2rem);
+  line-height: 1.05;
+  letter-spacing: -2px;
+  margin-bottom: 24px;
+}
+
+.viewer-info h2 .highlight {
+  color: var(--accent-cyan);
+}
+
+.viewer-info > p {
+  color: var(--text-secondary);
+  font-size: 1.05rem;
+  line-height: 1.8;
+  font-weight: 300;
+  margin-bottom: 40px;
+}
+
+.format-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 40px;
+}
+
+.format-badge {
+  padding: 10px 20px;
+  border-radius: 12px;
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg);
+  font-family: 'Space Mono', monospace;
+  font-size: 0.75rem;
+  letter-spacing: 1px;
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+  cursor: none;
+}
+
+.format-badge.supported {
+  border-color: rgba(0, 240, 255, 0.2);
+  color: var(--accent-cyan);
+}
+
+.format-badge.supported:hover {
+  background: rgba(0, 240, 255, 0.08);
+  transform: translateY(-2px);
+}
+
+.format-badge.best {
+  border-color: rgba(255, 204, 0, 0.3);
+  color: var(--accent-gold);
+  background: rgba(255, 204, 0, 0.05);
+}
+
+.format-badge.best:hover {
+  background: rgba(255, 204, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.format-badge.convert {
+  border-color: rgba(255, 0, 170, 0.2);
+  color: var(--accent-magenta);
+  opacity: 0.7;
+}
+
+.badge-label {
+  display: block;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.6rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-top: 4px;
+  opacity: 0.6;
+}
+
+/* Stats Bar */
+.stats-section {
+  padding: 80px 48px;
+  border-top: 1px solid var(--glass-border);
+  border-bottom: 1px solid var(--glass-border);
+  background: rgba(0, 240, 255, 0.01);
+}
+
+.stats-grid {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 48px;
+  text-align: center;
+}
+
+.stat-item .stat-number {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  letter-spacing: -2px;
+  background: linear-gradient(135deg, var(--text-primary), var(--accent-cyan));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.stat-item .stat-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  margin-top: 8px;
+}
+
+/* Showcase Gallery */
+.showcase {
+  padding: 160px 48px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.showcase-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  grid-template-rows: auto auto;
+  gap: 24px;
+  margin-top: 80px;
+}
+
+.showcase-item {
+  border-radius: 20px;
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  overflow: hidden;
+  position: relative;
+  cursor: none;
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.showcase-item:hover {
+  transform: scale(1.02);
+  border-color: rgba(0, 240, 255, 0.2);
+}
+
+.showcase-item:nth-child(1) { grid-column: 1 / 8; grid-row: 1; }
+.showcase-item:nth-child(2) { grid-column: 8 / 13; grid-row: 1; }
+.showcase-item:nth-child(3) { grid-column: 1 / 5; grid-row: 2; }
+.showcase-item:nth-child(4) { grid-column: 5 / 13; grid-row: 2; }
+
+.showcase-inner {
+  padding: 48px;
+  height: 320px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  position: relative;
+}
+
+.showcase-inner::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  opacity: 0.15;
+}
+
+.showcase-item:nth-child(1) .showcase-inner::before {
+  background: linear-gradient(135deg, var(--accent-cyan), transparent);
+}
+.showcase-item:nth-child(2) .showcase-inner::before {
+  background: linear-gradient(135deg, var(--accent-magenta), transparent);
+}
+.showcase-item:nth-child(3) .showcase-inner::before {
+  background: linear-gradient(135deg, var(--accent-gold), transparent);
+}
+.showcase-item:nth-child(4) .showcase-inner::before {
+  background: linear-gradient(135deg, var(--accent-cyan), var(--accent-magenta));
+}
+
+.showcase-inner h3 {
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  font-size: 1.5rem;
+  margin-bottom: 8px;
+  position: relative;
+}
+
+.showcase-inner p {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.6;
+  font-weight: 300;
+  position: relative;
+}
+
+/* CTA Section */
+.cta-section {
+  padding: 160px 48px;
+  text-align: center;
+  position: relative;
+}
+
+.cta-section::before {
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(0, 240, 255, 0.06) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.cta-section h2 {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: clamp(2.5rem, 6vw, 5rem);
+  letter-spacing: -2px;
+  line-height: 1.05;
+  margin-bottom: 24px;
+  position: relative;
+}
+
+.cta-section p {
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+  line-height: 1.7;
+  font-weight: 300;
+  max-width: 500px;
+  margin: 0 auto 50px;
+  position: relative;
+}
+
+/* Footer */
+footer {
+  padding: 60px 48px;
+  border-top: 1px solid var(--glass-border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+footer .footer-left {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 2px;
+  color: var(--text-secondary);
+}
+
+footer .footer-right {
+  display: flex;
+  gap: 30px;
+}
+
+footer .footer-right a {
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 1px;
+  transition: color 0.3s ease;
+}
+
+footer .footer-right a:hover {
+  color: var(--accent-cyan);
+}
+
+/* Reveal Animations */
+.reveal {
+  opacity: 0;
+  transform: translateY(60px);
+  transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Keyframes */
+@keyframes fadeSlideUp {
+  from { opacity: 0; transform: translateY(40px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes gradientShift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(1.5); }
+}
+
+@keyframes scrollPulse {
+  0% { opacity: 0; transform: scaleY(0); transform-origin: top; }
+  50% { opacity: 1; transform: scaleY(1); }
+  100% { opacity: 0; transform: scaleY(0); transform-origin: bottom; }
+}
+
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-20px); }
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .features-grid { grid-template-columns: repeat(2, 1fr); }
+  .viewer-container { grid-template-columns: 1fr; }
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  .showcase-grid { grid-template-columns: 1fr; }
+  .showcase-item:nth-child(n) { grid-column: 1 / -1; grid-row: auto; }
+  .section-header { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 768px) {
+  nav { padding: 20px 24px; }
+  .nav-links { display: none; }
+  .hero { padding: 0 24px; }
+  .features, .viewer-section, .showcase, .cta-section { padding: 100px 24px; }
+  .features-grid { grid-template-columns: 1fr; }
+  .stats-grid { grid-template-columns: 1fr; gap: 32px; }
+  footer { flex-direction: column; gap: 20px; text-align: center; }
+}
+</style>
+</head>
+<body>
+
+<div class="cursor-dot" id="cursor-dot"></div>
+<div class="cursor-ring" id="cursor-ring"></div>
+<div class="noise-overlay"></div>
+<canvas id="three-canvas"></canvas>
+
+<!-- Navigation -->
+<nav id="navbar">
+  <div class="logo">PRO SYSTEM <span>S.r.l.</span></div>
+  <ul class="nav-links">
+    <li><a href="#features">Servizi</a></li>
+    <li><a href="#viewer">3D Viewer</a></li>
+    <li><a href="#showcase">Progetti</a></li>
+    <li><a href="#contact">Contatti</a></li>
+  </ul>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-badge">
+    <span class="dot"></span>
+    Innovazione Industriale 4.0
+  </div>
+  <h1>
+    <span class="line">Ingegneria</span>
+    <span class="line"><span class="gradient-text">Senza Limiti</span></span>
+  </h1>
+  <p>Progettiamo, installiamo e gestiamo macchinari industriali all'avanguardia. Dall'idea alla produzione, con precisione millimetrica.</p>
+  <div class="hero-cta">
+    <button class="btn-primary" onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'})">Inizia Ora</button>
+    <button class="btn-secondary" onclick="document.getElementById('viewer').scrollIntoView({behavior:'smooth'})">Esplora in 3D</button>
+  </div>
+  <div class="scroll-indicator">
+    <span>Scroll</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<!-- Marquee -->
+<div class="marquee-section">
+  <div class="marquee-track">
+    <div class="marquee-item">Automazione <span class="sep"></span></div>
+    <div class="marquee-item">Macchinari CNC <span class="sep"></span></div>
+    <div class="marquee-item">Progettazione 3D <span class="sep"></span></div>
+    <div class="marquee-item">Industria 4.0 <span class="sep"></span></div>
+    <div class="marquee-item">Taglio Laser <span class="sep"></span></div>
+    <div class="marquee-item">Robotica <span class="sep"></span></div>
+    <div class="marquee-item">Qualità Totale <span class="sep"></span></div>
+    <div class="marquee-item">Smart Factory <span class="sep"></span></div>
+    <div class="marquee-item">Automazione <span class="sep"></span></div>
+    <div class="marquee-item">Macchinari CNC <span class="sep"></span></div>
+    <div class="marquee-item">Progettazione 3D <span class="sep"></span></div>
+    <div class="marquee-item">Industria 4.0 <span class="sep"></span></div>
+    <div class="marquee-item">Taglio Laser <span class="sep"></span></div>
+    <div class="marquee-item">Robotica <span class="sep"></span></div>
+    <div class="marquee-item">Qualità Totale <span class="sep"></span></div>
+    <div class="marquee-item">Smart Factory <span class="sep"></span></div>
+  </div>
+</div>
+
+<!-- Features -->
+<section class="features" id="features">
+  <div class="section-header reveal">
+    <div>
+      <div class="section-number">01 — Servizi</div>
+      <h2 class="section-title">Soluzioni che<br>ridefiniscono<br>l'industria</h2>
+    </div>
+    <p class="section-desc">Combiniamo tecnologia avanzata e competenza ingegneristica per trasformare le sfide produttive in opportunità di crescita. Ogni progetto è unico, ogni soluzione è su misura.</p>
+  </div>
+  <div class="features-grid">
+    <div class="feature-card reveal">
+      <div class="feature-icon cyan">⚙️</div>
+      <h3>Installazione Macchinari</h3>
+      <p>Montaggio e messa in servizio di linee produttive complete, con calibrazione di precisione e testing rigoroso.</p>
+      <span class="feature-tag cyan">Core Service</span>
+    </div>
+    <div class="feature-card reveal">
+      <div class="feature-icon magenta">🔬</div>
+      <h3>Progettazione CAD/CAM</h3>
+      <p>Modellazione 3D avanzata e simulazione virtuale per validare ogni dettaglio prima della produzione fisica.</p>
+      <span class="feature-tag magenta">Design</span>
+    </div>
+    <div class="feature-card reveal">
+      <div class="feature-icon gold">🤖</div>
+      <h3>Automazione Smart</h3>
+      <p>Integrazione IoT e sistemi di controllo intelligenti per massimizzare efficienza e ridurre sprechi operativi.</p>
+      <span class="feature-tag gold">Industry 4.0</span>
+    </div>
+    <div class="feature-card reveal">
+      <div class="feature-icon cyan">📊</div>
+      <h3>Monitoraggio Real-Time</h3>
+      <p>Dashboard interattive e analytics predittivi per il controllo totale del ciclo produttivo, ovunque tu sia.</p>
+      <span class="feature-tag cyan">Analytics</span>
+    </div>
+    <div class="feature-card reveal">
+      <div class="feature-icon magenta">🛡️</div>
+      <h3>Manutenzione Predittiva</h3>
+      <p>Algoritmi AI che anticipano guasti e ottimizzano i cicli di manutenzione, riducendo i fermi macchina del 70%.</p>
+      <span class="feature-tag magenta">AI-Powered</span>
+    </div>
+    <div class="feature-card reveal">
+      <div class="feature-icon gold">🌍</div>
+      <h3>Consulenza Globale</h3>
+      <p>Team di ingegneri specializzati disponibili per assistenza on-site e da remoto in tutto il territorio nazionale.</p>
+      <span class="feature-tag gold">Support</span>
+    </div>
+  </div>
+</section>
+
+<!-- 3D Viewer Section -->
+<section class="viewer-section" id="viewer">
+  <div class="section-header reveal">
+    <div>
+      <div class="section-number">02 — 3D Viewer</div>
+      <h2 class="section-title">Visualizza i tuoi<br>progetti in 3D</h2>
+    </div>
+    <p class="section-desc">Carica i tuoi modelli 3D direttamente nel browser. Supportiamo i principali formati CAD industriali con rendering in tempo reale.</p>
+  </div>
+  <div class="viewer-container reveal">
+    <div class="viewer-box">
+      <canvas id="viewer-canvas"></canvas>
+      <div class="viewer-overlay">
+        <span class="viewer-label">◉ Interactive 3D</span>
+        <div class="viewer-controls">
+          <button class="viewer-btn" onclick="resetViewer()" title="Reset View">↺</button>
+          <button class="viewer-btn" onclick="toggleWireframe()" title="Wireframe">◇</button>
+          <button class="viewer-btn" onclick="toggleAutoRotate()" title="Auto Rotate">↻</button>
+        </div>
+      </div>
+    </div>
+    <div class="viewer-info">
+      <h2>Importa.<br>Visualizza.<br><span class="highlight">Stupisce.</span></h2>
+      <p>Il nostro viewer 3D integrato supporta i formati più diffusi nell'industria. Carica il tuo file e condividilo con il team in un click.</p>
+      <div class="format-list">
+        <div class="format-badge best">.GLTF / .GLB<span class="badge-label">★ Consigliato</span></div>
+        <div class="format-badge supported">.OBJ<span class="badge-label">Supportato</span></div>
+        <div class="format-badge supported">.STL<span class="badge-label">Supportato</span></div>
+        <div class="format-badge supported">.FBX<span class="badge-label">Supportato</span></div>
+        <div class="format-badge convert">.STEP / .STP<span class="badge-label">Richiede conversione</span></div>
+      </div>
+      <button class="btn-primary" style="width: fit-content;">Carica Modello 3D</button>
+    </div>
+  </div>
+</section>
+
+<!-- Stats -->
+<div class="stats-section">
+  <div class="stats-grid">
+    <div class="stat-item reveal">
+      <div class="stat-number" data-target="250">0</div>
+      <div class="stat-label">Impianti Installati</div>
+    </div>
+    <div class="stat-item reveal">
+      <div class="stat-number" data-target="98">0</div>
+      <div class="stat-label">% Soddisfazione</div>
+    </div>
+    <div class="stat-item reveal">
+      <div class="stat-number" data-target="15">0</div>
+      <div class="stat-label">Anni di Esperienza</div>
+    </div>
+    <div class="stat-item reveal">
+      <div class="stat-number" data-target="24">0</div>
+      <div class="stat-label">Supporto H/24</div>
+    </div>
+  </div>
+</div>
+
+<!-- Showcase -->
+<section class="showcase" id="showcase">
+  <div class="section-header reveal">
+    <div>
+      <div class="section-number">03 — Progetti</div>
+      <h2 class="section-title">Eccellenza<br>comprovata</h2>
+    </div>
+    <p class="section-desc">Ogni progetto completato è una testimonianza del nostro impegno verso l'eccellenza ingegneristica e l'innovazione continua.</p>
+  </div>
+  <div class="showcase-grid">
+    <div class="showcase-item reveal">
+      <div class="showcase-inner">
+        <h3>Linea di Taglio Automatizzata</h3>
+        <p>Sistema completo CNC per il taglio di precisione di profili in alluminio con ottimizzazione nesting avanzata.</p>
+      </div>
+    </div>
+    <div class="showcase-item reveal">
+      <div class="showcase-inner">
+        <h3>Smart Factory IoT</h3>
+        <p>Digitalizzazione completa di un impianto produttivo con 120+ sensori connessi.</p>
+      </div>
+    </div>
+    <div class="showcase-item reveal">
+      <div class="showcase-inner">
+        <h3>Robotica Collaborativa</h3>
+        <p>Integrazione cobot per assemblaggio di precisione in ambiente condiviso.</p>
+      </div>
+    </div>
+    <div class="showcase-item reveal">
+      <div class="showcase-inner">
+        <h3>Digital Twin Platform</h3>
+        <p>Replica digitale completa di una linea produttiva con simulazione real-time e analytics predittivi integrati.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section" id="contact">
+  <div class="section-number reveal">04 — Contatti</div>
+  <h2 class="reveal">Pronto a<br><span class="gradient-text">innovare?</span></h2>
+  <p class="reveal">Parliamo del tuo prossimo progetto. Il futuro dell'industria inizia con una conversazione.</p>
+  <div class="hero-cta reveal" style="justify-content: center;">
+    <button class="btn-primary">Richiedi Preventivo</button>
+    <button class="btn-secondary">Prenota Demo</button>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="footer-left">© 2026 PRO SYSTEM S.R.L. — ALL RIGHTS RESERVED</div>
+  <div class="footer-right">
+    <a href="#">Privacy</a>
+    <a href="#">Termini</a>
+    <a href="#">LinkedIn</a>
+  </div>
+</footer>
+
+<script>
+// ==================== THREE.JS BACKGROUND ====================
+const canvas = document.getElementById('three-canvas');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+camera.position.z = 30;
+
+// Particle Field
+const particleCount = 2000;
+const positions = new Float32Array(particleCount * 3);
+const colors = new Float32Array(particleCount * 3);
+const sizes = new Float32Array(particleCount);
+
+for (let i = 0; i < particleCount; i++) {
+  positions[i * 3] = (Math.random() - 0.5) * 80;
+  positions[i * 3 + 1] = (Math.random() - 0.5) * 80;
+  positions[i * 3 + 2] = (Math.random() - 0.5) * 80;
+  
+  const colorChoice = Math.random();
+  if (colorChoice < 0.4) {
+    colors[i * 3] = 0; colors[i * 3 + 1] = 0.94; colors[i * 3 + 2] = 1;
+  } else if (colorChoice < 0.7) {
+    colors[i * 3] = 1; colors[i * 3 + 1] = 0; colors[i * 3 + 2] = 0.67;
+  } else {
+    colors[i * 3] = 1; colors[i * 3 + 1] = 0.8; colors[i * 3 + 2] = 0;
+  }
+  
+  sizes[i] = Math.random() * 2 + 0.5;
+}
+
+const particleGeometry = new THREE.BufferGeometry();
+particleGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+particleGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+particleGeometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
+
+const particleMaterial = new THREE.PointsMaterial({
+  size: 0.12,
+  vertexColors: true,
+  transparent: true,
+  opacity: 0.7,
+  blending: THREE.AdditiveBlending,
+  sizeAttenuation: true
+});
+
+const particles = new THREE.Points(particleGeometry, particleMaterial);
+scene.add(particles);
+
+// Wireframe geometric shapes
+const shapes = [];
+const shapeMaterials = [
+  new THREE.MeshBasicMaterial({ color: 0x00f0ff, wireframe: true, transparent: true, opacity: 0.08 }),
+  new THREE.MeshBasicMaterial({ color: 0xff00aa, wireframe: true, transparent: true, opacity: 0.06 }),
+  new THREE.MeshBasicMaterial({ color: 0xffcc00, wireframe: true, transparent: true, opacity: 0.05 }),
+];
+
+const ico1 = new THREE.Mesh(new THREE.IcosahedronGeometry(8, 1), shapeMaterials[0]);
+ico1.position.set(-15, 5, -10);
+scene.add(ico1); shapes.push(ico1);
+
+const torus1 = new THREE.Mesh(new THREE.TorusGeometry(6, 0.8, 16, 48), shapeMaterials[1]);
+torus1.position.set(18, -8, -15);
+scene.add(torus1); shapes.push(torus1);
+
+const oct1 = new THREE.Mesh(new THREE.OctahedronGeometry(5, 0), shapeMaterials[2]);
+oct1.position.set(0, 12, -20);
+scene.add(oct1); shapes.push(oct1);
+
+const dodec = new THREE.Mesh(new THREE.DodecahedronGeometry(4, 0), shapeMaterials[0]);
+dodec.position.set(-20, -12, -8);
+scene.add(dodec); shapes.push(dodec);
+
+// Connection lines
+const lineGeometry = new THREE.BufferGeometry();
+const linePositions = new Float32Array(300 * 6);
+const lineMaterial = new THREE.LineBasicMaterial({ 
+  color: 0x00f0ff, transparent: true, opacity: 0.04, blending: THREE.AdditiveBlending 
+});
+
+for (let i = 0; i < 300; i++) {
+  const idx = Math.floor(Math.random() * particleCount);
+  const idx2 = Math.floor(Math.random() * particleCount);
+  linePositions[i * 6] = positions[idx * 3];
+  linePositions[i * 6 + 1] = positions[idx * 3 + 1];
+  linePositions[i * 6 + 2] = positions[idx * 3 + 2];
+  linePositions[i * 6 + 3] = positions[idx2 * 3];
+  linePositions[i * 6 + 4] = positions[idx2 * 3 + 1];
+  linePositions[i * 6 + 5] = positions[idx2 * 3 + 2];
+}
+lineGeometry.setAttribute('position', new THREE.BufferAttribute(linePositions, 3));
+const lines = new THREE.LineSegments(lineGeometry, lineMaterial);
+scene.add(lines);
+
+// Mouse tracking
+let mouseX = 0, mouseY = 0;
+let targetMouseX = 0, targetMouseY = 0;
+
+document.addEventListener('mousemove', (e) => {
+  targetMouseX = (e.clientX / window.innerWidth - 0.5) * 2;
+  targetMouseY = (e.clientY / window.innerHeight - 0.5) * 2;
+});
+
+// Animate
+function animateBackground() {
+  requestAnimationFrame(animateBackground);
+  
+  mouseX += (targetMouseX - mouseX) * 0.05;
+  mouseY += (targetMouseY - mouseY) * 0.05;
+  
+  particles.rotation.y += 0.0004;
+  particles.rotation.x += 0.0002;
+  lines.rotation.y += 0.0004;
+  lines.rotation.x += 0.0002;
+  
+  camera.position.x = mouseX * 3;
+  camera.position.y = -mouseY * 3;
+  camera.lookAt(scene.position);
+  
+  const time = Date.now() * 0.001;
+  shapes.forEach((shape, i) => {
+    shape.rotation.x += 0.002 + i * 0.001;
+    shape.rotation.y += 0.003 + i * 0.001;
+    shape.position.y += Math.sin(time + i) * 0.01;
+  });
+  
+  renderer.render(scene, camera);
+}
+animateBackground();
+
+// ==================== 3D VIEWER ====================
+const viewerCanvas = document.getElementById('viewer-canvas');
+const vRenderer = new THREE.WebGLRenderer({ canvas: viewerCanvas, antialias: true, alpha: true });
+const viewerBox = viewerCanvas.parentElement;
+vRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+vRenderer.setClearColor(0x0a0a12, 1);
+
+const vScene = new THREE.Scene();
+const vCamera = new THREE.PerspectiveCamera(50, 1, 0.1, 100);
+vCamera.position.set(3, 2.5, 4);
+vCamera.lookAt(0, 0, 0);
+
+// Lights
+const ambientLight = new THREE.AmbientLight(0x404060, 0.5);
+vScene.add(ambientLight);
+
+const dirLight1 = new THREE.DirectionalLight(0x00f0ff, 1);
+dirLight1.position.set(5, 5, 5);
+vScene.add(dirLight1);
+
+const dirLight2 = new THREE.DirectionalLight(0xff00aa, 0.5);
+dirLight2.position.set(-5, 3, -5);
+vScene.add(dirLight2);
+
+const pointLight = new THREE.PointLight(0xffcc00, 0.3, 20);
+pointLight.position.set(0, 5, 0);
+vScene.add(pointLight);
+
+// Grid
+const gridHelper = new THREE.GridHelper(10, 20, 0x00f0ff, 0x1a1a2e);
+gridHelper.material.transparent = true;
+gridHelper.material.opacity = 0.3;
+vScene.add(gridHelper);
+
+// Demo 3D Object - Mechanical gear-like structure
+const gearGroup = new THREE.Group();
+
+// Main body
+const mainGeo = new THREE.TorusGeometry(1, 0.35, 16, 64);
+const mainMat = new THREE.MeshPhongMaterial({ 
+  color: 0x2a2a3e, specular: 0x00f0ff, shininess: 80, 
+  transparent: true, opacity: 0.9 
+});
+const mainMesh = new THREE.Mesh(mainGeo, mainMat);
+mainMesh.rotation.x = Math.PI / 2;
+gearGroup.add(mainMesh);
+
+// Inner ring
+const innerGeo = new THREE.TorusGeometry(0.5, 0.15, 16, 32);
+const innerMat = new THREE.MeshPhongMaterial({ 
+  color: 0x1a1a2e, specular: 0xff00aa, shininess: 100 
+});
+const innerMesh = new THREE.Mesh(innerGeo, innerMat);
+innerMesh.rotation.x = Math.PI / 2;
+gearGroup.add(innerMesh);
+
+// Teeth
+for (let i = 0; i < 16; i++) {
+  const angle = (i / 16) * Math.PI * 2;
+  const toothGeo = new THREE.BoxGeometry(0.15, 0.3, 0.25);
+  const toothMat = new THREE.MeshPhongMaterial({ 
+    color: 0x3a3a5e, specular: 0x00f0ff, shininess: 60 
+  });
+  const tooth = new THREE.Mesh(toothGeo, toothMat);
+  tooth.position.x = Math.cos(angle) * 1.35;
+  tooth.position.z = Math.sin(angle) * 1.35;
+  tooth.rotation.y = -angle;
+  gearGroup.add(tooth);
+}
+
+// Spokes
+for (let i = 0; i < 6; i++) {
+  const angle = (i / 6) * Math.PI * 2;
+  const spokeGeo = new THREE.CylinderGeometry(0.03, 0.03, 1, 8);
+  const spokeMat = new THREE.MeshPhongMaterial({ 
+    color: 0x4a4a6e, emissive: 0x00f0ff, emissiveIntensity: 0.1 
+  });
+  const spoke = new THREE.Mesh(spokeGeo, spokeMat);
+  spoke.position.x = Math.cos(angle) * 0.35;
+  spoke.position.z = Math.sin(angle) * 0.35;
+  spoke.rotation.x = Math.PI / 2;
+  spoke.rotation.z = angle;
+  spoke.position.x = Math.cos(angle) * 0.5;
+  spoke.position.z = Math.sin(angle) * 0.5;
+  gearGroup.add(spoke);
+}
+
+// Center hub
+const hubGeo = new THREE.CylinderGeometry(0.2, 0.2, 0.4, 32);
+const hubMat = new THREE.MeshPhongMaterial({ 
+  color: 0x5a5a7e, specular: 0xffcc00, shininess: 120 
+});
+const hub = new THREE.Mesh(hubGeo, hubMat);
+hub.rotation.x = 0;
+gearGroup.add(hub);
+
+// Second smaller gear
+const gear2 = new THREE.Group();
+const mainGeo2 = new THREE.TorusGeometry(0.6, 0.2, 16, 32);
+const mainMesh2 = new THREE.Mesh(mainGeo2, mainMat.clone());
+mainMesh2.rotation.x = Math.PI / 2;
+gear2.add(mainMesh2);
+
+for (let i = 0; i < 10; i++) {
+  const angle = (i / 10) * Math.PI * 2;
+  const toothGeo = new THREE.BoxGeometry(0.1, 0.2, 0.18);
+  const tooth = new THREE.Mesh(toothGeo, new THREE.MeshPhongMaterial({ 
+    color: 0x3a3a5e, specular: 0xff00aa, shininess: 60 
+  }));
+  tooth.position.x = Math.cos(angle) * 0.8;
+  tooth.position.z = Math.sin(angle) * 0.8;
+  tooth.rotation.y = -angle;
+  gear2.add(tooth);
+}
+
+gear2.position.set(1.95, 0, 0.4);
+gearGroup.add(gear2);
+
+gearGroup.position.y = 0.5;
+vScene.add(gearGroup);
+
+let wireframeMode = false;
+let autoRotate = true;
+let vAngle = 0;
+
+function toggleWireframe() {
+  wireframeMode = !wireframeMode;
+  gearGroup.traverse((child) => {
+    if (child.isMesh) child.material.wireframe = wireframeMode;
+  });
+  gear2.traverse((child) => {
+    if (child.isMesh) child.material.wireframe = wireframeMode;
+  });
+}
+
+function toggleAutoRotate() {
+  autoRotate = !autoRotate;
+}
+
+function resetViewer() {
+  vAngle = 0;
+  vCamera.position.set(3, 2.5, 4);
+  vCamera.lookAt(0, 0, 0);
+}
+
+function resizeViewer() {
+  const rect = viewerBox.getBoundingClientRect();
+  vRenderer.setSize(rect.width, rect.height);
+  vCamera.aspect = rect.width / rect.height;
+  vCamera.updateProjectionMatrix();
+}
+
+function animateViewer() {
+  requestAnimationFrame(animateViewer);
+  
+  if (autoRotate) {
+    vAngle += 0.005;
+    gearGroup.rotation.y = vAngle;
+    gear2.rotation.y = -vAngle * 1.6;
+  }
+  
+  const time = Date.now() * 0.001;
+  dirLight1.position.x = Math.cos(time * 0.5) * 5;
+  dirLight1.position.z = Math.sin(time * 0.5) * 5;
+  
+  vRenderer.render(vScene, vCamera);
+}
+
+resizeViewer();
+animateViewer();
+
+// ==================== CUSTOM CURSOR ====================
+const cursorDot = document.getElementById('cursor-dot');
+const cursorRing = document.getElementById('cursor-ring');
+
+document.addEventListener('mousemove', (e) => {
+  cursorDot.style.left = e.clientX - 4 + 'px';
+  cursorDot.style.top = e.clientY - 4 + 'px';
+  cursorRing.style.left = e.clientX + 'px';
+  cursorRing.style.top = e.clientY + 'px';
+});
+
+document.querySelectorAll('a, button, .feature-card, .showcase-item, .format-badge, .viewer-btn').forEach(el => {
+  el.addEventListener('mouseenter', () => cursorRing.classList.add('hover'));
+  el.addEventListener('mouseleave', () => cursorRing.classList.remove('hover'));
+});
+
+// ==================== NAV SCROLL ====================
+window.addEventListener('scroll', () => {
+  const navbar = document.getElementById('navbar');
+  navbar.classList.toggle('scrolled', window.scrollY > 80);
+});
+
+// ==================== REVEAL ON SCROLL ====================
+const revealElements = document.querySelectorAll('.reveal');
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.15 });
+
+revealElements.forEach(el => revealObserver.observe(el));
+
+// ==================== CARD MOUSE FOLLOW ====================
+document.querySelectorAll('.feature-card').forEach(card => {
+  card.addEventListener('mousemove', (e) => {
+    const rect = card.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width) * 100;
+    const y = ((e.clientY - rect.top) / rect.height) * 100;
+    card.style.setProperty('--mx', x + '%');
+    card.style.setProperty('--my', y + '%');
+  });
+});
+
+// ==================== COUNTER ANIMATION ====================
+const statNumbers = document.querySelectorAll('.stat-number');
+const counterObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const el = entry.target;
+      const target = parseInt(el.dataset.target);
+      let current = 0;
+      const increment = target / 60;
+      const timer = setInterval(() => {
+        current += increment;
+        if (current >= target) {
+          el.textContent = target + (el.parentElement.querySelector('.stat-label').textContent.includes('%') ? '%' : '+');
+          clearInterval(timer);
+        } else {
+          el.textContent = Math.floor(current);
+        }
+      }, 25);
+      counterObserver.unobserve(el);
+    }
+  });
+}, { threshold: 0.5 });
+
+statNumbers.forEach(el => counterObserver.observe(el));
+
+// ==================== RESIZE ====================
+window.addEventListener('resize', () => {
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  resizeViewer();
+});
+</script>
+</body>
+</html>

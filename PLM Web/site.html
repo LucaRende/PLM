@@ -9,54 +9,46 @@
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 :root{
-  --bg:#050709;
-  --surface:#0c0f17;
-  --primary:#0af;
-  --warm:#ff6a2f;
-  --green:#3ddc84;
-  --text:#dce0ea;
-  --muted:#5c6280;
-  --dim:#181d30;
-  --glass:rgba(12,15,23,.55);
+  --bg:#050709;--surface:#0c0f17;--primary:#0af;--warm:#ff6a2f;--green:#3ddc84;
+  --text:#dce0ea;--muted:#5c6280;--dim:#181d30;--glass:rgba(12,15,23,.55);
 }
 html{background:var(--bg)}
 body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;overflow-x:hidden;-webkit-font-smoothing:antialiased}
 ::-webkit-scrollbar{width:0}
 
-/* ── Canvas ── */
 #scene{position:fixed;inset:0;z-index:0}
-
-/* ── Atmosphere ── */
-.vig{position:fixed;inset:0;background:radial-gradient(ellipse at 50% 50%,transparent 35%,rgba(5,7,9,.75) 100%);pointer-events:none;z-index:1}
+.vig{position:fixed;inset:0;background:radial-gradient(ellipse at 50% 50%,transparent 35%,rgba(5,7,9,.75));pointer-events:none;z-index:1}
 .grain{position:fixed;inset:0;pointer-events:none;z-index:2;opacity:.022;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
 
-/* ── Spacer ── */
 #spacer{height:900vh;position:relative;z-index:-1}
 
-/* ── Nav ── */
-nav{position:fixed;top:0;left:0;right:0;z-index:200;padding:28px 52px;display:flex;justify-content:space-between;align-items:center;backdrop-filter:blur(16px);background:rgba(5,7,9,.35);border-bottom:1px solid rgba(255,255,255,.04);transition:all .45s ease}
-.logo{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:5px;color:var(--text)}
-.logo b{color:var(--primary)}
+/* Nav */
+nav{position:fixed;top:0;left:0;right:0;z-index:200;padding:28px 52px;display:flex;justify-content:space-between;align-items:center;backdrop-filter:blur(16px);background:rgba(5,7,9,.35);border-bottom:1px solid rgba(255,255,255,.04)}
+.logo{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:5px;color:var(--text)}.logo b{color:var(--primary)}
 .nav-r{display:flex;gap:32px;list-style:none}
-.nav-r a{font-family:'IBM Plex Mono',monospace;font-size:.62rem;font-weight:400;letter-spacing:2.5px;text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color .35s}
-.nav-r a:hover{color:var(--primary)}
+.nav-r a{font-family:'IBM Plex Mono',monospace;font-size:.62rem;font-weight:400;letter-spacing:2.5px;text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color .35s}.nav-r a:hover{color:var(--primary)}
 
-/* ── Progress ── */
+/* Progress */
 .prog{position:fixed;right:36px;top:50%;transform:translateY(-50%);z-index:200;display:flex;flex-direction:column;align-items:center;gap:10px}
 .prog-dot{width:5px;height:5px;border-radius:50%;background:var(--primary);box-shadow:0 0 12px var(--primary)}
 .prog-bar{width:1px;height:100px;background:var(--dim);position:relative;overflow:hidden;border-radius:1px}
 .prog-fill{position:absolute;top:0;left:0;width:100%;height:0%;background:var(--primary);box-shadow:0 0 6px var(--primary);border-radius:1px}
 .prog-num{font-family:'IBM Plex Mono',monospace;font-size:.5rem;letter-spacing:2px;color:var(--muted);writing-mode:vertical-rl;transform:rotate(180deg)}
 
-/* ── Shape HUD ── */
+/* HUD */
 .hud{position:fixed;bottom:28px;left:52px;z-index:200;font-family:'IBM Plex Mono',monospace;font-size:.55rem;letter-spacing:3px;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:10px}
 .hud-dot{width:5px;height:5px;border-radius:50%;background:var(--primary);box-shadow:0 0 8px var(--primary)}
 
-/* ── Panels ── */
-.p{position:fixed;inset:0;z-index:10;display:flex;align-items:center;pointer-events:none;opacity:0}
-.p.on{pointer-events:auto}
+/* Upload overlay */
+.upload-hint{position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;background:rgba(5,7,9,.88);border:3px dashed rgba(0,170,255,.35);pointer-events:none;opacity:0;transition:opacity .25s;backdrop-filter:blur(10px)}
+.upload-hint.show{opacity:1}
+.upload-hint h3{font-family:'Bebas Neue',sans-serif;font-size:3rem;letter-spacing:4px;color:var(--primary)}
+.upload-hint p{font-family:'IBM Plex Mono',monospace;font-size:.7rem;color:var(--muted);letter-spacing:2px}
+.upload-hint .fmts{display:flex;gap:10px;margin-top:8px}
+.upload-hint .fmt{padding:5px 14px;border-radius:8px;font-family:'IBM Plex Mono',monospace;font-size:.55rem;letter-spacing:1.5px;border:1px solid var(--dim);color:var(--primary);background:rgba(0,170,255,.04)}
 
-/* ── Hero ── */
+/* Panels */
+.p{position:fixed;inset:0;z-index:10;display:flex;align-items:center;pointer-events:none;opacity:0}.p.on{pointer-events:auto}
 .hero-wrap{width:100%;text-align:center;padding:0 48px}
 .hero-badge{display:inline-flex;align-items:center;gap:10px;padding:8px 20px;border:1px solid rgba(0,170,255,.15);border-radius:100px;font-family:'IBM Plex Mono',monospace;font-size:.6rem;letter-spacing:3.5px;text-transform:uppercase;color:var(--primary);margin-bottom:36px;backdrop-filter:blur(8px);background:rgba(0,170,255,.03)}
 .hero-badge i{width:5px;height:5px;border-radius:50%;background:var(--primary);box-shadow:0 0 8px var(--primary);animation:blink 2.5s ease infinite}
@@ -65,25 +57,19 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;padding:28px 52px;display:fl
 .hero-sub{font-weight:300;font-size:1.05rem;color:var(--muted);max-width:500px;margin:0 auto;line-height:1.8}
 .scroll-cue{position:absolute;bottom:48px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px}
 .scroll-cue span{font-family:'IBM Plex Mono',monospace;font-size:.5rem;letter-spacing:4px;text-transform:uppercase;color:var(--muted)}
-.scroll-line{width:1px;height:36px;overflow:hidden;position:relative}
-.scroll-line::after{content:'';position:absolute;top:-100%;left:0;width:100%;height:100%;background:linear-gradient(to bottom,transparent,var(--primary));animation:slide 2.2s ease infinite}
+.scroll-line{width:1px;height:36px;overflow:hidden;position:relative}.scroll-line::after{content:'';position:absolute;top:-100%;left:0;width:100%;height:100%;background:linear-gradient(to bottom,transparent,var(--primary));animation:slide 2.2s ease infinite}
 
-/* ── Info Layout ── */
 .row{width:100%;padding:0 80px;display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center}
 .sec-tag{font-family:'IBM Plex Mono',monospace;font-size:.58rem;letter-spacing:4px;color:var(--primary);text-transform:uppercase;margin-bottom:22px;display:flex;align-items:center;gap:12px}
 .sec-tag::after{content:'';flex:1;height:1px;background:var(--dim);max-width:50px}
-.sec-h{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.8rem,5.5vw,5.5rem);letter-spacing:2px;line-height:.93;color:var(--text)}
-.sec-h em{font-style:normal;color:var(--primary)}
+.sec-h{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.8rem,5.5vw,5.5rem);letter-spacing:2px;line-height:.93;color:var(--text)}.sec-h em{font-style:normal;color:var(--primary)}
 .col-r p{font-weight:300;font-size:.95rem;color:var(--muted);line-height:1.85;margin-bottom:28px}
 
-/* ── Stats ── */
 .stats{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .st{padding:18px 20px;border:1px solid var(--dim);border-radius:10px;background:var(--glass);backdrop-filter:blur(8px)}
-.st-v{font-family:'Bebas Neue',sans-serif;font-size:2.2rem;color:var(--text);line-height:1}
-.st-v b{color:var(--primary);font-weight:400}
+.st-v{font-family:'Bebas Neue',sans-serif;font-size:2.2rem;color:var(--text);line-height:1}.st-v b{color:var(--primary);font-weight:400}
 .st-l{font-family:'IBM Plex Mono',monospace;font-size:.5rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-top:4px}
 
-/* ── Product Grid ── */
 .pgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 .pcard{padding:22px 20px;border:1px solid var(--dim);border-radius:12px;background:var(--glass);backdrop-filter:blur(8px);transition:border-color .35s,transform .35s}
 .pcard:hover{border-color:rgba(0,170,255,.18);transform:translateY(-3px)}
@@ -94,40 +80,33 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;padding:28px 52px;display:fl
 .tw{color:var(--warm);border-color:rgba(255,106,47,.2);background:rgba(255,106,47,.04)}
 .tg{color:var(--green);border-color:rgba(61,220,132,.2);background:rgba(61,220,132,.04)}
 
-/* ── Cert badges ── */
 .certs{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:24px}
-.cert{padding:10px 16px;border:1px solid var(--dim);border-radius:10px;background:var(--glass);backdrop-filter:blur(8px);font-family:'IBM Plex Mono',monospace;font-size:.6rem;letter-spacing:1px;color:var(--text);transition:border-color .3s}
-.cert:hover{border-color:rgba(0,170,255,.2)}
+.cert{padding:10px 16px;border:1px solid var(--dim);border-radius:10px;background:var(--glass);backdrop-filter:blur(8px);font-family:'IBM Plex Mono',monospace;font-size:.6rem;letter-spacing:1px;color:var(--text)}.cert:hover{border-color:rgba(0,170,255,.2)}
 .cert small{display:block;font-size:.48rem;color:var(--muted);margin-top:2px;letter-spacing:1.5px;text-transform:uppercase}
 
-/* ── CTA ── */
 .cta-wrap{width:100%;text-align:center;padding:0 48px}
 .cta-wrap h2{font-family:'Bebas Neue',sans-serif;font-size:clamp(3.5rem,10vw,9rem);letter-spacing:3px;line-height:.92;color:var(--text);margin-bottom:20px}
 .cta-wrap h2 em{font-style:normal;background:linear-gradient(90deg,var(--primary),var(--green));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.cta-wrap p{font-weight:300;font-size:1rem;color:var(--muted);max-width:420px;margin:0 auto 44px;line-height:1.7}
+.cta-wrap>p{font-weight:300;font-size:1rem;color:var(--muted);max-width:420px;margin:0 auto 44px;line-height:1.7}
 .cta-btn{display:inline-flex;align-items:center;gap:12px;padding:16px 40px;border:1px solid var(--primary);border-radius:60px;background:rgba(0,170,255,.05);color:var(--primary);font-family:'IBM Plex Mono',monospace;font-size:.68rem;letter-spacing:3px;text-transform:uppercase;text-decoration:none;transition:all .4s cubic-bezier(.16,1,.3,1);backdrop-filter:blur(8px);cursor:pointer}
 .cta-btn:hover{transform:translateY(-3px);box-shadow:0 12px 40px rgba(0,170,255,.18);background:rgba(0,170,255,.1)}
 .cta-addr{font-family:'IBM Plex Mono',monospace;font-size:.55rem;letter-spacing:2px;color:var(--muted);margin-top:32px}
 
-/* ── Footer ── */
-.foot{position:fixed;bottom:0;left:0;right:0;z-index:50;padding:20px 52px;display:flex;justify-content:space-between;opacity:0;transition:opacity .5s;pointer-events:none;font-family:'IBM Plex Mono',monospace;font-size:.5rem;letter-spacing:2px;color:var(--muted)}
-.foot.on{opacity:1;pointer-events:auto}
+.foot{position:fixed;bottom:0;left:0;right:0;z-index:50;padding:20px 52px;display:flex;justify-content:space-between;opacity:0;transition:opacity .5s;pointer-events:none;font-family:'IBM Plex Mono',monospace;font-size:.5rem;letter-spacing:2px;color:var(--muted)}.foot.on{opacity:1;pointer-events:auto}
 
-/* ── Keyframes ── */
+/* Toast notification */
+.toast{position:fixed;top:100px;left:50%;transform:translateX(-50%);z-index:9999;padding:14px 28px;background:rgba(5,7,9,.9);border:1px solid var(--primary);border-radius:12px;font-family:'IBM Plex Mono',monospace;font-size:.68rem;letter-spacing:1.5px;color:var(--primary);backdrop-filter:blur(16px);opacity:0;transition:all .4s cubic-bezier(.16,1,.3,1);pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.35}}
 @keyframes slide{0%{top:-100%}100%{top:200%}}
 
-/* ── Responsive ── */
 @media(max-width:900px){
-  nav{padding:20px 24px}
-  .nav-r{display:none}
+  nav{padding:20px 24px}.nav-r{display:none}
   .row{grid-template-columns:1fr;padding:0 28px;gap:36px}
-  .pgrid{grid-template-columns:1fr}
-  .stats{grid-template-columns:1fr}
-  .prog{right:14px}
-  .hud{left:24px}
+  .pgrid,.stats{grid-template-columns:1fr}
+  .prog{right:14px}.hud{left:24px}
   .hero-wrap,.cta-wrap{padding:0 24px}
-  .certs{gap:6px}
 }
 </style>
 </head>
@@ -138,7 +117,18 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;padding:28px 52px;display:fl
 <div class="grain"></div>
 <div id="spacer"></div>
 
-<!-- Nav -->
+<!-- Drag overlay -->
+<div class="upload-hint" id="upload-hint">
+  <h3>RILASCIA IL TUO MODELLO 3D</h3>
+  <p>Le particelle si trasformeranno nella forma del tuo file</p>
+  <div class="fmts">
+    <span class="fmt">.GLB</span><span class="fmt">.GLTF</span><span class="fmt">.OBJ</span><span class="fmt">.STL</span>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
 <nav>
   <div class="logo"><b>PRO</b>SYSTEM</div>
   <ul class="nav-r">
@@ -150,19 +140,15 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;padding:28px 52px;display:fl
   </ul>
 </nav>
 
-<!-- Progress -->
 <div class="prog">
   <div class="prog-dot"></div>
   <div class="prog-bar"><div class="prog-fill" id="pf"></div></div>
   <div class="prog-num" id="pn">00</div>
 </div>
 
-<!-- HUD -->
 <div class="hud"><span class="hud-dot"></span><span id="hud-t">field.init</span></div>
 
 <!-- ═══ PANELS ═══ -->
-
-<!-- 0 Hero -->
 <div class="p" id="p0">
  <div class="hero-wrap">
   <div class="hero-badge"><i></i> Since 2001 — Anzola dell'Emilia (BO)</div>
@@ -172,15 +158,11 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;padding:28px 52px;display:fl
  </div>
 </div>
 
-<!-- 1 Chi Siamo -->
 <div class="p" id="p1">
  <div class="row">
-  <div>
-   <div class="sec-tag">01 — Chi Siamo</div>
-   <h2 class="sec-h">DA BORGO PANIGALE<br>ALLA <em>PACKAGING<br>VALLEY</em></h2>
-  </div>
+  <div><div class="sec-tag">01 — Chi Siamo</div><h2 class="sec-h">DA BORGO PANIGALE<br>ALLA <em>PACKAGING<br>VALLEY</em></h2></div>
   <div class="col-r">
-   <p>Da oltre vent'anni Pro System S.r.l. è punto di riferimento nel settore delle protezioni anti-infortunistiche per macchine automatiche, con specializzazione nei sistemi di automazione industriale su misura. Fondata da De Marco Daniele e Rende Gianni, oggi l'azienda opera nel nuovo stabilimento di 5.000 m² ad Anzola dell'Emilia.</p>
+   <p>Da oltre vent'anni Pro System S.r.l. è punto di riferimento nel settore delle protezioni anti-infortunistiche per macchine automatiche, con specializzazione nei sistemi di automazione industriale su misura. Fondata da De Marco Daniele e Rende Gianni, oggi operiamo nel nuovo stabilimento di 5.000 m² ad Anzola dell'Emilia.</p>
    <div class="stats">
     <div class="st"><div class="st-v">1500<b>+</b></div><div class="st-l">Ripari installati</div></div>
     <div class="st"><div class="st-v">35</div><div class="st-l">Collaboratori</div></div>
@@ -191,33 +173,25 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;padding:28px 52px;display:fl
  </div>
 </div>
 
-<!-- 2 Prodotti / Ripari -->
 <div class="p" id="p2">
  <div class="row">
-  <div>
-   <div class="sec-tag">02 — Ripari di Sicurezza</div>
-   <h2 class="sec-h">PROTEZIONI<br><em>SU MISURA</em><br>PER OGNI MACCHINA</h2>
-  </div>
+  <div><div class="sec-tag">02 — Ripari di Sicurezza</div><h2 class="sec-h">PROTEZIONI<br><em>SU MISURA</em><br>PER OGNI MACCHINA</h2></div>
   <div class="col-r">
    <div class="pgrid">
     <div class="pcard"><h4>Sportelli & Portelloni</h4><p>Cerniere industriali ad alta resistenza, molle a gas integrate, predisposizione sensori di sicurezza.</p><span class="ptag tc">Accesso</span></div>
     <div class="pcard"><h4>Scorrevoli su Binario</h4><p>Guide ad alta scorrevolezza, sistema di bloccaggio sicuro, compatibilità interblocco.</p><span class="ptag tw">Movimentazione</span></div>
-    <div class="pcard"><h4>Carter & Pannelli</h4><p>Protezioni in lamiera, policarbonato o compositi. Fissi o asportabili per manutenzione rapida.</p><span class="ptag tg">Sicurezza</span></div>
-    <div class="pcard"><h4>Profilati in Alluminio</h4><p>Catalogo completo: profili Q25/Q30, cornici, profili ad L, piatti. Anodizzazione grigia o elox.</p><span class="ptag tc">Struttura</span></div>
+    <div class="pcard"><h4>Carter & Pannelli</h4><p>Lamiera, policarbonato o compositi. Fissi o asportabili per manutenzione rapida.</p><span class="ptag tg">Sicurezza</span></div>
+    <div class="pcard"><h4>Profilati Alluminio</h4><p>Profili Q25/Q30, cornici, ad L, piatti. Anodizzazione grigia o elox.</p><span class="ptag tc">Struttura</span></div>
    </div>
   </div>
  </div>
 </div>
 
-<!-- 3 Macchine Automatiche -->
 <div class="p" id="p3">
  <div class="row">
-  <div>
-   <div class="sec-tag">03 — Macchine Automatiche</div>
-   <h2 class="sec-h">F50-MAXI<br>& F50-MI<br><em>CARTONATRICI</em></h2>
-  </div>
+  <div><div class="sec-tag">03 — Macchine Automatiche</div><h2 class="sec-h">F50-MAXI<br>& F50-MI<br><em>CARTONATRICI</em></h2></div>
   <div class="col-r">
-   <p>La F50-MAXI è la nostra cartonatrice automatica per sacchetti di capsule caffè: braccio a ventosa su guida lineare, ingresso fino a 1.000 sacchetti/min, chiusura con colla a caldo o scotch, produttività di 5 scatole/min. La F50-MI è la versione versatile per astucci di dimensioni variabili.</p>
+   <p>La F50-MAXI è la nostra cartonatrice automatica per sacchetti di capsule caffè: braccio a ventosa su guida lineare, ingresso fino a 1.000 sacchetti/min, chiusura con colla a caldo o scotch, produttività di 5 scatole/min. La F50-MI gestisce astucci di dimensioni variabili.</p>
    <div class="stats">
     <div class="st"><div class="st-v">1000<b>/min</b></div><div class="st-l">Sacchetti ingresso</div></div>
     <div class="st"><div class="st-v">5<b>/min</b></div><div class="st-l">Scatole chiuse</div></div>
@@ -228,31 +202,26 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;padding:28px 52px;display:fl
  </div>
 </div>
 
-<!-- 4 Tecnologia -->
 <div class="p" id="p4">
  <div class="row">
-  <div>
-   <div class="sec-tag">04 — Tecnologia & Stampa 3D</div>
-   <h2 class="sec-h">CNC, LEAN<br>& ADDITIVE<br><em>MANUFACTURING</em></h2>
-  </div>
+  <div><div class="sec-tag">04 — Tecnologia & Stampa 3D</div><h2 class="sec-h">CNC, LEAN<br>& ADDITIVE<br><em>MANUFACTURING</em></h2></div>
   <div class="col-r">
    <div class="certs">
     <div class="cert">ISO 9001<small>Qualità</small></div>
     <div class="cert">ISO 14001<small>Ambiente</small></div>
     <div class="cert">ISO 45001<small>Sicurezza</small></div>
    </div>
-   <p>Stratasys F170 per stampa FDM con Nylon, Onyx, fibra di carbonio e Kevlar. Stampa SLS a polvere e resina ad alta precisione. CNC SCM Morbidelli X200 di ultima generazione. Sistemi Kanban e banchi ergonomici motorizzati per lean production.</p>
+   <p>Stratasys F170 per stampa FDM con Nylon, Onyx, fibra di carbonio e Kevlar. Stampa SLS a polvere e resina ad alta precisione. CNC SCM Morbidelli X200 di ultima generazione. Sistemi Kanban e banchi ergonomici motorizzati.</p>
    <div class="pgrid">
     <div class="pcard"><h4>Stampa FDM</h4><p>PLA, Nylon, Onyx, Fibra di carbonio, Kevlar, Vetro HSHT.</p><span class="ptag tc">Filamento</span></div>
     <div class="pcard"><h4>Stampa SLS</h4><p>Nylon 11/12 CF, Nylon 12 GF, TPU 90A. Senza supporti.</p><span class="ptag tw">Polvere</span></div>
     <div class="pcard"><h4>Stampa Resina</h4><p>Rigid 10K, Elastic 50A, High Temp, Castable Wax.</p><span class="ptag tg">Alta precisione</span></div>
-    <div class="pcard"><h4>Nastri Trasportatori</h4><p>Lineari, curvi, inclinati, multipiano. Strutture alluminio o acciaio.</p><span class="ptag tc">Trasporto</span></div>
+    <div class="pcard"><h4>Nastri Trasportatori</h4><p>Lineari, curvi, inclinati, multipiano. Alluminio o acciaio.</p><span class="ptag tc">Trasporto</span></div>
    </div>
   </div>
  </div>
 </div>
 
-<!-- 5 CTA -->
 <div class="p" id="p5">
  <div class="cta-wrap">
   <h2>PROTEGGIAMO<br>IL TUO <em>FUTURO</em></h2>
@@ -269,401 +238,314 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;padding:28px 52px;display:fl
 
 <script>
 // =====================================================
-// THREE.JS
+// UTILS
 // =====================================================
-const canvas = document.getElementById('scene');
-const W = () => window.innerWidth, H = () => window.innerHeight;
-const renderer = new THREE.WebGLRenderer({canvas, antialias: true});
-renderer.setSize(W(), H());
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-renderer.setClearColor(0x050709);
-
-const scene = new THREE.Scene();
-scene.fog = new THREE.FogExp2(0x050709, 0.015);
-const camera = new THREE.PerspectiveCamera(50, W()/H(), .1, 300);
-camera.position.set(0, 0, 14);
-
-// ── Sharp square particle texture ──
-function sharpTex() {
-  const c = document.createElement('canvas');
-  c.width = 32; c.height = 32;
-  const ctx = c.getContext('2d');
-  // Crisp bright center with hard edge
-  ctx.fillStyle = '#fff';
-  ctx.beginPath();
-  ctx.arc(16, 16, 12, 0, Math.PI*2);
-  ctx.fill();
-  // Outer glow ring
-  const g = ctx.createRadialGradient(16,16,8,16,16,16);
-  g.addColorStop(0,'rgba(255,255,255,0)');
-  g.addColorStop(.6,'rgba(255,255,255,0)');
-  g.addColorStop(1,'rgba(255,255,255,0)');
-  ctx.fillStyle = g;
-  ctx.fillRect(0,0,32,32);
-  return new THREE.CanvasTexture(c);
-}
-
-// ── Shape generators ──
-const N = 4500;
-
-function genCloud(n) {
-  const p = new Float32Array(n*3);
-  for (let i=0;i<n;i++) {
-    const a=Math.random()*Math.PI*2, b=Math.acos(2*Math.random()-1);
-    const r=4*(0.88+Math.random()*0.12);
-    p[i*3]=r*Math.sin(b)*Math.cos(a);
-    p[i*3+1]=r*Math.sin(b)*Math.sin(a);
-    p[i*3+2]=r*Math.cos(b);
-  }
-  return p;
-}
-
-// Safety guard grid (riparo di sicurezza)
-function genGuard(n) {
-  const p = new Float32Array(n*3);
-  const W=7, H=5, sp=0.45, thick=0.35;
-  for (let i=0;i<n;i++) {
-    const ch = Math.random();
-    if (ch < 0.35) {
-      // Vertical bars
-      const col = Math.floor(Math.random()*(W/sp+1));
-      const x = -W/2 + col*sp;
-      const y = -H/2 + Math.random()*H;
-      p[i*3]=x+(Math.random()-.5)*.06;
-      p[i*3+1]=y;
-      p[i*3+2]=(Math.random()-.5)*thick;
-    } else if (ch < 0.7) {
-      // Horizontal bars
-      const row = Math.floor(Math.random()*(H/sp+1));
-      const y = -H/2 + row*sp;
-      const x = -W/2 + Math.random()*W;
-      p[i*3]=x;
-      p[i*3+1]=y+(Math.random()-.5)*.06;
-      p[i*3+2]=(Math.random()-.5)*thick;
-    } else if (ch < 0.85) {
-      // Frame border
-      const side = Math.floor(Math.random()*4);
-      let x,y;
-      if(side===0){x=-W/2;y=-H/2+Math.random()*H}
-      else if(side===1){x=W/2;y=-H/2+Math.random()*H}
-      else if(side===2){x=-W/2+Math.random()*W;y=-H/2}
-      else{x=-W/2+Math.random()*W;y=H/2}
-      p[i*3]=x+(Math.random()-.5)*.15;
-      p[i*3+1]=y+(Math.random()-.5)*.15;
-      p[i*3+2]=(Math.random()-.5)*thick;
-    } else {
-      // Corner brackets
-      const cx = (Math.random()>.5?1:-1)*W/2;
-      const cy = (Math.random()>.5?1:-1)*H/2;
-      const t = Math.random()*0.6;
-      const isH = Math.random()>.5;
-      p[i*3]=cx+(isH?(Math.random()>.5?t:-t):0)+(Math.random()-.5)*.1;
-      p[i*3+1]=cy+(isH?0:(Math.random()>.5?t:-t))+(Math.random()-.5)*.1;
-      p[i*3+2]=(Math.random()-.5)*thick*.6;
-    }
-  }
-  return p;
-}
-
-// Cartoning machine silhouette (F50-MAXI like)
-function genMachine(n) {
-  const p = new Float32Array(n*3);
-  const parts = [
-    // Main body (box)
-    {fn:(i,p)=>{p[i*3]=(Math.random()-.5)*4;p[i*3+1]=(Math.random()-.5)*3-0.5;p[i*3+2]=(Math.random()-.5)*2},w:0.35},
-    // Conveyor belt (horizontal line)
-    {fn:(i,p)=>{p[i*3]=-3+Math.random()*8;p[i*3+1]=-2.2+(Math.random()-.5)*.15;p[i*3+2]=(Math.random()-.5)*.6},w:0.18},
-    // Arm (diagonal)
-    {fn:(i,p)=>{const t=Math.random();p[i*3]=1+t*2.5;p[i*3+1]=0.5+t*2.2;p[i*3+2]=(Math.random()-.5)*.35},w:0.12},
-    // Suction head
-    {fn:(i,p)=>{const a=Math.random()*Math.PI*2;const r=Math.random()*.4;p[i*3]=3.5+Math.cos(a)*r;p[i*3+1]=2.7+Math.sin(a)*r;p[i*3+2]=(Math.random()-.5)*.3},w:0.08},
-    // Box output
-    {fn:(i,p)=>{p[i*3]=3+Math.random()*2;p[i*3+1]=-1.5+(Math.random()-.5)*1.2;p[i*3+2]=(Math.random()-.5)*1},w:0.12},
-    // Control panel
-    {fn:(i,p)=>{p[i*3]=-3.5+(Math.random()-.5)*.6;p[i*3+1]=0.5+Math.random()*2.5;p[i*3+2]=1+(Math.random()-.5)*.3},w:0.08},
-    // Rollers
-    {fn:(i,p)=>{const ci=Math.floor(Math.random()*6);const cx=-2.5+ci*1;const a=Math.random()*Math.PI*2;p[i*3]=cx+(Math.random()-.5)*.15;p[i*3+1]=-2.2+Math.sin(a)*.22;p[i*3+2]=Math.cos(a)*.22},w:0.07},
-  ];
-  const tw=parts.reduce((a,x)=>a+x.w,0);
-  for(let i=0;i<n;i++){
-    let r=Math.random()*tw,c=0;
-    for(const pt of parts){c+=pt.w;if(c>=r){pt.fn(i,p);break}}
-  }
-  return p;
-}
-
-// Conveyor belt
-function genConveyor(n) {
-  const p = new Float32Array(n*3);
-  const L=8, W=2.5;
-  for (let i=0;i<n;i++) {
-    const ch=Math.random();
-    if(ch<0.3){
-      // Belt surface
-      p[i*3]=(Math.random()-.5)*L;
-      p[i*3+1]=(Math.random()-.5)*.06;
-      p[i*3+2]=(Math.random()-.5)*W;
-    } else if(ch<0.55){
-      // Side rails
-      const side=Math.random()>.5?1:-1;
-      p[i*3]=(Math.random()-.5)*L;
-      p[i*3+1]=Math.random()*1.2;
-      p[i*3+2]=side*W/2+(Math.random()-.5)*.08;
-    } else if(ch<0.72){
-      // Legs
-      const lx=(Math.random()>.5?-1:1)*(L/2-0.3);
-      const lz=(Math.random()>.5?-1:1)*(W/2-0.2);
-      p[i*3]=lx+(Math.random()-.5)*.12;
-      p[i*3+1]=-Math.random()*2;
-      p[i*3+2]=lz+(Math.random()-.5)*.12;
-    } else if(ch<0.88){
-      // Rollers
-      const rx=-L/2+Math.floor(Math.random()*8)*(L/7);
-      const a=Math.random()*Math.PI*2;
-      const r=W/2*.42;
-      p[i*3]=rx+(Math.random()-.5)*.08;
-      p[i*3+1]=-0.15+Math.sin(a)*r*.3;
-      p[i*3+2]=Math.cos(a)*r;
-    } else {
-      // Items on belt
-      const bx=-L/2+Math.random()*L;
-      const bz=(Math.random()-.5)*W*.6;
-      p[i*3]=bx;
-      p[i*3+1]=0.15+Math.random()*.45;
-      p[i*3+2]=bz;
-    }
-  }
-  return p;
-}
-
-// 3D printed object (layered)
-function gen3DPrint(n) {
-  const p = new Float32Array(n*3);
-  for (let i=0;i<n;i++) {
-    const ch=Math.random();
-    if(ch<0.6){
-      // Layered cylinder (printed object)
-      const layer=Math.floor(Math.random()*40);
-      const y=-2+layer*0.12;
-      const rBase=2.2-Math.abs(y)*0.3;
-      const r=Math.max(0.3,rBase)*(0.92+Math.random()*.08);
-      const a=Math.random()*Math.PI*2;
-      // Only surface (shell)
-      const onSurface=Math.random()>0.3;
-      const dist=onSurface?r:r*Math.random();
-      p[i*3]=Math.cos(a)*dist;
-      p[i*3+1]=y;
-      p[i*3+2]=Math.sin(a)*dist;
-    } else if(ch<0.8){
-      // Print bed
-      p[i*3]=(Math.random()-.5)*5;
-      p[i*3+1]=-2.1+(Math.random()-.5)*.06;
-      p[i*3+2]=(Math.random()-.5)*5;
-    } else {
-      // Nozzle & gantry
-      const t=Math.random();
-      p[i*3]=-2.5+t*5;
-      p[i*3+1]=3+(Math.random()-.5)*.1;
-      p[i*3+2]=(Math.random()-.5)*.1;
-    }
-  }
-  return p;
-}
-
-function genDisperse(n) {
-  const p = new Float32Array(n*3);
-  for (let i=0;i<n;i++){
-    const a=Math.random()*Math.PI*2,b=Math.acos(2*Math.random()-1),r=12+Math.random()*25;
-    p[i*3]=r*Math.sin(b)*Math.cos(a);
-    p[i*3+1]=r*Math.sin(b)*Math.sin(a);
-    p[i*3+2]=r*Math.cos(b);
-  }
-  return p;
-}
-
-// Coherent ordering
-function sortPos(pos,n){
-  const idx=Array.from({length:n},(_,i)=>i);
-  idx.sort((a,b)=>{
-    const aa=Math.atan2(pos[a*3+1],pos[a*3]);
-    const ba=Math.atan2(pos[b*3+1],pos[b*3]);
-    return aa-ba;
-  });
-  const s=new Float32Array(n*3);
-  idx.forEach((o,i)=>{s[i*3]=pos[o*3];s[i*3+1]=pos[o*3+1];s[i*3+2]=pos[o*3+2]});
-  return s;
-}
-
-const shapes=[
-  sortPos(genCloud(N),N),
-  sortPos(genGuard(N),N),
-  sortPos(genMachine(N),N),
-  sortPos(genConveyor(N),N),
-  sortPos(gen3DPrint(N),N),
-  sortPos(genDisperse(N),N),
-];
-const shapeLabels=['field.sphere','model.riparo_sicurezza','machine.f50_maxi','transport.nastro','tech.stampa_3d','field.disperse'];
-
-// ── Particle system ──
-const geo = new THREE.BufferGeometry();
-const pos = new Float32Array(N*3);
-const col = new Float32Array(N*3);
-const prev = new Float32Array(N*3);
-for(let i=0;i<N*3;i++){pos[i]=shapes[0][i];prev[i]=shapes[0][i]}
-geo.setAttribute('position',new THREE.BufferAttribute(pos,3));
-geo.setAttribute('color',new THREE.BufferAttribute(col,3));
-
-const mat = new THREE.PointsMaterial({
-  size: .12,
-  map: sharpTex(),
-  vertexColors: true,
-  transparent: true,
-  opacity: .95,
-  blending: THREE.AdditiveBlending,
-  sizeAttenuation: true,
-  depthWrite: false,
-});
-const pts = new THREE.Points(geo, mat);
-scene.add(pts);
-
-// Background dust
-const dN=500, dG=new THREE.BufferGeometry(), dP=new Float32Array(dN*3);
-for(let i=0;i<dN;i++){dP[i*3]=(Math.random()-.5)*60;dP[i*3+1]=(Math.random()-.5)*60;dP[i*3+2]=(Math.random()-.5)*60}
-dG.setAttribute('position',new THREE.BufferAttribute(dP,3));
-scene.add(new THREE.Points(dG,new THREE.PointsMaterial({size:.025,color:0x1e2540,transparent:true,opacity:.45,blending:THREE.AdditiveBlending,depthWrite:false})));
-
-// =====================================================
-// SCROLL LOGIC — generous spacing
-// =====================================================
-// Transitions happen LATER and with more scroll room
-const transitions=[
-  {start:.10,end:.18,from:0,to:1},   // cloud → guard
-  {start:.28,end:.36,from:1,to:2},   // guard → machine
-  {start:.48,end:.56,from:2,to:3},   // machine → conveyor
-  {start:.66,end:.74,from:3,to:4},   // conveyor → 3dprint
-  {start:.82,end:.90,from:4,to:5},   // 3dprint → disperse
-];
-
-const panels=[
-  {id:'p0',in:0,   peak:.03, out:.08},
-  {id:'p1',in:.14, peak:.22, out:.26},
-  {id:'p2',in:.32, peak:.40, out:.46},
-  {id:'p3',in:.52, peak:.60, out:.64},
-  {id:'p4',in:.70, peak:.78, out:.80},
-  {id:'p5',in:.86, peak:.94, out:1.01},
-];
-
+const W=()=>window.innerWidth, H=()=>window.innerHeight;
 const ease=t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 const lerp=(a,b,t)=>a+(b-a)*t;
 const mapR=(v,a,b,c,d)=>clamp((v-a)/(b-a),0,1)*(d-c)+c;
 
-const baseCol={r:0,g:.45,b:.72};
-const fastCol={r:1,g:.42,b:.17};
+function toast(msg,dur=3000){
+  const el=document.getElementById('toast');
+  el.textContent=msg;el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'),dur);
+}
 
-let scroll=0, mxT=0, myT=0, mx=0, my=0;
+// =====================================================
+// THREE.JS
+// =====================================================
+const canvas=document.getElementById('scene');
+const renderer=new THREE.WebGLRenderer({canvas,antialias:true});
+renderer.setSize(W(),H());
+renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+renderer.setClearColor(0x050709);
+
+const scene=new THREE.Scene();
+scene.fog=new THREE.FogExp2(0x050709,.015);
+const camera=new THREE.PerspectiveCamera(50,W()/H(),.1,300);
+camera.position.set(0,0,14);
+
+function sharpTex(){
+  const c=document.createElement('canvas');c.width=32;c.height=32;
+  const ctx=c.getContext('2d');
+  ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(16,16,11,0,Math.PI*2);ctx.fill();
+  return new THREE.CanvasTexture(c);
+}
+
+// =====================================================
+// SHAPE GENERATORS
+// =====================================================
+const N=4500;
+
+function genSphere(n){const p=new Float32Array(n*3);for(let i=0;i<n;i++){const a=Math.random()*Math.PI*2,b=Math.acos(2*Math.random()-1),r=4*(.88+Math.random()*.12);p[i*3]=r*Math.sin(b)*Math.cos(a);p[i*3+1]=r*Math.sin(b)*Math.sin(a);p[i*3+2]=r*Math.cos(b)}return p}
+
+function genGuard(n){const p=new Float32Array(n*3),GW=7,GH=5,sp=.45,th=.35;for(let i=0;i<n;i++){const c=Math.random();if(c<.35){const col=Math.floor(Math.random()*(GW/sp+1)),x=-GW/2+col*sp;p[i*3]=x+(Math.random()-.5)*.06;p[i*3+1]=-GH/2+Math.random()*GH;p[i*3+2]=(Math.random()-.5)*th}else if(c<.7){const row=Math.floor(Math.random()*(GH/sp+1)),y=-GH/2+row*sp;p[i*3]=-GW/2+Math.random()*GW;p[i*3+1]=y+(Math.random()-.5)*.06;p[i*3+2]=(Math.random()-.5)*th}else{const s=Math.floor(Math.random()*4);let x,y;if(s===0){x=-GW/2;y=-GH/2+Math.random()*GH}else if(s===1){x=GW/2;y=-GH/2+Math.random()*GH}else if(s===2){x=-GW/2+Math.random()*GW;y=-GH/2}else{x=-GW/2+Math.random()*GW;y=GH/2}p[i*3]=x+(Math.random()-.5)*.15;p[i*3+1]=y+(Math.random()-.5)*.15;p[i*3+2]=(Math.random()-.5)*th}}return p}
+
+function genMachine(n){const p=new Float32Array(n*3);const P=[{fn:(i,p)=>{p[i*3]=(Math.random()-.5)*4;p[i*3+1]=(Math.random()-.5)*3-.5;p[i*3+2]=(Math.random()-.5)*2},w:.35},{fn:(i,p)=>{p[i*3]=-3+Math.random()*8;p[i*3+1]=-2.2+(Math.random()-.5)*.15;p[i*3+2]=(Math.random()-.5)*.6},w:.18},{fn:(i,p)=>{const t=Math.random();p[i*3]=1+t*2.5;p[i*3+1]=.5+t*2.2;p[i*3+2]=(Math.random()-.5)*.35},w:.12},{fn:(i,p)=>{const a=Math.random()*Math.PI*2,r=Math.random()*.4;p[i*3]=3.5+Math.cos(a)*r;p[i*3+1]=2.7+Math.sin(a)*r;p[i*3+2]=(Math.random()-.5)*.3},w:.08},{fn:(i,p)=>{p[i*3]=3+Math.random()*2;p[i*3+1]=-1.5+(Math.random()-.5)*1.2;p[i*3+2]=(Math.random()-.5)*1},w:.12},{fn:(i,p)=>{p[i*3]=-3.5+(Math.random()-.5)*.6;p[i*3+1]=.5+Math.random()*2.5;p[i*3+2]=1+(Math.random()-.5)*.3},w:.08},{fn:(i,p)=>{const ci=Math.floor(Math.random()*6),cx=-2.5+ci,a=Math.random()*Math.PI*2;p[i*3]=cx+(Math.random()-.5)*.15;p[i*3+1]=-2.2+Math.sin(a)*.22;p[i*3+2]=Math.cos(a)*.22},w:.07}];const tw=P.reduce((a,x)=>a+x.w,0);for(let i=0;i<n;i++){let r=Math.random()*tw,c=0;for(const pt of P){c+=pt.w;if(c>=r){pt.fn(i,p);break}}}return p}
+
+function genConveyor(n){const p=new Float32Array(n*3),L=8,CW=2.5;for(let i=0;i<n;i++){const c=Math.random();if(c<.3){p[i*3]=(Math.random()-.5)*L;p[i*3+1]=(Math.random()-.5)*.06;p[i*3+2]=(Math.random()-.5)*CW}else if(c<.55){const s=Math.random()>.5?1:-1;p[i*3]=(Math.random()-.5)*L;p[i*3+1]=Math.random()*1.2;p[i*3+2]=s*CW/2+(Math.random()-.5)*.08}else if(c<.72){const lx=(Math.random()>.5?-1:1)*(L/2-.3),lz=(Math.random()>.5?-1:1)*(CW/2-.2);p[i*3]=lx+(Math.random()-.5)*.12;p[i*3+1]=-Math.random()*2;p[i*3+2]=lz+(Math.random()-.5)*.12}else if(c<.88){const rx=-L/2+Math.floor(Math.random()*8)*(L/7),a=Math.random()*Math.PI*2;p[i*3]=rx+(Math.random()-.5)*.08;p[i*3+1]=-.15+Math.sin(a)*.15;p[i*3+2]=Math.cos(a)*(CW/2*.42)}else{p[i*3]=-L/2+Math.random()*L;p[i*3+1]=.15+Math.random()*.45;p[i*3+2]=(Math.random()-.5)*CW*.6}}return p}
+
+function gen3DPrint(n){const p=new Float32Array(n*3);for(let i=0;i<n;i++){const c=Math.random();if(c<.6){const l=Math.floor(Math.random()*40),y=-2+l*.12,rB=2.2-Math.abs(y)*.3,r=Math.max(.3,rB)*(.92+Math.random()*.08),a=Math.random()*Math.PI*2,d=Math.random()>.3?r:r*Math.random();p[i*3]=Math.cos(a)*d;p[i*3+1]=y;p[i*3+2]=Math.sin(a)*d}else if(c<.8){p[i*3]=(Math.random()-.5)*5;p[i*3+1]=-2.1+(Math.random()-.5)*.06;p[i*3+2]=(Math.random()-.5)*5}else{const t=Math.random();p[i*3]=-2.5+t*5;p[i*3+1]=3+(Math.random()-.5)*.1;p[i*3+2]=(Math.random()-.5)*.1}}return p}
+
+function srt(pos,n){const idx=Array.from({length:n},(_,i)=>i);idx.sort((a,b)=>Math.atan2(pos[a*3+1],pos[a*3])-Math.atan2(pos[b*3+1],pos[b*3]));const s=new Float32Array(n*3);idx.forEach((o,i)=>{s[i*3]=pos[o*3];s[i*3+1]=pos[o*3+1];s[i*3+2]=pos[o*3+2]});return s}
+
+// ── shape[0] = shape[5] → seamless loop ──
+const sphereSeed=genSphere(N);
+const shapes=[
+  srt(new Float32Array(sphereSeed),N), // 0 start
+  srt(genGuard(N),N),                  // 1 riparo
+  srt(genMachine(N),N),                // 2 F50
+  srt(genConveyor(N),N),               // 3 nastro
+  srt(gen3DPrint(N),N),                // 4 stampa3d
+  srt(new Float32Array(sphereSeed),N), // 5 end = start!
+];
+const shapeLabels=['field.sphere','model.riparo','machine.f50','transport.nastro','tech.stampa3d','field.sphere'];
+
+// =====================================================
+// MESH SURFACE SAMPLER — for loading real 3D models
+// =====================================================
+function sampleMeshSurface(object, count){
+  // Collect all geometries
+  const geoms=[];
+  object.traverse(c=>{if(c.isMesh && c.geometry){
+    c.updateMatrixWorld(true);
+    const g=c.geometry.clone();
+    g.applyMatrix4(c.matrixWorld);
+    if(!g.index){
+      const posA=g.attributes.position;
+      const idx=[];for(let i=0;i<posA.count;i++)idx.push(i);
+      g.setIndex(idx);
+    }
+    geoms.push(g);
+  }});
+  if(!geoms.length)return null;
+
+  // Merge into single geometry
+  const allPos=[],allIdx=[];
+  let offset=0;
+  for(const g of geoms){
+    const p=g.attributes.position;
+    for(let i=0;i<p.count;i++){allPos.push(p.getX(i),p.getY(i),p.getZ(i))}
+    const idx=g.index;
+    for(let i=0;i<idx.count;i++)allIdx.push(idx.getX(i)+offset);
+    offset+=p.count;
+  }
+
+  const triCount=allIdx.length/3;
+  // Triangle area weighted sampling
+  const areas=new Float64Array(triCount);
+  let totalArea=0;
+  const vA=new THREE.Vector3(),vB=new THREE.Vector3(),vC=new THREE.Vector3();
+  for(let t=0;t<triCount;t++){
+    const i0=allIdx[t*3],i1=allIdx[t*3+1],i2=allIdx[t*3+2];
+    vA.set(allPos[i0*3],allPos[i0*3+1],allPos[i0*3+2]);
+    vB.set(allPos[i1*3],allPos[i1*3+1],allPos[i1*3+2]);
+    vC.set(allPos[i2*3],allPos[i2*3+1],allPos[i2*3+2]);
+    const ab=new THREE.Vector3().subVectors(vB,vA);
+    const ac=new THREE.Vector3().subVectors(vC,vA);
+    areas[t]=ab.cross(ac).length()*.5;
+    totalArea+=areas[t];
+  }
+
+  const result=new Float32Array(count*3);
+  for(let i=0;i<count;i++){
+    let r=Math.random()*totalArea,cum=0,tri=0;
+    for(let t=0;t<triCount;t++){cum+=areas[t];if(cum>=r){tri=t;break}}
+    const i0=allIdx[tri*3],i1=allIdx[tri*3+1],i2=allIdx[tri*3+2];
+    vA.set(allPos[i0*3],allPos[i0*3+1],allPos[i0*3+2]);
+    vB.set(allPos[i1*3],allPos[i1*3+1],allPos[i1*3+2]);
+    vC.set(allPos[i2*3],allPos[i2*3+1],allPos[i2*3+2]);
+    let u=Math.random(),v=Math.random();
+    if(u+v>1){u=1-u;v=1-v}
+    const w=1-u-v;
+    result[i*3]=vA.x*w+vB.x*u+vC.x*v;
+    result[i*3+1]=vA.y*w+vB.y*u+vC.y*v;
+    result[i*3+2]=vA.z*w+vB.z*u+vC.z*v;
+  }
+
+  // Center & normalize to fit ~7 units
+  let mnx=Infinity,mxx=-Infinity,mny=Infinity,mxy=-Infinity,mnz=Infinity,mxz=-Infinity;
+  for(let i=0;i<count;i++){
+    mnx=Math.min(mnx,result[i*3]);mxx=Math.max(mxx,result[i*3]);
+    mny=Math.min(mny,result[i*3+1]);mxy=Math.max(mxy,result[i*3+1]);
+    mnz=Math.min(mnz,result[i*3+2]);mxz=Math.max(mxz,result[i*3+2]);
+  }
+  const cx=(mnx+mxx)/2,cy=(mny+mxy)/2,cz=(mnz+mxz)/2;
+  const span=Math.max(mxx-mnx,mxy-mny,mxz-mnz);
+  const sc=7/span;
+  for(let i=0;i<count;i++){
+    result[i*3]=(result[i*3]-cx)*sc;
+    result[i*3+1]=(result[i*3+1]-cy)*sc;
+    result[i*3+2]=(result[i*3+2]-cz)*sc;
+  }
+  return srt(result,count);
+}
+
+// =====================================================
+// DRAG & DROP 3D FILES
+// =====================================================
+const uploadHint=document.getElementById('upload-hint');
+let dragCount=0, nextSlot=1;
+
+document.addEventListener('dragenter',e=>{e.preventDefault();dragCount++;uploadHint.classList.add('show')});
+document.addEventListener('dragleave',e=>{e.preventDefault();dragCount--;if(dragCount<=0){uploadHint.classList.remove('show');dragCount=0}});
+document.addEventListener('dragover',e=>e.preventDefault());
+document.addEventListener('drop',e=>{
+  e.preventDefault();dragCount=0;uploadHint.classList.remove('show');
+  const file=e.dataTransfer.files[0];
+  if(!file)return;
+  const name=file.name.toLowerCase();
+  const url=URL.createObjectURL(file);
+  const slot=nextSlot;
+  nextSlot=slot>=4?1:slot+1;
+
+  toast('⏳ Caricamento: '+file.name);
+
+  if(name.endsWith('.glb')||name.endsWith('.gltf')){
+    import('https://cdn.jsdelivr.net/npm/three@0.128.0/examples/jsm/loaders/GLTFLoader.js').then(m=>{
+      new m.GLTFLoader().load(url,gltf=>{injectModel(gltf.scene,slot,file.name)},null,err=>toast('❌ Errore: '+err.message))
+    });
+  }else if(name.endsWith('.obj')){
+    import('https://cdn.jsdelivr.net/npm/three@0.128.0/examples/jsm/loaders/OBJLoader.js').then(m=>{
+      new m.OBJLoader().load(url,obj=>{injectModel(obj,slot,file.name)},null,err=>toast('❌ Errore: '+err.message))
+    });
+  }else if(name.endsWith('.stl')){
+    import('https://cdn.jsdelivr.net/npm/three@0.128.0/examples/jsm/loaders/STLLoader.js').then(m=>{
+      new m.STLLoader().load(url,geo=>{
+        const mesh=new THREE.Mesh(geo);
+        injectModel(mesh,slot,file.name);
+      },null,err=>toast('❌ Errore: '+err.message))
+    });
+  }else{
+    toast('❌ Formato non supportato. Usa .GLB .OBJ .STL');
+  }
+});
+
+function injectModel(object,slot,filename){
+  const sampled=sampleMeshSurface(object,N);
+  if(!sampled){toast('❌ Nessuna geometria trovata');return}
+  shapes[slot]=sampled;
+  const sectionNames=['','Ripari','Macchine','Nastri','Tecnologia'];
+  shapeLabels[slot]='custom.'+filename.replace(/\.[^.]+$/,'');
+  toast('✦ '+filename+' → sezione '+sectionNames[slot]+' (slot '+slot+')');
+}
+
+// =====================================================
+// PARTICLE SYSTEM
+// =====================================================
+const geo=new THREE.BufferGeometry();
+const pos=new Float32Array(N*3),col=new Float32Array(N*3),prev=new Float32Array(N*3);
+for(let i=0;i<N*3;i++){pos[i]=shapes[0][i];prev[i]=shapes[0][i]}
+geo.setAttribute('position',new THREE.BufferAttribute(pos,3));
+geo.setAttribute('color',new THREE.BufferAttribute(col,3));
+
+const mat=new THREE.PointsMaterial({size:.12,map:sharpTex(),vertexColors:true,transparent:true,opacity:.95,blending:THREE.AdditiveBlending,sizeAttenuation:true,depthWrite:false});
+const pts=new THREE.Points(geo,mat);scene.add(pts);
+
+// Dust
+const dN=500,dG=new THREE.BufferGeometry(),dP=new Float32Array(dN*3);
+for(let i=0;i<dN;i++){dP[i*3]=(Math.random()-.5)*60;dP[i*3+1]=(Math.random()-.5)*60;dP[i*3+2]=(Math.random()-.5)*60}
+dG.setAttribute('position',new THREE.BufferAttribute(dP,3));
+scene.add(new THREE.Points(dG,new THREE.PointsMaterial({size:.025,color:0x1e2540,transparent:true,opacity:.45,blending:THREE.AdditiveBlending,depthWrite:false})));
+
+// =====================================================
+// SCROLL — SEAMLESS INFINITE LOOP
+// =====================================================
+const transitions=[
+  {start:.10,end:.18,from:0,to:1},  // sphere → guard
+  {start:.28,end:.36,from:1,to:2},  // guard → machine
+  {start:.48,end:.56,from:2,to:3},  // machine → conveyor
+  {start:.66,end:.74,from:3,to:4},  // conveyor → 3dprint
+  {start:.86,end:.94,from:4,to:5},  // 3dprint → sphere again!
+];
+
+const panels=[
+  {id:'p0',in:0,  peak:.03,out:.08},
+  {id:'p1',in:.14,peak:.22,out:.26},
+  {id:'p2',in:.32,peak:.40,out:.46},
+  {id:'p3',in:.52,peak:.60,out:.64},
+  {id:'p4',in:.70,peak:.78,out:.84},
+  {id:'p5',in:.86,peak:.93,out:.965},
+];
+
+const baseCol={r:0,g:.45,b:.72},fastCol={r:1,g:.42,b:.17};
+let scroll=0,mxT=0,myT=0,mx=0,my=0;
+let loopLock=false;
 
 document.addEventListener('mousemove',e=>{mxT=(e.clientX/W()-.5)*2;myT=(e.clientY/H()-.5)*2});
 
 function tick(){
-  const maxS=document.getElementById('spacer').offsetHeight-H();
+  const spacer=document.getElementById('spacer');
+  const maxS=spacer.offsetHeight-H();
   scroll=clamp(window.scrollY/maxS,0,1);
-  
-  // Progress
+
+  // ── SEAMLESS LOOP ──
+  // Shape[5] is identical to Shape[0], so at scroll=.97
+  // particles are already in sphere position → safe to jump
+  if(!loopLock && scroll>.97){
+    loopLock=true;
+    // Snap particles to shape[0] for safety
+    for(let i=0;i<N*3;i++){pos[i]=shapes[0][i];prev[i]=shapes[0][i]}
+    geo.attributes.position.needsUpdate=true;
+    // Jump scroll to beginning (hero visible zone)
+    window.scrollTo(0, maxS*.03);
+    scroll=.03;
+    requestAnimationFrame(()=>{loopLock=false});
+    return;
+  }
+
   document.getElementById('pf').style.height=(scroll*100)+'%';
   document.getElementById('pn').textContent=String(Math.floor(scroll*100)).padStart(2,'0');
-  
-  // Panels
+
   panels.forEach(z=>{
     const el=document.getElementById(z.id);
     let o=0;
-    if(scroll>=z.in&&scroll<=z.out){
-      o=scroll<z.peak?mapR(scroll,z.in,z.peak,0,1):mapR(scroll,z.peak,z.out,1,0);
-    }
-    el.style.opacity=o;
-    el.classList.toggle('on',o>.1);
+    if(scroll>=z.in&&scroll<=z.out)o=scroll<z.peak?mapR(scroll,z.in,z.peak,0,1):mapR(scroll,z.peak,z.out,1,0);
+    el.style.opacity=o;el.classList.toggle('on',o>.1);
   });
-  
-  document.getElementById('foot').classList.toggle('on',scroll>.88);
-  
-  // Shape morph
+
+  document.getElementById('foot').classList.toggle('on',scroll>.88&&scroll<.97);
+
   let fromS=0,toS=0,tw=0,inTr=false;
   for(const tr of transitions){
     if(scroll>=tr.start&&scroll<=tr.end){fromS=tr.from;toS=tr.to;tw=ease((scroll-tr.start)/(tr.end-tr.start));inTr=true;break}
     if(scroll>tr.end){fromS=tr.to;toS=tr.to}
   }
-  
+
   document.getElementById('hud-t').textContent=shapeLabels[inTr?toS:fromS];
-  
-  const A=shapes[fromS], B=inTr?shapes[toS]:A, t=inTr?tw:0;
-  
-  for(let i=0;i<N*3;i++){
-    prev[i]=pos[i];
-    pos[i]=lerp(A[i],B[i],t);
-  }
+
+  const A=shapes[fromS],B=inTr?shapes[toS]:A,t=inTr?tw:0;
+  for(let i=0;i<N*3;i++){prev[i]=pos[i];pos[i]=lerp(A[i],B[i],t)}
   geo.attributes.position.needsUpdate=true;
-  
-  // Speed coloring
-  let maxSpd=0;
-  const spd=new Float32Array(N);
-  for(let i=0;i<N;i++){
-    const dx=pos[i*3]-prev[i*3],dy=pos[i*3+1]-prev[i*3+1],dz=pos[i*3+2]-prev[i*3+2];
-    spd[i]=Math.sqrt(dx*dx+dy*dy+dz*dz);
-    if(spd[i]>maxSpd)maxSpd=spd[i];
-  }
+
+  let maxSpd=0;const spd=new Float32Array(N);
+  for(let i=0;i<N;i++){const dx=pos[i*3]-prev[i*3],dy=pos[i*3+1]-prev[i*3+1],dz=pos[i*3+2]-prev[i*3+2];spd[i]=Math.sqrt(dx*dx+dy*dy+dz*dz);if(spd[i]>maxSpd)maxSpd=spd[i]}
   if(maxSpd<.0005)maxSpd=.0005;
-  
-  for(let i=0;i<N;i++){
-    const s=clamp(spd[i]/(maxSpd*.5),0,1);
-    const s2=s*s;
-    col[i*3]=lerp(baseCol.r,fastCol.r,s2);
-    col[i*3+1]=lerp(baseCol.g,fastCol.g,s2);
-    col[i*3+2]=lerp(baseCol.b,fastCol.b,s2);
-  }
+  for(let i=0;i<N;i++){const s=clamp(spd[i]/(maxSpd*.5),0,1),s2=s*s;col[i*3]=lerp(baseCol.r,fastCol.r,s2);col[i*3+1]=lerp(baseCol.g,fastCol.g,s2);col[i*3+2]=lerp(baseCol.b,fastCol.b,s2)}
   geo.attributes.color.needsUpdate=true;
-  
-  // Dynamic size: bigger during morph
-  mat.size = inTr ? lerp(.12,.18,Math.sin(tw*Math.PI)) : .12;
+
+  mat.size=inTr?lerp(.12,.18,Math.sin(tw*Math.PI)):.12;
 }
 
 window.addEventListener('scroll',tick,{passive:true});
+document.querySelectorAll('.nav-r a').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const ms=document.getElementById('spacer').offsetHeight-H();window.scrollTo({top:parseFloat(a.dataset.go)*ms,behavior:'smooth'})}));
 
-// Nav
-document.querySelectorAll('.nav-r a').forEach(a=>a.addEventListener('click',e=>{
-  e.preventDefault();
-  const t=parseFloat(a.dataset.go);
-  const ms=document.getElementById('spacer').offsetHeight-H();
-  window.scrollTo({top:t*ms,behavior:'smooth'});
-}));
-
-// ── Render loop ──
 function animate(){
   requestAnimationFrame(animate);
-  mx+=(mxT-mx)*.035;
-  my+=(myT-my)*.035;
-  camera.position.x=mx*1.2;
-  camera.position.y=-my*.8;
-  camera.lookAt(0,0,0);
+  mx+=(mxT-mx)*.035;my+=(myT-my)*.035;
+  camera.position.x=mx*1.2;camera.position.y=-my*.8;camera.lookAt(0,0,0);
   const t=performance.now()*.001;
   pts.rotation.y=t*.025+scroll*.4;
   pts.rotation.x=Math.sin(t*.015)*.05;
   renderer.render(scene,camera);
 }
-animate();
-tick();
+animate();tick();
 
-window.addEventListener('resize',()=>{
-  renderer.setSize(W(),H());
-  camera.aspect=W()/H();
-  camera.updateProjectionMatrix();
-});
+window.addEventListener('resize',()=>{renderer.setSize(W(),H());camera.aspect=W()/H();camera.updateProjectionMatrix()});
 
-// Card glow
 document.querySelectorAll('.pcard').forEach(c=>{
-  c.addEventListener('mousemove',e=>{
-    const r=c.getBoundingClientRect();
-    c.style.background=`radial-gradient(circle at ${((e.clientX-r.left)/r.width*100)}% ${((e.clientY-r.top)/r.height*100)}%,rgba(0,170,255,.055) 0%,rgba(12,15,23,.55) 60%)`;
-  });
+  c.addEventListener('mousemove',e=>{const r=c.getBoundingClientRect();c.style.background=`radial-gradient(circle at ${((e.clientX-r.left)/r.width*100)}% ${((e.clientY-r.top)/r.height*100)}%,rgba(0,170,255,.055) 0%,rgba(12,15,23,.55) 60%)`});
   c.addEventListener('mouseleave',()=>c.style.background='var(--glass)');
 });
 </script>

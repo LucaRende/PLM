@@ -8,120 +8,120 @@
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@300;400;500&family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
-:root{--bg:#050709;--primary:#0af;--warm:#ff6a2f;--green:#3ddc84;--text:#e8ecf2;--muted:#8890a8;--dim:#181d30;--glass:rgba(8,10,16,.88)}
+:root{
+  --bg:#050709;
+  --primary:#E22025;
+  --primary-glow:rgba(226,32,37,.15);
+  --warm:#ff6a2f;
+  --green:#3ddc84;
+  --text:#e8ecf2;
+  --muted:#8890a8;
+  --dim:#1a1d2a;
+  --glass:rgba(8,10,16,.90);
+}
 html{background:var(--bg);overscroll-behavior:none}
 body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;overflow-x:hidden;-webkit-font-smoothing:antialiased;-webkit-text-size-adjust:100%}
 ::-webkit-scrollbar{width:0}
 
 #c{position:fixed;inset:0;z-index:0}
-.vig{position:fixed;inset:0;background:radial-gradient(ellipse at 50% 50%,transparent 40%,rgba(5,7,9,.7));pointer-events:none;z-index:1}
+.vig{position:fixed;inset:0;background:radial-gradient(ellipse at 50% 50%,transparent 40%,rgba(5,7,9,.65));pointer-events:none;z-index:1}
 #spacer{height:1500vh;position:relative;z-index:-1}
 
-/* NAV */
-nav{position:fixed;top:0;left:0;right:0;z-index:200;padding:20px 40px;display:flex;justify-content:space-between;align-items:center;backdrop-filter:blur(16px);background:rgba(5,7,9,.4);border-bottom:1px solid rgba(255,255,255,.04)}
+nav{position:fixed;top:0;left:0;right:0;z-index:200;padding:18px 36px;display:flex;justify-content:space-between;align-items:center;backdrop-filter:blur(18px);background:rgba(5,7,9,.45);border-bottom:1px solid rgba(226,32,37,.08)}
 .logo{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:5px;color:var(--text)}.logo b{color:var(--primary)}
-.nav-r{display:flex;gap:28px;list-style:none}
+.nav-r{display:flex;gap:26px;list-style:none}
 .nav-r a{font-family:'IBM Plex Mono',monospace;font-size:.6rem;font-weight:400;letter-spacing:2.5px;text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color .3s}.nav-r a:hover{color:var(--primary)}
 
-/* PROGRESS */
-.prog{position:fixed;right:28px;top:50%;transform:translateY(-50%);z-index:200;display:flex;flex-direction:column;align-items:center;gap:8px}
+.prog{position:fixed;right:24px;top:50%;transform:translateY(-50%);z-index:200;display:flex;flex-direction:column;align-items:center;gap:8px}
 .prog-dot{width:5px;height:5px;border-radius:50%;background:var(--primary);box-shadow:0 0 10px var(--primary)}
-.prog-bar{width:1px;height:80px;background:var(--dim);position:relative;overflow:hidden;border-radius:1px}
-.prog-fill{position:absolute;top:0;left:0;width:100%;height:0%;background:var(--primary);border-radius:1px}
+.prog-bar{width:1px;height:80px;background:var(--dim);position:relative;overflow:hidden}
+.prog-fill{position:absolute;top:0;left:0;width:100%;height:0%;background:var(--primary)}
 .prog-num{font-family:'IBM Plex Mono',monospace;font-size:.45rem;letter-spacing:2px;color:var(--muted);writing-mode:vertical-rl;transform:rotate(180deg)}
 
-/* HUD */
-.hud{position:fixed;bottom:20px;left:40px;z-index:200;font-family:'IBM Plex Mono',monospace;font-size:.5rem;letter-spacing:3px;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:8px}
+.hud{position:fixed;bottom:18px;left:36px;z-index:200;font-family:'IBM Plex Mono',monospace;font-size:.5rem;letter-spacing:3px;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:8px}
 .hud-dot{width:4px;height:4px;border-radius:50%;background:var(--primary);box-shadow:0 0 6px var(--primary)}
 
-/* ═══ PANELS ═══ */
-.p{position:fixed;inset:0;z-index:10;display:flex;align-items:center;justify-content:center;pointer-events:none;opacity:0;padding:80px 40px 40px}
+.p{position:fixed;inset:0;z-index:10;display:flex;align-items:center;justify-content:center;pointer-events:none;opacity:0;padding:76px 36px 36px}
 .p.on{pointer-events:auto}
 
-/* ═══ CONTENT BOX — the key to readability ═══ */
-.cb{background:var(--glass);border:1px solid rgba(255,255,255,.06);border-radius:20px;padding:48px;backdrop-filter:blur(28px);max-width:1200px;width:100%}
+.cb{background:var(--glass);border:1px solid rgba(226,32,37,.08);border-radius:18px;padding:44px;backdrop-filter:blur(28px);max-width:1180px;width:100%}
 
-/* HERO */
 .hero{text-align:center;background:none;border:none;backdrop-filter:none}
-.hero-badge{display:inline-flex;align-items:center;gap:10px;padding:8px 20px;border:1px solid rgba(0,170,255,.18);border-radius:100px;font-family:'IBM Plex Mono',monospace;font-size:.65rem;letter-spacing:3.5px;text-transform:uppercase;color:var(--primary);margin-bottom:32px;backdrop-filter:blur(8px);background:rgba(0,170,255,.04)}
+.hero-badge{display:inline-flex;align-items:center;gap:10px;padding:8px 20px;border:1px solid rgba(226,32,37,.25);border-radius:100px;font-family:'IBM Plex Mono',monospace;font-size:.65rem;letter-spacing:3.5px;text-transform:uppercase;color:var(--primary);margin-bottom:28px;backdrop-filter:blur(8px);background:rgba(226,32,37,.05)}
 .hero-badge i{width:5px;height:5px;border-radius:50%;background:var(--primary);box-shadow:0 0 8px var(--primary);animation:blink 2.5s ease infinite}
-.hero h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(4rem,12vw,11rem);line-height:.88;letter-spacing:4px;color:#fff;margin-bottom:20px}
+.hero h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(3.8rem,11vw,10rem);line-height:.88;letter-spacing:4px;color:#fff;margin-bottom:18px}
 .hero h1 span{display:block;background:linear-gradient(90deg,var(--primary),var(--warm));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.hero>p{font-weight:400;font-size:clamp(1rem,2.2vw,1.2rem);color:var(--muted);max-width:540px;margin:0 auto;line-height:1.8}
-.scroll-cue{position:fixed;bottom:40px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;z-index:20}
+.hero>p{font-weight:400;font-size:clamp(.95rem,2vw,1.15rem);color:var(--muted);max-width:520px;margin:0 auto;line-height:1.85}
+.scroll-cue{position:fixed;bottom:36px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;z-index:20}
 .scroll-cue span{font-family:'IBM Plex Mono',monospace;font-size:.5rem;letter-spacing:4px;text-transform:uppercase;color:var(--muted)}
-.scroll-line{width:1px;height:32px;overflow:hidden;position:relative}
+.scroll-line{width:1px;height:30px;overflow:hidden;position:relative}
 .scroll-line::after{content:'';position:absolute;top:-100%;left:0;width:100%;height:100%;background:linear-gradient(to bottom,transparent,var(--primary));animation:sld 2s ease infinite}
 
-/* ROW LAYOUT */
-.row{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:start}
-.sec-tag{font-family:'IBM Plex Mono',monospace;font-size:.65rem;letter-spacing:4px;color:var(--primary);text-transform:uppercase;margin-bottom:18px;display:flex;align-items:center;gap:10px}
-.sec-tag::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.08);max-width:50px}
-.sec-h{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.8rem,5vw,5rem);letter-spacing:2px;line-height:.92;color:#fff;margin-bottom:16px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:start}
+.sec-tag{font-family:'IBM Plex Mono',monospace;font-size:.65rem;letter-spacing:4px;color:var(--primary);text-transform:uppercase;margin-bottom:16px;display:flex;align-items:center;gap:10px}
+.sec-tag::after{content:'';flex:1;height:1px;background:rgba(226,32,37,.15);max-width:40px}
+.sec-h{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.6rem,4.8vw,4.8rem);letter-spacing:2px;line-height:.92;color:#fff;margin-bottom:14px}
 .sec-h em{font-style:normal;color:var(--primary)}
-.body-text{font-weight:400;font-size:clamp(.95rem,1.6vw,1.08rem);color:var(--muted);line-height:1.85;margin-bottom:24px}
+.bt{font-weight:400;font-size:clamp(.92rem,1.5vw,1.05rem);color:var(--muted);line-height:1.85;margin-bottom:22px}
 
-/* STATS */
-.stats{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.st{padding:18px;border:1px solid rgba(255,255,255,.06);border-radius:12px;background:rgba(255,255,255,.02)}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.st{padding:16px;border:1px solid rgba(226,32,37,.08);border-radius:12px;background:rgba(226,32,37,.02)}
 .st-v{font-family:'Bebas Neue',sans-serif;font-size:2rem;color:#fff;line-height:1}.st-v b{color:var(--primary);font-weight:400}
 .st-l{font-family:'IBM Plex Mono',monospace;font-size:.55rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-top:4px}
-.st-alt{font-family:'IBM Plex Mono',monospace;font-size:1rem;color:var(--primary);font-weight:500;line-height:1.2}
+.st-alt{font-family:'IBM Plex Mono',monospace;font-size:.95rem;color:var(--primary);font-weight:500;line-height:1.2}
 
-/* CARDS */
-.pgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.pcard{padding:20px;border:1px solid rgba(255,255,255,.06);border-radius:12px;background:rgba(255,255,255,.02);transition:border-color .3s,transform .3s}
-.pcard:hover{border-color:rgba(0,170,255,.15);transform:translateY(-2px)}
-.pcard h4{font-weight:700;font-size:.9rem;color:#fff;margin-bottom:5px}
-.pcard p{font-size:.78rem;color:var(--muted);line-height:1.6;font-weight:400}
-.ptag{display:inline-block;margin-top:8px;padding:3px 9px;border-radius:100px;font-family:'IBM Plex Mono',monospace;font-size:.5rem;letter-spacing:1.5px;text-transform:uppercase;border:1px solid}
-.tc{color:var(--primary);border-color:rgba(0,170,255,.2)}
+.pgrid{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.pcard{padding:18px;border:1px solid rgba(226,32,37,.06);border-radius:12px;background:rgba(226,32,37,.02);transition:border-color .3s,transform .3s}
+.pcard:hover{border-color:rgba(226,32,37,.2);transform:translateY(-2px)}
+.pcard h4{font-weight:700;font-size:.88rem;color:#fff;margin-bottom:4px}
+.pcard p{font-size:.76rem;color:var(--muted);line-height:1.6;font-weight:400}
+.ptag{display:inline-block;margin-top:7px;padding:3px 9px;border-radius:100px;font-family:'IBM Plex Mono',monospace;font-size:.48rem;letter-spacing:1.5px;text-transform:uppercase;border:1px solid}
+.tc{color:var(--primary);border-color:rgba(226,32,37,.2)}
 .tw{color:var(--warm);border-color:rgba(255,106,47,.2)}
 .tg{color:var(--green);border-color:rgba(61,220,132,.2)}
 
-/* CERTS */
-.certs{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:20px}
-.cert{padding:10px 16px;border:1px solid rgba(255,255,255,.06);border-radius:10px;background:rgba(255,255,255,.02);font-family:'IBM Plex Mono',monospace;font-size:.65rem;letter-spacing:1px;color:#fff}
+.certs{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:18px}
+.cert{padding:10px 16px;border:1px solid rgba(226,32,37,.08);border-radius:10px;background:rgba(226,32,37,.02);font-family:'IBM Plex Mono',monospace;font-size:.65rem;letter-spacing:1px;color:#fff}
 .cert small{display:block;font-size:.5rem;color:var(--muted);margin-top:2px;letter-spacing:1.5px;text-transform:uppercase}
 
-/* CTA */
 .cta{text-align:center;background:none;border:none;backdrop-filter:none}
-.cta h2{font-family:'Bebas Neue',sans-serif;font-size:clamp(3.5rem,10vw,9rem);letter-spacing:3px;line-height:.92;color:#fff;margin-bottom:20px}
-.cta h2 em{font-style:normal;background:linear-gradient(90deg,var(--primary),var(--green));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.cta>p{font-weight:400;font-size:1.05rem;color:var(--muted);max-width:420px;margin:0 auto 40px;line-height:1.7}
-.cta-btn{display:inline-flex;align-items:center;gap:12px;padding:16px 40px;border:1px solid var(--primary);border-radius:60px;background:rgba(0,170,255,.06);color:var(--primary);font-family:'IBM Plex Mono',monospace;font-size:.72rem;letter-spacing:3px;text-transform:uppercase;text-decoration:none;transition:all .4s;cursor:pointer}
-.cta-btn:hover{transform:translateY(-3px);box-shadow:0 12px 40px rgba(0,170,255,.18);background:rgba(0,170,255,.12)}
-.cta-addr{font-family:'IBM Plex Mono',monospace;font-size:.6rem;letter-spacing:2px;color:var(--muted);margin-top:28px}
+.cta h2{font-family:'Bebas Neue',sans-serif;font-size:clamp(3.2rem,9vw,8rem);letter-spacing:3px;line-height:.92;color:#fff;margin-bottom:18px}
+.cta h2 em{font-style:normal;background:linear-gradient(90deg,var(--primary),var(--warm));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.cta>p{font-weight:400;font-size:1.05rem;color:var(--muted);max-width:400px;margin:0 auto 36px;line-height:1.7}
+.cta-btn{display:inline-flex;align-items:center;gap:12px;padding:16px 40px;border:1px solid var(--primary);border-radius:60px;background:rgba(226,32,37,.06);color:var(--primary);font-family:'IBM Plex Mono',monospace;font-size:.72rem;letter-spacing:3px;text-transform:uppercase;text-decoration:none;transition:all .4s;cursor:pointer}
+.cta-btn:hover{transform:translateY(-3px);box-shadow:0 12px 40px rgba(226,32,37,.25);background:rgba(226,32,37,.12)}
+.cta-addr{font-family:'IBM Plex Mono',monospace;font-size:.6rem;letter-spacing:2px;color:var(--muted);margin-top:26px}
 
-.foot{position:fixed;bottom:0;left:0;right:0;z-index:50;padding:16px 40px;display:flex;justify-content:space-between;opacity:0;transition:opacity .5s;pointer-events:none;font-family:'IBM Plex Mono',monospace;font-size:.5rem;letter-spacing:2px;color:var(--muted)}.foot.on{opacity:1}
+.foot{position:fixed;bottom:0;left:0;right:0;z-index:50;padding:14px 36px;display:flex;justify-content:space-between;opacity:0;transition:opacity .5s;pointer-events:none;font-family:'IBM Plex Mono',monospace;font-size:.5rem;letter-spacing:2px;color:var(--muted)}.foot.on{opacity:1}
 
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
 @keyframes sld{0%{top:-100%}100%{top:200%}}
 
-/* ═══ MOBILE ═══ */
 @media(max-width:900px){
-  nav{padding:16px 20px;padding-top:calc(16px + env(safe-area-inset-top))}.nav-r{display:none}
-  .p{padding:70px 16px 30px}
-  .cb{padding:28px 22px;border-radius:16px}
-  .row{grid-template-columns:1fr;gap:28px}
+  nav{padding:14px 18px;padding-top:calc(14px + env(safe-area-inset-top))}
+  .nav-r{display:none}
+  .p{padding:66px 14px 24px}
+  .cb{padding:24px 18px;border-radius:14px}
+  .row{grid-template-columns:1fr;gap:24px}
   .pgrid{grid-template-columns:1fr}
-  .stats{grid-template-columns:1fr 1fr}
-  .hero h1{font-size:clamp(3.2rem,15vw,5rem)}
-  .sec-h{font-size:clamp(2.2rem,8vw,3.5rem)}
-  .body-text{font-size:1rem}
-  .prog{right:12px}
-  .hud{left:16px;bottom:calc(12px + env(safe-area-inset-bottom))}
-  .vig{display:none}
-  .scroll-cue{bottom:calc(30px + env(safe-area-inset-bottom))}
-  .foot{padding:12px 20px;padding-bottom:calc(12px + env(safe-area-inset-bottom))}
-}
-@media(max-width:500px){
-  .cb{padding:22px 18px;border-radius:14px}
-  .stats{gap:10px}
+  .stats{grid-template-columns:1fr 1fr;gap:10px}
   .st{padding:14px}
-  .st-v{font-size:1.6rem}
+  .st-v{font-size:1.7rem}
+  .sec-h{font-size:clamp(2rem,7.5vw,3.2rem)}
+  .bt{font-size:.98rem}
+  .hero h1{font-size:clamp(3rem,14vw,4.5rem)}
+  .prog{right:10px}.prog-bar{height:60px}
+  .hud{left:14px;bottom:calc(10px + env(safe-area-inset-bottom))}
+  .vig{display:none}
+  .scroll-cue{bottom:calc(28px + env(safe-area-inset-bottom))}
+  .foot{padding:10px 18px;padding-bottom:calc(10px + env(safe-area-inset-bottom))}
   .pcard{padding:16px}
-  .pcard h4{font-size:.82rem}
+  .pcard h4{font-size:.84rem}
+}
+@media(max-width:420px){
+  .cb{padding:20px 16px}
+  .st-v{font-size:1.5rem}
+  .sec-h{font-size:clamp(1.8rem,8vw,2.6rem)}
 }
 </style>
 </head>
@@ -145,7 +145,6 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;padding:20px 40px;display:fl
 <div class="prog"><div class="prog-dot"></div><div class="prog-bar"><div class="prog-fill" id="pf"></div></div><div class="prog-num" id="pn">00</div></div>
 <div class="hud"><span class="hud-dot"></span><span id="ht">logo.prosystem</span></div>
 
-<!-- ═══ P0: HERO ═══ -->
 <div class="p" id="p0">
  <div class="cb hero">
   <div class="hero-badge"><i></i> Since 2001 — Anzola dell'Emilia (BO)</div>
@@ -155,121 +154,105 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;padding:20px 40px;display:fl
  <div class="scroll-cue" id="sc"><span>Scroll</span><div class="scroll-line"></div></div>
 </div>
 
-<!-- ═══ P1: CHI SIAMO ═══ -->
 <div class="p" id="p1">
- <div class="cb">
-  <div class="row">
-   <div>
-    <div class="sec-tag">01 — Chi Siamo</div>
-    <h2 class="sec-h">DAL 2001 NEL CUORE<br>DELLA <em>PACKAGING<br>VALLEY</em></h2>
-   </div>
-   <div>
-    <p class="body-text">Da oltre vent'anni Pro System S.r.l. è punto di riferimento nella produzione di protezioni anti-infortunistiche per macchine automatiche e nei sistemi di automazione industriale su misura. Fondata da De Marco Daniele e Rende Gianni, oggi operiamo nel nuovo stabilimento di 5.000 m² ad Anzola dell'Emilia, nel cuore della Packaging Valley bolognese.</p>
-    <div class="stats">
-     <div class="st"><div class="st-v">1500<b>+</b></div><div class="st-l">Ripari installati</div></div>
-     <div class="st"><div class="st-v">35</div><div class="st-l">Collaboratori</div></div>
-     <div class="st"><div class="st-v">5000<b>m²</b></div><div class="st-l">Stabilimento</div></div>
-     <div class="st"><div class="st-v">20<b>+</b></div><div class="st-l">Anni esperienza</div></div>
-    </div>
+ <div class="cb"><div class="row">
+  <div>
+   <div class="sec-tag">01 — Chi Siamo</div>
+   <h2 class="sec-h">DAL 2001 NEL CUORE<br>DELLA <em>PACKAGING<br>VALLEY</em></h2>
+  </div>
+  <div>
+   <p class="bt">Da oltre vent'anni Pro System S.r.l. è punto di riferimento nella produzione di protezioni anti-infortunistiche per macchine automatiche e nei sistemi di automazione industriale su misura. Fondata da De Marco Daniele e Rende Gianni, oggi operiamo nel nuovo stabilimento di 5.000 m² ad Anzola dell'Emilia.</p>
+   <div class="stats">
+    <div class="st"><div class="st-v">1500<b>+</b></div><div class="st-l">Ripari installati</div></div>
+    <div class="st"><div class="st-v">35</div><div class="st-l">Collaboratori</div></div>
+    <div class="st"><div class="st-v">5000<b>m²</b></div><div class="st-l">Stabilimento</div></div>
+    <div class="st"><div class="st-v">20<b>+</b></div><div class="st-l">Anni esperienza</div></div>
    </div>
   </div>
- </div>
+ </div></div>
 </div>
 
-<!-- ═══ P2: RIPARI ═══ -->
 <div class="p" id="p2">
- <div class="cb">
-  <div class="row">
-   <div>
-    <div class="sec-tag">02 — Ripari di Sicurezza</div>
-    <h2 class="sec-h">PROTEZIONI<br><em>SU MISURA</em><br>PER OGNI MACCHINA</h2>
-    <p class="body-text">Il nostro core business: ripari certificati in profilati di alluminio Q25/Q30, pannelli in policarbonato, lamiera o compositi. Ogni protezione è progettata ad-hoc per il macchinario del cliente.</p>
-   </div>
-   <div>
-    <div class="pgrid">
-     <div class="pcard"><h4>Sportelli & Portelloni</h4><p>Cerniere industriali, molle a gas, predisposizione sensori di sicurezza.</p><span class="ptag tc">Accesso</span></div>
-     <div class="pcard"><h4>Scorrevoli su Binario</h4><p>Guide ad alta scorrevolezza, bloccaggio sicuro, interblocco.</p><span class="ptag tw">Movimentazione</span></div>
-     <div class="pcard"><h4>Carter & Pannelli</h4><p>Lamiera, policarbonato o compositi. Fissi o asportabili.</p><span class="ptag tg">Copertura</span></div>
-     <div class="pcard"><h4>Profilati Alluminio</h4><p>Serie Q25/Q30, cornici, L, piatti. Anodizzazione grigia o elox.</p><span class="ptag tc">Struttura</span></div>
-    </div>
+ <div class="cb"><div class="row">
+  <div>
+   <div class="sec-tag">02 — Ripari di Sicurezza</div>
+   <h2 class="sec-h">PROTEZIONI<br><em>SU MISURA</em><br>PER OGNI MACCHINA</h2>
+   <p class="bt">Il nostro core business: ripari certificati in profilati alluminio Q25/Q30, pannelli in policarbonato, lamiera o compositi. Ogni protezione è progettata ad-hoc.</p>
+  </div>
+  <div>
+   <div class="pgrid">
+    <div class="pcard"><h4>Sportelli & Portelloni</h4><p>Cerniere industriali, molle a gas, sensori di sicurezza.</p><span class="ptag tc">Accesso</span></div>
+    <div class="pcard"><h4>Scorrevoli su Binario</h4><p>Guide ad alta scorrevolezza, bloccaggio, interblocco.</p><span class="ptag tw">Movimentazione</span></div>
+    <div class="pcard"><h4>Carter & Pannelli</h4><p>Lamiera, policarbonato o compositi. Fissi o asportabili.</p><span class="ptag tg">Copertura</span></div>
+    <div class="pcard"><h4>Profilati Alluminio</h4><p>Serie Q25/Q30, cornici, L, piatti. Anodizzazione grigia/elox.</p><span class="ptag tc">Struttura</span></div>
    </div>
   </div>
- </div>
+ </div></div>
 </div>
 
-<!-- ═══ P3: MACCHINE ═══ -->
 <div class="p" id="p3">
- <div class="cb">
-  <div class="row">
-   <div>
-    <div class="sec-tag">03 — Macchine Automatiche</div>
-    <h2 class="sec-h">F50-MAXI<br>& F50-MI<br><em>CARTONATRICI</em></h2>
-   </div>
-   <div>
-    <p class="body-text">La F50-MAXI è la nostra cartonatrice automatica per sacchetti di capsule caffè: braccio a ventosa su guida lineare, ingresso fino a 1.000 sacchetti/min, chiusura colla a caldo o scotch, produttività di 5 scatole/min. La F50-MI gestisce astucci di dimensioni variabili.</p>
-    <div class="stats">
-     <div class="st"><div class="st-v">1000<b>/min</b></div><div class="st-l">Sacchetti ingresso</div></div>
-     <div class="st"><div class="st-v">5<b>/min</b></div><div class="st-l">Scatole chiuse</div></div>
-     <div class="st"><div class="st-alt">COLLA · SCOTCH</div><div class="st-l">Chiusura</div></div>
-     <div class="st"><div class="st-alt" style="color:var(--warm)">VENTOSA</div><div class="st-l">Presa a vuoto</div></div>
-    </div>
+ <div class="cb"><div class="row">
+  <div>
+   <div class="sec-tag">03 — Macchine Automatiche</div>
+   <h2 class="sec-h">F50-MAXI<br>& F50-MI<br><em>CARTONATRICI</em></h2>
+  </div>
+  <div>
+   <p class="bt">La F50-MAXI è la nostra cartonatrice automatica per sacchetti di capsule caffè: braccio a ventosa su guida lineare, ingresso fino a 1.000 sacchetti/min, chiusura colla a caldo o scotch, 5 scatole/min.</p>
+   <div class="stats">
+    <div class="st"><div class="st-v">1000<b>/min</b></div><div class="st-l">Sacchetti ingresso</div></div>
+    <div class="st"><div class="st-v">5<b>/min</b></div><div class="st-l">Scatole chiuse</div></div>
+    <div class="st"><div class="st-alt">COLLA · SCOTCH</div><div class="st-l">Chiusura</div></div>
+    <div class="st"><div class="st-alt" style="color:var(--warm)">VENTOSA</div><div class="st-l">Presa a vuoto</div></div>
    </div>
   </div>
- </div>
+ </div></div>
 </div>
 
-<!-- ═══ P4: LEAN / KANBAN ═══ -->
 <div class="p" id="p4">
- <div class="cb">
-  <div class="row">
-   <div>
-    <div class="sec-tag">04 — Lean Production</div>
-    <h2 class="sec-h">KANBAN,<br>NASTRI &<br><em>ERGONOMIA</em></h2>
-    <p class="body-text">Scaffalature Kanban inclinabili con rulliere a gravità, banchi ergonomici motorizzati con altezza regolabile e 4 posizioni di memoria. Nastri trasportatori lineari, curvi, inclinati e multipiano in alluminio o acciaio.</p>
-   </div>
-   <div>
-    <div class="pgrid">
-     <div class="pcard"><h4>Scaffali Kanban</h4><p>Struttura in profili alluminio, rulliere a gravità, inclinazione regolabile.</p><span class="ptag tc">Logistica</span></div>
-     <div class="pcard"><h4>Banchi Ergonomici</h4><p>Motorizzati, altezza regolabile, 4 posizioni memoria.</p><span class="ptag tw">Postazione</span></div>
-     <div class="pcard"><h4>Nastri Trasportatori</h4><p>Lineari, curvi, inclinati, multipiano. Modulari con sensori.</p><span class="ptag tg">Trasporto</span></div>
-     <div class="pcard"><h4>Sistemi Modulari</h4><p>Componenti standard combinabili per layout personalizzati.</p><span class="ptag tc">Flessibilità</span></div>
-    </div>
+ <div class="cb"><div class="row">
+  <div>
+   <div class="sec-tag">04 — Lean Production</div>
+   <h2 class="sec-h">KANBAN,<br>NASTRI &<br><em>ERGONOMIA</em></h2>
+   <p class="bt">Scaffalature Kanban con rulliere a gravità, banchi ergonomici motorizzati con 4 posizioni memoria, nastri trasportatori lineari, curvi, inclinati e multipiano.</p>
+  </div>
+  <div>
+   <div class="pgrid">
+    <div class="pcard"><h4>Scaffali Kanban</h4><p>Profili alluminio, rulliere a gravità, inclinazione regolabile.</p><span class="ptag tc">Logistica</span></div>
+    <div class="pcard"><h4>Banchi Ergonomici</h4><p>Motorizzati, altezza regolabile, 4 posizioni di memoria.</p><span class="ptag tw">Postazione</span></div>
+    <div class="pcard"><h4>Nastri Trasportatori</h4><p>Lineari, curvi, inclinati, multipiano. Modulari con sensori.</p><span class="ptag tg">Trasporto</span></div>
+    <div class="pcard"><h4>Sistemi Modulari</h4><p>Componenti standard combinabili per layout su misura.</p><span class="ptag tc">Flessibilità</span></div>
    </div>
   </div>
- </div>
+ </div></div>
 </div>
 
-<!-- ═══ P5: STAMPA 3D ═══ -->
 <div class="p" id="p5">
- <div class="cb">
-  <div class="row">
-   <div>
-    <div class="sec-tag">05 — Stampa 3D & CNC</div>
-    <h2 class="sec-h">ADDITIVE<br><em>MANUFACTURING</em><br>& CNC</h2>
+ <div class="cb"><div class="row">
+  <div>
+   <div class="sec-tag">05 — Stampa 3D & CNC</div>
+   <h2 class="sec-h">ADDITIVE<br><em>MANUFACTURING</em><br>& CNC</h2>
+  </div>
+  <div>
+   <div class="certs">
+    <div class="cert">ISO 9001<small>Qualità</small></div>
+    <div class="cert">ISO 14001<small>Ambiente</small></div>
+    <div class="cert">ISO 45001<small>Sicurezza</small></div>
    </div>
-   <div>
-    <div class="certs">
-     <div class="cert">ISO 9001<small>Qualità</small></div>
-     <div class="cert">ISO 14001<small>Ambiente</small></div>
-     <div class="cert">ISO 45001<small>Sicurezza</small></div>
-    </div>
-    <p class="body-text">Stratasys F170 per stampa FDM con Nylon, Onyx, fibra di carbonio e Kevlar. Stampante SLS a polvere e resina ad alta precisione. CNC SCM Morbidelli X200 di ultima generazione.</p>
-    <div class="pgrid">
-     <div class="pcard"><h4>FDM</h4><p>PLA, Nylon, Onyx, Carbonio, Kevlar, HSHT.</p><span class="ptag tc">Filamento</span></div>
-     <div class="pcard"><h4>SLS</h4><p>Nylon 11/12 CF, Nylon 12 GF, TPU 90A.</p><span class="ptag tw">Polvere</span></div>
-     <div class="pcard"><h4>Resina SLA</h4><p>Rigid 10K, Elastic 50A, High Temp, Castable Wax.</p><span class="ptag tg">Precisione</span></div>
-     <div class="pcard"><h4>CNC</h4><p>SCM Morbidelli X200 (2025). Fresatura alta velocità.</p><span class="ptag tc">Sottrattivo</span></div>
-    </div>
+   <p class="bt">Stratasys F170 per stampa FDM con Nylon, Onyx, fibra di carbonio e Kevlar. SLS a polvere e resina ad alta precisione. CNC SCM Morbidelli X200.</p>
+   <div class="pgrid">
+    <div class="pcard"><h4>FDM</h4><p>PLA, Nylon, Onyx, Carbonio, Kevlar, HSHT.</p><span class="ptag tc">Filamento</span></div>
+    <div class="pcard"><h4>SLS</h4><p>Nylon 11/12 CF, Nylon 12 GF, TPU 90A.</p><span class="ptag tw">Polvere</span></div>
+    <div class="pcard"><h4>Resina SLA</h4><p>Rigid 10K, Elastic 50A, High Temp, Castable Wax.</p><span class="ptag tg">Precisione</span></div>
+    <div class="pcard"><h4>CNC</h4><p>SCM Morbidelli X200. Fresatura alta velocità.</p><span class="ptag tc">Sottrattivo</span></div>
    </div>
   </div>
- </div>
+ </div></div>
 </div>
 
-<!-- ═══ P6: CTA ═══ -->
 <div class="p" id="p6">
  <div class="cb cta">
   <h2>PROTEGGIAMO<br>IL TUO <em>FUTURO</em></h2>
-  <p>Ogni soluzione è progettata su misura per le tue esigenze. Parliamo del tuo prossimo impianto.</p>
+  <p>Ogni soluzione progettata su misura. Parliamo del tuo prossimo impianto.</p>
   <a href="mailto:info@prosystemsrl.eu" class="cta-btn"><span>Richiedi Preventivo</span> →</a>
   <div class="cta-addr">Via Carlo Nepoti 1 — 40011 Anzola dell'Emilia (BO) — www.prosystemsrl.eu</div>
  </div>
@@ -278,33 +261,28 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;padding:20px 40px;display:fl
 <div class="foot" id="foot"><span>© 2026 PRO SYSTEM S.R.L.</span><span>PACKAGING VALLEY — ITALIA</span></div>
 
 <script>
-/* ═══════════════════════════════════════
-   SETUP
-   ═══════════════════════════════════════ */
 const W=()=>innerWidth,H=()=>innerHeight;
 const isMob=/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)||W()<768;
-const N=isMob?2500:5000;
+const N=isMob?2200:5000;
 const ease=t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 const lerp=(a,b,t)=>a+(b-a)*t;
 const mapR=(v,a,b,c,d)=>clamp((v-a)/(b-a),0,1)*(d-c)+c;
 
 const canvas=document.getElementById('c');
-const ren=new THREE.WebGLRenderer({canvas,antialias:!isMob});
-ren.setSize(W(),H());ren.setPixelRatio(Math.min(devicePixelRatio,isMob?2:2));ren.setClearColor(0x050709);
+const ren=new THREE.WebGLRenderer({canvas,antialias:!isMob,powerPreference:isMob?'low-power':'high-performance'});
+ren.setSize(W(),H());ren.setPixelRatio(Math.min(devicePixelRatio,isMob?1.5:2));ren.setClearColor(0x050709);
 const scene=new THREE.Scene();
-scene.fog=new THREE.FogExp2(0x050709,isMob?.012:.014);
+scene.fog=new THREE.FogExp2(0x050709,isMob?.01:.013);
 const cam=new THREE.PerspectiveCamera(50,W()/H(),.1,300);
 cam.position.set(0,0,14);
 
 function sharpTex(){const c=document.createElement('canvas');c.width=32;c.height=32;const x=c.getContext('2d');x.fillStyle='#fff';x.beginPath();x.arc(16,16,12,0,Math.PI*2);x.fill();return new THREE.CanvasTexture(c)}
 
-/* ═══════════════════════════════════════
-   BOX-BASED SHAPE GENERATOR
-   ═══════════════════════════════════════ */
+/* ═══ BOX GENERATOR ═══ */
 function genBoxes(n,boxes){
   const pos=new Float32Array(n*3),col=new Float32Array(n*3);
-  const vols=boxes.map(b=>(b[1]-b[0])*(b[3]-b[2])*(b[5]-b[4]));
+  const vols=boxes.map(b=>Math.abs((b[1]-b[0])*(b[3]-b[2])*(b[5]-b[4])));
   const tot=vols.reduce((a,b)=>a+b,0);
   for(let i=0;i<n;i++){
     let r=Math.random()*tot,cum=0,bi=0;
@@ -317,243 +295,196 @@ function genBoxes(n,boxes){
   }
   return{positions:pos,colors:col};
 }
-
-function sortShape(d,n){
+function sortS(d,n){
   const idx=Array.from({length:n},(_,i)=>i);
   idx.sort((a,b)=>Math.atan2(d.positions[a*3+1],d.positions[a*3])-Math.atan2(d.positions[b*3+1],d.positions[b*3]));
   const sp=new Float32Array(n*3),sc=new Float32Array(n*3);
-  idx.forEach((o,i)=>{sp[i*3]=d.positions[o*3];sp[i*3+1]=d.positions[o*3+1];sp[i*3+2]=d.positions[o*3+2];sc[i*3]=d.colors[o*3];sc[i*3+1]=d.colors[o*3+1];sc[i*3+2]=d.colors[o*3+2]});
+  idx.forEach((o,i)=>{for(let k=0;k<3;k++){sp[i*3+k]=d.positions[o*3+k];sc[i*3+k]=d.colors[o*3+k]}});
   return{positions:sp,colors:sc};
 }
 
-/* ═══════════════════════════════════════
-   SHAPE 0: PS LOGO (Isometric 3D letterform)
-   Colors: steel blue top ~(.38,.46,.50) · silver front ~(.72,.75,.78)
-   ═══════════════════════════════════════ */
-const SB=[.30,.38,.42], SV=[.62,.66,.70]; // steel blue, silver (dimmed for additive)
+/* ═══ SHAPE 0: PS LOGO ═══ */
 function genLogo(n){
+  const ST=[.35,.40,.46],SV=[.58,.62,.66];
   return genBoxes(n,[
-    // Left vertical bar (tall, silver)
-    [-3.0,-2.1, -3,3, -.4,.4, SV[0],SV[1],SV[2]],
-    // Top horizontal bar (steel blue)
-    [-3,2.8, 2.2,3, -.4,.4, SB[0],SB[1],SB[2]],
-    // Top bar front face (silver, thin)
-    [-3,2.8, 1.6,2.2, .2,.4, SV[0],SV[1],SV[2]],
-    // Middle horizontal bar (steel blue top)
-    [-1.5,2.8, .1,.7, -.4,.4, SB[0],SB[1],SB[2]],
-    // Middle bar front face (silver)
-    [-1.5,2.8, -.5,.1, .2,.4, SV[0],SV[1],SV[2]],
-    // Right vertical upper (silver)
-    [2.1,2.8, .7,2.2, -.4,.4, SV[0],SV[1],SV[2]],
-    // Right vertical lower (silver, back layer)
-    [2.1,2.8, -3,-.5, -.4,.1, SV[0],SV[1],SV[2]],
-    // Bottom horizontal bar (steel blue, back layer)
-    [-.5,2.8, -3,-2.3, -.4,.1, SB[0],SB[1],SB[2]],
+    [-3.2,-2.2, -3.2,3.2, -.45,.45, SV[0],SV[1],SV[2]],
+    [-3.2,2.8, 2.2,3.2, -.45,.45, ST[0],ST[1],ST[2]],
+    [-3.2,2.8, 1.6,2.2, .2,.45, SV[0],SV[1],SV[2]],
+    [-1.5,2.8, .0,.7, -.45,.45, ST[0],ST[1],ST[2]],
+    [-1.5,2.8, -.6,.0, .2,.45, SV[0],SV[1],SV[2]],
+    [2.0,2.8, .7,2.2, -.45,.45, SV[0],SV[1],SV[2]],
+    [2.0,2.8, -3.2,-.6, -.45,.1, SV[0],SV[1],SV[2]],
+    [-.5,2.8, -3.2,-2.5, -.45,.1, ST[0],ST[1],ST[2]],
   ]);
 }
 
-/* ═══════════════════════════════════════
-   SHAPE 1: BUILDING (Capannone with RED totems)
-   ═══════════════════════════════════════ */
+/* ═══ SHAPE 1: BUILDING (L-shape with RED totems) ═══ */
 function genBuilding(n){
-  const DG=[.25,.28,.32], LR=[.55,.58,.62], RD=[.70,.10,.08], BR=[.42,.33,.22], GN=[.15,.50,.15];
+  const DG=[.22,.24,.27],LG=[.52,.55,.58],RD=[.85,.12,.10],BR=[.38,.30,.18],
+        WN=[.14,.12,.10],GN=[.15,.55,.15],WH=[.60,.62,.65],RF=[.45,.48,.52];
   return genBoxes(n,[
-    // Main warehouse body (dark gray)
-    [-1,5, -.5,1.8, -2.5,2.5, DG[0],DG[1],DG[2]],
-    // Office section left (slightly lighter)
-    [-4.5,-1, -.5,2.8, -1.8,1.8, .30,.33,.37],
-    // Roof (light gray, wider)
-    [-1.3,5.3, 1.8,2.1, -2.8,2.8, LR[0],LR[1],LR[2]],
-    // Office roof
-    [-4.8,-.7, 2.8,3.1, -2,2, LR[0],LR[1],LR[2]],
-    // ──── RED TOTEMS ──── (the key visual!)
-    [-4.7,-4.1, -.5,3.2, 1.6,2, RD[0],RD[1],RD[2]],  // totem left
-    [1.5,2.1, -.5,2.6, 2.3,2.7, RD[0],RD[1],RD[2]],   // totem center
-    [4.5,5.1, -.5,2.6, 2.3,2.7, RD[0],RD[1],RD[2]],   // totem right
-    // Ground (brown)
-    [-6,7, -1.2,-.5, -4,4, BR[0],BR[1],BR[2]],
-    // Windows on office (lighter spots)
-    [-4,-3.5, .5,1.5, 1.7,1.85, .50,.52,.56],
-    [-3.2,-2.7, .5,1.5, 1.7,1.85, .50,.52,.56],
-    [-4,-3.5, 1.8,2.5, 1.7,1.85, .50,.52,.56],
-    [-3.2,-2.7, 1.8,2.5, 1.7,1.85, .50,.52,.56],
-    // Green entrance
-    [-1.3,-.5, -.5,.1, 1.8,2, GN[0],GN[1],GN[2]],
+    // Office (left, 2-story)
+    [-6,-1, -1,2.8, -2.5,2, DG[0],DG[1],DG[2]],
+    [-6.2,-.8, 2.8,3.1, -2.7,2.2, LG[0],LG[1],LG[2]],
+    // Warehouse (right)
+    [-1,6, -1,1.8, -3.5,2, DG[0],DG[1],DG[2]],
+    [-1.2,6.3, 1.8,2.1, -3.7,2.2, RF[0],RF[1],RF[2]],
+    [-1.2,6.3, 2.05,2.15, -3.5,2, .55,.58,.62],
+    // Windows - office front
+    [-5.5,-4.8, -.2,.8, 1.95,2.05, WN[0],WN[1],WN[2]],
+    [-4.4,-3.7, -.2,.8, 1.95,2.05, WN[0],WN[1],WN[2]],
+    [-3.3,-2.6, -.2,.8, 1.95,2.05, WN[0],WN[1],WN[2]],
+    [-2.2,-1.5, -.2,.8, 1.95,2.05, WN[0],WN[1],WN[2]],
+    [-5.5,-4.8, 1.2,2.2, 1.95,2.05, WN[0],WN[1],WN[2]],
+    [-4.4,-3.7, 1.2,2.2, 1.95,2.05, WN[0],WN[1],WN[2]],
+    [-3.3,-2.6, 1.2,2.2, 1.95,2.05, WN[0],WN[1],WN[2]],
+    [-2.2,-1.5, 1.2,2.2, 1.95,2.05, WN[0],WN[1],WN[2]],
+    // Warehouse windows
+    [0,.6, .6,1.4, 1.95,2.05, WN[0],WN[1],WN[2]],
+    [2,2.6, .6,1.4, 1.95,2.05, WN[0],WN[1],WN[2]],
+    [4,4.6, .6,1.4, 1.95,2.05, WN[0],WN[1],WN[2]],
+    // RED BANNERS
+    [-5.3,-4.9, .2,2.4, 2.02,2.1, RD[0],RD[1],RD[2]],
+    [-4.1,-3.7, .2,2.4, 2.02,2.1, RD[0],RD[1],RD[2]],
+    [-2.9,-2.5, .2,2.4, 2.02,2.1, RD[0],RD[1],RD[2]],
+    [-.5,-.1, .2,1.6, 2.02,2.1, RD[0],RD[1],RD[2]],
+    [1.3,1.7, .2,1.6, 2.02,2.1, RD[0],RD[1],RD[2]],
+    [3.3,3.7, .2,1.6, 2.02,2.1, RD[0],RD[1],RD[2]],
+    // GIANT RED TOTEM (right corner)
+    [5.5,6.2, -1,4.2, 1.6,2.4, RD[0],RD[1],RD[2]],
+    [5.6,6.1, .5,3.5, 1.8,2.2, .90,.15,.12],
+    // Second totem (junction)
+    [-1.2,-.6, -1,3.5, 1.6,2.2, RD[0],RD[1],RD[2]],
+    // Entrance
+    [-3.8,-2.5, -1,-.3, 2.0,2.6, WH[0],WH[1],WH[2]],
+    // Green strip
+    [-5.5,-.5, -.95,-.7, 2.1,2.8, GN[0],GN[1],GN[2]],
+    // Ground
+    [-7,8, -1.8,-1, -5,5, BR[0],BR[1],BR[2]],
+    [-7,8, -1.5,-1, 2.5,5, .35,.37,.40],
+    // Totem glow on ground
+    [5,6.5, -1.3,-1, 1,3, .30,.06,.05],
+    [-1.5,-.3, -1.3,-1, 1.3,2.5, .25,.05,.04],
   ]);
 }
 
-/* ═══════════════════════════════════════
-   SHAPE 2: SAFETY GUARD (Grid pattern)
-   Aluminum profiles + polycarbonate
-   ═══════════════════════════════════════ */
+/* ═══ SHAPE 2: GUARD ═══ */
 function genGuard(n){
-  const AL=[.50,.53,.57], FR=[.38,.42,.45], PC=[.30,.48,.62];
-  const boxes=[];
-  // Frame border (darker)
-  boxes.push([-3.8,3.8, 2.5,2.7, -.2,.2, FR[0],FR[1],FR[2]]);
-  boxes.push([-3.8,3.8, -2.7,-2.5, -.2,.2, FR[0],FR[1],FR[2]]);
-  boxes.push([-3.8,-3.5, -2.5,2.5, -.2,.2, FR[0],FR[1],FR[2]]);
-  boxes.push([3.5,3.8, -2.5,2.5, -.2,.2, FR[0],FR[1],FR[2]]);
-  // Vertical bars
-  for(let x=-3.5;x<=3.5;x+=.5)boxes.push([x-.025,x+.025, -2.5,2.5, -.12,.12, AL[0],AL[1],AL[2]]);
-  // Horizontal bars
-  for(let y=-2.5;y<=2.5;y+=.5)boxes.push([-3.5,3.5, y-.025,y+.025, -.12,.12, AL[0],AL[1],AL[2]]);
-  // Polycarbonate panel (center, bluish)
-  boxes.push([-2.5,2.5, -1.5,1.5, -.03,.03, PC[0],PC[1],PC[2]]);
-  return genBoxes(n,boxes);
+  const AL=[.50,.53,.57],FR=[.38,.42,.45],PC=[.30,.48,.58];
+  const b=[];
+  b.push([-4,4, 2.6,2.8, -.2,.2, FR[0],FR[1],FR[2]]);
+  b.push([-4,4, -2.8,-2.6, -.2,.2, FR[0],FR[1],FR[2]]);
+  b.push([-4,-3.7, -2.6,2.6, -.2,.2, FR[0],FR[1],FR[2]]);
+  b.push([3.7,4, -2.6,2.6, -.2,.2, FR[0],FR[1],FR[2]]);
+  for(let x=-3.5;x<=3.5;x+=.5)b.push([x-.03,x+.03, -2.6,2.6, -.12,.12, AL[0],AL[1],AL[2]]);
+  for(let y=-2.5;y<=2.5;y+=.5)b.push([-3.7,3.7, y-.03,y+.03, -.12,.12, AL[0],AL[1],AL[2]]);
+  b.push([-2.5,2.5, -1.5,1.5, -.02,.02, PC[0],PC[1],PC[2]]);
+  return genBoxes(n,b);
 }
 
-/* ═══════════════════════════════════════
-   SHAPE 3: F50-MAXI (Cartoning machine)
-   White body, glass panels, conveyor output
-   ═══════════════════════════════════════ */
+/* ═══ SHAPE 3: F50-MAXI ═══ */
 function genF50(n){
-  const WH=[.65,.67,.70], GL=[.40,.55,.68], DK=[.22,.25,.28], TN=[.55,.45,.30];
+  const WH=[.62,.64,.68],GL=[.38,.50,.60],DK=[.20,.22,.25],TN=[.52,.42,.28];
   return genBoxes(n,[
-    // Main body base
-    [-4.5,3.5, -2.5,.5, -1.5,1.5, WH[0],WH[1],WH[2]],
-    // Left enclosure (glass panels - taller)
-    [-4.5,-1, .5,2.8, -1.5,1.5, GL[0],GL[1],GL[2]],
-    // Center processing (white)
-    [-1,2, .5,2.2, -1.5,1.5, WH[0],WH[1],WH[2]],
-    // Right enclosure (glass)
-    [2,3.5, .5,2.2, -1.5,1.5, GL[0],GL[1],GL[2]],
-    // Control tower on top
-    [.5,1.5, 2.2,4.2, -.4,.4, DK[0],DK[1],DK[2]],
-    // Output conveyor
-    [3.5,6, -2.5,-1.5, -.6,.6, DK[0],DK[1],DK[2]],
-    // Boxes on output conveyor (tan/cardboard)
-    [4,4.8, -1.5,-.5, -.4,.4, TN[0],TN[1],TN[2]],
-    [5.2,5.8, -1.5,-.5, -.4,.4, TN[0],TN[1],TN[2]],
-    // Feed conveyor (left)
-    [-4.5,-4, -2.5,-1.8, -.8,.8, DK[0],DK[1],DK[2]],
-    // Sliding door rails (subtle)
-    [-4.5,-1, 2.6,2.8, 1.4,1.55, .35,.38,.42],
+    [-5,4, -2.5,.2, -1.5,1.5, DK[0],DK[1],DK[2]],
+    [-5,-1.5, .2,2.5, -1.5,1.5, GL[0],GL[1],GL[2]],
+    [-1.5,1.5, .2,2, -1.5,1.5, WH[0],WH[1],WH[2]],
+    [1.5,3.5, .2,2, -1.5,1.5, GL[0],GL[1],GL[2]],
+    [-5,4, -2.5,-.5, 1.3,1.55, WH[0],WH[1],WH[2]],
+    [-5,4, -2.5,-.5, -1.55,-1.3, WH[0],WH[1],WH[2]],
+    [.3,1.2, 2,3.8, -.3,.3, DK[0],DK[1],DK[2]],
+    [3.5,6.5, -2.5,-1.5, -.5,.5, DK[0],DK[1],DK[2]],
+    [4.2,5, -1.5,-.6, -.3,.3, TN[0],TN[1],TN[2]],
+    [5.4,6, -1.5,-.6, -.3,.3, TN[0],TN[1],TN[2]],
+    [-5,-1.5, 2.4,2.55, 1.3,1.45, .30,.32,.35],
   ]);
 }
 
-/* ═══════════════════════════════════════
-   SHAPE 4: KANBAN SHELVING (from catalog image)
-   Aluminum frame + yellow rollers
-   ═══════════════════════════════════════ */
+/* ═══ SHAPE 4: KANBAN ═══ */
 function genKanban(n){
-  const AL=[.55,.57,.60], YL=[.60,.58,.15], DK=[.30,.32,.35];
-  const boxes=[];
-  // 3 vertical frames (posts)
-  for(let x of[-3.5,0,3.5]){
-    boxes.push([x-.15,x+.15, -3,3.5, -2,2, AL[0],AL[1],AL[2]]);
-  }
-  // 4 shelves with inclined yellow rollers
+  const AL=[.52,.55,.58],YL=[.58,.55,.12],DK=[.28,.30,.33];
+  const b=[];
+  for(let x of[-3.5,0,3.5])b.push([x-.15,x+.15, -3,3.5, -2,2, AL[0],AL[1],AL[2]]);
   for(let y of[-2,-.3,1.4,3]){
-    // Shelf frame
-    boxes.push([-3.5,3.5, y-.08,y+.08, -2,2, AL[0],AL[1],AL[2]]);
-    // Yellow rollers on each shelf (inclined slightly)
-    for(let z=-1.5;z<=1.5;z+=.35){
-      boxes.push([-3.3,3.3, y-.12,y+.2, z-.06,z+.06, YL[0],YL[1],YL[2]]);
-    }
+    b.push([-3.5,3.5, y-.08,y+.08, -2,2, AL[0],AL[1],AL[2]]);
+    for(let z=-1.5;z<=1.5;z+=.35)
+      b.push([-3.3,3.3, y-.15,y+.2, z-.06,z+.06, YL[0],YL[1],YL[2]]);
   }
-  // Top frame
-  boxes.push([-3.5,3.5, 3.4,3.6, -2,2, AL[0],AL[1],AL[2]]);
-  // Feet
-  for(let x of[-3.5,0,3.5])for(let z of[-1.8,1.8]){
-    boxes.push([x-.2,x+.2, -3.3,-3, z-.2,z+.2, DK[0],DK[1],DK[2]]);
-  }
-  return genBoxes(n,boxes);
+  b.push([-3.5,3.5, 3.4,3.6, -2,2, AL[0],AL[1],AL[2]]);
+  for(let x of[-3.5,0,3.5])for(let z of[-1.8,1.8])
+    b.push([x-.2,x+.2, -3.3,-3, z-.2,z+.2, DK[0],DK[1],DK[2]]);
+  return genBoxes(n,b);
 }
 
-/* ═══════════════════════════════════════
-   SHAPE 5: 3D PRINT (SLA resin - hanging parts)
-   Blue resin parts, orange platform, steel frame
-   ═══════════════════════════════════════ */
+/* ═══ SHAPE 5: 3D PRINT ═══ */
 function gen3DPrint(n){
-  const BL=[.18,.45,.68], OR=[.72,.40,.08], LB=[.40,.60,.72], ST=[.28,.30,.33];
+  const BL=[.16,.42,.65],OR=[.68,.38,.06],LB=[.35,.55,.68],ST=[.25,.27,.30];
   return genBoxes(n,[
-    // Build plate (top, orange)
     [-2.5,2.5, 3,3.4, -2.5,2.5, OR[0],OR[1],OR[2]],
-    // Printed part A (blue resin, left)
-    [-2,-0.5, -.5,3, -1,1, BL[0],BL[1],BL[2]],
-    // Printed part B (blue resin, right)
+    [-2,-.5, -.5,3, -1,1, BL[0],BL[1],BL[2]],
     [.5,2, -.5,3, -1,1, BL[0],BL[1],BL[2]],
-    // Printed part C (center, smaller)
     [-.5,.5, .5,3, -.6,.6, BL[0],BL[1],BL[2]],
-    // Support lattice (light blue, thin)
-    [-1.5,1.5, 1.5,3, -.15,.15, LB[0],LB[1],LB[2]],
-    [-.15,.15, 1.5,3, -1.5,1.5, LB[0],LB[1],LB[2]],
-    // Frame pillars (steel)
+    [-1.5,1.5, 1.5,3, -.12,.12, LB[0],LB[1],LB[2]],
+    [-.12,.12, 1.5,3, -1.5,1.5, LB[0],LB[1],LB[2]],
     [-3,-2.5, -2.5,3.5, -3,-2.5, ST[0],ST[1],ST[2]],
     [2.5,3, -2.5,3.5, -3,-2.5, ST[0],ST[1],ST[2]],
     [-3,-2.5, -2.5,3.5, 2.5,3, ST[0],ST[1],ST[2]],
     [2.5,3, -2.5,3.5, 2.5,3, ST[0],ST[1],ST[2]],
-    // Base (dark)
     [-3,3, -2.8,-2.5, -3,3, ST[0],ST[1],ST[2]],
-    // Resin pool (blue at bottom)
-    [-2.5,2.5, -2.5,-1.5, -2.5,2.5, .12,.32,.50],
+    [-2.5,2.5, -2.5,-1.5, -2.5,2.5, .10,.28,.45],
   ]);
 }
 
-/* ═══════════════════════════════════════
-   GENERATE ALL SHAPES
-   ═══════════════════════════════════════ */
+/* ═══ BUILD ═══ */
 const raw0=genLogo(N);
-const shapeData=[
-  sortShape(raw0,N),                       // 0: PS Logo
-  sortShape(genBuilding(N),N),             // 1: Building
-  sortShape(genGuard(N),N),                // 2: Safety Guard
-  sortShape(genF50(N),N),                  // 3: F50-MAXI
-  sortShape(genKanban(N),N),               // 4: Kanban
-  sortShape(gen3DPrint(N),N),              // 5: 3D Print
-  {positions:new Float32Array(raw0.positions), // 6: = Logo copy for loop
-   colors:new Float32Array(raw0.colors)},
+const sd=[
+  sortS(raw0,N),
+  sortS(genBuilding(N),N),
+  sortS(genGuard(N),N),
+  sortS(genF50(N),N),
+  sortS(genKanban(N),N),
+  sortS(gen3DPrint(N),N),
+  sortS({positions:new Float32Array(raw0.positions),colors:new Float32Array(raw0.colors)},N),
 ];
-// Sort the loop copy the same way
-const s6=sortShape(shapeData[6],N);
-shapeData[6]=s6;
+const labels=['logo.prosystem','sede.capannone','prod.riparo','machine.f50','lean.kanban','tech.stampa3d','logo.prosystem'];
 
-const labels=['logo.prosystem','sede.capannone','prod.riparo','machine.f50_maxi','lean.kanban','tech.stampa3d','logo.prosystem'];
-
-/* ═══════════════════════════════════════
-   PARTICLE SYSTEM
-   ═══════════════════════════════════════ */
+/* ═══ PARTICLES ═══ */
 const geo=new THREE.BufferGeometry();
 const pos=new Float32Array(N*3),col=new Float32Array(N*3),prev=new Float32Array(N*3);
-for(let i=0;i<N*3;i++){pos[i]=shapeData[0].positions[i];prev[i]=pos[i];col[i]=shapeData[0].colors[i]}
+for(let i=0;i<N*3;i++){pos[i]=sd[0].positions[i];prev[i]=pos[i];col[i]=sd[0].colors[i]}
 geo.setAttribute('position',new THREE.BufferAttribute(pos,3));
 geo.setAttribute('color',new THREE.BufferAttribute(col,3));
 
 const mat=new THREE.PointsMaterial({
-  size:isMob?.14:.12,map:sharpTex(),vertexColors:true,transparent:true,
-  opacity:.85,blending:THREE.AdditiveBlending,sizeAttenuation:true,depthWrite:false
+  size:isMob?.16:.12,map:sharpTex(),vertexColors:true,transparent:true,
+  opacity:.82,blending:THREE.AdditiveBlending,sizeAttenuation:true,depthWrite:false
 });
 const pts=new THREE.Points(geo,mat);scene.add(pts);
 
-// Dust
 if(!isMob){
-  const dN=400,dG=new THREE.BufferGeometry(),dP=new Float32Array(dN*3);
-  for(let i=0;i<dN;i++){dP[i*3]=(Math.random()-.5)*60;dP[i*3+1]=(Math.random()-.5)*60;dP[i*3+2]=(Math.random()-.5)*60}
+  const dN=350,dG=new THREE.BufferGeometry(),dP=new Float32Array(dN*3);
+  for(let i=0;i<dN;i++){dP[i*3]=(Math.random()-.5)*50;dP[i*3+1]=(Math.random()-.5)*50;dP[i*3+2]=(Math.random()-.5)*50}
   dG.setAttribute('position',new THREE.BufferAttribute(dP,3));
-  scene.add(new THREE.Points(dG,new THREE.PointsMaterial({size:.02,color:0x1e2540,transparent:true,opacity:.4,blending:THREE.AdditiveBlending,depthWrite:false})));
+  scene.add(new THREE.Points(dG,new THREE.PointsMaterial({size:.02,color:0x1a1520,transparent:true,opacity:.35,blending:THREE.AdditiveBlending,depthWrite:false})));
 }
 
-/* ═══════════════════════════════════════
-   SCROLL — GENEROUS PACING + SEAMLESS LOOP
-   1500vh total → each section ~10% = 150vh
-   ═══════════════════════════════════════ */
+/* ═══ SCROLL ═══ */
 const TR=[
-  {s:.07,e:.12,from:0,to:1},  // logo → building
-  {s:.22,e:.27,from:1,to:2},  // building → guard
-  {s:.37,e:.42,from:2,to:3},  // guard → F50
-  {s:.52,e:.57,from:3,to:4},  // F50 → kanban
-  {s:.67,e:.72,from:4,to:5},  // kanban → 3dprint
-  {s:.87,e:.92,from:5,to:6},  // 3dprint → logo (LOOP)
+  {s:.07,e:.12,from:0,to:1},
+  {s:.22,e:.27,from:1,to:2},
+  {s:.37,e:.42,from:2,to:3},
+  {s:.52,e:.57,from:3,to:4},
+  {s:.67,e:.72,from:4,to:5},
+  {s:.87,e:.92,from:5,to:6},
 ];
 const PN=[
-  {id:'p0',in:0,  pk:.03,out:.06},
+  {id:'p0',in:0,pk:.03,out:.06},
   {id:'p1',in:.13,pk:.17,out:.21},
   {id:'p2',in:.28,pk:.32,out:.36},
   {id:'p3',in:.43,pk:.47,out:.51},
   {id:'p4',in:.58,pk:.62,out:.66},
   {id:'p5',in:.73,pk:.79,out:.86},
-  {id:'p6',in:.88,pk:.94,out:.965},
+  {id:'p6',in:.88,pk:.94,out:.96},
 ];
 
 let scroll=0,mxT=0,myT=0,mx=0,my=0,loopLock=false;
@@ -564,34 +495,25 @@ function tick(){
   const maxS=sp.offsetHeight-H();
   scroll=clamp(scrollY/maxS,0,1);
 
-  // ── SEAMLESS LOOP ──
   if(!loopLock&&scroll>.965){
     loopLock=true;
-    for(let i=0;i<N*3;i++){pos[i]=shapeData[0].positions[i];prev[i]=pos[i];col[i]=shapeData[0].colors[i]}
+    for(let i=0;i<N*3;i++){pos[i]=sd[0].positions[i];prev[i]=pos[i];col[i]=sd[0].colors[i]}
     geo.attributes.position.needsUpdate=true;geo.attributes.color.needsUpdate=true;
     scrollTo(0,maxS*.03);scroll=.03;
-    requestAnimationFrame(()=>loopLock=false);
-    return;
+    requestAnimationFrame(()=>loopLock=false);return;
   }
 
-  // Progress
   document.getElementById('pf').style.height=(scroll*100)+'%';
   document.getElementById('pn').textContent=String(Math.floor(scroll*100)).padStart(2,'0');
+  const sc=document.getElementById('sc');if(sc)sc.style.opacity=scroll<.04?1-scroll/.04:0;
 
-  // Scroll cue fade
-  const sc=document.getElementById('sc');
-  if(sc)sc.style.opacity=scroll<.04?1-scroll/.04:0;
-
-  // Panels
   PN.forEach(z=>{
-    const el=document.getElementById(z.id);
-    let o=0;
+    const el=document.getElementById(z.id);let o=0;
     if(scroll>=z.in&&scroll<=z.out)o=scroll<z.pk?mapR(scroll,z.in,z.pk,0,1):mapR(scroll,z.pk,z.out,1,0);
     el.style.opacity=o;el.classList.toggle('on',o>.1);
   });
   document.getElementById('foot').classList.toggle('on',scroll>.88&&scroll<.96);
 
-  // Shape morph
   let fromS=0,toS=0,tw=0,inTr=false;
   for(const tr of TR){
     if(scroll>=tr.s&&scroll<=tr.e){fromS=tr.from;toS=tr.to;tw=ease((scroll-tr.s)/(tr.e-tr.s));inTr=true;break}
@@ -599,56 +521,46 @@ function tick(){
   }
   document.getElementById('ht').textContent=labels[inTr?toS:fromS];
 
-  const A=shapeData[fromS],B=inTr?shapeData[toS]:A;
-  const t=inTr?tw:0;
-
-  // Morph positions AND colors
+  const A=sd[fromS],B=inTr?sd[toS]:A,t=inTr?tw:0;
   for(let i=0;i<N*3;i++){
     prev[i]=pos[i];
     pos[i]=lerp(A.positions[i],B.positions[i],t);
     col[i]=lerp(A.colors[i],B.colors[i],t);
   }
 
-  // Velocity glow boost during transitions
   if(inTr){
     let maxSpd=0;const spd=new Float32Array(N);
     for(let i=0;i<N;i++){
       const dx=pos[i*3]-prev[i*3],dy=pos[i*3+1]-prev[i*3+1],dz=pos[i*3+2]-prev[i*3+2];
       spd[i]=Math.sqrt(dx*dx+dy*dy+dz*dz);if(spd[i]>maxSpd)maxSpd=spd[i];
     }
-    if(maxSpd>.0005){
-      for(let i=0;i<N;i++){
-        const g=clamp(spd[i]/(maxSpd*.4),0,1)*.25; // subtle white glow
-        col[i*3]=Math.min(1,col[i*3]+g);
-        col[i*3+1]=Math.min(1,col[i*3+1]+g);
-        col[i*3+2]=Math.min(1,col[i*3+2]+g);
-      }
+    if(maxSpd>.0005)for(let i=0;i<N;i++){
+      const g=clamp(spd[i]/(maxSpd*.35),0,1);
+      col[i*3]=Math.min(1,col[i*3]+g*.28);
+      col[i*3+1]=Math.min(1,col[i*3+1]+g*.06);
+      col[i*3+2]=Math.min(1,col[i*3+2]+g*.04);
     }
   }
 
   geo.attributes.position.needsUpdate=true;
   geo.attributes.color.needsUpdate=true;
-  mat.size=inTr?lerp(isMob?.14:.12,isMob?.20:.18,Math.sin(tw*Math.PI)):isMob?.14:.12;
+  mat.size=inTr?lerp(isMob?.16:.12,isMob?.22:.18,Math.sin(tw*Math.PI)):isMob?.16:.12;
 }
 
 addEventListener('scroll',tick,{passive:true});
-
-// Nav links
 document.querySelectorAll('.nav-r a').forEach(a=>a.addEventListener('click',e=>{
-  e.preventDefault();const ms=document.getElementById('spacer').offsetHeight-H();
-  scrollTo({top:parseFloat(a.dataset.go)*ms,behavior:'smooth'});
+  e.preventDefault();scrollTo({top:parseFloat(a.dataset.go)*(document.getElementById('spacer').offsetHeight-H()),behavior:'smooth'});
 }));
 
-/* ═══════════════════════════════════════
-   RENDER LOOP
-   ═══════════════════════════════════════ */
+let fskip=0;
 function animate(){
   requestAnimationFrame(animate);
-  if(!isMob){mx+=(mxT-mx)*.03;my+=(myT-my)*.03;cam.position.x=mx*1.1;cam.position.y=-my*.7}
+  if(isMob&&++fskip%2!==0)return;
+  if(!isMob){mx+=(mxT-mx)*.03;my+=(myT-my)*.03;cam.position.x=mx*1;cam.position.y=-my*.6}
   cam.lookAt(0,0,0);
   const t=performance.now()*.001;
-  pts.rotation.y=t*.02+scroll*.4;
-  pts.rotation.x=Math.sin(t*.012)*.04;
+  pts.rotation.y=t*.018+scroll*.35;
+  pts.rotation.x=Math.sin(t*.01)*.035;
   ren.render(scene,cam);
 }
 animate();tick();

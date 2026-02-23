@@ -495,77 +495,96 @@ function drawS0(){
   const p=Math.min(t/STEPS[0].dur,1);
   const m=mob();
 
-  // Three boxes: ERP | WMS | CANTIERI
-  const bW=Math.min(W(m?.28:.18),160), bH=Math.min(H(.52),220);
-  const gap=Math.min(W(m?.04:.08),60);
-  const totalW=3*bW+2*gap;
-  const startX=cx()-totalW/2, midY=cy();
+  // Box sizing — leave room for title (top) and status bar (bottom)
+  const titleH = H(.13);              // space consumed by title overlay
+  const statusH = Math.min(H(.09),42); // status bar height + margin
+  const usableH = CH - titleH - statusH - 16;
+  const bH = Math.min(usableH * .94, m?220:240);
+  const bW = Math.min(W(m?.28:.2), 160);
+  const gap= Math.min(W(m?.03:.06), 50);
+  const totalW = 3*bW + 2*gap;
 
-  const positions=[
-    [startX+bW/2, midY],            // ERP
-    [startX+bW+gap+bW/2, midY],     // WMS
-    [startX+2*(bW+gap)+bW/2, midY], // CANTIERI
-  ];
-  const [ex,ey]=positions[0], [wx,wy]=positions[1], [ox,oy]=positions[2];
+  // Center the group in the usable area
+  const midY = titleH + usableH/2;
+  const startX = cx() - totalW/2;
+  const ex=startX+bW/2, ey=midY;
+  const wx=startX+bW+gap+bW/2, wy=midY;
+  const ox=startX+2*(bW+gap)+bW/2, oy=midY;
 
   // Background panel
-  rr(cx()-totalW/2-14,midY-bH/2-14,totalW+28,bH+28,'#060F1E',10);
-  rs(cx()-totalW/2-14,midY-bH/2-14,totalW+28,bH+28,'#1A3A6A30',1.5,10);
+  rr(startX-10, midY-bH/2-10, totalW+20, bH+20, '#060F1E', 10);
+  rs(startX-10, midY-bH/2-10, totalW+20, bH+20, '#1A3A6A30', 1.5, 10);
 
-  // ERP box
-  rr(ex-bW/2,ey-bH/2,bW,bH,'#061830',7);
-  rs(ex-bW/2,ey-bH/2,bW,bH,'#2A8AF6',2,7);
-  fnt(ex,ey-bH*.35,'ERP','#5AAAD0',Math.min(S(.045),20));
-  tx(ex,ey-bH*.22,'GESTIONALE','#3A5A80',Math.min(S(.022),9));
+  // ── ERP box ──────────────────────────────────────────────────────
+  rr(ex-bW/2, ey-bH/2, bW, bH, '#061830', 7);
+  rs(ex-bW/2, ey-bH/2, bW, bH, '#2A8AF6', 2, 7);
+  const erLabelH = bH * .26; // header area
+  fnt(ex, ey-bH/2+erLabelH*.42, 'ERP', '#5AAAD0', Math.min(S(.04),18));
+  tx(ex, ey-bH/2+erLabelH*.76, 'GESTIONALE', '#3A5A80', Math.min(S(.02),9));
+  // 5 racks evenly in remaining space
+  const erArea = bH - erLabelH - 8;
+  const erRH = erArea/5 - 3;
   for(let i=0;i<5;i++){
-    const ry=ey-bH*.1+i*bH*.16;
-    rr(ex-bW*.4,ry,bW*.8,bH*.11,'#0E2040',3);
-    cc(ex+bW*.35,ry+bH*.055,S(.015),i%2===0?'#14C760':'#E07B00',null);
+    const ry = ey-bH/2 + erLabelH + 4 + i*(erRH+3);
+    rr(ex-bW*.4, ry, bW*.8, erRH, '#0E2040', 2);
+    cc(ex+bW*.35, ry+erRH/2, Math.min(erRH*.28,5), i%2===0?'#14C760':'#E07B00', null);
   }
 
-  // WMS box (highlighted)
+  // ── WMS box (slightly larger) ─────────────────────────────────────
+  const wbW=bW*1.08, wbH=bH*1.04;
   gl('#1354A0',20);
-  rr(wx-bW*.55,wy-bH*.52,bW*1.1,bH*1.04,'#061830',8);
-  rs(wx-bW*.55,wy-bH*.52,bW*1.1,bH*1.04,'#2A8AF6',2.5,8); ng();
-  gl('#2A8AF6',14); fnt(wx,wy-bH*.37,'WMS','#5AAAD0',Math.min(S(.055),24)); ng();
-  tx(wx,wy-bH*.24,'WAREHOUSE MGMT','#3A5A80',Math.min(S(.022),9));
+  rr(wx-wbW/2, wy-wbH/2, wbW, wbH, '#061830', 8);
+  rs(wx-wbW/2, wy-wbH/2, wbW, wbH, '#2A8AF6', 2.5, 8); ng();
+  const wmLabelH = wbH * .26;
+  gl('#2A8AF6',14);
+  fnt(wx, wy-wbH/2+wmLabelH*.42, 'WMS', '#5AAAD0', Math.min(S(.05),22)); ng();
+  tx(wx, wy-wbH/2+wmLabelH*.76, 'WAREHOUSE MGMT', '#3A5A80', Math.min(S(.02),9));
+  // 6 racks
+  const wmArea = wbH - wmLabelH - 8;
+  const wmRH = wmArea/6 - 3;
   for(let i=0;i<6;i++){
-    const ry=wy-bH*.12+i*bH*.17;
-    rr(wx-bW*.45,ry,bW*.9,bH*.12,'#081830',3);
-    gl('#14C760',4); cc(wx+bW*.38,ry+bH*.06,S(.013),'#14C760',null); ng();
+    const ry = wy-wbH/2 + wmLabelH + 4 + i*(wmRH+3);
+    rr(wx-wbW*.43, ry, wbW*.86, wmRH, '#081830', 2);
+    gl('#14C760',3); cc(wx+wbW*.36, ry+wmRH/2, Math.min(wmRH*.28,5), '#14C760', null); ng();
   }
 
-  // CANTIERI box
-  rr(ox-bW/2,oy-bH/2,bW,bH,'#081010',7);
-  rs(ox-bW/2,oy-bH/2,bW,bH,'#E07B00',2,7);
-  fnt(ox,oy-bH*.36,'CANTIERI','#F5A623',Math.min(S(.04),18));
+  // ── CANTIERI box ──────────────────────────────────────────────────
+  rr(ox-bW/2, oy-bH/2, bW, bH, '#081010', 7);
+  rs(ox-bW/2, oy-bH/2, bW, bH, '#E07B00', 2, 7);
+  const cLabelH = bH * .22;
+  fnt(ox, oy-bH/2+cLabelH*.48, 'CANTIERI', '#F5A623', Math.min(S(.035),16));
+  // 6 items evenly in remaining space
+  const cArea = bH - cLabelH - 8;
+  const cRH = cArea/6 - 3;
   ['CANT. A','CANT. B','CANT. C','CANT. D','CANT. E','CANT. F'].forEach((n,i)=>{
-    const ry=oy-bH*.2+i*(bH*.15);
-    const lit=i<Math.floor(p*7);
-    rr(ox-bW*.44,ry-bH*.07,bW*.88,bH*.12,lit?'rgba(15,158,80,.2)':'rgba(21,40,64,.5)',3);
-    tx(ox,ry,n,lit?'#14C760':'#2A4060',Math.min(S(.022),9),'center','600');
-    if(lit){gl('#14C760',5);cc(ox+bW*.38,ry,S(.013),'#14C760',null);ng();}
+    const ry = oy-bH/2 + cLabelH + 4 + i*(cRH+3);
+    const lit = i < Math.floor(p*7);
+    rr(ox-bW*.44, ry, bW*.88, cRH, lit?'rgba(15,158,80,.2)':'rgba(21,40,64,.5)', 3);
+    tx(ox, ry+cRH/2, n, lit?'#14C760':'#2A4060', Math.min(cRH*.38,9), 'center', '600');
+    if(lit){ gl('#14C760',4); cc(ox+bW*.38, ry+cRH/2, Math.min(cRH*.25,5), '#14C760', null); ng(); }
   });
 
-  // Arrows
-  arrow(ex+bW/2,ey, wx-bW*.55,wy,'#2A8AF6',2);
-  arrow(wx+bW*.55,wy,ox-bW/2,oy,'#E07B00',2);
+  // ── Arrows ────────────────────────────────────────────────────────
+  arrow(ex+bW/2, ey, wx-wbW/2, wy, '#2A8AF6', 2);
+  arrow(wx+wbW/2, wy, ox-bW/2, oy, '#E07B00', 2);
 
-  // Data packets
+  // ── Data packets ─────────────────────────────────────────────────
   A.pkt.forEach(pk=>{
-    const px2=cx()-totalW/2+pk.x*(totalW*.65), py2=midY-bH/2+pk.y*bH;
-    if(px2>ox-bW/2)return;
+    const px2=startX+pk.x*totalW*.65, py2=midY-bH/2+pk.y*bH;
+    if(px2>ox-bW/2) return;
     ctx.globalAlpha=Math.max(0,.9-pk.life/4);
-    rr(px2-9,py2-5,18,10,'#1354A0',3);
+    rr(px2-8,py2-5,16,10,'#1354A0',3);
     tx(px2,py2,'01','#90CAF9',7); ctx.globalAlpha=1;
   });
 
-  // Status bar
+  // ── Status bar (below boxes, above canvas bottom) ─────────────────
+  const sbY = midY + bH/2 + 10;
+  const sbW = Math.min(W(.75), 400), sbH2 = Math.min(H(.07), 32);
   gl('#14C760',8);
-  rr(cx()-W(.3),cy()+H(.38),W(.6),H(.06),'rgba(15,158,80,.15)',6);
-  rs(cx()-W(.3),cy()+H(.38),W(.6),H(.06),'#14C760',1.5,6); ng();
-  tx(cx(),cy()+H(.41),'● SISTEMA OPERATIVO — PIANIFICAZIONE IN CORSO','#14C760',
-    Math.min(S(.025),11),'center','600');
+  rr(cx()-sbW/2, sbY, sbW, sbH2, 'rgba(15,158,80,.15)', 6);
+  rs(cx()-sbW/2, sbY, sbW, sbH2, '#14C760', 1.5, 6); ng();
+  tx(cx(), sbY+sbH2/2, '● SISTEMA OPERATIVO — PIANIFICAZIONE IN CORSO',
+     '#14C760', Math.min(S(.024),10), 'center', '600');
 }
 
 // ─────────────────────────────────────────────────────────────────────

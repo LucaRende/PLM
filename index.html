@@ -1,52 +1,978 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PLM Web</title>
-    
-    <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="favicon.ico">
-    
-    <link rel="stylesheet" href="PLM Web/Load/loader.css">
-    
-    <!-- Nascondi contenuto, mostra solo loader -->
-    <style id="preload-style">
-        body { background: #030305; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pro System — Simulazione Processo Notturno</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --navy:#050C18;--blue:#1354A0;--amber:#E07B00;
+  --amberL:#F5A623;--green:#1A8A3A;--red:#C0392B;
+  --cyan:#0097A7;--steel:#1A3A5A;--white:#E8F0F8;
+  --dim:#263C58;--ltblue:#5AAAD0;
+}
+html,body{width:100%;height:100%;background:var(--navy);overflow:hidden;
+  font-family:'JetBrains Mono',monospace;color:var(--white)}
+#app{display:flex;flex-direction:column;height:100vh}
+
+/* ── HEADER ── */
+#hdr{
+  height:44px;flex-shrink:0;
+  display:flex;align-items:center;gap:10px;padding:0 14px;
+  background:#040810;border-bottom:2px solid var(--amber);
+}
+.logo{width:28px;height:28px;background:var(--amber);flex-shrink:0;
+  clip-path:polygon(15% 0,85% 0,100% 15%,100% 85%,85% 100%,15% 100%,0 85%,0 15%);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Bebas Neue',sans-serif;font-size:11px;color:#040810}
+.hdr-t{font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:.1em;white-space:nowrap}
+.hdr-s{font-size:8px;color:var(--ltblue);letter-spacing:.05em;white-space:nowrap}
+.hdr-grow{flex:1}
+#clock{font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--amber);
+  letter-spacing:.1em;min-width:72px;text-align:center;flex-shrink:0}
+.badge{font-size:8px;color:var(--amber);border:1px solid rgba(224,123,0,.3);
+  padding:3px 8px;border-radius:2px;white-space:nowrap;flex-shrink:0}
+
+/* ── PHASE BAR ── */
+#phases{
+  height:32px;flex-shrink:0;display:flex;align-items:stretch;
+  background:#030810;border-bottom:1px solid var(--steel);
+}
+.ph{flex:1;display:flex;align-items:center;justify-content:center;gap:4px;
+  font-size:8.5px;color:var(--dim);
+  border-right:1px solid rgba(26,58,90,.35);
+  cursor:pointer;transition:background .2s,color .2s;
+  white-space:nowrap;padding:0 3px;overflow:hidden}
+.ph:last-child{border-right:none}
+.ph.active{background:rgba(224,123,0,.1);color:var(--amber)}
+.ph.done{color:var(--green)}
+.phn{width:16px;height:16px;border-radius:50%;background:var(--dim);
+  border:1.5px solid rgba(26,58,90,.8);display:flex;align-items:center;
+  justify-content:center;font-size:7.5px;font-weight:600;flex-shrink:0}
+.ph.active .phn{background:var(--amber);border-color:var(--amberL);color:#040810}
+.ph.done .phn{background:var(--green);border-color:#2ECC71;color:white}
+.ph-t{color:var(--amber);opacity:.5;font-size:7px;margin-left:1px}
+
+/* ── BODY ── */
+#body{flex:1;display:flex;overflow:hidden;min-height:0}
+
+/* canvas wrapper */
+#cw{flex:1;position:relative;overflow:hidden;min-width:0}
+canvas{display:block;width:100%;height:100%}
+
+/* ── SIDEBAR (right, fixed 190px) ── */
+#sb{
+  width:190px;flex-shrink:0;display:flex;flex-direction:column;
+  background:#030810;border-left:1px solid var(--steel);overflow:hidden;
+}
+.sc{padding:9px 11px;border-bottom:1px solid var(--steel);flex-shrink:0}
+.sc:last-child{flex:1;border-bottom:none;overflow:hidden}
+.sc-t{font-family:'Bebas Neue',sans-serif;font-size:11.5px;
+  color:var(--amber);letter-spacing:.07em;margin-bottom:5px}
+.sc-d{font-size:8px;color:var(--ltblue);line-height:1.7}
+.sc-d b{color:var(--white)}
+/* 3-stat row */
+.s3{display:grid;grid-template-columns:repeat(3,1fr);gap:4px}
+.sv{text-align:center}
+.sv-n{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--white);line-height:1}
+.sv-l{font-size:7.5px;color:var(--dim);text-transform:uppercase;letter-spacing:.04em}
+/* progress bar */
+.pb{height:3px;background:var(--steel);border-radius:2px;margin-top:7px;overflow:hidden}
+.pbf{height:100%;background:var(--amber);border-radius:2px;transition:width .8s}
+.pr{display:flex;justify-content:space-between;margin-top:2px;font-size:7.5px;color:var(--dim)}
+/* kpi rows */
+.kv{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:3px}
+.kv span{font-size:7.5px;color:var(--dim)}
+.kv b{font-size:8px;color:var(--white)}
+/* equipment leds */
+.eq-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;font-size:7.5px}
+.eq-row span{color:var(--dim)}
+.eq-leds{display:flex;gap:3px}
+.led{width:7px;height:7px;border-radius:50%;background:var(--steel)}
+/* staging mini grid */
+#sg{display:grid;grid-template-columns:repeat(5,1fr);gap:3px;margin-top:2px}
+.sgc{padding:3px 1px;border-radius:2px;text-align:center;
+  font-size:7px;background:var(--steel);color:var(--dim);transition:background .3s,color .3s}
+
+/* floating controls */
+#ctrl{position:absolute;left:10px;top:10px;display:flex;gap:6px;z-index:5}
+.btn{font-size:8px;background:rgba(3,8,16,.88);border:1px solid var(--steel);
+  color:var(--ltblue);padding:4px 9px;border-radius:2px;cursor:pointer;
+  letter-spacing:.03em;transition:border-color .2s,color .2s}
+.btn:hover{border-color:var(--amber);color:var(--amber)}
+/* legend */
+#leg{position:absolute;left:10px;bottom:8px;
+  display:flex;gap:12px;flex-wrap:wrap;font-size:7.5px;color:var(--dim);
+  pointer-events:none;z-index:5}
+.li{display:flex;align-items:center;gap:4px}
+.ld{width:8px;height:8px;border-radius:2px}
+.ll{width:18px;height:2px}
+</style>
 </head>
 <body>
-    <script src="PLM Web/Load/loader.js"></script>
-    <script>
-        // Mostra loader subito
-        Loader.show('pagina', 'Caricamento...');
-        
-        async function init() {
-            try {
-                // Carica configurazione
-                const configResponse = await fetch('index.json');
-                const config = await configResponse.json();
-                
-                // Controlla se utente è già loggato (session storage)
-                const isLoggedIn = sessionStorage.getItem('plm_logged_in');
-                
-                // Redirige alla pagina corretta
-                const basePath = config.config.basePath;
-                
-                if (isLoggedIn === 'true') {
-                    window.location.replace(basePath + config.pages.home.path);
-                } else {
-                    window.location.replace(basePath + config.pages.login.path);
-                }
-                
-            } catch (error) {
-                console.error('Errore caricamento configurazione:', error);
-                Loader.hide();
-                document.body.innerHTML = '<p style="text-align:center;margin-top:50px;font-family:Arial;">Errore di caricamento</p>';
-            }
-        }
-        
-        init();
-    </script>
+<div id="app">
+
+  <div id="hdr">
+    <div class="logo">PS</div>
+    <div>
+      <div class="hdr-t">PRO SYSTEM S.r.l. — SIMULAZIONE PROCESSO NOTTURNO</div>
+      <div class="hdr-s">SISTEMA AUTOMATICO PREPARAZIONE MATERIALI EDILIZIA · TOP-DOWN VIEW · RT-AUTO-EDI-001</div>
+    </div>
+    <div class="hdr-grow"></div>
+    <div id="clock">20:00</div>
+    <div class="badge">REV. 1.0 · SCHEMA FUNZIONALE</div>
+  </div>
+
+  <div id="phases">
+    <div class="ph active" data-ph="0"><span class="phn">1</span>Import Ordini<span class="ph-t">20:00</span></div>
+    <div class="ph" data-ph="1"><span class="phn">2</span>VLM Attivo<span class="ph-t">20:20</span></div>
+    <div class="ph" data-ph="2"><span class="phn">3</span>Robot Picking<span class="ph-t">20:25</span></div>
+    <div class="ph" data-ph="3"><span class="phn">4</span>Composizione<span class="ph-t">21:xx</span></div>
+    <div class="ph" data-ph="4"><span class="phn">5</span>AGV Trasporto<span class="ph-t">22:xx</span></div>
+    <div class="ph" data-ph="5"><span class="phn">6</span>Staging<span class="ph-t">23:xx</span></div>
+    <div class="ph" data-ph="6"><span class="phn">7</span>Carico Furgoni<span class="ph-t">06:00</span></div>
+  </div>
+
+  <div id="body">
+
+    <!-- CANVAS -->
+    <div id="cw">
+      <canvas id="c"></canvas>
+      <div id="ctrl">
+        <button class="btn" id="btn-play">⏸ PAUSA</button>
+        <button class="btn" id="btn-speed">⚡ 1×</button>
+      </div>
+      <div id="leg">
+        <div class="li"><div class="ld" style="background:#1354A0"></div>VLM</div>
+        <div class="li"><div class="ld" style="background:#6A0DAD"></div>Robot</div>
+        <div class="li"><div class="ld" style="background:#1A8A3A"></div>Libero</div>
+        <div class="li"><div class="ld" style="background:#E07B00"></div>Completo</div>
+        <div class="li"><div class="ld" style="background:#C0392B"></div>In carico</div>
+        <div class="li"><div class="ll" style="background:#0097A7"></div>AGV</div>
+        <div class="li"><div class="ll" style="background:#E07B00"></div>Materiali</div>
+      </div>
+    </div>
+
+    <!-- SIDEBAR -->
+    <div id="sb">
+      <div class="sc">
+        <div class="sc-t" id="ph-name">IMPORT ORDINI</div>
+        <div class="sc-d" id="ph-desc">
+          Il <b>WMS</b> riceve gli ordini ERP.<br>
+          Pianificazione <b>wave picking</b>.<br>
+          Sequenza <b>6 commesse</b> attive.
+        </div>
+      </div>
+      <div class="sc">
+        <div class="s3">
+          <div class="sv"><div class="sv-n" id="s-c">0</div><div class="sv-l">Commesse</div></div>
+          <div class="sv"><div class="sv-n" id="s-p">0</div><div class="sv-l">Pallet</div></div>
+          <div class="sv"><div class="sv-n" id="s-k">0.0</div><div class="sv-l">Ton</div></div>
+        </div>
+        <div class="pb"><div class="pbf" id="pbf" style="width:0%"></div></div>
+        <div class="pr"><span>AVANZAMENTO</span><span id="pct">0%</span></div>
+      </div>
+      <div class="sc">
+        <div class="sc-t">KPI SISTEMA</div>
+        <div class="kv"><span>Accuratezza</span><b>&gt; 99.5%</b></div>
+        <div class="kv"><span>Uptime</span><b>&gt; 97.5%</b></div>
+        <div class="kv"><span>Throughput</span><b>≥ 6/notte</b></div>
+        <div class="kv"><span>MTTR target</span><b>&lt; 45 min</b></div>
+      </div>
+      <div class="sc">
+        <div class="sc-t">ATTREZZATURA</div>
+        <div class="eq-row"><span>VLM (4×)</span><div class="eq-leds" id="vlm-l"></div></div>
+        <div class="eq-row"><span>Robot (4×)</span><div class="eq-leds" id="rob-l"></div></div>
+        <div class="eq-row"><span>AGV (2×)</span><div class="eq-leds" id="agv-l"></div></div>
+      </div>
+      <div class="sc">
+        <div class="sc-t">STAGING</div>
+        <div id="sg"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ════════════════════════════════════════════
+// SETUP
+// ════════════════════════════════════════════
+const canvas = document.getElementById('c');
+const ctx    = canvas.getContext('2d');
+const DPR    = window.devicePixelRatio || 1;
+let CW, CH, SC; // canvas logical size & scale
+
+// Base coordinate system 1200 × 520
+const BW = 1200, BH = 520;
+
+function resize(){
+  const el = canvas.parentElement;
+  CW = el.clientWidth;
+  CH = el.clientHeight;
+  canvas.width  = Math.round(CW * DPR);
+  canvas.height = Math.round(CH * DPR);
+  canvas.style.width  = CW + 'px';
+  canvas.style.height = CH + 'px';
+  ctx.setTransform(DPR,0,0,DPR,0,0);
+  SC = Math.min(CW/BW, CH/BH) * 0.98;
+}
+resize();
+window.addEventListener('resize', resize);
+
+// World → screen
+function wx(x){ return (CW - BW*SC)/2 + x*SC; }
+function wy(y){ return (CH - BH*SC)/2 + y*SC; }
+function ws(v){ return v*SC; }
+
+// ════════════════════════════════════════════
+// PALETTE
+// ════════════════════════════════════════════
+const C = {
+  bg:'#040810', floor:'#060D1A', grid:'rgba(255,255,255,0.022)',
+  wall:'#0C1C30',
+  blue:'#1354A0', blueL:'#1A6ACA', blueDk:'#061830',
+  amber:'#E07B00', amberL:'#F5A623',
+  green:'#1A8A3A', greenL:'#27AE60',
+  red:'#C0392B',   redL:'#E74C3C',
+  cyan:'#0097A7',  cyanL:'#00BCD4',
+  purple:'#6A0DAD',purpleL:'#9B27C8', purpleDk:'#200040',
+  steel:'#1A3A5A', steelL:'#2A5A8A',
+  white:'#E8F0F8', ltblue:'#5AAAD0', dim:'#263C58',
+  yellow:'#F9A825',
+};
+
+// ════════════════════════════════════════════
+// LAYOUT  (all in BASE coords 1200×520)
+//
+//  Zone widths:
+//   VLM   0–210   (210)
+//   ROB   210–400 (190)
+//   COMP  400–570 (170)
+//   AGV   570–860 (290)
+//   STAG  860–1060(200)
+//   DOCK  1060–1190(130)
+//   (right margin 10)
+//
+//  Floor y: 14 → 506
+// ════════════════════════════════════════════
+const FL = { x:0, y:14, w:1200, h:492 };
+
+// Zone definitions
+const Z = {
+  vlm:  { x:6,    w:204, label:'ZONA VLM',      col:'#3A6AA0' },
+  rob:  { x:214,  w:186, label:'ISOLA ROBOT',    col:'#7A20B8' },
+  comp: { x:404,  w:166, label:'COMPOSIZIONE',   col:'#2A7A40' },
+  agv:  { x:574,  w:286, label:'CORRIDOIO AGV',  col:'#0097A7' },
+  stag: { x:864,  w:196, label:'AREA STAGING',   col:'#2A7A40' },
+  dock: { x:1064, w:126, label:'BANCHINA',        col:'#8A5000' },
+};
+const FY = FL.y, FH = FL.h; // floor top/height shortcuts
+
+// ─── VLMs: 2×2 grid ───
+function getVLMs(){
+  const z=Z.vlm, pad=6;
+  const vw=(z.w-pad*3)/2, vh=(FH-pad*3-16)/2;
+  return [
+    { x:z.x+pad,      y:FY+16+pad,      w:vw, h:vh, id:'VLM-01' },
+    { x:z.x+pad*2+vw, y:FY+16+pad,      w:vw, h:vh, id:'VLM-02' },
+    { x:z.x+pad,      y:FY+16+pad*2+vh, w:vw, h:vh, id:'VLM-03' },
+    { x:z.x+pad*2+vw, y:FY+16+pad*2+vh, w:vw, h:vh, id:'VLM-04' },
+  ];
+}
+
+// ─── Robots: 2×2 ───
+function getRobots(){
+  const z=Z.rob;
+  const cx1=z.x+z.w*0.27, cx2=z.x+z.w*0.73;
+  const cy1=FY+FH*0.28,    cy2=FY+FH*0.72;
+  return [
+    { cx:cx1, cy:cy1, id:'R-01' },
+    { cx:cx2, cy:cy1, id:'R-02' },
+    { cx:cx1, cy:cy2, id:'R-03' },
+    { cx:cx2, cy:cy2, id:'R-04' },
+  ];
+}
+
+// ─── Comp tables: 2×2 ───
+function getTables(){
+  const z=Z.comp, pad=6;
+  const tw=(z.w-pad*3)/2, th=(FH-pad*3-16)/2;
+  return [
+    { x:z.x+pad,      y:FY+16+pad,      w:tw, h:th, id:'T-01' },
+    { x:z.x+pad*2+tw, y:FY+16+pad,      w:tw, h:th, id:'T-02' },
+    { x:z.x+pad,      y:FY+16+pad*2+th, w:tw, h:th, id:'T-03' },
+    { x:z.x+pad*2+tw, y:FY+16+pad*2+th, w:tw, h:th, id:'T-04' },
+  ];
+}
+
+// ─── AGV tracks ───
+const AGV_TY1 = FY + FH*0.33;
+const AGV_TY2 = FY + FH*0.67;
+const AGV_X0  = Z.agv.x + 8;
+const AGV_X1  = Z.agv.x + Z.agv.w - 8;
+
+// ─── Staging bays: 2 cols × 5 rows ───
+function getBays(){
+  const z=Z.stag, pad=5;
+  const bw=(z.w-pad*3)/2, bh=(FH-16-pad*6)/5;
+  const bays=[];
+  for(let r=0;r<5;r++) for(let c=0;c<2;c++){
+    const n=r*2+c+1;
+    bays.push({
+      x:z.x+pad+c*(bw+pad),
+      y:FY+16+pad+r*(bh+pad),
+      w:bw, h:bh,
+      id:`S-${String(n).padStart(2,'0')}`,
+    });
+  }
+  return bays;
+}
+
+// ─── Vans: 3 stacked ───
+function getVans(){
+  const z=Z.dock, pad=6;
+  const vh=(FH-16-pad*4)/3;
+  return [
+    { x:z.x+pad, y:FY+16+pad,         w:z.w-pad*2, h:vh, id:'VAN-A' },
+    { x:z.x+pad, y:FY+16+pad*2+vh,    w:z.w-pad*2, h:vh, id:'VAN-B' },
+    { x:z.x+pad, y:FY+16+pad*3+vh*2,  w:z.w-pad*2, h:vh, id:'VAN-C' },
+  ];
+}
+
+// ════════════════════════════════════════════
+// STATE
+// ════════════════════════════════════════════
+let phase=0, phaseT=0, simTime=0, playing=true, speed=1, lastTS=null;
+const PDUR = [4,5,6,7,6,6,5];
+const PINFO = [
+  {name:'IMPORT ORDINI',   desc:'Il <b>WMS</b> riceve gli ordini ERP.<br>Pianificazione <b>wave picking</b>.<br>Sequenza <b>6 commesse</b> attive.'},
+  {name:'ATTIVAZIONE VLM', desc:'I <b>4 VLM</b> avviano i cassetti.<br>Goods-to-person attivo.<br><b>Encoder ±0.5 mm</b>.'},
+  {name:'ROBOT PICKING',   desc:'<b>4 robot 6 assi</b> prelevano.<br>Vision 3D · F/T sensor.<br><b>Ripetibilità ±0.05 mm</b>.'},
+  {name:'COMPOSIZIONE',    desc:'Robot impilano su pallet.<br>Peso <b>±1 kg</b> · Barcode scan.<br>Per commessa / cantiere.'},
+  {name:'AGV TRASPORTO',   desc:'<b>2 AGV</b> trasportano pallet.<br>SLAM 360° · Path A*.<br><b>1500 kg</b> · Docking ±10 mm.'},
+  {name:'STAGING',         desc:'Deposito in <b>baia numerata</b>.<br>Display e-paper · LED 3 stati.<br>Celle di carico ±1 kg.'},
+  {name:'CARICO FURGONI',  desc:'Ore <b>06:00</b> — operatori caricano.<br>Tutti i cantieri pronti.<br>Barcode scan + DDT.'},
+];
+
+const st = {
+  vlmPh:  [0,0.5,1.1,1.8].map((ph,i)=>({ ph, spd:0.7+i*0.12 })),
+  robA:   [0,0,0,0].map(()=>({ base:Math.random()*6.28, a1:0, a2:0, spd:0.35+Math.random()*.3 })),
+  parcels:[],
+  agvs:[
+    { x:AGV_X0+20, y:AGV_TY1, dir:1, loaded:false, active:false },
+    { x:AGV_X1-20, y:AGV_TY2, dir:-1, loaded:false, active:false },
+  ],
+  tblFill:[0,0,0,0],
+  stagSt: Array(10).fill('empty'),
+  vanLoad:[0,0,0],
+  flash: null,
+  C:0, P:0, K:0,
+};
+
+// ════════════════════════════════════════════
+// PHASE ADVANCE + UI
+// ════════════════════════════════════════════
+function advPhase(){
+  if(phase<6) phase++;
+  phaseT=0; st.flash={t:0};
+  refreshUI();
+}
+
+function refreshUI(){
+  document.querySelectorAll('.ph').forEach((el,i)=>{
+    el.classList.toggle('active',i===phase);
+    el.classList.toggle('done',i<phase);
+  });
+  const pi=PINFO[phase];
+  document.getElementById('ph-name').textContent=pi.name;
+  document.getElementById('ph-desc').innerHTML=pi.desc;
+  const pct=Math.round(phase/6*100);
+  document.getElementById('pbf').style.width=pct+'%';
+  document.getElementById('pct').textContent=pct+'%';
+
+  // equipment leds
+  function mkLeds(count, on, col){
+    return Array.from({length:count},(_,i)=>
+      `<div class="led" style="background:${i<count&&on?col:'#1A3A5A'}"></div>`
+    ).join('');
+  }
+  document.getElementById('vlm-l').innerHTML=mkLeds(4,phase>=1,'#E07B00');
+  document.getElementById('rob-l').innerHTML=mkLeds(4,phase>=2,'#9B27C8');
+  document.getElementById('agv-l').innerHTML=mkLeds(2,phase>=4,'#0097A7');
+
+  // staging grid
+  const cols={empty:'#1A3A5A',loading:'#C0392B',done:'#E07B00',ready:'#1A8A3A'};
+  document.getElementById('sg').innerHTML=st.stagSt.map((s,i)=>`
+    <div class="sgc" style="background:${cols[s]};color:${s==='empty'?'#263C58':'white'}">
+      ${String(i+1).padStart(2,'0')}
+    </div>`).join('');
+}
+
+// ════════════════════════════════════════════
+// UPDATE
+// ════════════════════════════════════════════
+function update(dt){
+  phaseT+=dt; simTime+=dt;
+  if(phaseT>=PDUR[phase]) advPhase();
+
+  // clock
+  const td=PDUR.reduce((a,b)=>a+b,0);
+  const mins=(simTime/td)*600;
+  const hh=Math.floor(20+mins/60)%24, mm=Math.floor(mins%60);
+  document.getElementById('clock').textContent=
+    String(hh).padStart(2,'0')+':'+String(mm).padStart(2,'0');
+
+  // VLM elevators
+  if(phase>=1) st.vlmPh.forEach(e=>{ e.ph+=dt*e.spd*(phase>=2?1.7:0.9); });
+
+  // Robots
+  if(phase>=2) st.robA.forEach(r=>{
+    r.base+=dt*r.spd;
+    r.a1=Math.sin(r.base*1.3)*0.8;
+    r.a2=Math.cos(r.base*0.8)*0.65-0.3;
+  });
+
+  // Parcels
+  const vlms=getVLMs(), tbls=getTables();
+  if(phase>=2 && Math.random()<dt*3){
+    const v=vlms[Math.floor(Math.random()*4)];
+    const t=tbls[Math.floor(Math.random()*4)];
+    const pc=['#6D4C41','#37474F','#4E342E','#455A64','#546E7A'];
+    st.parcels.push({
+      x:v.x+v.w-2, y:v.y+v.h*0.6,
+      tx:t.x+t.w/2+(Math.random()-.5)*20,
+      ty:t.y+t.h*0.55,
+      age:0, life:0.8+Math.random()*.6,
+      col:pc[Math.floor(Math.random()*pc.length)],
+      sz:5+Math.random()*4,
+    });
+  }
+  st.parcels=st.parcels.filter(p=>{
+    p.age+=dt;
+    p.x+=(p.tx-p.x)*dt*4.5;
+    p.y+=(p.ty-p.y)*dt*4.5;
+    return p.age<p.life+0.3;
+  });
+
+  // Table fill
+  if(phase>=3) st.tblFill=st.tblFill.map(f=>Math.min(f+dt*.09,1));
+
+  // AGVs
+  st.agvs.forEach((a,i)=>{
+    a.active=phase>=4;
+    if(!a.active) return;
+    const ty=i===0?AGV_TY1:AGV_TY2;
+    a.y+=(ty-a.y)*dt*5;
+    a.x+=a.dir*130*dt;
+    if(a.x>AGV_X1+25){ a.dir=-1; a.loaded=false; }
+    if(a.x<AGV_X0-25){ a.dir=1;  a.loaded=true;  }
+    a.x=Math.max(AGV_X0-30,Math.min(AGV_X1+30,a.x));
+  });
+
+  // Staging
+  if(phase>=5){
+    const done=Math.floor(phaseT/PDUR[5]*10);
+    st.stagSt=st.stagSt.map((s,i)=>{
+      if(s==='done'||s==='ready') return s;
+      if(i<done)    return 'done';
+      if(i===done)  return 'loading';
+      return 'empty';
+    });
+  }
+  if(phase>=6) st.stagSt=st.stagSt.map(()=>'ready');
+
+  // Vans
+  if(phase>=6) st.vanLoad=st.vanLoad.map(v=>Math.min(v+dt*.09,1));
+
+  // Stats
+  st.C=Math.min(phase>=1?Math.floor(simTime*.18):0,6);
+  st.P=Math.min(phase>=3?Math.floor(simTime*.3):0,24);
+  st.K=parseFloat(Math.min(phase>=3?simTime*.14:0,14.4).toFixed(1));
+  document.getElementById('s-c').textContent=st.C;
+  document.getElementById('s-p').textContent=st.P;
+  document.getElementById('s-k').textContent=st.K;
+
+  if(st.flash){ st.flash.t+=dt; if(st.flash.t>1.2) st.flash=null; }
+  if(phase>=5) refreshStagGrid();
+}
+
+function refreshStagGrid(){
+  const cols={empty:'#1A3A5A',loading:'#C0392B',done:'#E07B00',ready:'#1A8A3A'};
+  document.getElementById('sg').innerHTML=st.stagSt.map((s,i)=>`
+    <div class="sgc" style="background:${cols[s]};color:${s==='empty'?'#263C58':'white'}">
+      ${String(i+1).padStart(2,'0')}
+    </div>`).join('');
+}
+
+// ════════════════════════════════════════════
+// DRAW HELPERS
+// ════════════════════════════════════════════
+function fr(x,y,w,h,col,r=2){
+  ctx.fillStyle=col;
+  ctx.beginPath();
+  if(r>0) ctx.roundRect(wx(x),wy(y),ws(w),ws(h),ws(r));
+  else ctx.rect(wx(x),wy(y),ws(w),ws(h));
+  ctx.fill();
+}
+function sr(x,y,w,h,col,lw=1,r=2,dash=[]){
+  ctx.strokeStyle=col; ctx.lineWidth=ws(lw);
+  ctx.setLineDash(dash.map(d=>ws(d)));
+  ctx.beginPath();
+  if(r>0) ctx.roundRect(wx(x),wy(y),ws(w),ws(h),ws(r));
+  else ctx.rect(wx(x),wy(y),ws(w),ws(h));
+  ctx.stroke(); ctx.setLineDash([]);
+}
+function ci(x,y,r,fill,stroke,lw=1){
+  ctx.beginPath(); ctx.arc(wx(x),wy(y),ws(r),0,Math.PI*2);
+  if(fill){ctx.fillStyle=fill;ctx.fill();}
+  if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=ws(lw);ctx.stroke();}
+}
+function li(x1,y1,x2,y2,col,lw=1,dash=[]){
+  ctx.beginPath(); ctx.moveTo(wx(x1),wy(y1)); ctx.lineTo(wx(x2),wy(y2));
+  ctx.strokeStyle=col; ctx.lineWidth=ws(lw);
+  ctx.setLineDash(dash.map(d=>ws(d)));
+  ctx.stroke(); ctx.setLineDash([]);
+}
+function tx(x,y,s,col,size=8,align='center'){
+  ctx.font=`${ws(size)}px 'JetBrains Mono',monospace`;
+  ctx.fillStyle=col; ctx.textAlign=align; ctx.textBaseline='middle';
+  ctx.fillText(s,wx(x),wy(y));
+}
+function txB(x,y,s,col,size=8,align='center'){
+  ctx.font=`${ws(size)}px 'Bebas Neue',sans-serif`;
+  ctx.fillStyle=col; ctx.textAlign=align; ctx.textBaseline='middle';
+  ctx.fillText(s,wx(x),wy(y));
+}
+function gl(col,blur){ ctx.shadowColor=col; ctx.shadowBlur=ws(blur); }
+function ng(){ ctx.shadowBlur=0; }
+
+// ════════════════════════════════════════════
+// DRAW
+// ════════════════════════════════════════════
+function draw(){
+  ctx.clearRect(0,0,CW,CH);
+
+  // bg + floor
+  ctx.fillStyle=C.bg; ctx.fillRect(0,0,CW,CH);
+  fr(FL.x,FL.y,FL.w,FL.h,C.floor,0);
+
+  // grid
+  ctx.strokeStyle=C.grid; ctx.lineWidth=0.5;
+  const gs=ws(22), ox=wx(0), oy=wy(FL.y), fw=ws(FL.w), fh=ws(FL.h);
+  for(let gx=ox;gx<ox+fw;gx+=gs){ctx.beginPath();ctx.moveTo(gx,oy);ctx.lineTo(gx,oy+fh);ctx.stroke();}
+  for(let gy=oy;gy<oy+fh;gy+=gs){ctx.beginPath();ctx.moveTo(ox,gy);ctx.lineTo(ox+fw,gy);ctx.stroke();}
+
+  // zone backgrounds + labels
+  Object.values(Z).forEach(z=>{
+    fr(z.x,FY,z.w,FH,'rgba(255,255,255,0.012)',0);
+  });
+
+  // phase-activated zone tinting
+  const zoneAct=[
+    {z:Z.vlm, ph:1, col:'rgba(19,84,160,0.06)'},
+    {z:Z.rob, ph:2, col:'rgba(106,13,173,0.06)'},
+    {z:Z.comp,ph:3, col:'rgba(26,138,58,0.06)'},
+    {z:Z.agv, ph:4, col:'rgba(0,100,120,0.04)'},
+    {z:Z.stag,ph:5, col:'rgba(26,138,58,0.06)'},
+    {z:Z.dock,ph:6, col:'rgba(224,123,0,0.06)'},
+  ];
+  zoneAct.forEach(({z,ph,col})=>{
+    if(phase>=ph) fr(z.x,FY,z.w,FH,col,0);
+  });
+
+  // zone dividers
+  [Z.rob.x,Z.comp.x,Z.agv.x,Z.stag.x,Z.dock.x].forEach(x=>{
+    li(x,FY,x,FY+FH,C.dim,0.5,[4,5]);
+  });
+
+  // zone top labels
+  Object.values(Z).forEach(z=>{
+    const rgb=z.col.length===7?
+      [parseInt(z.col.slice(1,3),16),parseInt(z.col.slice(3,5),16),parseInt(z.col.slice(5),16)]:
+      [150,150,150];
+    // label bar
+    fr(z.x+1,FY,z.w-2,13,`rgba(${rgb[0]},${rgb[1]},${rgb[2]},0.18)`,0);
+    txB(z.x+z.w/2,FY+6.5,z.label,z.col,7.5,'center');
+  });
+
+  // ── VLMs ──────────────────────────────────
+  const vlms=getVLMs();
+  vlms.forEach((v,i)=>{
+    const on=phase>=1;
+    if(on){gl(C.blue,10);}
+    fr(v.x,v.y,v.w,v.h,on?'#07152A':'#050C1A',3);
+    sr(v.x,v.y,v.w,v.h,on?C.blue:C.dim,1.2,3);
+    ng();
+
+    // shelves (6 rows)
+    const ns=6, sh=v.h/ns;
+    const shC=['#4E342E','#37474F','#546E7A','#607D8B','#455A64','#795548'];
+    for(let s=0;s<ns;s++){
+      const sy2=v.y+s*sh;
+      li(v.x+3,sy2+0.5,v.x+v.w-3,sy2+0.5,'#0C2240',0.6);
+      const iy=sy2+sh*0.18, ih=sh*0.52;
+      fr(v.x+3,   iy, v.w*0.3, ih, shC[s],1);
+      fr(v.x+v.w*0.38,iy, v.w*0.22, ih, shC[(s+2)%6],1);
+      fr(v.x+v.w*0.65,iy, v.w*0.3, ih, shC[(s+4)%6],1);
+    }
+
+    // elevator rail + car
+    const rx=v.x+v.w/2;
+    li(rx,v.y+2,rx,v.y+v.h-2,on?'rgba(224,123,0,.65)':'rgba(224,123,0,.12)',1.2);
+    if(on){
+      const ey=v.y+3+(Math.sin(st.vlmPh[i].ph)*.5+.5)*(v.h-20);
+      gl(C.amber,6);
+      fr(rx-6,ey,12,7,C.amberL,1);
+      ng();
+    }
+
+    // exit slot (bottom-right corner)
+    const sx2=v.x+v.w-30, sly=v.y+v.h-13;
+    fr(sx2,sly,26,10,'#020810',2);
+    sr(sx2,sly,26,10,on?C.amber:C.dim,0.9,2);
+    tx(sx2+13,sly+5,'OUT',on?C.amber:C.dim,6.5,'center');
+
+    // label
+    tx(v.x+v.w/2,v.y+v.h+7,v.id,on?C.ltblue:C.dim,7.5,'center');
+
+    // LED
+    if(on){ gl(C.amber,5); ci(v.x+v.w-5,v.y+5,2.5,C.amberL,null); ng(); }
+    else   ci(v.x+v.w-5,v.y+5,2.5,C.dim,null);
+  });
+
+  // material flow arrows VLM → COMP
+  if(phase>=2){
+    vlms.forEach((v,i)=>{
+      const t=getTables()[i];
+      const a=0.25+0.3*Math.abs(Math.sin(simTime*2+i));
+      ctx.strokeStyle=`rgba(224,123,0,${a})`;
+      ctx.lineWidth=ws(0.8); ctx.setLineDash([ws(3),ws(4)]);
+      ctx.beginPath();
+      ctx.moveTo(wx(v.x+v.w),wy(v.y+v.h*0.65));
+      // gentle bezier through robot zone
+      ctx.bezierCurveTo(
+        wx(v.x+v.w+35),wy(v.y+v.h*0.65),
+        wx(t.x-20),     wy(t.y+t.h*0.55),
+        wx(t.x),         wy(t.y+t.h*0.55)
+      );
+      ctx.stroke(); ctx.setLineDash([]);
+    });
+  }
+
+  // ── Robots ────────────────────────────────
+  const robs=getRobots();
+  robs.forEach((r,i)=>{
+    const on=phase>=2, ra=st.robA[i];
+
+    // safety zone
+    ctx.beginPath();
+    ctx.arc(wx(r.cx),wy(r.cy),ws(44),0,Math.PI*2);
+    ctx.fillStyle=on?'rgba(106,13,173,0.07)':'transparent'; ctx.fill();
+    ctx.strokeStyle=on?'rgba(192,57,43,0.2)':'rgba(26,58,90,0.15)';
+    ctx.lineWidth=ws(0.7); ctx.setLineDash([ws(3),ws(4)]);
+    ctx.stroke(); ctx.setLineDash([]);
+
+    // base
+    if(on) gl(C.purple,8);
+    ci(r.cx,r.cy,7,on?C.purpleDk:'#050C1A',on?'#9B27C8':C.dim,1.5);
+    ng();
+
+    if(on){
+      const a1=ra.base, L1=28, L2=20;
+      const ex1=r.cx+Math.cos(a1)*L1, ey1=r.cy+Math.sin(a1)*L1;
+      const a2=a1+ra.a1;
+      const ex2=ex1+Math.cos(a2)*L2, ey2=ey1+Math.sin(a2)*L2;
+
+      ctx.lineCap='round';
+      ctx.strokeStyle='#AB47BC'; ctx.lineWidth=ws(3.5);
+      ctx.beginPath(); ctx.moveTo(wx(r.cx),wy(r.cy)); ctx.lineTo(wx(ex1),wy(ey1)); ctx.stroke();
+      ctx.strokeStyle='#7B1FA2'; ctx.lineWidth=ws(2.5);
+      ctx.beginPath(); ctx.moveTo(wx(ex1),wy(ey1)); ctx.lineTo(wx(ex2),wy(ey2)); ctx.stroke();
+      ctx.lineCap='butt';
+
+      gl(C.amber,5);
+      ci(ex2,ey2,3,C.amberL,C.amber,1);
+      ng();
+    }
+    tx(r.cx,r.cy+52,r.id,on?'#8A20B8':C.dim,7.5,'center');
+  });
+
+  // parcels
+  if(phase>=2) st.parcels.forEach(p=>{
+    const a=Math.max(0,Math.min(1,(p.life-p.age+0.25)/0.3));
+    ctx.globalAlpha=a;
+    fr(p.x-p.sz/2,p.y-p.sz/2,p.sz,p.sz,p.col,1);
+    sr(p.x-p.sz/2,p.y-p.sz/2,p.sz,p.sz,'rgba(255,255,255,0.18)',0.4,1);
+    ctx.globalAlpha=1;
+  });
+
+  // ── Composition tables ────────────────────
+  const tbls=getTables();
+  tbls.forEach((t,i)=>{
+    const on=phase>=3, fill=st.tblFill[i];
+    if(on) gl(C.green,8);
+    fr(t.x,t.y,t.w,t.h,on?'#060F10':'#050C1A',3);
+    sr(t.x,t.y,t.w,t.h,on?C.green:C.dim,1.2,3);
+    ng();
+
+    // pallet base
+    const pH=t.h*0.12, pY=t.y+t.h-pH-4;
+    fr(t.x+4,pY,t.w-8,pH,'#4E342E',1);
+
+    // layer items
+    if(on && fill>0){
+      const maxL=5, lh=(t.h-pH-12)/maxL, nl=Math.round(fill*maxL);
+      const lc=['#5D4037','#455A64','#607D8B','#546E7A','#4E342E'];
+      for(let l=0;l<nl;l++){
+        const ly=pY-pH-(l+1)*lh;
+        if(ly>t.y+2) fr(t.x+5,ly,t.w-10,lh-1.5,lc[l%5],1);
+      }
+    }
+
+    const wkg=Math.floor(fill*680);
+    const sc=fill>=1?C.greenL:(on?C.amberL:C.dim);
+    tx(t.x+t.w/2,t.y+8,fill>=1?'✓ COMPLETO':(on?`${wkg} kg`:'ATTESA'),sc,7,'center');
+    tx(t.x+t.w/2,t.y-8,t.id,on?'#2A8A40':C.dim,7.5,'center');
+
+    const lc2=fill>=1?C.green:(on?C.amber:C.dim);
+    if(on){ gl(lc2,4); ci(t.x+t.w-5,t.y+5,2.5,fill>=1?C.greenL:C.amberL,null); ng(); }
+    else   ci(t.x+t.w-5,t.y+5,2.5,C.dim,null);
+  });
+
+  // ── AGV zone ──────────────────────────────
+  // Track lanes (visible roads)
+  [AGV_TY1,AGV_TY2].forEach(ty=>{
+    fr(AGV_X0-2,ty-9,AGV_X1-AGV_X0+4,18,'rgba(0,55,75,0.4)',3);
+    li(AGV_X0,ty,AGV_X1,ty,'rgba(0,151,167,0.35)',1.2,[9,7]);
+    // start/end marks
+    li(AGV_X0+2,ty-6,AGV_X0+2,ty+6,'rgba(0,151,167,0.3)',0.8);
+    li(AGV_X1-2,ty-6,AGV_X1-2,ty+6,'rgba(0,151,167,0.3)',0.8);
+  });
+
+  // Dotted connection lines AGV → staging
+  if(phase>=4){
+    const bays=getBays();
+    [0,1,2,3,4].forEach(r=>{
+      const by=bays[r*2].y+bays[r*2].h/2;
+      const a=0.18+0.12*Math.sin(simTime*1.2+r);
+      li(Z.agv.x+Z.agv.w-4,by,Z.stag.x,by,`rgba(0,151,167,${a})`,0.7,[3,5]);
+    });
+  }
+
+  // SLAM scatter dots
+  ctx.fillStyle='rgba(0,151,167,0.2)';
+  [[596,50],[630,80],[670,45],[710,90],[750,55],[790,80],[820,50],[845,90],
+   [596,470],[640,500],[690,480],[740,495],[790,470],[830,500],[850,475]].forEach(([px,py])=>{
+    ctx.beginPath(); ctx.arc(wx(px),wy(py),ws(1.2),0,Math.PI*2); ctx.fill();
+  });
+
+  // AGVs
+  st.agvs.forEach((a,i)=>{
+    if(!a.active) return;
+
+    // scan glow
+    const g=ctx.createRadialGradient(wx(a.x),wy(a.y),0,wx(a.x),wy(a.y),ws(26));
+    g.addColorStop(0,'rgba(0,151,167,0.15)'); g.addColorStop(1,'rgba(0,151,167,0)');
+    ctx.fillStyle=g; ctx.beginPath(); ctx.arc(wx(a.x),wy(a.y),ws(26),0,Math.PI*2); ctx.fill();
+
+    // LIDAR rays
+    ctx.strokeStyle='rgba(0,151,167,0.16)'; ctx.lineWidth=ws(0.7);
+    for(let k=0;k<8;k++){
+      const ang=k*Math.PI/4+simTime*0.9;
+      ctx.beginPath(); ctx.moveTo(wx(a.x),wy(a.y));
+      ctx.lineTo(wx(a.x+Math.cos(ang)*22),wy(a.y+Math.sin(ang)*22));
+      ctx.stroke();
+    }
+
+    // body
+    gl(C.cyan,8);
+    fr(a.x-14,a.y-9,28,18,C.blue,4);
+    sr(a.x-14,a.y-9,28,18,C.cyanL,1.2,4);
+    ng();
+
+    // wheels
+    [[-11,-9],[11,-9],[-11,9],[11,9]].forEach(([dx,dy])=>{
+      ci(a.x+dx,a.y+dy,2.8,'#0A1828','#3A6A9A',0.8);
+    });
+
+    // LIDAR dome
+    ci(a.x,a.y,3,'#EF5350',null);
+
+    // pallet
+    if(a.loaded){
+      fr(a.x-11,a.y-7,22,14,'rgba(90,60,40,.55)',2);
+      fr(a.x-9,a.y-5,9,10,'#6D4C41',1);
+      fr(a.x+1,a.y-5,9,10,'#546E7A',1);
+    }
+    tx(a.x,a.y+16,i===0?'AGV-01':'AGV-02','rgba(255,255,255,.5)',7,'center');
+  });
+
+  // ── Staging bays ──────────────────────────
+  const bays=getBays();
+  const sCol={empty:C.dim,loading:C.red,done:C.amber,ready:C.green};
+  const sFill={empty:'rgba(5,12,26,.7)',loading:'rgba(192,57,43,.08)',
+               done:'rgba(224,123,0,.08)',ready:'rgba(26,138,58,.08)'};
+  bays.forEach((b,i)=>{
+    const s=phase>=5?st.stagSt[i]:'empty';
+    const on=phase>=5, bc=sCol[s];
+
+    if(s!=='empty') gl(bc,5);
+    fr(b.x,b.y,b.w,b.h,sFill[s],3);
+    sr(b.x,b.y,b.w,b.h,bc,on?1.3:.7,3);
+    ng();
+
+    // floor corner marks
+    const cm=5;
+    [[b.x,b.y,1,0,0,1],[b.x+b.w,b.y,-1,0,0,1],
+     [b.x,b.y+b.h,1,0,0,-1],[b.x+b.w,b.y+b.h,-1,0,0,-1]].forEach(([px,py,dx1,dy1,dx2,dy2])=>{
+      li(px,py,px+dx1*cm,py+dy1*cm,C.yellow,1.2);
+      li(px,py,px+dx2*cm,py+dy2*cm,C.yellow,1.2);
+    });
+
+    // bay id
+    tx(b.x+b.w/2,b.y+7.5,b.id,on?C.yellow:C.dim,7.5,'center');
+
+    // content
+    if(s==='empty'&&on){
+      tx(b.x+b.w/2,b.y+b.h/2,'LIBERA',C.green,7,'center');
+    } else if(s==='loading'){
+      fr(b.x+4,b.y+b.h-13,b.w-8,9,'#4E342E',1);
+      fr(b.x+4,b.y+b.h-25,b.w-8,10,'#455A64',1);
+      tx(b.x+b.w/2,b.y+14,'IN CARICO',C.redL,7,'center');
+    } else if(s==='done'){
+      fr(b.x+4,b.y+b.h-13,b.w-8,9,'#4E342E',1);
+      fr(b.x+4,b.y+b.h-25,b.w-8,10,'#455A64',1);
+      fr(b.x+4,b.y+b.h-38,b.w-8,11,'#546E7A',1);
+      tx(b.x+b.w/2,b.y+14,'✓ COMPL.',C.amberL,7,'center');
+    } else if(s==='ready'){
+      fr(b.x+4,b.y+b.h-13,b.w-8,9,'#4E342E',1);
+      fr(b.x+4,b.y+b.h-25,b.w-8,10,'#455A64',1);
+      fr(b.x+4,b.y+b.h-38,b.w-8,11,'#546E7A',1);
+      gl(C.green,4);
+      tx(b.x+b.w/2,b.y+14,'★ PRONTO',C.greenL,7,'center');
+      ng();
+    }
+
+    // status LED
+    if(on&&s!=='empty'){ gl(bc,5); ci(b.x+b.w-5,b.y+b.h-5,3,bc,null); ng(); }
+    else ci(b.x+b.w-5,b.y+b.h-5,3,C.dim,null);
+  });
+
+  // ── Vans ──────────────────────────────────
+  const vans=getVans();
+  vans.forEach((v,i)=>{
+    const on=phase>=6, load=st.vanLoad[i];
+    const st2=load>.8?'full':load>.01?'loading':'empty';
+    const vc=st2==='full'?C.green:st2==='loading'?C.amber:C.dim;
+
+    if(on) gl(vc,6);
+    fr(v.x,v.y,v.w,v.h,'#141E28',4);
+    sr(v.x,v.y,v.w,v.h,vc,on?1.5:.8,4);
+    ng();
+
+    // cab
+    const cH=v.h*.36;
+    fr(v.x+3,v.y+3,v.w-6,cH,'#1E2D38',3);
+    fr(v.x+5,v.y+5,v.w-10,cH*.55,'rgba(144,202,249,.13)',2);
+
+    // cargo
+    const cY=v.y+cH+3, cgH=v.h-cH-20;
+    fr(v.x+3,cY,v.w-6,cgH,'#0A1510',2);
+    if(load>0){
+      const fh=cgH*load*.9;
+      fr(v.x+5,cY+cgH-fh-1,v.w-10,fh,'rgba(100,70,50,.55)',1);
+    }
+
+    // wheels
+    ci(v.x+11,v.y+v.h-7,5.5,'#0A1528','#3A6090',1);
+    ci(v.x+v.w-11,v.y+v.h-7,5.5,'#0A1528','#3A6090',1);
+
+    // status
+    const stT=st2==='full'?'✓ PRONTO':st2==='loading'?'CARICO...':'IN ATTESA';
+    tx(v.x+v.w/2,v.y+v.h-10,stT,vc,7,'center');
+    tx(v.x+v.w/2,v.y-8,v.id,on?C.amberL:C.dim,8,'center');
+  });
+
+  // stag→dock arrows
+  if(phase>=6){
+    vans.forEach(v=>{
+      const a=.35+.25*Math.abs(Math.sin(simTime*2));
+      li(Z.stag.x+Z.stag.w,v.y+v.h/2,Z.dock.x,v.y+v.h/2,`rgba(29,138,58,${a})`,1.2,[4,4]);
+    });
+  }
+
+  // ── WMS bar (bottom of AGV zone) ──────────
+  const wCX=Z.agv.x+Z.agv.w/2;
+  const wY=FY+FH-10;
+  fr(wCX-95,wY-7,190,14,'rgba(3,8,16,.92)',3);
+  sr(wCX-95,wY-7,190,14,C.blue,.7,3);
+  const p=.5+.5*Math.sin(simTime*2.5);
+  gl(C.green,3*p);
+  ci(wCX-82,wY,2.8,C.green,null);
+  ng();
+  tx(wCX-72,wY,'WMS · OPC UA · ERP SYNC · SIL3',C.steelL,7,'left');
+
+  // faint WMS connection lines
+  [Z.vlm,Z.rob,Z.comp,Z.stag,Z.dock].forEach(z=>{
+    ctx.strokeStyle='rgba(19,84,160,.07)'; ctx.lineWidth=ws(.7);
+    ctx.setLineDash([ws(2),ws(8)]);
+    ctx.beginPath();
+    ctx.moveTo(wx(wCX),wy(wY-7));
+    ctx.lineTo(wx(z.x+z.w/2),wy(FY+FH*.65));
+    ctx.stroke(); ctx.setLineDash([]);
+  });
+
+  // ── outer frame ───────────────────────────
+  sr(FL.x,FL.y,FL.w,FL.h,C.wall,1.5,3);
+
+  // ── flash ─────────────────────────────────
+  if(st.flash&&st.flash.t<1){
+    const fa=Math.sin(st.flash.t*Math.PI)*.05;
+    ctx.fillStyle=`rgba(224,123,0,${fa})`;
+    ctx.fillRect(ox,oy,fw,fh);
+  }
+
+  // ── scanline ──────────────────────────────
+  const sy2=wy(FL.y+(simTime*52)%FH);
+  const sg2=ctx.createLinearGradient(0,sy2,0,sy2+ws(12));
+  sg2.addColorStop(0,'rgba(255,255,255,0)');
+  sg2.addColorStop(.5,'rgba(255,255,255,.01)');
+  sg2.addColorStop(1,'rgba(255,255,255,0)');
+  ctx.fillStyle=sg2; ctx.fillRect(ox,sy2,fw,ws(12));
+}
+
+// ════════════════════════════════════════════
+// LOOP
+// ════════════════════════════════════════════
+function frame(ts){
+  if(!lastTS) lastTS=ts;
+  const dt=Math.min((ts-lastTS)/1000,.05);
+  lastTS=ts;
+  if(playing) update(dt*speed);
+  draw();
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+
+// ════════════════════════════════════════════
+// CONTROLS
+// ════════════════════════════════════════════
+const spdList=[1,2,4,.5]; let si=0;
+document.getElementById('btn-play').addEventListener('click',()=>{
+  playing=!playing;
+  document.getElementById('btn-play').textContent=playing?'⏸ PAUSA':'▶ PLAY';
+});
+document.getElementById('btn-speed').addEventListener('click',()=>{
+  si=(si+1)%spdList.length; speed=spdList[si];
+  document.getElementById('btn-speed').textContent=`⚡ ${speed}×`;
+});
+document.querySelectorAll('.ph').forEach((el,i)=>
+  el.addEventListener('click',()=>{ phase=i; phaseT=0; refreshUI(); })
+);
+refreshUI();
+</script>
 </body>
 </html>

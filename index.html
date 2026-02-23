@@ -464,8 +464,8 @@ function fr(x,y,w,h,col,r=4){
 }
 function sr(x,y,w,h,col,lw=1,r=4,dash=[]){
   ctx.strokeStyle=col; ctx.lineWidth=lw;
-  ctx.setLineDash(dash); ctx.beginPath();
-  ctx.roundRect(x,y,w,h,r); ctx.stroke(); ctx.setLineDash([]);
+  ctx.setLineDash(Array.isArray(dash) ? dash : []); ctx.beginPath();
+  ctx.roundRect(x,y,w,h,Array.isArray(r) ? 4 : r); ctx.stroke(); ctx.setLineDash([]);
 }
 function ci(x,y,r,fill,stroke,lw=1){
   ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2);
@@ -757,7 +757,7 @@ function drawStep2(){
   // Pallet area (right)
   const px=cx+280, py=cy-20;
   fr(px-70,py+60,140,20,'#4E342E',3); // pallet base
-  sr(px-70,py-60,140,120,C.green+'40',1.5,[8,5],4);
+  sr(px-70,py-60,140,120,C.green+'40',1.5,4,[8,5]);
   txB(px,py-45,'PALLET',C.greenL,14,'center');
   tx(px,py-27,'DESTINAZIONE',C.muted,10,'center');
 

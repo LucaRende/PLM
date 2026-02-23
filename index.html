@@ -2,977 +2,1222 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pro System — Simulazione Processo Notturno</title>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pro System — Processo Automatizzato</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 :root{
-  --navy:#050C18;--blue:#1354A0;--amber:#E07B00;
-  --amberL:#F5A623;--green:#1A8A3A;--red:#C0392B;
-  --cyan:#0097A7;--steel:#1A3A5A;--white:#E8F0F8;
-  --dim:#263C58;--ltblue:#5AAAD0;
+  --bg:#060D18; --panel:#091525; --border:#152840;
+  --amber:#E07B00; --amberL:#F5A623;
+  --blue:#1354A0;  --blueL:#1A72D4;
+  --green:#0F9E50; --greenL:#14C760;
+  --purple:#7C3AED;--purpleL:#A78BFA;
+  --cyan:#0891B2;  --cyanL:#22D3EE;
+  --red:#DC2626;
+  --white:#F0F6FF; --muted:#4A7AA0; --dim:#1E3A55;
 }
-html,body{width:100%;height:100%;background:var(--navy);overflow:hidden;
-  font-family:'JetBrains Mono',monospace;color:var(--white)}
+html,body{width:100%;height:100%;background:var(--bg);overflow:hidden;
+  font-family:'Inter',sans-serif;color:var(--white)}
 #app{display:flex;flex-direction:column;height:100vh}
 
-/* ── HEADER ── */
+/* HEADER */
 #hdr{
-  height:44px;flex-shrink:0;
-  display:flex;align-items:center;gap:10px;padding:0 14px;
-  background:#040810;border-bottom:2px solid var(--amber);
+  height:52px;flex-shrink:0;display:flex;align-items:center;
+  justify-content:space-between;padding:0 28px;
+  background:rgba(6,13,24,.98);border-bottom:2px solid var(--amber);
 }
-.logo{width:28px;height:28px;background:var(--amber);flex-shrink:0;
+.logo{width:34px;height:34px;background:var(--amber);flex-shrink:0;
   clip-path:polygon(15% 0,85% 0,100% 15%,100% 85%,85% 100%,15% 100%,0 85%,0 15%);
   display:flex;align-items:center;justify-content:center;
-  font-family:'Bebas Neue',sans-serif;font-size:11px;color:#040810}
-.hdr-t{font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:.1em;white-space:nowrap}
-.hdr-s{font-size:8px;color:var(--ltblue);letter-spacing:.05em;white-space:nowrap}
-.hdr-grow{flex:1}
-#clock{font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--amber);
-  letter-spacing:.1em;min-width:72px;text-align:center;flex-shrink:0}
-.badge{font-size:8px;color:var(--amber);border:1px solid rgba(224,123,0,.3);
-  padding:3px 8px;border-radius:2px;white-space:nowrap;flex-shrink:0}
+  font-family:'Bebas Neue',sans-serif;font-size:13px;color:#060D18}
+.hdr-title{font-family:'Bebas Neue',sans-serif;font-size:19px;letter-spacing:.1em}
+.hdr-sub{font-size:10px;color:var(--muted);letter-spacing:.06em;margin-top:1px}
+#clock{font-family:'Bebas Neue',sans-serif;font-size:34px;color:var(--amber);letter-spacing:.1em}
+.badge{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--amber);
+  border:1px solid rgba(224,123,0,.3);padding:5px 11px;border-radius:3px}
 
-/* ── PHASE BAR ── */
-#phases{
-  height:32px;flex-shrink:0;display:flex;align-items:stretch;
-  background:#030810;border-bottom:1px solid var(--steel);
+/* PROGRESS STEPS BAR */
+#stepbar{
+  flex-shrink:0;display:flex;align-items:center;justify-content:center;
+  padding:10px 20px;gap:0;background:#040C16;
+  border-bottom:1px solid var(--border);
 }
-.ph{flex:1;display:flex;align-items:center;justify-content:center;gap:4px;
-  font-size:8.5px;color:var(--dim);
-  border-right:1px solid rgba(26,58,90,.35);
-  cursor:pointer;transition:background .2s,color .2s;
-  white-space:nowrap;padding:0 3px;overflow:hidden}
-.ph:last-child{border-right:none}
-.ph.active{background:rgba(224,123,0,.1);color:var(--amber)}
-.ph.done{color:var(--green)}
-.phn{width:16px;height:16px;border-radius:50%;background:var(--dim);
-  border:1.5px solid rgba(26,58,90,.8);display:flex;align-items:center;
-  justify-content:center;font-size:7.5px;font-weight:600;flex-shrink:0}
-.ph.active .phn{background:var(--amber);border-color:var(--amberL);color:#040810}
-.ph.done .phn{background:var(--green);border-color:#2ECC71;color:white}
-.ph-t{color:var(--amber);opacity:.5;font-size:7px;margin-left:1px}
+.stp{
+  display:flex;align-items:center;gap:8px;padding:5px 12px;
+  border-radius:6px;cursor:pointer;transition:background .25s;
+  white-space:nowrap;
+}
+.stp:hover{background:rgba(255,255,255,.04)}
+.stp.active{background:rgba(224,123,0,.12)}
+.stp.done .stp-n{background:var(--green);border-color:var(--greenL);color:white}
+.stp.active .stp-n{background:var(--amber);border-color:var(--amberL);color:#060D18;
+  box-shadow:0 0 12px rgba(224,123,0,.5)}
+.stp-n{width:22px;height:22px;border-radius:50%;background:var(--dim);
+  border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;
+  font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:600;
+  flex-shrink:0;transition:all .3s}
+.stp-lbl{font-size:10.5px;color:var(--muted);transition:color .25s}
+.stp.active .stp-lbl{color:var(--amber)}
+.stp.done .stp-lbl{color:var(--green)}
+.stp-time{font-family:'JetBrains Mono',monospace;font-size:8.5px;
+  color:rgba(224,123,0,.4);margin-left:3px}
+.stp-arrow{color:var(--dim);font-size:14px;margin:0 2px;flex-shrink:0}
 
-/* ── BODY ── */
-#body{flex:1;display:flex;overflow:hidden;min-height:0}
+/* MAIN CONTENT */
+#main{flex:1;display:flex;overflow:hidden;min-height:0}
 
-/* canvas wrapper */
-#cw{flex:1;position:relative;overflow:hidden;min-width:0}
+/* STEP PANEL (large canvas area) */
+#panel{flex:1;position:relative;overflow:hidden;min-width:0}
 canvas{display:block;width:100%;height:100%}
 
-/* ── SIDEBAR (right, fixed 190px) ── */
-#sb{
-  width:190px;flex-shrink:0;display:flex;flex-direction:column;
-  background:#030810;border-left:1px solid var(--steel);overflow:hidden;
+/* SIDE INFO */
+#info{
+  width:260px;flex-shrink:0;display:flex;flex-direction:column;
+  background:#040C16;border-left:1px solid var(--border);
 }
-.sc{padding:9px 11px;border-bottom:1px solid var(--steel);flex-shrink:0}
-.sc:last-child{flex:1;border-bottom:none;overflow:hidden}
-.sc-t{font-family:'Bebas Neue',sans-serif;font-size:11.5px;
-  color:var(--amber);letter-spacing:.07em;margin-bottom:5px}
-.sc-d{font-size:8px;color:var(--ltblue);line-height:1.7}
-.sc-d b{color:var(--white)}
-/* 3-stat row */
-.s3{display:grid;grid-template-columns:repeat(3,1fr);gap:4px}
-.sv{text-align:center}
-.sv-n{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--white);line-height:1}
-.sv-l{font-size:7.5px;color:var(--dim);text-transform:uppercase;letter-spacing:.04em}
-/* progress bar */
-.pb{height:3px;background:var(--steel);border-radius:2px;margin-top:7px;overflow:hidden}
+.ic{padding:14px 16px;border-bottom:1px solid var(--border)}
+.ic:last-child{border-bottom:none;flex:1}
+.ic-t{font-family:'Bebas Neue',sans-serif;font-size:15px;color:var(--amber);
+  letter-spacing:.08em;margin-bottom:7px}
+.ic-d{font-size:12px;color:#7AAAC8;line-height:1.7}
+.ic-d b{color:var(--white);font-weight:600}
+/* big number */
+.big-num{font-family:'Bebas Neue',sans-serif;font-size:42px;color:var(--white);
+  line-height:1;letter-spacing:.04em}
+.big-lbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-top:2px}
+/* ora */
+.ora-row{display:flex;align-items:baseline;gap:8px;margin-top:6px}
+.ora-val{font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--amber)}
+.ora-lbl{font-size:10px;color:var(--muted)}
+/* stats grid */
+.sg{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px}
+.sc{background:var(--panel);border:1px solid var(--border);border-radius:5px;
+  padding:8px 10px;text-align:center}
+.sc-n{font-family:'Bebas Neue',sans-serif;font-size:24px;color:var(--white);line-height:1}
+.sc-l{font-size:8.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-top:2px}
+/* progress */
+.pb{height:4px;background:var(--dim);border-radius:2px;margin-top:10px;overflow:hidden}
 .pbf{height:100%;background:var(--amber);border-radius:2px;transition:width .8s}
-.pr{display:flex;justify-content:space-between;margin-top:2px;font-size:7.5px;color:var(--dim)}
-/* kpi rows */
-.kv{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:3px}
-.kv span{font-size:7.5px;color:var(--dim)}
-.kv b{font-size:8px;color:var(--white)}
-/* equipment leds */
-.eq-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;font-size:7.5px}
-.eq-row span{color:var(--dim)}
-.eq-leds{display:flex;gap:3px}
-.led{width:7px;height:7px;border-radius:50%;background:var(--steel)}
-/* staging mini grid */
-#sg{display:grid;grid-template-columns:repeat(5,1fr);gap:3px;margin-top:2px}
-.sgc{padding:3px 1px;border-radius:2px;text-align:center;
-  font-size:7px;background:var(--steel);color:var(--dim);transition:background .3s,color .3s}
+/* checklist */
+.chk-row{display:flex;align-items:center;gap:8px;padding:5px 0;
+  border-bottom:1px solid rgba(21,40,64,.5);font-size:11px}
+.chk-row:last-child{border-bottom:none}
+.chk-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.chk-lbl{flex:1;color:var(--muted)}
+.chk-val{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--white)}
 
-/* floating controls */
-#ctrl{position:absolute;left:10px;top:10px;display:flex;gap:6px;z-index:5}
-.btn{font-size:8px;background:rgba(3,8,16,.88);border:1px solid var(--steel);
-  color:var(--ltblue);padding:4px 9px;border-radius:2px;cursor:pointer;
-  letter-spacing:.03em;transition:border-color .2s,color .2s}
+/* CONTROLS */
+#ctrl{position:absolute;left:16px;bottom:16px;display:flex;gap:8px;z-index:10}
+.btn{font-family:'JetBrains Mono',monospace;font-size:9px;
+  background:rgba(4,12,22,.9);border:1px solid var(--border);
+  color:var(--muted);padding:7px 14px;border-radius:3px;cursor:pointer;
+  transition:border-color .2s,color .2s;letter-spacing:.04em}
 .btn:hover{border-color:var(--amber);color:var(--amber)}
-/* legend */
-#leg{position:absolute;left:10px;bottom:8px;
-  display:flex;gap:12px;flex-wrap:wrap;font-size:7.5px;color:var(--dim);
-  pointer-events:none;z-index:5}
-.li{display:flex;align-items:center;gap:4px}
-.ld{width:8px;height:8px;border-radius:2px}
-.ll{width:18px;height:2px}
 </style>
 </head>
 <body>
 <div id="app">
 
-  <div id="hdr">
+<div id="hdr">
+  <div style="display:flex;align-items:center;gap:14px">
     <div class="logo">PS</div>
     <div>
-      <div class="hdr-t">PRO SYSTEM S.r.l. — SIMULAZIONE PROCESSO NOTTURNO</div>
-      <div class="hdr-s">SISTEMA AUTOMATICO PREPARAZIONE MATERIALI EDILIZIA · TOP-DOWN VIEW · RT-AUTO-EDI-001</div>
+      <div class="hdr-title">PRO SYSTEM — PROCESSO AUTOMATIZZATO NOTTURNO</div>
+      <div class="hdr-sub">MAGAZZINO MATERIALI EDILIZIA · CICLO 20:00 → 06:00</div>
     </div>
-    <div class="hdr-grow"></div>
-    <div id="clock">20:00</div>
-    <div class="badge">REV. 1.0 · SCHEMA FUNZIONALE</div>
   </div>
+  <div id="clock">20:00</div>
+  <div class="badge">RT-AUTO-EDI-001</div>
+</div>
 
-  <div id="phases">
-    <div class="ph active" data-ph="0"><span class="phn">1</span>Import Ordini<span class="ph-t">20:00</span></div>
-    <div class="ph" data-ph="1"><span class="phn">2</span>VLM Attivo<span class="ph-t">20:20</span></div>
-    <div class="ph" data-ph="2"><span class="phn">3</span>Robot Picking<span class="ph-t">20:25</span></div>
-    <div class="ph" data-ph="3"><span class="phn">4</span>Composizione<span class="ph-t">21:xx</span></div>
-    <div class="ph" data-ph="4"><span class="phn">5</span>AGV Trasporto<span class="ph-t">22:xx</span></div>
-    <div class="ph" data-ph="5"><span class="phn">6</span>Staging<span class="ph-t">23:xx</span></div>
-    <div class="ph" data-ph="6"><span class="phn">7</span>Carico Furgoni<span class="ph-t">06:00</span></div>
+<div id="stepbar">
+  <div class="stp active" data-s="0"><span class="stp-n">1</span><span class="stp-lbl">WMS Import</span><span class="stp-time">20:00</span></div>
+  <div class="stp-arrow">›</div>
+  <div class="stp" data-s="1"><span class="stp-n">2</span><span class="stp-lbl">VLM Estrae</span><span class="stp-time">20:20</span></div>
+  <div class="stp-arrow">›</div>
+  <div class="stp" data-s="2"><span class="stp-n">3</span><span class="stp-lbl">Robot Preleva</span><span class="stp-time">20:25</span></div>
+  <div class="stp-arrow">›</div>
+  <div class="stp" data-s="3"><span class="stp-n">4</span><span class="stp-lbl">Pallet</span><span class="stp-time">21:xx</span></div>
+  <div class="stp-arrow">›</div>
+  <div class="stp" data-s="4"><span class="stp-n">5</span><span class="stp-lbl">AGV Trasporta</span><span class="stp-time">22:xx</span></div>
+  <div class="stp-arrow">›</div>
+  <div class="stp" data-s="5"><span class="stp-n">6</span><span class="stp-lbl">Staging</span><span class="stp-time">23:xx</span></div>
+  <div class="stp-arrow">›</div>
+  <div class="stp" data-s="6"><span class="stp-n">7</span><span class="stp-lbl">Carico</span><span class="stp-time">06:00</span></div>
+</div>
+
+<div id="main">
+  <div id="panel">
+    <canvas id="c"></canvas>
+    <div id="ctrl">
+      <button class="btn" id="btn-play">⏸ PAUSA</button>
+      <button class="btn" id="btn-speed">⚡ 1×</button>
+      <button class="btn" id="btn-prev">← PREC</button>
+      <button class="btn" id="btn-next">SUCC →</button>
+    </div>
   </div>
-
-  <div id="body">
-
-    <!-- CANVAS -->
-    <div id="cw">
-      <canvas id="c"></canvas>
-      <div id="ctrl">
-        <button class="btn" id="btn-play">⏸ PAUSA</button>
-        <button class="btn" id="btn-speed">⚡ 1×</button>
-      </div>
-      <div id="leg">
-        <div class="li"><div class="ld" style="background:#1354A0"></div>VLM</div>
-        <div class="li"><div class="ld" style="background:#6A0DAD"></div>Robot</div>
-        <div class="li"><div class="ld" style="background:#1A8A3A"></div>Libero</div>
-        <div class="li"><div class="ld" style="background:#E07B00"></div>Completo</div>
-        <div class="li"><div class="ld" style="background:#C0392B"></div>In carico</div>
-        <div class="li"><div class="ll" style="background:#0097A7"></div>AGV</div>
-        <div class="li"><div class="ll" style="background:#E07B00"></div>Materiali</div>
+  <div id="info">
+    <div class="ic">
+      <div class="ic-t" id="i-title">WMS IMPORTA ORDINI</div>
+      <div class="ic-d" id="i-desc">
+        Il sistema <b>WMS</b> riceve tutti gli ordini dall'ERP aziendale.<br><br>
+        Pianifica la sequenza ottimale per preparare <b>ogni cantiere</b> durante la notte.
       </div>
     </div>
-
-    <!-- SIDEBAR -->
-    <div id="sb">
-      <div class="sc">
-        <div class="sc-t" id="ph-name">IMPORT ORDINI</div>
-        <div class="sc-d" id="ph-desc">
-          Il <b>WMS</b> riceve gli ordini ERP.<br>
-          Pianificazione <b>wave picking</b>.<br>
-          Sequenza <b>6 commesse</b> attive.
-        </div>
+    <div class="ic">
+      <div class="ora-row">
+        <div class="ora-val" id="i-ora">20:00</div>
+        <div class="ora-lbl">orario fase</div>
       </div>
-      <div class="sc">
-        <div class="s3">
-          <div class="sv"><div class="sv-n" id="s-c">0</div><div class="sv-l">Commesse</div></div>
-          <div class="sv"><div class="sv-n" id="s-p">0</div><div class="sv-l">Pallet</div></div>
-          <div class="sv"><div class="sv-n" id="s-k">0.0</div><div class="sv-l">Ton</div></div>
-        </div>
-        <div class="pb"><div class="pbf" id="pbf" style="width:0%"></div></div>
-        <div class="pr"><span>AVANZAMENTO</span><span id="pct">0%</span></div>
+      <div class="sg">
+        <div class="sc"><div class="sc-n" id="i-n1">6</div><div class="sc-l">Commesse</div></div>
+        <div class="sc"><div class="sc-n" id="i-n2">24</div><div class="sc-l">Pallet tot.</div></div>
+        <div class="sc"><div class="sc-n" id="i-n3">14.4</div><div class="sc-l">Ton totali</div></div>
+        <div class="sc"><div class="sc-n" id="i-n4">10h</div><div class="sc-l">Ciclo</div></div>
       </div>
-      <div class="sc">
-        <div class="sc-t">KPI SISTEMA</div>
-        <div class="kv"><span>Accuratezza</span><b>&gt; 99.5%</b></div>
-        <div class="kv"><span>Uptime</span><b>&gt; 97.5%</b></div>
-        <div class="kv"><span>Throughput</span><b>≥ 6/notte</b></div>
-        <div class="kv"><span>MTTR target</span><b>&lt; 45 min</b></div>
-      </div>
-      <div class="sc">
-        <div class="sc-t">ATTREZZATURA</div>
-        <div class="eq-row"><span>VLM (4×)</span><div class="eq-leds" id="vlm-l"></div></div>
-        <div class="eq-row"><span>Robot (4×)</span><div class="eq-leds" id="rob-l"></div></div>
-        <div class="eq-row"><span>AGV (2×)</span><div class="eq-leds" id="agv-l"></div></div>
-      </div>
-      <div class="sc">
-        <div class="sc-t">STAGING</div>
-        <div id="sg"></div>
-      </div>
+      <div class="pb"><div class="pbf" id="pbf" style="width:0%"></div></div>
     </div>
-
+    <div class="ic" style="flex:1;overflow:auto">
+      <div class="ic-t">CARATTERISTICHE</div>
+      <div id="i-spec"></div>
+    </div>
   </div>
 </div>
 
+</div>
+
 <script>
-// ════════════════════════════════════════════
-// SETUP
-// ════════════════════════════════════════════
+// ═══════════════════════════════════════════
+// CANVAS SETUP
+// ═══════════════════════════════════════════
 const canvas = document.getElementById('c');
 const ctx    = canvas.getContext('2d');
 const DPR    = window.devicePixelRatio || 1;
-let CW, CH, SC; // canvas logical size & scale
-
-// Base coordinate system 1200 × 520
-const BW = 1200, BH = 520;
+let CW, CH;
 
 function resize(){
   const el = canvas.parentElement;
-  CW = el.clientWidth;
-  CH = el.clientHeight;
-  canvas.width  = Math.round(CW * DPR);
-  canvas.height = Math.round(CH * DPR);
-  canvas.style.width  = CW + 'px';
-  canvas.style.height = CH + 'px';
+  CW = el.clientWidth; CH = el.clientHeight;
+  canvas.width  = CW * DPR; canvas.height = CH * DPR;
+  canvas.style.width = CW+'px'; canvas.style.height = CH+'px';
   ctx.setTransform(DPR,0,0,DPR,0,0);
-  SC = Math.min(CW/BW, CH/BH) * 0.98;
 }
 resize();
 window.addEventListener('resize', resize);
 
-// World → screen
-function wx(x){ return (CW - BW*SC)/2 + x*SC; }
-function wy(y){ return (CH - BH*SC)/2 + y*SC; }
-function ws(v){ return v*SC; }
-
-// ════════════════════════════════════════════
+// ═══════════════════════════════════════════
 // PALETTE
-// ════════════════════════════════════════════
+// ═══════════════════════════════════════════
 const C = {
-  bg:'#040810', floor:'#060D1A', grid:'rgba(255,255,255,0.022)',
-  wall:'#0C1C30',
-  blue:'#1354A0', blueL:'#1A6ACA', blueDk:'#061830',
-  amber:'#E07B00', amberL:'#F5A623',
-  green:'#1A8A3A', greenL:'#27AE60',
-  red:'#C0392B',   redL:'#E74C3C',
-  cyan:'#0097A7',  cyanL:'#00BCD4',
-  purple:'#6A0DAD',purpleL:'#9B27C8', purpleDk:'#200040',
-  steel:'#1A3A5A', steelL:'#2A5A8A',
-  white:'#E8F0F8', ltblue:'#5AAAD0', dim:'#263C58',
-  yellow:'#F9A825',
+  bg:'#060D18', floor:'#08111E', grid:'rgba(255,255,255,0.025)',
+  amber:'#E07B00', amberL:'#F5A623', amberD:'#7A3800',
+  blue:'#1354A0', blueL:'#2A8AF6', blueDk:'#061830',
+  green:'#0F9E50', greenL:'#14C760',
+  purple:'#7C3AED', purpleL:'#A78BFA',
+  cyan:'#0891B2', cyanL:'#22D3EE',
+  red:'#DC2626', redL:'#F87171',
+  white:'#F0F6FF', muted:'#4A7AA0', dim:'#1E3A55',
+  panel:'#091525', border:'#152840',
+  gray:'#374151', grayL:'#6B7280',
+  brown:'#78350F', brownL:'#92400E',
+  steel:'#334155',
 };
 
-// ════════════════════════════════════════════
-// LAYOUT  (all in BASE coords 1200×520)
-//
-//  Zone widths:
-//   VLM   0–210   (210)
-//   ROB   210–400 (190)
-//   COMP  400–570 (170)
-//   AGV   570–860 (290)
-//   STAG  860–1060(200)
-//   DOCK  1060–1190(130)
-//   (right margin 10)
-//
-//  Floor y: 14 → 506
-// ════════════════════════════════════════════
-const FL = { x:0, y:14, w:1200, h:492 };
-
-// Zone definitions
-const Z = {
-  vlm:  { x:6,    w:204, label:'ZONA VLM',      col:'#3A6AA0' },
-  rob:  { x:214,  w:186, label:'ISOLA ROBOT',    col:'#7A20B8' },
-  comp: { x:404,  w:166, label:'COMPOSIZIONE',   col:'#2A7A40' },
-  agv:  { x:574,  w:286, label:'CORRIDOIO AGV',  col:'#0097A7' },
-  stag: { x:864,  w:196, label:'AREA STAGING',   col:'#2A7A40' },
-  dock: { x:1064, w:126, label:'BANCHINA',        col:'#8A5000' },
-};
-const FY = FL.y, FH = FL.h; // floor top/height shortcuts
-
-// ─── VLMs: 2×2 grid ───
-function getVLMs(){
-  const z=Z.vlm, pad=6;
-  const vw=(z.w-pad*3)/2, vh=(FH-pad*3-16)/2;
-  return [
-    { x:z.x+pad,      y:FY+16+pad,      w:vw, h:vh, id:'VLM-01' },
-    { x:z.x+pad*2+vw, y:FY+16+pad,      w:vw, h:vh, id:'VLM-02' },
-    { x:z.x+pad,      y:FY+16+pad*2+vh, w:vw, h:vh, id:'VLM-03' },
-    { x:z.x+pad*2+vw, y:FY+16+pad*2+vh, w:vw, h:vh, id:'VLM-04' },
-  ];
-}
-
-// ─── Robots: 2×2 ───
-function getRobots(){
-  const z=Z.rob;
-  const cx1=z.x+z.w*0.27, cx2=z.x+z.w*0.73;
-  const cy1=FY+FH*0.28,    cy2=FY+FH*0.72;
-  return [
-    { cx:cx1, cy:cy1, id:'R-01' },
-    { cx:cx2, cy:cy1, id:'R-02' },
-    { cx:cx1, cy:cy2, id:'R-03' },
-    { cx:cx2, cy:cy2, id:'R-04' },
-  ];
-}
-
-// ─── Comp tables: 2×2 ───
-function getTables(){
-  const z=Z.comp, pad=6;
-  const tw=(z.w-pad*3)/2, th=(FH-pad*3-16)/2;
-  return [
-    { x:z.x+pad,      y:FY+16+pad,      w:tw, h:th, id:'T-01' },
-    { x:z.x+pad*2+tw, y:FY+16+pad,      w:tw, h:th, id:'T-02' },
-    { x:z.x+pad,      y:FY+16+pad*2+th, w:tw, h:th, id:'T-03' },
-    { x:z.x+pad*2+tw, y:FY+16+pad*2+th, w:tw, h:th, id:'T-04' },
-  ];
-}
-
-// ─── AGV tracks ───
-const AGV_TY1 = FY + FH*0.33;
-const AGV_TY2 = FY + FH*0.67;
-const AGV_X0  = Z.agv.x + 8;
-const AGV_X1  = Z.agv.x + Z.agv.w - 8;
-
-// ─── Staging bays: 2 cols × 5 rows ───
-function getBays(){
-  const z=Z.stag, pad=5;
-  const bw=(z.w-pad*3)/2, bh=(FH-16-pad*6)/5;
-  const bays=[];
-  for(let r=0;r<5;r++) for(let c=0;c<2;c++){
-    const n=r*2+c+1;
-    bays.push({
-      x:z.x+pad+c*(bw+pad),
-      y:FY+16+pad+r*(bh+pad),
-      w:bw, h:bh,
-      id:`S-${String(n).padStart(2,'0')}`,
-    });
-  }
-  return bays;
-}
-
-// ─── Vans: 3 stacked ───
-function getVans(){
-  const z=Z.dock, pad=6;
-  const vh=(FH-16-pad*4)/3;
-  return [
-    { x:z.x+pad, y:FY+16+pad,         w:z.w-pad*2, h:vh, id:'VAN-A' },
-    { x:z.x+pad, y:FY+16+pad*2+vh,    w:z.w-pad*2, h:vh, id:'VAN-B' },
-    { x:z.x+pad, y:FY+16+pad*3+vh*2,  w:z.w-pad*2, h:vh, id:'VAN-C' },
-  ];
-}
-
-// ════════════════════════════════════════════
-// STATE
-// ════════════════════════════════════════════
-let phase=0, phaseT=0, simTime=0, playing=true, speed=1, lastTS=null;
-const PDUR = [4,5,6,7,6,6,5];
-const PINFO = [
-  {name:'IMPORT ORDINI',   desc:'Il <b>WMS</b> riceve gli ordini ERP.<br>Pianificazione <b>wave picking</b>.<br>Sequenza <b>6 commesse</b> attive.'},
-  {name:'ATTIVAZIONE VLM', desc:'I <b>4 VLM</b> avviano i cassetti.<br>Goods-to-person attivo.<br><b>Encoder ±0.5 mm</b>.'},
-  {name:'ROBOT PICKING',   desc:'<b>4 robot 6 assi</b> prelevano.<br>Vision 3D · F/T sensor.<br><b>Ripetibilità ±0.05 mm</b>.'},
-  {name:'COMPOSIZIONE',    desc:'Robot impilano su pallet.<br>Peso <b>±1 kg</b> · Barcode scan.<br>Per commessa / cantiere.'},
-  {name:'AGV TRASPORTO',   desc:'<b>2 AGV</b> trasportano pallet.<br>SLAM 360° · Path A*.<br><b>1500 kg</b> · Docking ±10 mm.'},
-  {name:'STAGING',         desc:'Deposito in <b>baia numerata</b>.<br>Display e-paper · LED 3 stati.<br>Celle di carico ±1 kg.'},
-  {name:'CARICO FURGONI',  desc:'Ore <b>06:00</b> — operatori caricano.<br>Tutti i cantieri pronti.<br>Barcode scan + DDT.'},
+// ═══════════════════════════════════════════
+// STEP DATA
+// ═══════════════════════════════════════════
+const STEPS = [
+  {
+    id:0, label:'WMS IMPORTA ORDINI', ora:'20:00',
+    color: C.blue, colorL: C.blueL,
+    n1:'6', l1:'Commesse', n2:'24', l2:'Pallet', n3:'14.4', l3:'Ton', n4:'10h', l4:'Ciclo',
+    desc:'Il sistema <b>WMS</b> riceve tutti gli ordini dall\'ERP aziendale.<br><br>Pianifica la sequenza ottimale per preparare <b>ogni cantiere</b> durante la notte.',
+    spec:[
+      {col:C.blue,   lbl:'Sistema',    val:'WMS / ERP'},
+      {col:C.green,  lbl:'Integrazione',val:'OPC UA'},
+      {col:C.amber,  lbl:'Commesse',   val:'6 / notte'},
+      {col:C.purple, lbl:'Algoritmo',  val:'Wave Picking'},
+      {col:C.cyan,   lbl:'Sequenza',   val:'Ottimizzata'},
+    ],
+    dur: 5,
+  },
+  {
+    id:1, label:'VLM ESTRAE CASSETTO', ora:'20:20',
+    color: C.amber, colorL: C.amberL,
+    n1:'4', l1:'VLM', n2:'300–600', l2:'kg/cassetto', n3:'±0.5', l3:'mm prec.', n4:'GTP', l4:'Modalità',
+    desc:'Il <b>magazzino verticale</b> (VLM) riceve l\'ordine di estrarre il cassetto che contiene il materiale richiesto.<br><br>L\'elevatore interno porta il cassetto alla <b>finestra di prelievo</b>.',
+    spec:[
+      {col:C.amber,  lbl:'Tipo',       val:'Vertical Lift Module'},
+      {col:C.blue,   lbl:'Unità',      val:'4 VLM indipendenti'},
+      {col:C.green,  lbl:'Portata',    val:'300–600 kg/cassetto'},
+      {col:C.cyan,   lbl:'Precisione', val:'Encoder ±0.5 mm'},
+      {col:C.purple, lbl:'Logica',     val:'Goods-to-Person'},
+    ],
+    dur: 5,
+  },
+  {
+    id:2, label:'ROBOT PRELEVA', ora:'20:25',
+    color: C.purple, colorL: C.purpleL,
+    n1:'4', l1:'Robot', n2:'6', l2:'Assi DOF', n3:'±0.05', l3:'mm riep.', n4:'3D', l4:'Vision',
+    desc:'Il <b>robot a 6 assi</b> si avvicina alla finestra del VLM, identifica il collo tramite <b>visione 3D</b> e lo preleva con la pinza.<br><br>Ogni pezzo viene riconosciuto e tracciato.',
+    spec:[
+      {col:C.purple, lbl:'Tipo',       val:'Robot 6 assi (KUKA)'},
+      {col:C.amber,  lbl:'Portata',    val:'50–120 kg'},
+      {col:C.blue,   lbl:'Ripetibilità',val:'±0.05 mm'},
+      {col:C.green,  lbl:'Sensori',    val:'Vision 3D + F/T'},
+      {col:C.cyan,   lbl:'Tool',       val:'ATC cambio utensile'},
+    ],
+    dur: 6,
+  },
+  {
+    id:3, label:'COMPOSIZIONE PALLET', ora:'21:xx',
+    color: C.green, colorL: C.greenL,
+    n1:'1', l1:'Pallet=1 cantiere', n2:'±1', l2:'kg peso', n3:'100%', l3:'Barcode', n4:'680', l4:'kg max',
+    desc:'Il robot impila i materiali sul pallet <b>commessa per commessa</b>.<br><br>Ogni collo viene posato con precisione, <b>pesato</b> e scannerizzato. Un pallet = un cantiere.',
+    spec:[
+      {col:C.green,  lbl:'Identificazione', val:'Barcode ogni collo'},
+      {col:C.amber,  lbl:'Pesatura',    val:'Celle ±1 kg'},
+      {col:C.blue,   lbl:'Strato',      val:'Ottimizzato WMS'},
+      {col:C.purple, lbl:'Pallet',      val:'1 per cantiere'},
+      {col:C.cyan,   lbl:'Capacità max',val:'680 kg / pallet'},
+    ],
+    dur: 6,
+  },
+  {
+    id:4, label:'AGV TRASPORTA', ora:'22:xx',
+    color: C.cyan, colorL: C.cyanL,
+    n1:'2', l1:'AGV', n2:'1500', l2:'kg portata', n3:'SLAM', l3:'Nav.', n4:'±10', l4:'mm dock',
+    desc:'Il <b>robot AGV</b> (veicolo autonomo) si avvicina al pallet completato, lo carica e lo trasporta attraverso il corridoio fino all\'area di staging.<br><br>Naviga da solo, senza binari.',
+    spec:[
+      {col:C.cyan,   lbl:'Tipo',       val:'AGV/AMR autonomo'},
+      {col:C.blue,   lbl:'Navigazione',val:'SLAM Laser 360°'},
+      {col:C.amber,  lbl:'Portata',    val:'1500 kg'},
+      {col:C.green,  lbl:'Docking',    val:'±10 mm precisione'},
+      {col:C.purple, lbl:'Protocollo', val:'VDA5050 / Wi-Fi 6'},
+    ],
+    dur: 6,
+  },
+  {
+    id:5, label:'DEPOSITO STAGING', ora:'23:xx',
+    color: C.green, colorL: C.greenL,
+    n1:'10', l1:'Baie', n2:'1', l2:'Baia=1 Cantiere', n3:'LED', l3:'3 stati', n4:'RFID', l4:'Tag',
+    desc:'L\'AGV deposita il pallet nella <b>baia staging numerata</b> assegnata a quel cantiere.<br><br>La <b>colonna luminosa verde</b> si accende: pallet pronto per il carico.',
+    spec:[
+      {col:C.green,  lbl:'Baie totali',val:'10 postazioni'},
+      {col:C.amber,  lbl:'Segnaletica',val:'Colonna LED 3 stati'},
+      {col:C.blue,   lbl:'Display',    val:'e-Paper per cantiere'},
+      {col:C.cyan,   lbl:'Tracciatura',val:'RFID ogni pallet'},
+      {col:C.purple, lbl:'Dimensione', val:'2000×2000 mm/baia'},
+    ],
+    dur: 6,
+  },
+  {
+    id:6, label:'CARICO FURGONI', ora:'06:00',
+    color: C.amberL, colorL: '#FFD700',
+    n1:'6', l1:'Furgoni', n2:'06:00', l2:'Partenza', n3:'100%', l3:'Tracciato', n4:'DDT', l4:'Auto',
+    desc:'Alle <b>06:00</b> arrivano i furgoni.<br><br>Gli operatori caricano ogni mezzo dalla baia assegnata. Ogni pallet è già <b>etichettato, pesato e tracciato</b>. I cantieri ricevono i materiali in tempo.',
+    spec:[
+      {col:C.amber,  lbl:'Orario',     val:'06:00 partenza'},
+      {col:C.green,  lbl:'Efficienza', val:'Zero errori picking'},
+      {col:C.blue,   lbl:'DDT',        val:'Generato automatico'},
+      {col:C.cyan,   lbl:'Tracciabilità',val:'Completa fine-a-fine'},
+      {col:C.purple, lbl:'Operatori',  val:'Solo al carico'},
+    ],
+    dur: 5,
+  },
 ];
 
-const st = {
-  vlmPh:  [0,0.5,1.1,1.8].map((ph,i)=>({ ph, spd:0.7+i*0.12 })),
-  robA:   [0,0,0,0].map(()=>({ base:Math.random()*6.28, a1:0, a2:0, spd:0.35+Math.random()*.3 })),
-  parcels:[],
-  agvs:[
-    { x:AGV_X0+20, y:AGV_TY1, dir:1, loaded:false, active:false },
-    { x:AGV_X1-20, y:AGV_TY2, dir:-1, loaded:false, active:false },
-  ],
-  tblFill:[0,0,0,0],
-  stagSt: Array(10).fill('empty'),
-  vanLoad:[0,0,0],
-  flash: null,
-  C:0, P:0, K:0,
+// ═══════════════════════════════════════════
+// SIM STATE
+// ═══════════════════════════════════════════
+let step = 0, t = 0, simT = 0, playing = true, speed = 1, lastTS = null;
+
+// Per-step animation state
+const anim = {
+  // Step 0 — WMS: data packets flying
+  packets: [],
+  // Step 1 — VLM: elevator position
+  elevY: 0.1,
+  // Step 2 — Robot: arm angles
+  armBase: 0, arm1: 0, arm2: 0,
+  // Step 3 — Pallet: layer count
+  layers: 0,
+  // Step 4 — AGV: position
+  agvX: 0.1,
+  // Step 5 — Staging: filled count
+  stagFilled: 0,
+  // Step 6 — Van: load
+  vanLoad: 0,
 };
 
-// ════════════════════════════════════════════
-// PHASE ADVANCE + UI
-// ════════════════════════════════════════════
-function advPhase(){
-  if(phase<6) phase++;
-  phaseT=0; st.flash={t:0};
-  refreshUI();
+function resetAnim(){
+  anim.packets = [];
+  anim.elevY   = 0.1;
+  anim.armBase = 0;
+  anim.layers  = 0;
+  anim.agvX    = 0.1;
+  anim.stagFilled = 0;
+  anim.vanLoad = 0;
 }
 
-function refreshUI(){
-  document.querySelectorAll('.ph').forEach((el,i)=>{
-    el.classList.toggle('active',i===phase);
-    el.classList.toggle('done',i<phase);
-  });
-  const pi=PINFO[phase];
-  document.getElementById('ph-name').textContent=pi.name;
-  document.getElementById('ph-desc').innerHTML=pi.desc;
-  const pct=Math.round(phase/6*100);
-  document.getElementById('pbf').style.width=pct+'%';
-  document.getElementById('pct').textContent=pct+'%';
+function goStep(s){
+  step = Math.max(0, Math.min(6, s));
+  t = 0;
+  resetAnim();
+  updateSidePanel();
+  updateStepBar();
+}
 
-  // equipment leds
-  function mkLeds(count, on, col){
-    return Array.from({length:count},(_,i)=>
-      `<div class="led" style="background:${i<count&&on?col:'#1A3A5A'}"></div>`
-    ).join('');
-  }
-  document.getElementById('vlm-l').innerHTML=mkLeds(4,phase>=1,'#E07B00');
-  document.getElementById('rob-l').innerHTML=mkLeds(4,phase>=2,'#9B27C8');
-  document.getElementById('agv-l').innerHTML=mkLeds(2,phase>=4,'#0097A7');
+// ═══════════════════════════════════════════
+// UI UPDATE
+// ═══════════════════════════════════════════
+function updateSidePanel(){
+  const d = STEPS[step];
+  document.getElementById('i-title').textContent = d.label;
+  document.getElementById('i-desc').innerHTML    = d.desc;
+  document.getElementById('i-ora').textContent   = d.ora;
+  document.getElementById('i-n1').textContent    = d.n1;
+  document.getElementById('i-n2').textContent    = d.n2;
+  document.getElementById('i-n3').textContent    = d.n3;
+  document.getElementById('i-n4').textContent    = d.n4;
+  document.querySelector('.sc:nth-child(1) .sc-l').textContent = d.l1;
+  document.querySelector('.sc:nth-child(2) .sc-l').textContent = d.l2;
+  document.querySelector('.sc:nth-child(3) .sc-l').textContent = d.l3;
+  document.querySelector('.sc:nth-child(4) .sc-l').textContent = d.l4;
+  document.getElementById('pbf').style.width = Math.round(step/6*100)+'%';
 
-  // staging grid
-  const cols={empty:'#1A3A5A',loading:'#C0392B',done:'#E07B00',ready:'#1A8A3A'};
-  document.getElementById('sg').innerHTML=st.stagSt.map((s,i)=>`
-    <div class="sgc" style="background:${cols[s]};color:${s==='empty'?'#263C58':'white'}">
-      ${String(i+1).padStart(2,'0')}
+  const spec = document.getElementById('i-spec');
+  spec.innerHTML = d.spec.map(s=>`
+    <div class="chk-row">
+      <div class="chk-dot" style="background:${s.col}"></div>
+      <div class="chk-lbl">${s.lbl}</div>
+      <div class="chk-val">${s.val}</div>
     </div>`).join('');
 }
 
-// ════════════════════════════════════════════
+function updateStepBar(){
+  document.querySelectorAll('.stp').forEach((el,i)=>{
+    el.classList.toggle('active', i===step);
+    el.classList.toggle('done',   i<step);
+  });
+}
+
+// ═══════════════════════════════════════════
 // UPDATE
-// ════════════════════════════════════════════
+// ═══════════════════════════════════════════
 function update(dt){
-  phaseT+=dt; simTime+=dt;
-  if(phaseT>=PDUR[phase]) advPhase();
+  t += dt; simT += dt;
 
   // clock
-  const td=PDUR.reduce((a,b)=>a+b,0);
-  const mins=(simTime/td)*600;
-  const hh=Math.floor(20+mins/60)%24, mm=Math.floor(mins%60);
-  document.getElementById('clock').textContent=
+  const td = STEPS.reduce((a,s)=>a+s.dur,0);
+  const mins = (simT/td)*600;
+  const hh = Math.floor(20+mins/60)%24, mm = Math.floor(mins%60);
+  document.getElementById('clock').textContent =
     String(hh).padStart(2,'0')+':'+String(mm).padStart(2,'0');
 
-  // VLM elevators
-  if(phase>=1) st.vlmPh.forEach(e=>{ e.ph+=dt*e.spd*(phase>=2?1.7:0.9); });
-
-  // Robots
-  if(phase>=2) st.robA.forEach(r=>{
-    r.base+=dt*r.spd;
-    r.a1=Math.sin(r.base*1.3)*0.8;
-    r.a2=Math.cos(r.base*0.8)*0.65-0.3;
-  });
-
-  // Parcels
-  const vlms=getVLMs(), tbls=getTables();
-  if(phase>=2 && Math.random()<dt*3){
-    const v=vlms[Math.floor(Math.random()*4)];
-    const t=tbls[Math.floor(Math.random()*4)];
-    const pc=['#6D4C41','#37474F','#4E342E','#455A64','#546E7A'];
-    st.parcels.push({
-      x:v.x+v.w-2, y:v.y+v.h*0.6,
-      tx:t.x+t.w/2+(Math.random()-.5)*20,
-      ty:t.y+t.h*0.55,
-      age:0, life:0.8+Math.random()*.6,
-      col:pc[Math.floor(Math.random()*pc.length)],
-      sz:5+Math.random()*4,
-    });
+  // auto advance
+  if(t >= STEPS[step].dur){
+    if(step < 6){ goStep(step+1); }
+    else { t = 0; goStep(0); simT = 0; } // loop
   }
-  st.parcels=st.parcels.filter(p=>{
-    p.age+=dt;
-    p.x+=(p.tx-p.x)*dt*4.5;
-    p.y+=(p.ty-p.y)*dt*4.5;
-    return p.age<p.life+0.3;
-  });
 
-  // Table fill
-  if(phase>=3) st.tblFill=st.tblFill.map(f=>Math.min(f+dt*.09,1));
+  const p = Math.min(t / STEPS[step].dur, 1); // 0→1 within step
 
-  // AGVs
-  st.agvs.forEach((a,i)=>{
-    a.active=phase>=4;
-    if(!a.active) return;
-    const ty=i===0?AGV_TY1:AGV_TY2;
-    a.y+=(ty-a.y)*dt*5;
-    a.x+=a.dir*130*dt;
-    if(a.x>AGV_X1+25){ a.dir=-1; a.loaded=false; }
-    if(a.x<AGV_X0-25){ a.dir=1;  a.loaded=true;  }
-    a.x=Math.max(AGV_X0-30,Math.min(AGV_X1+30,a.x));
-  });
-
-  // Staging
-  if(phase>=5){
-    const done=Math.floor(phaseT/PDUR[5]*10);
-    st.stagSt=st.stagSt.map((s,i)=>{
-      if(s==='done'||s==='ready') return s;
-      if(i<done)    return 'done';
-      if(i===done)  return 'loading';
-      return 'empty';
-    });
+  // Step-specific animations
+  switch(step){
+    case 0: // packets spawn
+      if(Math.random() < dt*4)
+        anim.packets.push({ x:0.12, y:0.3+Math.random()*0.4, vx:0.25, vy:(Math.random()-.5)*0.05, life:0 });
+      anim.packets.forEach(pk=>{ pk.x+=pk.vx*dt; pk.y+=pk.vy*dt; pk.life+=dt; });
+      anim.packets = anim.packets.filter(pk=>pk.x<0.92&&pk.life<4);
+      break;
+    case 1: // elevator going down then up
+      anim.elevY = 0.1 + Math.abs(Math.sin(simT*0.6)) * 0.7;
+      break;
+    case 2: // robot arm sweep
+      anim.armBase += dt*0.7;
+      anim.arm1 = Math.sin(anim.armBase*1.2)*0.9;
+      anim.arm2 = Math.cos(anim.armBase*0.8)*0.7;
+      break;
+    case 3: // layers building
+      anim.layers = Math.min(p*6, 5.99);
+      break;
+    case 4: // AGV moving
+      anim.agvX = 0.1 + Math.abs(Math.sin(simT*0.4))*0.75;
+      break;
+    case 5: // bays filling
+      anim.stagFilled = Math.min(p*10.5, 10);
+      break;
+    case 6: // van loading
+      anim.vanLoad = p;
+      break;
   }
-  if(phase>=6) st.stagSt=st.stagSt.map(()=>'ready');
-
-  // Vans
-  if(phase>=6) st.vanLoad=st.vanLoad.map(v=>Math.min(v+dt*.09,1));
-
-  // Stats
-  st.C=Math.min(phase>=1?Math.floor(simTime*.18):0,6);
-  st.P=Math.min(phase>=3?Math.floor(simTime*.3):0,24);
-  st.K=parseFloat(Math.min(phase>=3?simTime*.14:0,14.4).toFixed(1));
-  document.getElementById('s-c').textContent=st.C;
-  document.getElementById('s-p').textContent=st.P;
-  document.getElementById('s-k').textContent=st.K;
-
-  if(st.flash){ st.flash.t+=dt; if(st.flash.t>1.2) st.flash=null; }
-  if(phase>=5) refreshStagGrid();
 }
 
-function refreshStagGrid(){
-  const cols={empty:'#1A3A5A',loading:'#C0392B',done:'#E07B00',ready:'#1A8A3A'};
-  document.getElementById('sg').innerHTML=st.stagSt.map((s,i)=>`
-    <div class="sgc" style="background:${cols[s]};color:${s==='empty'?'#263C58':'white'}">
-      ${String(i+1).padStart(2,'0')}
-    </div>`).join('');
-}
-
-// ════════════════════════════════════════════
+// ═══════════════════════════════════════════
 // DRAW HELPERS
-// ════════════════════════════════════════════
-function fr(x,y,w,h,col,r=2){
+// ═══════════════════════════════════════════
+function fr(x,y,w,h,col,r=4){
   ctx.fillStyle=col;
-  ctx.beginPath();
-  if(r>0) ctx.roundRect(wx(x),wy(y),ws(w),ws(h),ws(r));
-  else ctx.rect(wx(x),wy(y),ws(w),ws(h));
-  ctx.fill();
+  ctx.beginPath(); ctx.roundRect(x,y,w,h,r); ctx.fill();
 }
-function sr(x,y,w,h,col,lw=1,r=2,dash=[]){
-  ctx.strokeStyle=col; ctx.lineWidth=ws(lw);
-  ctx.setLineDash(dash.map(d=>ws(d)));
-  ctx.beginPath();
-  if(r>0) ctx.roundRect(wx(x),wy(y),ws(w),ws(h),ws(r));
-  else ctx.rect(wx(x),wy(y),ws(w),ws(h));
-  ctx.stroke(); ctx.setLineDash([]);
+function sr(x,y,w,h,col,lw=1,r=4,dash=[]){
+  ctx.strokeStyle=col; ctx.lineWidth=lw;
+  ctx.setLineDash(dash); ctx.beginPath();
+  ctx.roundRect(x,y,w,h,r); ctx.stroke(); ctx.setLineDash([]);
 }
 function ci(x,y,r,fill,stroke,lw=1){
-  ctx.beginPath(); ctx.arc(wx(x),wy(y),ws(r),0,Math.PI*2);
+  ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2);
   if(fill){ctx.fillStyle=fill;ctx.fill();}
-  if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=ws(lw);ctx.stroke();}
+  if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=lw;ctx.stroke();}
 }
-function li(x1,y1,x2,y2,col,lw=1,dash=[]){
-  ctx.beginPath(); ctx.moveTo(wx(x1),wy(y1)); ctx.lineTo(wx(x2),wy(y2));
-  ctx.strokeStyle=col; ctx.lineWidth=ws(lw);
-  ctx.setLineDash(dash.map(d=>ws(d)));
-  ctx.stroke(); ctx.setLineDash([]);
-}
-function tx(x,y,s,col,size=8,align='center'){
-  ctx.font=`${ws(size)}px 'JetBrains Mono',monospace`;
+function tx(x,y,s,col,sz=14,align='center',fam='Inter'){
+  ctx.font=`${sz}px '${fam}',sans-serif`;
   ctx.fillStyle=col; ctx.textAlign=align; ctx.textBaseline='middle';
-  ctx.fillText(s,wx(x),wy(y));
+  ctx.fillText(s,x,y);
 }
-function txB(x,y,s,col,size=8,align='center'){
-  ctx.font=`${ws(size)}px 'Bebas Neue',sans-serif`;
+function txB(x,y,s,col,sz=20,align='center'){
+  ctx.font=`${sz}px 'Bebas Neue',sans-serif`;
   ctx.fillStyle=col; ctx.textAlign=align; ctx.textBaseline='middle';
-  ctx.fillText(s,wx(x),wy(y));
+  ctx.fillText(s,x,y);
 }
-function gl(col,blur){ ctx.shadowColor=col; ctx.shadowBlur=ws(blur); }
+function gl(col,blur){ ctx.shadowColor=col; ctx.shadowBlur=blur; }
 function ng(){ ctx.shadowBlur=0; }
+function arrow(x1,y1,x2,y2,col,lw=2){
+  ctx.strokeStyle=col; ctx.lineWidth=lw;
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+  const ang=Math.atan2(y2-y1,x2-x1);
+  const hs=10;
+  ctx.fillStyle=col;
+  ctx.beginPath();
+  ctx.moveTo(x2,y2);
+  ctx.lineTo(x2-hs*Math.cos(ang-0.4),y2-hs*Math.sin(ang-0.4));
+  ctx.lineTo(x2-hs*Math.cos(ang+0.4),y2-hs*Math.sin(ang+0.4));
+  ctx.closePath(); ctx.fill();
+}
 
-// ════════════════════════════════════════════
-// DRAW
-// ════════════════════════════════════════════
-function draw(){
-  ctx.clearRect(0,0,CW,CH);
+// ═══════════════════════════════════════════
+// BIG LABEL OVERLAY (step title on canvas)
+// ═══════════════════════════════════════════
+function drawStepTitle(){
+  const d = STEPS[step];
+  const x=CW/2, y=38;
+  fr(x-200,y-20,400,40,`rgba(6,13,24,.85)`,6);
+  sr(x-200,y-20,400,40,`${d.color}55`,1,6);
+  txB(x,y,`STEP ${step+1} — ${d.label}`,d.colorL,18,'center');
+}
 
-  // bg + floor
-  ctx.fillStyle=C.bg; ctx.fillRect(0,0,CW,CH);
-  fr(FL.x,FL.y,FL.w,FL.h,C.floor,0);
+// ═══════════════════════════════════════════
+// STEP RENDERERS
+// ═══════════════════════════════════════════
 
-  // grid
-  ctx.strokeStyle=C.grid; ctx.lineWidth=0.5;
-  const gs=ws(22), ox=wx(0), oy=wy(FL.y), fw=ws(FL.w), fh=ws(FL.h);
-  for(let gx=ox;gx<ox+fw;gx+=gs){ctx.beginPath();ctx.moveTo(gx,oy);ctx.lineTo(gx,oy+fh);ctx.stroke();}
-  for(let gy=oy;gy<oy+fh;gy+=gs){ctx.beginPath();ctx.moveTo(ox,gy);ctx.lineTo(ox+fw,gy);ctx.stroke();}
+// ── STEP 0: WMS / ERP ──────────────────────
+function drawStep0(){
+  const cx=CW/2, cy=CH/2;
+  const p = Math.min(t/STEPS[0].dur,1);
 
-  // zone backgrounds + labels
-  Object.values(Z).forEach(z=>{
-    fr(z.x,FY,z.w,FH,'rgba(255,255,255,0.012)',0);
-  });
+  // Background panel
+  fr(cx-380,cy-200,760,400,C.panel,12);
+  sr(cx-380,cy-200,760,400,C.blue+'40',1.5,12);
 
-  // phase-activated zone tinting
-  const zoneAct=[
-    {z:Z.vlm, ph:1, col:'rgba(19,84,160,0.06)'},
-    {z:Z.rob, ph:2, col:'rgba(106,13,173,0.06)'},
-    {z:Z.comp,ph:3, col:'rgba(26,138,58,0.06)'},
-    {z:Z.agv, ph:4, col:'rgba(0,100,120,0.04)'},
-    {z:Z.stag,ph:5, col:'rgba(26,138,58,0.06)'},
-    {z:Z.dock,ph:6, col:'rgba(224,123,0,0.06)'},
-  ];
-  zoneAct.forEach(({z,ph,col})=>{
-    if(phase>=ph) fr(z.x,FY,z.w,FH,col,0);
-  });
-
-  // zone dividers
-  [Z.rob.x,Z.comp.x,Z.agv.x,Z.stag.x,Z.dock.x].forEach(x=>{
-    li(x,FY,x,FY+FH,C.dim,0.5,[4,5]);
-  });
-
-  // zone top labels
-  Object.values(Z).forEach(z=>{
-    const rgb=z.col.length===7?
-      [parseInt(z.col.slice(1,3),16),parseInt(z.col.slice(3,5),16),parseInt(z.col.slice(5),16)]:
-      [150,150,150];
-    // label bar
-    fr(z.x+1,FY,z.w-2,13,`rgba(${rgb[0]},${rgb[1]},${rgb[2]},0.18)`,0);
-    txB(z.x+z.w/2,FY+6.5,z.label,z.col,7.5,'center');
-  });
-
-  // ── VLMs ──────────────────────────────────
-  const vlms=getVLMs();
-  vlms.forEach((v,i)=>{
-    const on=phase>=1;
-    if(on){gl(C.blue,10);}
-    fr(v.x,v.y,v.w,v.h,on?'#07152A':'#050C1A',3);
-    sr(v.x,v.y,v.w,v.h,on?C.blue:C.dim,1.2,3);
-    ng();
-
-    // shelves (6 rows)
-    const ns=6, sh=v.h/ns;
-    const shC=['#4E342E','#37474F','#546E7A','#607D8B','#455A64','#795548'];
-    for(let s=0;s<ns;s++){
-      const sy2=v.y+s*sh;
-      li(v.x+3,sy2+0.5,v.x+v.w-3,sy2+0.5,'#0C2240',0.6);
-      const iy=sy2+sh*0.18, ih=sh*0.52;
-      fr(v.x+3,   iy, v.w*0.3, ih, shC[s],1);
-      fr(v.x+v.w*0.38,iy, v.w*0.22, ih, shC[(s+2)%6],1);
-      fr(v.x+v.w*0.65,iy, v.w*0.3, ih, shC[(s+4)%6],1);
-    }
-
-    // elevator rail + car
-    const rx=v.x+v.w/2;
-    li(rx,v.y+2,rx,v.y+v.h-2,on?'rgba(224,123,0,.65)':'rgba(224,123,0,.12)',1.2);
-    if(on){
-      const ey=v.y+3+(Math.sin(st.vlmPh[i].ph)*.5+.5)*(v.h-20);
-      gl(C.amber,6);
-      fr(rx-6,ey,12,7,C.amberL,1);
-      ng();
-    }
-
-    // exit slot (bottom-right corner)
-    const sx2=v.x+v.w-30, sly=v.y+v.h-13;
-    fr(sx2,sly,26,10,'#020810',2);
-    sr(sx2,sly,26,10,on?C.amber:C.dim,0.9,2);
-    tx(sx2+13,sly+5,'OUT',on?C.amber:C.dim,6.5,'center');
-
-    // label
-    tx(v.x+v.w/2,v.y+v.h+7,v.id,on?C.ltblue:C.dim,7.5,'center');
-
-    // LED
-    if(on){ gl(C.amber,5); ci(v.x+v.w-5,v.y+5,2.5,C.amberL,null); ng(); }
-    else   ci(v.x+v.w-5,v.y+5,2.5,C.dim,null);
-  });
-
-  // material flow arrows VLM → COMP
-  if(phase>=2){
-    vlms.forEach((v,i)=>{
-      const t=getTables()[i];
-      const a=0.25+0.3*Math.abs(Math.sin(simTime*2+i));
-      ctx.strokeStyle=`rgba(224,123,0,${a})`;
-      ctx.lineWidth=ws(0.8); ctx.setLineDash([ws(3),ws(4)]);
-      ctx.beginPath();
-      ctx.moveTo(wx(v.x+v.w),wy(v.y+v.h*0.65));
-      // gentle bezier through robot zone
-      ctx.bezierCurveTo(
-        wx(v.x+v.w+35),wy(v.y+v.h*0.65),
-        wx(t.x-20),     wy(t.y+t.h*0.55),
-        wx(t.x),         wy(t.y+t.h*0.55)
-      );
-      ctx.stroke(); ctx.setLineDash([]);
-    });
+  // ERP server (left)
+  const ex=cx-260, ey=cy;
+  fr(ex-50,ey-70,100,140,C.blueDk,8);
+  sr(ex-50,ey-70,100,140,C.blueL,2,8);
+  // server racks
+  for(let i=0;i<5;i++){
+    const ry=ey-52+i*22;
+    fr(ex-38,ry,76,14,'#0E2040',3);
+    // blink LEDs
+    ci(ex+28,ry+7,3,i%2===0?C.greenL:C.amber,null);
   }
+  txB(ex,ey+82,'ERP',C.blueL,18,'center');
+  tx(ex,ey+100,'GESTIONALE',C.muted,11,'center');
 
-  // ── Robots ────────────────────────────────
-  const robs=getRobots();
-  robs.forEach((r,i)=>{
-    const on=phase>=2, ra=st.robA[i];
+  // WMS server (center)
+  const wx2=cx, wy2=cy;
+  gl(C.blue,20);
+  fr(wx2-55,wy2-75,110,150,C.blueDk,8);
+  sr(wx2-55,wy2-75,110,150,C.blueL,2.5,8);
+  ng();
+  for(let i=0;i<6;i++){
+    const ry=wy2-57+i*20;
+    fr(wx2-43,ry,86,14,'#081830',3);
+    ci(wx2+33,ry+7,3,C.green,null);
+    gl(C.green,4);ci(wx2+33,ry+7,2,C.greenL,null);ng();
+  }
+  // WMS glow label
+  gl(C.blue,14);
+  txB(wx2,wy2+95,'WMS',C.blueL,24,'center');
+  ng();
+  tx(wx2,wy2+115,'WAREHOUSE MGMT',C.muted,10,'center');
 
-    // safety zone
-    ctx.beginPath();
-    ctx.arc(wx(r.cx),wy(r.cy),ws(44),0,Math.PI*2);
-    ctx.fillStyle=on?'rgba(106,13,173,0.07)':'transparent'; ctx.fill();
-    ctx.strokeStyle=on?'rgba(192,57,43,0.2)':'rgba(26,58,90,0.15)';
-    ctx.lineWidth=ws(0.7); ctx.setLineDash([ws(3),ws(4)]);
-    ctx.stroke(); ctx.setLineDash([]);
-
-    // base
-    if(on) gl(C.purple,8);
-    ci(r.cx,r.cy,7,on?C.purpleDk:'#050C1A',on?'#9B27C8':C.dim,1.5);
-    ng();
-
-    if(on){
-      const a1=ra.base, L1=28, L2=20;
-      const ex1=r.cx+Math.cos(a1)*L1, ey1=r.cy+Math.sin(a1)*L1;
-      const a2=a1+ra.a1;
-      const ex2=ex1+Math.cos(a2)*L2, ey2=ey1+Math.sin(a2)*L2;
-
-      ctx.lineCap='round';
-      ctx.strokeStyle='#AB47BC'; ctx.lineWidth=ws(3.5);
-      ctx.beginPath(); ctx.moveTo(wx(r.cx),wy(r.cy)); ctx.lineTo(wx(ex1),wy(ey1)); ctx.stroke();
-      ctx.strokeStyle='#7B1FA2'; ctx.lineWidth=ws(2.5);
-      ctx.beginPath(); ctx.moveTo(wx(ex1),wy(ey1)); ctx.lineTo(wx(ex2),wy(ey2)); ctx.stroke();
-      ctx.lineCap='butt';
-
-      gl(C.amber,5);
-      ci(ex2,ey2,3,C.amberL,C.amber,1);
-      ng();
+  // Orders panel (right)
+  const ox2=cx+240, oy2=cy;
+  fr(ox2-60,oy2-80,120,160,C.panel,8);
+  sr(ox2-60,oy2-80,120,160,C.amber+'50',1.5,8);
+  txB(ox2,oy2-60,'ORDINI',C.amberL,16,'center');
+  // 6 order lines
+  const orders=['CANTIERE A','CANTIERE B','CANTIERE C','CANTIERE D','CANTIERE E','CANTIERE F'];
+  orders.forEach((o,i)=>{
+    const vy=oy2-38+i*21;
+    const isActive = i < Math.floor(p*6.5);
+    fr(ox2-48,vy,96,15,isActive?'rgba(14,157,80,.2)':'rgba(21,40,64,.5)',3);
+    tx(ox2,vy+7.5,o,isActive?C.greenL:C.muted,9,'center');
+    if(isActive){
+      ci(ox2+52,vy+7.5,3,C.greenL,null);
     }
-    tx(r.cx,r.cy+52,r.id,on?'#8A20B8':C.dim,7.5,'center');
   });
 
-  // parcels
-  if(phase>=2) st.parcels.forEach(p=>{
-    const a=Math.max(0,Math.min(1,(p.life-p.age+0.25)/0.3));
+  // Animated data packets
+  anim.packets.forEach(pk=>{
+    const px=cx-380+pk.x*760, py=cy-200+pk.y*400;
+    const a=Math.max(0,1-pk.life/2.5);
     ctx.globalAlpha=a;
-    fr(p.x-p.sz/2,p.y-p.sz/2,p.sz,p.sz,p.col,1);
-    sr(p.x-p.sz/2,p.y-p.sz/2,p.sz,p.sz,'rgba(255,255,255,0.18)',0.4,1);
+    fr(px-8,py-5,16,10,C.blue,3);
+    ctx.globalAlpha=0.6*a;
+    tx(px,py,'01',C.cyanL,7,'center');
     ctx.globalAlpha=1;
   });
 
-  // ── Composition tables ────────────────────
-  const tbls=getTables();
-  tbls.forEach((t,i)=>{
-    const on=phase>=3, fill=st.tblFill[i];
-    if(on) gl(C.green,8);
-    fr(t.x,t.y,t.w,t.h,on?'#060F10':'#050C1A',3);
-    sr(t.x,t.y,t.w,t.h,on?C.green:C.dim,1.2,3);
-    ng();
+  // Arrow ERP → WMS
+  arrow(ex+52,ey,wx2-57,wy2,C.blueL,2.5);
+  // Arrow WMS → Orders
+  arrow(wx2+57,wy2,ox2-62,oy2,C.amber,2.5);
 
-    // pallet base
-    const pH=t.h*0.12, pY=t.y+t.h-pH-4;
-    fr(t.x+4,pY,t.w-8,pH,'#4E342E',1);
+  // Flow labels
+  tx(cx-155,cy-20,'ordini ERP',C.blue,11,'center');
+  tx(cx+155,cy-20,'pianificazione',C.amber,11,'center');
 
-    // layer items
-    if(on && fill>0){
-      const maxL=5, lh=(t.h-pH-12)/maxL, nl=Math.round(fill*maxL);
-      const lc=['#5D4037','#455A64','#607D8B','#546E7A','#4E342E'];
-      for(let l=0;l<nl;l++){
-        const ly=pY-pH-(l+1)*lh;
-        if(ly>t.y+2) fr(t.x+5,ly,t.w-10,lh-1.5,lc[l%5],1);
-      }
+  // Status tag
+  gl(C.green,8);
+  fr(cx-70,cy+145,140,28,C.green+'20',6);
+  sr(cx-70,cy+145,140,28,C.green+'60',1,6);
+  tx(cx,cy+159,'● SISTEMA OPERATIVO',C.greenL,11,'center');
+  ng();
+}
+
+// ── STEP 1: VLM ────────────────────────────
+function drawStep1(){
+  const cx=CW/2, cy=CH/2;
+
+  // Building the VLM illustration
+  const vw=200, vh=360;
+  const vx=cx-vw/2, vy=cy-vh/2-20;
+
+  // VLM shell
+  gl(C.amber,15);
+  fr(vx,vy,vw,vh,C.panel,6);
+  sr(vx,vy,vw,vh,C.amber,2.5,6);
+  ng();
+
+  // Top header
+  fr(vx,vy,vw,30,'rgba(224,123,0,.2)',6);
+  txB(vx+vw/2,vy+15,'MAGAZZINO VERTICALE VLM',C.amberL,13,'center');
+
+  // Cassette (shelves) — 9 rows
+  const nS=9, sH=(vh-60)/nS;
+  const colAssort=['#4E342E','#37474F','#546E7A','#607D8B','#455A64','#795548'];
+  for(let i=0;i<nS;i++){
+    const sy=vy+35+i*sH;
+    // shelf line
+    ctx.strokeStyle='#0E2040'; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(vx+8,sy); ctx.lineTo(vx+vw-8,sy); ctx.stroke();
+    // items on shelf (except the one being extracted)
+    if(i !== Math.floor(anim.elevY*(nS-1))){
+      fr(vx+10, sy+2, 38, sH-5, colAssort[i%6],2);
+      fr(vx+52, sy+2, 28, sH-5, colAssort[(i+2)%6],2);
+      fr(vx+84, sy+2, 44, sH-5, colAssort[(i+4)%6],2);
+      fr(vx+132,sy+2, 56, sH-5, colAssort[(i+1)%6],2);
     }
-
-    const wkg=Math.floor(fill*680);
-    const sc=fill>=1?C.greenL:(on?C.amberL:C.dim);
-    tx(t.x+t.w/2,t.y+8,fill>=1?'✓ COMPLETO':(on?`${wkg} kg`:'ATTESA'),sc,7,'center');
-    tx(t.x+t.w/2,t.y-8,t.id,on?'#2A8A40':C.dim,7.5,'center');
-
-    const lc2=fill>=1?C.green:(on?C.amber:C.dim);
-    if(on){ gl(lc2,4); ci(t.x+t.w-5,t.y+5,2.5,fill>=1?C.greenL:C.amberL,null); ng(); }
-    else   ci(t.x+t.w-5,t.y+5,2.5,C.dim,null);
-  });
-
-  // ── AGV zone ──────────────────────────────
-  // Track lanes (visible roads)
-  [AGV_TY1,AGV_TY2].forEach(ty=>{
-    fr(AGV_X0-2,ty-9,AGV_X1-AGV_X0+4,18,'rgba(0,55,75,0.4)',3);
-    li(AGV_X0,ty,AGV_X1,ty,'rgba(0,151,167,0.35)',1.2,[9,7]);
-    // start/end marks
-    li(AGV_X0+2,ty-6,AGV_X0+2,ty+6,'rgba(0,151,167,0.3)',0.8);
-    li(AGV_X1-2,ty-6,AGV_X1-2,ty+6,'rgba(0,151,167,0.3)',0.8);
-  });
-
-  // Dotted connection lines AGV → staging
-  if(phase>=4){
-    const bays=getBays();
-    [0,1,2,3,4].forEach(r=>{
-      const by=bays[r*2].y+bays[r*2].h/2;
-      const a=0.18+0.12*Math.sin(simTime*1.2+r);
-      li(Z.agv.x+Z.agv.w-4,by,Z.stag.x,by,`rgba(0,151,167,${a})`,0.7,[3,5]);
-    });
   }
 
-  // SLAM scatter dots
-  ctx.fillStyle='rgba(0,151,167,0.2)';
-  [[596,50],[630,80],[670,45],[710,90],[750,55],[790,80],[820,50],[845,90],
-   [596,470],[640,500],[690,480],[740,495],[790,470],[830,500],[850,475]].forEach(([px,py])=>{
-    ctx.beginPath(); ctx.arc(wx(px),wy(py),ws(1.2),0,Math.PI*2); ctx.fill();
+  // Central vertical rail
+  ctx.strokeStyle=C.amber+'80'; ctx.lineWidth=3;
+  ctx.beginPath(); ctx.moveTo(cx,vy+30); ctx.lineTo(cx,vy+vh-10); ctx.stroke();
+
+  // ELEVATOR CARRIAGE (animated)
+  const elevAbsY = vy+35 + anim.elevY * (vh-65);
+  gl(C.amberL,16);
+  fr(cx-35, elevAbsY-2, 70, sH-2, C.amberD,3);
+  sr(cx-35, elevAbsY-2, 70, sH-2, C.amberL,2,3);
+  ng();
+
+  // Item on elevator (highlighted)
+  fr(cx-28,elevAbsY+1,22,sH-8,'#8D6E63',2);
+  fr(cx-4, elevAbsY+1,16,sH-8,'#546E7A',2);
+  fr(cx+14,elevAbsY+1,14,sH-8,'#607D8B',2);
+
+  // Arrow showing extraction direction
+  const isGoingDown = Math.sin(simT*0.6) > 0;
+  const arrowEndY = isGoingDown ? elevAbsY+sH+30 : elevAbsY-30;
+  arrow(cx+vw/2+10,elevAbsY+sH/2, cx+vw/2+70, elevAbsY+sH/2, C.amber,3);
+
+  // Access window (bottom-right)
+  const awX=vx+vw+10, awY=vy+vh-70;
+  gl(C.amber,10);
+  fr(awX,awY,100,60,'#071018',6);
+  sr(awX,awY,100,60,C.amberL,2,6);
+  ng();
+  txB(awX+50,awY+20,'FINESTRA',C.amberL,14,'center');
+  tx(awX+50,awY+40,'DI ACCESSO',C.amber,11,'center');
+  arrow(vx+vw,vy+vh/2,awX,awY+30,C.amber,2);
+
+  // Labels
+  tx(vx-12, vy+vh/2,'CASSETTI',C.amber,12,'right');
+  tx(vx-12, vy+vh/2+16,'STOCCATI',C.muted,10,'right');
+  tx(cx,vy+vh+22,'Elevatore porta il cassetto alla finestra di accesso',C.muted,11,'center');
+
+  // Metrics at bottom
+  const metrics=[['300–600','kg/cassetto'],['±0.5','mm precisione'],['9','piani']];
+  metrics.forEach(([v,l],i)=>{
+    const mx=cx-200+i*200;
+    fr(mx-50,cy+200,100,48,C.panel,6);
+    sr(mx-50,cy+200,100,48,C.amber+'30',1,6);
+    txB(mx,cy+220,v,C.amberL,18,'center');
+    tx(mx,cy+237,l,C.muted,9,'center');
   });
+}
 
-  // AGVs
-  st.agvs.forEach((a,i)=>{
-    if(!a.active) return;
+// ── STEP 2: ROBOT ──────────────────────────
+function drawStep2(){
+  const cx=CW/2, cy=CH/2;
 
-    // scan glow
-    const g=ctx.createRadialGradient(wx(a.x),wy(a.y),0,wx(a.x),wy(a.y),ws(26));
-    g.addColorStop(0,'rgba(0,151,167,0.15)'); g.addColorStop(1,'rgba(0,151,167,0)');
-    ctx.fillStyle=g; ctx.beginPath(); ctx.arc(wx(a.x),wy(a.y),ws(26),0,Math.PI*2); ctx.fill();
+  // VLM exit (left) — small representation
+  fr(cx-380,cy-120,80,240,'#07152A',6);
+  sr(cx-380,cy-120,80,240,C.amber+'50',1.5,6);
+  txB(cx-340,cy-100,'VLM',C.amber,13,'center');
+  // cassette sticking out
+  gl(C.amber,8);
+  fr(cx-300,cy-20,60,40,'#4E342E',4);
+  fr(cx-297,cy-17,15,34,'#6D4C41',3);
+  fr(cx-279,cy-17,12,34,'#546E7A',3);
+  fr(cx-264,cy-17,18,34,'#607D8B',3);
+  ng();
 
-    // LIDAR rays
-    ctx.strokeStyle='rgba(0,151,167,0.16)'; ctx.lineWidth=ws(0.7);
-    for(let k=0;k<8;k++){
-      const ang=k*Math.PI/4+simTime*0.9;
-      ctx.beginPath(); ctx.moveTo(wx(a.x),wy(a.y));
-      ctx.lineTo(wx(a.x+Math.cos(ang)*22),wy(a.y+Math.sin(ang)*22));
-      ctx.stroke();
-    }
+  // Robot BASE (center)
+  const rbx=cx, rby=cy+60;
 
-    // body
-    gl(C.cyan,8);
-    fr(a.x-14,a.y-9,28,18,C.blue,4);
-    sr(a.x-14,a.y-9,28,18,C.cyanL,1.2,4);
+  // Robot base platform
+  gl(C.purple,20);
+  fr(rbx-30,rby-10,60,20,'#2A0060',6);
+  sr(rbx-30,rby-10,60,20,C.purpleL,2,6);
+  ng();
+
+  // Arm segment 1
+  const L1=110, a1=anim.armBase-0.5;
+  const e1x=rbx+Math.cos(a1)*L1, e1y=rby+Math.sin(a1)*L1;
+
+  gl(C.purple,8);
+  ctx.strokeStyle='#AB47BC'; ctx.lineWidth=16; ctx.lineCap='round';
+  ctx.beginPath(); ctx.moveTo(rbx,rby); ctx.lineTo(e1x,e1y); ctx.stroke();
+  ctx.strokeStyle='#7B1FA2'; ctx.lineWidth=12;
+  ctx.beginPath(); ctx.moveTo(rbx,rby); ctx.lineTo(e1x,e1y); ctx.stroke();
+  ng();
+
+  // Joint 1
+  ci(e1x,e1y,8,C.purpleDk,C.purpleL,2);
+
+  // Arm segment 2
+  const L2=80, a2=a1+anim.arm1;
+  const e2x=e1x+Math.cos(a2)*L2, e2y=e1y+Math.sin(a2)*L2;
+
+  ctx.strokeStyle='#7B1FA2'; ctx.lineWidth=12; ctx.lineCap='round';
+  ctx.beginPath(); ctx.moveTo(e1x,e1y); ctx.lineTo(e2x,e2y); ctx.stroke();
+  ctx.strokeStyle='#9B27C8'; ctx.lineWidth=8;
+  ctx.beginPath(); ctx.moveTo(e1x,e1y); ctx.lineTo(e2x,e2y); ctx.stroke();
+
+  // End effector / gripper
+  gl(C.amber,14);
+  ci(e2x,e2y,10,C.amberD,C.amberL,2.5);
+  // gripper fingers
+  const gAng=a2+Math.PI/2;
+  ctx.strokeStyle=C.amberL; ctx.lineWidth=4; ctx.lineCap='round';
+  ctx.beginPath();
+  ctx.moveTo(e2x+Math.cos(gAng)*6,e2y+Math.sin(gAng)*6);
+  ctx.lineTo(e2x+Math.cos(gAng)*6+Math.cos(a2)*14,e2y+Math.sin(gAng)*6+Math.sin(a2)*14);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(e2x-Math.cos(gAng)*6,e2y-Math.sin(gAng)*6);
+  ctx.lineTo(e2x-Math.cos(gAng)*6+Math.cos(a2)*14,e2y-Math.sin(gAng)*6+Math.sin(a2)*14);
+  ctx.stroke();
+  ng(); ctx.lineCap='butt';
+
+  // 3D vision cone from end-effector
+  ctx.strokeStyle='rgba(34,211,238,0.15)'; ctx.lineWidth=1;
+  for(let a=-0.4;a<=0.4;a+=0.1){
+    ctx.beginPath();
+    ctx.moveTo(e2x,e2y);
+    ctx.lineTo(e2x+Math.cos(a2+a)*60,e2y+Math.sin(a2+a)*60);
+    ctx.stroke();
+  }
+  tx(e2x+Math.cos(a2)*80,e2y+Math.sin(a2)*80,'VISIONE 3D',C.cyanL,10,'center');
+
+  // Pallet area (right)
+  const px=cx+280, py=cy-20;
+  fr(px-70,py+60,140,20,'#4E342E',3); // pallet base
+  sr(px-70,py-60,140,120,C.green+'40',1.5,[8,5],4);
+  txB(px,py-45,'PALLET',C.greenL,14,'center');
+  tx(px,py-27,'DESTINAZIONE',C.muted,10,'center');
+
+  // Moving item (animated)
+  const prog=Math.sin(simT*1.2)*0.5+0.5;
+  const itemX=cx-280+prog*(cx+200-cx+280);
+  ci(itemX,cy-10,12,C.brown+'CC','#92400E',2);
+  tx(itemX,cy+8,'collo',C.amber,9,'center');
+
+  // Safety zone
+  ctx.strokeStyle='rgba(220,38,38,0.15)'; ctx.lineWidth=1.5;
+  ctx.setLineDash([8,6]);
+  ctx.beginPath(); ctx.arc(rbx,rby,170,0,Math.PI*2); ctx.stroke();
+  ctx.setLineDash([]);
+  tx(rbx,rby-180,'ZONA DI SICUREZZA',C.red+'80',9,'center');
+
+  // Metrics
+  const metrics=[['6','Assi DOF'],['±0.05','mm ripet.'],['50–120','kg portata']];
+  metrics.forEach(([v,l],i)=>{
+    const mx=cx-200+i*200;
+    fr(mx-55,cy+175,110,50,C.panel,6);
+    sr(mx-55,cy+175,110,50,C.purple+'40',1,6);
+    txB(mx,cy+196,v,C.purpleL,20,'center');
+    tx(mx,cy+213,l,C.muted,10,'center');
+  });
+}
+
+// ── STEP 3: PALLET COMPOSITION ─────────────
+function drawStep3(){
+  const cx=CW/2, cy=CH/2;
+
+  const nL=Math.floor(anim.layers);
+  const frac=anim.layers-nL;
+
+  // Pallet base
+  const pw=220, ph2=22, px=cx-pw/2, py=cy+120;
+  gl(C.green,8);
+  fr(px,py,pw,ph2,'#4E342E',4);
+  sr(px,py,pw,ph2,'#8D6E63',1.5,4);
+  ng();
+  // pallet feet
+  for(let i=0;i<4;i++){
+    fr(px+10+i*58,py+ph2,14,10,'#3E2723',3);
+  }
+
+  // Layer colors and labels
+  const lyrs=[
+    {col:'#37474F',lbl:'Tubi PVC Ø63',  kg:'42 kg'},
+    {col:'#4E342E',lbl:'Sacchi cemento', kg:'50 kg'},
+    {col:'#546E7A',lbl:'Mattoni forati', kg:'85 kg'},
+    {col:'#455A64',lbl:'Pannelli XPS',   kg:'28 kg'},
+    {col:'#607D8B',lbl:'Cassette imp.',  kg:'31 kg'},
+  ];
+  const lH=34;
+
+  lyrs.forEach((l,i)=>{
+    if(i>=nL) return;
+    const isPartial=(i===nL-1)&&frac<1;
+    const h=isPartial ? lH*frac : lH;
+    const ly=py-ph2-(i+1)*lH+lH*(1-(isPartial?frac:1));
+    if(h<1) return;
+
+    gl(C.green,i===nL-1?10:0);
+    fr(px+4,ly,pw-8,h,l.col,3);
+    sr(px+4,ly,pw-8,h,'rgba(255,255,255,.12)',0.8,3);
     ng();
 
-    // wheels
-    [[-11,-9],[11,-9],[-11,9],[11,9]].forEach(([dx,dy])=>{
-      ci(a.x+dx,a.y+dy,2.8,'#0A1828','#3A6A9A',0.8);
-    });
-
-    // LIDAR dome
-    ci(a.x,a.y,3,'#EF5350',null);
-
-    // pallet
-    if(a.loaded){
-      fr(a.x-11,a.y-7,22,14,'rgba(90,60,40,.55)',2);
-      fr(a.x-9,a.y-5,9,10,'#6D4C41',1);
-      fr(a.x+1,a.y-5,9,10,'#546E7A',1);
+    if(h>20){
+      tx(cx,ly+h/2,l.lbl,'rgba(255,255,255,.8)',9.5,'center');
+      tx(cx+pw/2-30,ly+h/2,l.kg,'rgba(255,255,255,.5)',9,'right');
     }
-    tx(a.x,a.y+16,i===0?'AGV-01':'AGV-02','rgba(255,255,255,.5)',7,'center');
   });
 
-  // ── Staging bays ──────────────────────────
-  const bays=getBays();
-  const sCol={empty:C.dim,loading:C.red,done:C.amber,ready:C.green};
-  const sFill={empty:'rgba(5,12,26,.7)',loading:'rgba(192,57,43,.08)',
-               done:'rgba(224,123,0,.08)',ready:'rgba(26,138,58,.08)'};
-  bays.forEach((b,i)=>{
-    const s=phase>=5?st.stagSt[i]:'empty';
-    const on=phase>=5, bc=sCol[s];
+  // Barcode scan effect (every layer)
+  if(nL>0){
+    const scanY=py-ph2-nL*lH+4;
+    ctx.strokeStyle=`rgba(34,211,238,${0.4+0.4*Math.abs(Math.sin(simT*4))})`;
+    ctx.lineWidth=2; ctx.setLineDash([4,3]);
+    ctx.beginPath(); ctx.moveTo(px+4,scanY); ctx.lineTo(px+pw-4,scanY); ctx.stroke();
+    ctx.setLineDash([]);
+    tx(cx,scanY-12,'◄ BARCODE SCAN ►',C.cyanL,9.5,'center');
+  }
 
-    if(s!=='empty') gl(bc,5);
-    fr(b.x,b.y,b.w,b.h,sFill[s],3);
-    sr(b.x,b.y,b.w,b.h,bc,on?1.3:.7,3);
+  // Weight indicator
+  const totalKg=nL*47;
+  const maxKg=680;
+  const wFrac=totalKg/maxKg;
+  fr(cx+160,cy-100,80,200,C.panel,6);
+  sr(cx+160,cy-100,80,200,C.green+'40',1,6);
+  txB(cx+200,cy-82,'PESO',C.greenL,13,'center');
+  // gauge bar
+  fr(cx+172,cy-60,56,140,C.dim,4);
+  if(wFrac>0){
+    const fh=140*wFrac;
+    fr(cx+172,cy-60+140-fh,56,fh,
+      wFrac>0.85?C.red:wFrac>0.6?C.amber:C.green,4);
+  }
+  txB(cx+200,cy+95,`${totalKg}`,C.white,18,'center');
+  tx(cx+200,cy+112,'kg',C.muted,10,'center');
+  tx(cx+200,cy-4,`max ${maxKg}`,C.muted,9,'center');
+
+  // Operator scan icon (left)
+  fr(cx-360,cy-60,120,80,C.panel,8);
+  sr(cx-360,cy-60,120,80,C.cyan+'40',1,8);
+  // scanner device
+  fr(cx-330,cy-45,60,30,'#1E2D38',5);
+  sr(cx-330,cy-45,60,30,C.cyanL,1.5,5);
+  tx(cx-300,cy-30,'SCAN',C.cyanL,11,'center');
+  arrow(cx-240,cy-20,cx-160,cy-20,C.cyan,2);
+
+  // Metrics
+  const met=[['1','pallet = 1 cantiere'],['680','kg capacità max'],['100%','colli scannerizzati']];
+  met.forEach(([v,l],i)=>{
+    const mx=cx-200+i*200;
+    fr(mx-65,cy+175,130,50,C.panel,6);
+    sr(mx-65,cy+175,130,50,C.green+'40',1,6);
+    txB(mx,cy+196,v,C.greenL,20,'center');
+    tx(mx,cy+212,l,C.muted,9.5,'center');
+  });
+}
+
+// ── STEP 4: AGV ────────────────────────────
+function drawStep4(){
+  const cx=CW/2, cy=CH/2;
+
+  // Floor / corridor
+  fr(80,cy-50,CW-160,100,'rgba(0,100,120,.12)',8);
+  ctx.strokeStyle='rgba(0,145,183,0.3)'; ctx.lineWidth=2; ctx.setLineDash([14,10]);
+  ctx.beginPath(); ctx.moveTo(80,cy); ctx.lineTo(CW-80,cy); ctx.stroke();
+  ctx.setLineDash([]);
+
+  // START label
+  fr(80,cy-90,100,40,C.panel,6);
+  sr(80,cy-90,100,40,C.green+'50',1.5,6);
+  txB(130,cy-70,'COMP.',C.greenL,14,'center');
+  tx(130,cy-55,'area composizione',C.muted,9,'center');
+
+  // END label
+  fr(CW-180,cy-90,100,40,C.panel,6);
+  sr(CW-180,cy-90,100,40,C.green+'50',1.5,6);
+  txB(CW-130,cy-70,'STAGING',C.greenL,14,'center');
+  tx(CW-130,cy-55,'area deposito',C.muted,9,'center');
+
+  // AGV position
+  const agvCx=80+anim.agvX*(CW-200);
+  const agvCy=cy;
+  const agvW=90, agvH=60;
+
+  // SLAM rays
+  ctx.strokeStyle='rgba(0,145,183,0.12)'; ctx.lineWidth=1;
+  for(let a=0;a<16;a++){
+    const ang=a*Math.PI/8+simT*0.6;
+    ctx.beginPath(); ctx.moveTo(agvCx,agvCy);
+    ctx.lineTo(agvCx+Math.cos(ang)*100,agvCy+Math.sin(ang)*100);
+    ctx.stroke();
+  }
+
+  // AGV glow
+  const glGrad=ctx.createRadialGradient(agvCx,agvCy,0,agvCx,agvCy,60);
+  glGrad.addColorStop(0,'rgba(0,145,183,0.25)');
+  glGrad.addColorStop(1,'rgba(0,145,183,0)');
+  ctx.fillStyle=glGrad; ctx.beginPath(); ctx.arc(agvCx,agvCy,60,0,Math.PI*2); ctx.fill();
+
+  // AGV body
+  gl(C.cyan,16);
+  fr(agvCx-agvW/2,agvCy-agvH/2,agvW,agvH,'#0A2040',8);
+  sr(agvCx-agvW/2,agvCy-agvH/2,agvW,agvH,C.cyanL,2.5,8);
+  ng();
+
+  // Wheels
+  [[-34,-24],[34,-24],[-34,24],[34,24]].forEach(([dx,dy])=>{
+    ci(agvCx+dx,agvCy+dy,8,'#050D18','#2A5A7A',1.5);
+  });
+
+  // LIDAR dome
+  gl(C.cyanL,8);
+  ci(agvCx,agvCy,7,'#EF5350',C.cyanL,1.5);
+  ng();
+
+  // Pallet on AGV
+  fr(agvCx-36,agvCy-20,72,40,'rgba(90,60,40,.7)',4);
+  fr(agvCx-30,agvCy-15,24,30,'#6D4C41',3);
+  fr(agvCx+8, agvCy-15,22,30,'#546E7A',3);
+  tx(agvCx,agvCy+8,'CANT. A',C.amberL,8.5,'center','JetBrains Mono');
+
+  // Speed indicator
+  txB(agvCx,agvCy-agvH/2-18,'AGV-01',C.cyanL,13,'center');
+  tx(agvCx,agvCy+agvH/2+14,'● NAVIGAZIONE ATTIVA',C.greenL,10,'center');
+
+  // Direction arrows on track
+  for(let xi=200;xi<CW-200;xi+=120){
+    arrow(xi,cy+35,xi+50,cy+35,`rgba(0,145,183,0.4)`,2);
+  }
+
+  // Path info labels
+  tx(cx,cy-80,'Navigazione SLAM — nessun binario — Path A*',C.muted,11,'center');
+
+  // Metrics
+  const met=[['1500','kg portata'],['±10','mm docking'],['SLAM','360° Laser']];
+  met.forEach(([v,l],i)=>{
+    const mx=cx-200+i*200;
+    fr(mx-55,cy+155,110,50,C.panel,6);
+    sr(mx-55,cy+155,110,50,C.cyan+'40',1,6);
+    txB(mx,cy+176,v,C.cyanL,20,'center');
+    tx(mx,cy+193,l,C.muted,10,'center');
+  });
+}
+
+// ── STEP 5: STAGING ────────────────────────
+function drawStep5(){
+  const cx=CW/2, cy=CH/2;
+
+  const nFilled=Math.floor(anim.stagFilled);
+  const cols=['CANTIERE A','CANTIERE B','CANTIERE C','CANTIERE D','CANTIERE E',
+              'CANTIERE F','CANTIERE G','CANTIERE H','CANTIERE I','CANTIERE L'];
+
+  // Title
+  txB(cx,cy-200,'AREA STAGING — 10 POSTAZIONI NUMERATE',C.greenL,16,'center');
+
+  // 10 bays in 2 rows × 5
+  const bW=130, bH=100, gapX=22, gapY=20;
+  const totalW=5*bW+4*gapX, startX=cx-totalW/2;
+  const startY=cy-bH-gapY/2-40;
+
+  for(let i=0;i<10;i++){
+    const col=i%5, row=Math.floor(i/5);
+    const bx=startX+col*(bW+gapX);
+    const by=startY+row*(bH+gapY);
+    const bcx=bx+bW/2, bcy=by+bH/2;
+
+    const isFilled=i<nFilled;
+    const isLoading=i===nFilled;
+    const bc=isFilled?C.green:isLoading?C.amber:C.dim;
+    const bf=isFilled?'rgba(15,158,80,.12)':isLoading?'rgba(224,123,0,.1)':'rgba(30,58,85,.3)';
+
+    if(isFilled||isLoading) gl(bc,8);
+    fr(bx,by,bW,bH,bf,6);
+    sr(bx,by,bW,bH,bc,isFilled||isLoading?2:1,6);
     ng();
 
-    // floor corner marks
-    const cm=5;
-    [[b.x,b.y,1,0,0,1],[b.x+b.w,b.y,-1,0,0,1],
-     [b.x,b.y+b.h,1,0,0,-1],[b.x+b.w,b.y+b.h,-1,0,0,-1]].forEach(([px,py,dx1,dy1,dx2,dy2])=>{
-      li(px,py,px+dx1*cm,py+dy1*cm,C.yellow,1.2);
-      li(px,py,px+dx2*cm,py+dy2*cm,C.yellow,1.2);
+    // Corner marks (yellow floor lines)
+    const cm=8;
+    [[bx,by,1,0],[bx+bW,by,-1,0],[bx,by+bH,1,0],[bx+bW,by+bH,-1,0]].forEach(([px2,py2,dx])=>{
+      ctx.strokeStyle=C.yellow; ctx.lineWidth=1.5;
+      ctx.beginPath(); ctx.moveTo(px2,py2); ctx.lineTo(px2+dx*cm,py2); ctx.stroke();
     });
 
-    // bay id
-    tx(b.x+b.w/2,b.y+7.5,b.id,on?C.yellow:C.dim,7.5,'center');
+    // Bay number
+    txB(bcx,by+14,`S-${String(i+1).padStart(2,'0')}`,C.yellow,12,'center');
 
-    // content
-    if(s==='empty'&&on){
-      tx(b.x+b.w/2,b.y+b.h/2,'LIBERA',C.green,7,'center');
-    } else if(s==='loading'){
-      fr(b.x+4,b.y+b.h-13,b.w-8,9,'#4E342E',1);
-      fr(b.x+4,b.y+b.h-25,b.w-8,10,'#455A64',1);
-      tx(b.x+b.w/2,b.y+14,'IN CARICO',C.redL,7,'center');
-    } else if(s==='done'){
-      fr(b.x+4,b.y+b.h-13,b.w-8,9,'#4E342E',1);
-      fr(b.x+4,b.y+b.h-25,b.w-8,10,'#455A64',1);
-      fr(b.x+4,b.y+b.h-38,b.w-8,11,'#546E7A',1);
-      tx(b.x+b.w/2,b.y+14,'✓ COMPL.',C.amberL,7,'center');
-    } else if(s==='ready'){
-      fr(b.x+4,b.y+b.h-13,b.w-8,9,'#4E342E',1);
-      fr(b.x+4,b.y+b.h-25,b.w-8,10,'#455A64',1);
-      fr(b.x+4,b.y+b.h-38,b.w-8,11,'#546E7A',1);
-      gl(C.green,4);
-      tx(b.x+b.w/2,b.y+14,'★ PRONTO',C.greenL,7,'center');
+    // Cantiere label
+    tx(bcx,by+30,cols[i],isFilled||isLoading?C.white:C.muted+'80',8.5,'center');
+
+    if(isFilled){
+      // Pallet shown
+      fr(bx+12,by+38,bW-24,34,'rgba(90,60,40,.6)',3);
+      fr(bx+15,by+41,28,28,'#6D4C41',2);
+      fr(bx+46,by+41,22,28,'#546E7A',2);
+      fr(bx+71,by+41,24,28,'#607D8B',2);
+      // Green light
+      gl(C.greenL,10);
+      ci(bcx,by+84,5,C.greenL,null);
+      ng();
+      tx(bcx,by+84,'',C.greenL,1,'center');
+    } else if(isLoading){
+      tx(bcx,bcy+10,'AGV IN ENTRATA',C.amber,8,'center');
+      ci(bcx,by+84,5,C.amber,null);
+      gl(C.amber,8); ci(bcx,by+84,3,C.amberL,null); ng();
+    } else {
+      tx(bcx,bcy,'LIBERA',C.green+'70',9,'center');
+      ci(bcx,by+84,5,C.dim,null);
+    }
+  }
+
+  // Stats below
+  tx(cx,cy+130,`${nFilled} / 10 postazioni occupate`,C.green,12,'center');
+
+  // Metrics
+  const met=[['10','baie staging'],['LED','3 stati colore'],['RFID','tracciatura']];
+  met.forEach(([v,l],i)=>{
+    const mx=cx-200+i*200;
+    fr(mx-55,cy+155,110,46,C.panel,6);
+    sr(mx-55,cy+155,110,46,C.green+'40',1,6);
+    txB(mx,cy+174,v,C.greenL,18,'center');
+    tx(mx,cy+190,l,C.muted,10,'center');
+  });
+}
+
+// ── STEP 6: LOADING ────────────────────────
+function drawStep6(){
+  const cx=CW/2, cy=CH/2;
+  const lp=anim.vanLoad;
+
+  // 3 vans side by side
+  const vans=['VAN-A','VAN-B','VAN-C'];
+  const sites=['CANTIERE A+B','CANTIERE C+D','CANTIERE E+F'];
+  const vW=160, vH=200, gap=40;
+  const totalW=3*vW+2*gap, startX=cx-totalW/2;
+
+  vans.forEach((v,i)=>{
+    const vx=startX+i*(vW+gap), vy=cy-vH/2-20;
+    const load=Math.min(1,lp*(1+i*0.15));
+    const isLoaded=load>0.85;
+    const vc=isLoaded?C.greenL:load>0.01?C.amber:C.muted;
+
+    gl(vc,isLoaded?12:5);
+    fr(vx,vy,vW,vH,'#141E28',8);
+    sr(vx,vy,vW,vH,vc,isLoaded?2.5:1.5,8);
+    ng();
+
+    // Cab
+    const cabH=vH*0.38;
+    fr(vx+4,vy+4,vW-8,cabH,'#1E2D38',6);
+    // Windscreen
+    fr(vx+8,vy+8,vW-16,cabH*0.55,'rgba(144,202,249,.2)',4);
+
+    // Headlights
+    if(isLoaded){
+      gl('#FFFF88',10);
+      fr(vx+10,vy+cabH-10,16,8,'#FFEE58',3);
+      fr(vx+vW-26,vy+cabH-10,16,8,'#FFEE58',3);
       ng();
     }
 
-    // status LED
-    if(on&&s!=='empty'){ gl(bc,5); ci(b.x+b.w-5,b.y+b.h-5,3,bc,null); ng(); }
-    else ci(b.x+b.w-5,b.y+b.h-5,3,C.dim,null);
-  });
+    // Cargo area
+    const cargoY=vy+cabH+6, cargoH=vH-cabH-30;
+    fr(vx+4,cargoY,vW-8,cargoH,'#0A1510',4);
 
-  // ── Vans ──────────────────────────────────
-  const vans=getVans();
-  vans.forEach((v,i)=>{
-    const on=phase>=6, load=st.vanLoad[i];
-    const st2=load>.8?'full':load>.01?'loading':'empty';
-    const vc=st2==='full'?C.green:st2==='loading'?C.amber:C.dim;
-
-    if(on) gl(vc,6);
-    fr(v.x,v.y,v.w,v.h,'#141E28',4);
-    sr(v.x,v.y,v.w,v.h,vc,on?1.5:.8,4);
-    ng();
-
-    // cab
-    const cH=v.h*.36;
-    fr(v.x+3,v.y+3,v.w-6,cH,'#1E2D38',3);
-    fr(v.x+5,v.y+5,v.w-10,cH*.55,'rgba(144,202,249,.13)',2);
-
-    // cargo
-    const cY=v.y+cH+3, cgH=v.h-cH-20;
-    fr(v.x+3,cY,v.w-6,cgH,'#0A1510',2);
+    // Fill
     if(load>0){
-      const fh=cgH*load*.9;
-      fr(v.x+5,cY+cgH-fh-1,v.w-10,fh,'rgba(100,70,50,.55)',1);
+      const fh=cargoH*load*0.92;
+      fr(vx+6,cargoY+cargoH-fh-1,vW-12,fh,'rgba(100,70,50,.65)',3);
+      // layers visible
+      const nL=Math.floor(load*4);
+      const lc=['#4E342E','#546E7A','#607D8B','#455A64'];
+      for(let l=0;l<nL;l++){
+        const ly=cargoY+cargoH-(l+1)*(cargoH*0.23)-1;
+        if(ly>cargoY+2) fr(vx+8,ly,vW-16,cargoH*0.2,'rgba(255,255,255,.06)',2);
+      }
     }
 
-    // wheels
-    ci(v.x+11,v.y+v.h-7,5.5,'#0A1528','#3A6090',1);
-    ci(v.x+v.w-11,v.y+v.h-7,5.5,'#0A1528','#3A6090',1);
+    // Wheels
+    ci(vx+22,vy+vH-14,12,'#0A1528','#3A6090',2);
+    ci(vx+vW-22,vy+vH-14,12,'#0A1528','#3A6090',2);
 
-    // status
-    const stT=st2==='full'?'✓ PRONTO':st2==='loading'?'CARICO...':'IN ATTESA';
-    tx(v.x+v.w/2,v.y+v.h-10,stT,vc,7,'center');
-    tx(v.x+v.w/2,v.y-8,v.id,on?C.amberL:C.dim,8,'center');
+    // Van label
+    txB(vx+vW/2,vy-20,v,isLoaded?C.amberL:C.muted,16,'center');
+    tx(vx+vW/2,vy-5,sites[i],C.muted,8.5,'center');
+
+    // Status label inside van
+    if(isLoaded){
+      gl(C.greenL,6);
+      fr(vx+10,cargoY+cargoH+4,vW-20,18,'rgba(15,158,80,.2)',4);
+      tx(vx+vW/2,cargoY+cargoH+13,'✓ PRONTO',C.greenL,9,'center');
+      ng();
+    } else if(load>0.01){
+      fr(vx+10,cargoY+cargoH+4,vW-20,18,'rgba(224,123,0,.15)',4);
+      tx(vx+vW/2,cargoY+cargoH+13,'CARICO...',C.amber,9,'center');
+    }
+
+    // Progress %
+    tx(vx+vW/2,vy+vH-4,`${Math.round(load*100)}%`,vc,10,'center');
   });
 
-  // stag→dock arrows
-  if(phase>=6){
-    vans.forEach(v=>{
-      const a=.35+.25*Math.abs(Math.sin(simTime*2));
-      li(Z.stag.x+Z.stag.w,v.y+v.h/2,Z.dock.x,v.y+v.h/2,`rgba(29,138,58,${a})`,1.2,[4,4]);
-    });
-  }
+  // Staging arrows (from left)
+  fr(80,cy-160,90,110,C.panel,6);
+  sr(80,cy-160,90,110,C.green+'40',1.5,6);
+  txB(125,cy-135,'STAGING',C.greenL,13,'center');
+  tx(125,cy-118,'pallet pronti',C.muted,9,'center');
+  // arrows to vans
+  vans.forEach((_,i)=>{
+    const vx2=startX+i*(vW+gap)+vW/2;
+    arrow(172,cy-105,vx2,cy-vH/2+20,C.green+'60',1.5);
+  });
 
-  // ── WMS bar (bottom of AGV zone) ──────────
-  const wCX=Z.agv.x+Z.agv.w/2;
-  const wY=FY+FH-10;
-  fr(wCX-95,wY-7,190,14,'rgba(3,8,16,.92)',3);
-  sr(wCX-95,wY-7,190,14,C.blue,.7,3);
-  const p=.5+.5*Math.sin(simTime*2.5);
-  gl(C.green,3*p);
-  ci(wCX-82,wY,2.8,C.green,null);
+  // Time badge
+  gl(C.amber,14);
+  fr(cx-80,cy+118,160,42,'rgba(224,123,0,.15)',8);
+  sr(cx-80,cy+118,160,42,C.amber,2,8);
+  txB(cx,cy+136,'ORE 06:00',C.amberL,20,'center');
+  tx(cx,cy+152,'PARTENZA FURGONI',C.amber,10,'center');
   ng();
-  tx(wCX-72,wY,'WMS · OPC UA · ERP SYNC · SIL3',C.steelL,7,'left');
 
-  // faint WMS connection lines
-  [Z.vlm,Z.rob,Z.comp,Z.stag,Z.dock].forEach(z=>{
-    ctx.strokeStyle='rgba(19,84,160,.07)'; ctx.lineWidth=ws(.7);
-    ctx.setLineDash([ws(2),ws(8)]);
-    ctx.beginPath();
-    ctx.moveTo(wx(wCX),wy(wY-7));
-    ctx.lineTo(wx(z.x+z.w/2),wy(FY+FH*.65));
-    ctx.stroke(); ctx.setLineDash([]);
+  // KPI
+  const met=[['6','furgoni caricati'],['0','errori picking'],['100%','tracciabilità']];
+  met.forEach(([v,l],i)=>{
+    const mx=cx-200+i*200;
+    fr(mx-55,cy+175,110,46,C.panel,6);
+    sr(mx-55,cy+175,110,46,C.amberL+'40',1,6);
+    txB(mx,cy+194,v,C.amberL,20,'center');
+    tx(mx,cy+210,l,C.muted,10,'center');
   });
-
-  // ── outer frame ───────────────────────────
-  sr(FL.x,FL.y,FL.w,FL.h,C.wall,1.5,3);
-
-  // ── flash ─────────────────────────────────
-  if(st.flash&&st.flash.t<1){
-    const fa=Math.sin(st.flash.t*Math.PI)*.05;
-    ctx.fillStyle=`rgba(224,123,0,${fa})`;
-    ctx.fillRect(ox,oy,fw,fh);
-  }
-
-  // ── scanline ──────────────────────────────
-  const sy2=wy(FL.y+(simTime*52)%FH);
-  const sg2=ctx.createLinearGradient(0,sy2,0,sy2+ws(12));
-  sg2.addColorStop(0,'rgba(255,255,255,0)');
-  sg2.addColorStop(.5,'rgba(255,255,255,.01)');
-  sg2.addColorStop(1,'rgba(255,255,255,0)');
-  ctx.fillStyle=sg2; ctx.fillRect(ox,sy2,fw,ws(12));
 }
 
-// ════════════════════════════════════════════
+// ═══════════════════════════════════════════
+// MAIN DRAW
+// ═══════════════════════════════════════════
+function draw(){
+  ctx.clearRect(0,0,CW,CH);
+  ctx.fillStyle=C.bg; ctx.fillRect(0,0,CW,CH);
+
+  // subtle grid
+  ctx.strokeStyle=C.grid; ctx.lineWidth=0.5;
+  const gs=30;
+  for(let x=0;x<CW;x+=gs){ ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,CH);ctx.stroke(); }
+  for(let y=0;y<CH;y+=gs){ ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(CW,y);ctx.stroke(); }
+
+  // Draw current step
+  switch(step){
+    case 0: drawStep0(); break;
+    case 1: drawStep1(); break;
+    case 2: drawStep2(); break;
+    case 3: drawStep3(); break;
+    case 4: drawStep4(); break;
+    case 5: drawStep5(); break;
+    case 6: drawStep6(); break;
+  }
+
+  drawStepTitle();
+
+  // scanline
+  const sy=((simT*40)%CH);
+  const sg=ctx.createLinearGradient(0,sy,0,sy+10);
+  sg.addColorStop(0,'rgba(255,255,255,0)');
+  sg.addColorStop(.5,'rgba(255,255,255,.009)');
+  sg.addColorStop(1,'rgba(255,255,255,0)');
+  ctx.fillStyle=sg; ctx.fillRect(0,sy,CW,10);
+}
+
+// ═══════════════════════════════════════════
 // LOOP
-// ════════════════════════════════════════════
+// ═══════════════════════════════════════════
 function frame(ts){
   if(!lastTS) lastTS=ts;
-  const dt=Math.min((ts-lastTS)/1000,.05);
-  lastTS=ts;
+  const dt=Math.min((ts-lastTS)/1000,.05); lastTS=ts;
   if(playing) update(dt*speed);
   draw();
   requestAnimationFrame(frame);
 }
 requestAnimationFrame(frame);
 
-// ════════════════════════════════════════════
+// ═══════════════════════════════════════════
 // CONTROLS
-// ════════════════════════════════════════════
-const spdList=[1,2,4,.5]; let si=0;
+// ═══════════════════════════════════════════
+const spds=[1,2,4,.5]; let si=0;
 document.getElementById('btn-play').addEventListener('click',()=>{
   playing=!playing;
   document.getElementById('btn-play').textContent=playing?'⏸ PAUSA':'▶ PLAY';
 });
 document.getElementById('btn-speed').addEventListener('click',()=>{
-  si=(si+1)%spdList.length; speed=spdList[si];
+  si=(si+1)%spds.length; speed=spds[si];
   document.getElementById('btn-speed').textContent=`⚡ ${speed}×`;
 });
-document.querySelectorAll('.ph').forEach((el,i)=>
-  el.addEventListener('click',()=>{ phase=i; phaseT=0; refreshUI(); })
-);
-refreshUI();
+document.getElementById('btn-prev').addEventListener('click',()=>goStep(step-1));
+document.getElementById('btn-next').addEventListener('click',()=>goStep(step+1));
+document.querySelectorAll('.stp').forEach((el,i)=>
+  el.addEventListener('click',()=>goStep(i)));
+
+updateSidePanel();
+updateStepBar();
 </script>
 </body>
 </html>

@@ -3,1343 +3,1196 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>Pro System — Processo Automatizzato</title>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<title>Pro System — Processo Notturno</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 :root{
-  --bg:#060D18; --panel:#091525; --border:#152840;
-  --amber:#E07B00; --amberL:#F5A623;
-  --blue:#1354A0;  --blueL:#1A72D4;
-  --green:#0F9E50; --greenL:#14C760;
+  --bg:#060D18;--panel:#091525;--border:#152840;
+  --amber:#E07B00;--amberL:#F5A623;
+  --blue:#1354A0;--blueL:#2A8AF6;
+  --green:#0F9E50;--greenL:#14C760;
   --purple:#7C3AED;--purpleL:#A78BFA;
-  --cyan:#0891B2;  --cyanL:#22D3EE;
+  --cyan:#0891B2;--cyanL:#22D3EE;
   --red:#DC2626;
-  --white:#F0F6FF; --muted:#4A7AA0; --dim:#1E3A55;
+  --white:#F0F6FF;--muted:#4A7AA0;--dim:#1E3A55;
+  --st:env(safe-area-inset-top,0px);
+  --sb:env(safe-area-inset-bottom,0px);
 }
-html,body{width:100%;height:100%;background:var(--bg);overflow:hidden;
-  font-family:'Inter',sans-serif;color:var(--white)}
+html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);
+  font-family:'Inter',sans-serif;color:var(--white);-webkit-font-smoothing:antialiased}
 #app{display:flex;flex-direction:column;height:100dvh}
 
 /* HEADER */
 #hdr{
-  flex-shrink:0;display:flex;align-items:center;
-  justify-content:space-between;padding:0 28px;
-  padding-top:env(safe-area-inset-top,0px);
-  min-height:52px;
-  background:rgba(6,13,24,.98);border-bottom:2px solid var(--amber);
+  flex-shrink:0;display:flex;align-items:center;gap:10px;
+  padding:0 16px;padding-top:var(--st);
+  height:calc(50px + var(--st));
+  background:#030810;border-bottom:2px solid var(--amber);
 }
-.logo{width:34px;height:34px;background:var(--amber);flex-shrink:0;
+.logo{width:30px;height:30px;background:var(--amber);flex-shrink:0;
   clip-path:polygon(15% 0,85% 0,100% 15%,100% 85%,85% 100%,15% 100%,0 85%,0 15%);
   display:flex;align-items:center;justify-content:center;
-  font-family:'Bebas Neue',sans-serif;font-size:13px;color:#060D18}
-.hdr-title{font-family:'Bebas Neue',sans-serif;font-size:19px;letter-spacing:.1em}
-.hdr-sub{font-size:10px;color:var(--muted);letter-spacing:.06em;margin-top:1px}
-#clock{font-family:'Bebas Neue',sans-serif;font-size:34px;color:var(--amber);letter-spacing:.1em}
-.badge{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--amber);
-  border:1px solid rgba(224,123,0,.3);padding:5px 11px;border-radius:3px}
+  font-family:'Bebas Neue';font-size:11px;color:#030810;letter-spacing:.05em}
+.htxt{flex:1;min-width:0;overflow:hidden}
+.ht{font-family:'Bebas Neue';font-size:16px;letter-spacing:.08em;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hs{font-size:9px;color:var(--muted);margin-top:1px}
+#clk{font-family:'Bebas Neue';font-size:28px;color:var(--amber);
+  letter-spacing:.06em;flex-shrink:0}
 
-/* PROGRESS STEPS BAR */
-#stepbar{
-  flex-shrink:0;display:flex;align-items:center;justify-content:center;
-  padding:10px 20px;gap:0;background:#040C16;
-  border-bottom:1px solid var(--border);
+/* STEP NAV */
+#nav{
+  flex-shrink:0;display:flex;align-items:center;
+  padding:0 8px;height:46px;
+  background:#030810;border-bottom:1px solid var(--border);
+  overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;
 }
-.stp{
-  display:flex;align-items:center;gap:8px;padding:5px 12px;
-  border-radius:6px;cursor:pointer;transition:background .25s;
-  white-space:nowrap;
+#nav::-webkit-scrollbar{display:none}
+.nd{
+  display:flex;align-items:center;gap:6px;padding:5px 10px;
+  border-radius:5px;cursor:pointer;flex-shrink:0;
+  transition:background .2s;white-space:nowrap;
 }
-.stp:hover{background:rgba(255,255,255,.04)}
-.stp.active{background:rgba(224,123,0,.12)}
-.stp.done .stp-n{background:var(--green);border-color:var(--greenL);color:white}
-.stp.active .stp-n{background:var(--amber);border-color:var(--amberL);color:#060D18;
-  box-shadow:0 0 12px rgba(224,123,0,.5)}
-.stp-n{width:22px;height:22px;border-radius:50%;background:var(--dim);
-  border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;
-  font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:600;
-  flex-shrink:0;transition:all .3s}
-.stp-lbl{font-size:10.5px;color:var(--muted);transition:color .25s}
-.stp.active .stp-lbl{color:var(--amber)}
-.stp.done .stp-lbl{color:var(--green)}
-.stp-time{font-family:'JetBrains Mono',monospace;font-size:8.5px;
-  color:rgba(224,123,0,.4);margin-left:3px}
-.stp-arrow{color:var(--dim);font-size:14px;margin:0 2px;flex-shrink:0}
+.nd.active{background:rgba(224,123,0,.15)}
+.nd.done .nn{background:var(--green);border-color:var(--greenL);color:#fff}
+.nd.active .nn{background:var(--amber);border-color:var(--amberL);color:#030810;
+  box-shadow:0 0 8px rgba(224,123,0,.5)}
+.nn{width:20px;height:20px;border-radius:50%;background:var(--dim);
+  border:1.5px solid var(--border);display:flex;align-items:center;
+  justify-content:center;font-family:'JetBrains Mono';font-size:8px;font-weight:600;
+  flex-shrink:0;transition:all .25s}
+.nl{font-size:9.5px;color:var(--muted)}
+.nd.active .nl{color:var(--amber)}
+.nd.done .nl{color:var(--green)}
+.na{color:var(--dim);font-size:10px;flex-shrink:0;padding:0 1px}
 
-/* MAIN CONTENT */
-#main{flex:1;display:flex;overflow:hidden;min-height:0}
+/* BODY */
+#body{flex:1;display:flex;overflow:hidden;min-height:0}
 
-/* STEP PANEL (large canvas area) */
-#panel{flex:1;position:relative;overflow:hidden;min-width:0}
-canvas{display:block;width:100%;height:100%}
+/* CANVAS AREA */
+#cv{flex:1;position:relative;overflow:hidden;min-width:0;min-height:0}
+canvas{position:absolute;top:0;left:0;display:block}
 
-/* SIDE INFO */
-#info{
-  width:260px;flex-shrink:0;display:flex;flex-direction:column;
-  background:#040C16;border-left:1px solid var(--border);
+/* DESKTOP SIDEBAR */
+#sb{
+  width:240px;flex-shrink:0;display:flex;flex-direction:column;
+  background:#030810;border-left:1px solid var(--border);overflow:hidden;
 }
-.ic{padding:14px 16px;border-bottom:1px solid var(--border)}
-.ic:last-child{border-bottom:none;flex:1}
-.ic-t{font-family:'Bebas Neue',sans-serif;font-size:15px;color:var(--amber);
-  letter-spacing:.08em;margin-bottom:7px}
-.ic-d{font-size:12px;color:#7AAAC8;line-height:1.7}
-.ic-d b{color:var(--white);font-weight:600}
-/* big number */
-.big-num{font-family:'Bebas Neue',sans-serif;font-size:42px;color:var(--white);
-  line-height:1;letter-spacing:.04em}
-.big-lbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-top:2px}
-/* ora */
-.ora-row{display:flex;align-items:baseline;gap:8px;margin-top:6px}
-.ora-val{font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--amber)}
-.ora-lbl{font-size:10px;color:var(--muted)}
-/* stats grid */
-.sg{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px}
-.sc{background:var(--panel);border:1px solid var(--border);border-radius:5px;
-  padding:8px 10px;text-align:center}
-.sc-n{font-family:'Bebas Neue',sans-serif;font-size:24px;color:var(--white);line-height:1}
-.sc-l{font-size:8.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-top:2px}
-/* progress */
-.pb{height:4px;background:var(--dim);border-radius:2px;margin-top:10px;overflow:hidden}
+.sb-sect{padding:12px 14px;border-bottom:1px solid var(--border);flex-shrink:0}
+.sb-grow{flex:1;overflow-y:auto;padding:10px 14px}
+.sb-title{font-family:'Bebas Neue';font-size:13px;color:var(--amber);
+  letter-spacing:.07em;margin-bottom:5px}
+.sb-desc{font-size:11.5px;color:#7AAAC8;line-height:1.7}
+.sb-desc b{color:var(--white)}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:4px}
+.stat{background:var(--panel);border:1px solid var(--border);border-radius:4px;padding:7px;text-align:center}
+.stat-n{font-family:'Bebas Neue';font-size:22px;color:var(--white);line-height:1}
+.stat-l{font-size:8px;color:var(--muted);text-transform:uppercase;letter-spacing:.03em;margin-top:1px}
+.pb{height:3px;background:var(--dim);border-radius:2px;margin-top:8px;overflow:hidden}
 .pbf{height:100%;background:var(--amber);border-radius:2px;transition:width .8s}
-/* checklist */
-.chk-row{display:flex;align-items:center;gap:8px;padding:5px 0;
-  border-bottom:1px solid rgba(21,40,64,.5);font-size:11px}
-.chk-row:last-child{border-bottom:none}
-.chk-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
-.chk-lbl{flex:1;color:var(--muted)}
-.chk-val{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--white)}
+.pr{display:flex;justify-content:space-between;margin-top:2px;
+  font-family:'JetBrains Mono';font-size:7px;color:#2A4060}
+.row{display:flex;align-items:center;gap:7px;padding:5px 0;
+  border-bottom:1px solid rgba(14,32,64,.5)}
+.row:last-child{border-bottom:none}
+.dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.rl{flex:1;font-size:10.5px;color:var(--muted)}
+.rv{font-family:'JetBrains Mono';font-size:9.5px;color:var(--white)}
 
 /* CONTROLS */
-#ctrl{position:absolute;left:16px;bottom:16px;display:flex;gap:8px;z-index:10}
-.btn{font-family:'JetBrains Mono',monospace;font-size:9px;
-  background:rgba(4,12,22,.9);border:1px solid var(--border);
-  color:var(--muted);padding:7px 14px;border-radius:3px;cursor:pointer;
-  transition:border-color .2s,color .2s;letter-spacing:.04em}
-.btn:hover{border-color:var(--amber);color:var(--amber)}
+#ctrl{position:absolute;left:10px;bottom:10px;display:flex;gap:5px;z-index:20}
+.btn{font-family:'JetBrains Mono';font-size:9px;
+  background:rgba(3,8,16,.92);border:1px solid var(--border);
+  color:var(--muted);padding:6px 12px;border-radius:3px;cursor:pointer;
+  transition:all .2s}
+.btn:active,.btn:hover{border-color:var(--amber);color:var(--amber)}
 
-/* ─── MOBILE ─────────────────────────────────────── */
-@media(max-width:700px){
-  #stepbar{
-    justify-content:flex-start;overflow-x:auto;
-    -webkit-overflow-scrolling:touch;scrollbar-width:none;
-    padding:6px 8px;
-  }
-  #stepbar::-webkit-scrollbar{display:none}
-  .stp{padding:4px 8px;white-space:nowrap}
-  .stp-time{display:none}
-  .stp-lbl{font-size:9px}
-  .stp-arrow{margin:0 1px}
-  #info{display:none!important}
-  #mob{display:flex!important}
-  .badge{display:none}
-  .hdr-title{font-size:13px}
-  .hdr-sub{font-size:9px}
-  .btn{padding:6px 10px;font-size:8px}
-  #ctrl{left:8px;bottom:8px;gap:5px}
-}
-@media(min-width:701px){#mob{display:none!important}}
-
-/* ─── MOBILE BOTTOM PANEL ──────────────────────────── */
+/* MOBILE BOTTOM PANEL */
 #mob{
-  display:none;flex-direction:column;flex-shrink:0;
-  background:#040C16;border-top:1px solid var(--border);
-  padding-bottom:env(safe-area-inset-bottom,0px);
-  max-height:44vh;overflow:hidden;transition:max-height .3s;
+  display:none;flex-shrink:0;flex-direction:column;
+  background:#030810;border-top:1px solid var(--border);
+  padding-bottom:var(--sb);
 }
-#mob.open{max-height:62vh}
-#mob-top{
+#mobt{
   display:flex;align-items:center;justify-content:space-between;
-  padding:8px 14px;border-bottom:1px solid var(--border);
-  cursor:pointer;-webkit-user-select:none;user-select:none;flex-shrink:0;
+  padding:9px 14px;cursor:pointer;border-bottom:1px solid var(--border);
+  -webkit-user-select:none;flex-shrink:0;
 }
-#mob-ttl{font-family:'Bebas Neue',sans-serif;font-size:13px;
-  color:var(--amber);letter-spacing:.07em}
-#mob-arr{font-size:10px;color:var(--muted);transition:transform .3s}
-#mob.open #mob-arr{transform:rotate(180deg)}
-#mob-body{overflow-y:auto;-webkit-overflow-scrolling:touch;padding:8px 14px}
-#mob-desc{font-size:11px;color:#7AAAC8;line-height:1.6;margin-bottom:7px}
-#mob-desc b{color:var(--white)}
-.m-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:7px}
-.m-stat{background:var(--panel);border:1px solid var(--border);
-  border-radius:4px;padding:5px;text-align:center}
-.m-stat-n{font-family:'Bebas Neue',sans-serif;font-size:17px;
-  color:var(--white);line-height:1}
-.m-stat-l{font-size:8px;color:var(--muted);text-transform:uppercase;letter-spacing:.03em}
-.m-spec-row{display:flex;align-items:center;gap:7px;padding:4px 0;
-  border-bottom:1px solid rgba(21,40,64,.4)}
-.m-spec-row:last-child{border-bottom:none}
-.m-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
-.m-lbl{flex:1;font-size:10px;color:var(--muted)}
-.m-val{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--white)}
+#mobttl{font-family:'Bebas Neue';font-size:13px;color:var(--amber);letter-spacing:.06em}
+#mobarr{font-size:10px;color:var(--muted);transition:transform .3s}
+#mob.open #mobarr{transform:rotate(180deg)}
+#mobc{
+  overflow-y:auto;-webkit-overflow-scrolling:touch;
+  padding:8px 14px 6px;
+  max-height:0;overflow:hidden;transition:max-height .35s ease;
+}
+#mob.open #mobc{max-height:55vh}
+#mobdesc{font-size:11px;color:#7AAAC8;line-height:1.65;margin-bottom:8px}
+#mobdesc b{color:var(--white)}
+.ms{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:7px}
+.msv{background:var(--panel);border:1px solid var(--border);border-radius:4px;padding:6px;text-align:center}
+.msvn{font-family:'Bebas Neue';font-size:18px;color:var(--white);line-height:1}
+.msvl{font-size:7.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.03em}
+.mrow{display:flex;align-items:center;gap:7px;padding:4px 0;
+  border-bottom:1px solid rgba(14,32,64,.4)}
+.mrow:last-child{border-bottom:none}
+.mdot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.mrl{flex:1;font-size:10px;color:var(--muted)}
+.mrv{font-family:'JetBrains Mono';font-size:9px;color:var(--white)}
 
+/* SWIPE HINT */
+#hint{
+  position:absolute;bottom:6px;left:50%;transform:translateX(-50%);
+  font-size:9px;color:rgba(74,122,160,.4);pointer-events:none;
+  white-space:nowrap;display:none;
+}
+
+@media(max-width:700px){
+  #sb{display:none}
+  #mob{display:flex}
+  #hint{display:block}
+  .ht{font-size:13px}
+  .hs{display:none}
+  #clk{font-size:24px}
+}
+@media(min-width:701px){
+  #mob{display:none!important}
+  #hint{display:none!important}
+}
 </style>
 </head>
 <body>
 <div id="app">
 
 <div id="hdr">
-  <div style="display:flex;align-items:center;gap:14px">
-    <div class="logo">PS</div>
-    <div>
-      <div class="hdr-title">PRO SYSTEM — PROCESSO AUTOMATIZZATO NOTTURNO</div>
-      <div class="hdr-sub">MAGAZZINO MATERIALI EDILIZIA · CICLO 20:00 → 06:00</div>
-    </div>
+  <div class="logo">PS</div>
+  <div class="htxt">
+    <div class="ht">PRO SYSTEM — PROCESSO AUTOMATIZZATO NOTTURNO</div>
+    <div class="hs">MAGAZZINO EDILIZIA · RT-AUTO-EDI-001 · CICLO 20:00–06:00</div>
   </div>
-  <div id="clock">20:00</div>
-  <div class="badge">RT-AUTO-EDI-001</div>
+  <div id="clk">20:00</div>
 </div>
 
-<div id="stepbar">
-  <div class="stp active" data-s="0"><span class="stp-n">1</span><span class="stp-lbl">WMS Import</span><span class="stp-time">20:00</span></div>
-  <div class="stp-arrow">›</div>
-  <div class="stp" data-s="1"><span class="stp-n">2</span><span class="stp-lbl">VLM Estrae</span><span class="stp-time">20:20</span></div>
-  <div class="stp-arrow">›</div>
-  <div class="stp" data-s="2"><span class="stp-n">3</span><span class="stp-lbl">Robot Preleva</span><span class="stp-time">20:25</span></div>
-  <div class="stp-arrow">›</div>
-  <div class="stp" data-s="3"><span class="stp-n">4</span><span class="stp-lbl">Pallet</span><span class="stp-time">21:xx</span></div>
-  <div class="stp-arrow">›</div>
-  <div class="stp" data-s="4"><span class="stp-n">5</span><span class="stp-lbl">AGV Trasporta</span><span class="stp-time">22:xx</span></div>
-  <div class="stp-arrow">›</div>
-  <div class="stp" data-s="5"><span class="stp-n">6</span><span class="stp-lbl">Staging</span><span class="stp-time">23:xx</span></div>
-  <div class="stp-arrow">›</div>
-  <div class="stp" data-s="6"><span class="stp-n">7</span><span class="stp-lbl">Carico</span><span class="stp-time">06:00</span></div>
+<div id="nav">
+  <div class="nd active" data-s="0"><span class="nn">1</span><span class="nl">WMS</span></div>
+  <div class="na">›</div>
+  <div class="nd" data-s="1"><span class="nn">2</span><span class="nl">VLM</span></div>
+  <div class="na">›</div>
+  <div class="nd" data-s="2"><span class="nn">3</span><span class="nl">Robot</span></div>
+  <div class="na">›</div>
+  <div class="nd" data-s="3"><span class="nn">4</span><span class="nl">Pallet</span></div>
+  <div class="na">›</div>
+  <div class="nd" data-s="4"><span class="nn">5</span><span class="nl">AGV</span></div>
+  <div class="na">›</div>
+  <div class="nd" data-s="5"><span class="nn">6</span><span class="nl">Staging</span></div>
+  <div class="na">›</div>
+  <div class="nd" data-s="6"><span class="nn">7</span><span class="nl">Carico</span></div>
 </div>
 
-<div id="main">
-  <div id="panel">
+<div id="body">
+  <div id="cv">
     <canvas id="c"></canvas>
     <div id="ctrl">
-      <button class="btn" id="btn-play">⏸ PAUSA</button>
-      <button class="btn" id="btn-speed">⚡ 1×</button>
-      <button class="btn" id="btn-prev">← PREC</button>
-      <button class="btn" id="btn-next">SUCC →</button>
+      <button class="btn" id="bplay">⏸</button>
+      <button class="btn" id="bspd">⚡1×</button>
+      <button class="btn" id="bprev">←</button>
+      <button class="btn" id="bnext">→</button>
     </div>
+    <div id="hint">← scorri →</div>
   </div>
-  <div id="info">
-    <div class="ic">
-      <div class="ic-t" id="i-title">WMS IMPORTA ORDINI</div>
-      <div class="ic-d" id="i-desc">
-        Il sistema <b>WMS</b> riceve tutti gli ordini dall'ERP aziendale.<br><br>
-        Pianifica la sequenza ottimale per preparare <b>ogni cantiere</b> durante la notte.
-      </div>
+
+  <div id="sb">
+    <div class="sb-sect">
+      <div class="sb-title" id="sbt">WMS IMPORTA ORDINI</div>
+      <div class="sb-desc" id="sbd">Il <b>WMS</b> riceve gli ordini ERP.</div>
     </div>
-    <div class="ic">
-      <div class="ora-row">
-        <div class="ora-val" id="i-ora">20:00</div>
-        <div class="ora-lbl">orario fase</div>
-      </div>
-      <div class="sg">
-        <div class="sc"><div class="sc-n" id="i-n1">6</div><div class="sc-l">Commesse</div></div>
-        <div class="sc"><div class="sc-n" id="i-n2">24</div><div class="sc-l">Pallet tot.</div></div>
-        <div class="sc"><div class="sc-n" id="i-n3">14.4</div><div class="sc-l">Ton totali</div></div>
-        <div class="sc"><div class="sc-n" id="i-n4">10h</div><div class="sc-l">Ciclo</div></div>
+    <div class="sb-sect">
+      <div class="stats">
+        <div class="stat"><div class="stat-n" id="n1">6</div><div class="stat-l" id="l1">Commesse</div></div>
+        <div class="stat"><div class="stat-n" id="n2">24</div><div class="stat-l" id="l2">Pallet</div></div>
+        <div class="stat"><div class="stat-n" id="n3">14.4</div><div class="stat-l" id="l3">Ton</div></div>
+        <div class="stat"><div class="stat-n" id="n4">10h</div><div class="stat-l" id="l4">Ciclo</div></div>
       </div>
       <div class="pb"><div class="pbf" id="pbf" style="width:0%"></div></div>
+      <div class="pr"><span>AVANZAMENTO</span><span id="pct">0%</span></div>
     </div>
-    <div class="ic" style="flex:1;overflow:auto">
-      <div class="ic-t">CARATTERISTICHE</div>
-      <div id="i-spec"></div>
+    <div class="sb-grow">
+      <div class="sb-title">CARATTERISTICHE</div>
+      <div id="spec"></div>
     </div>
   </div>
 </div>
 
 <div id="mob">
-  <div id="mob-top">
-    <div id="mob-ttl">STEP 1 — WMS IMPORTA ORDINI</div>
-    <div id="mob-arr">▼</div>
+  <div id="mobt">
+    <div id="mobttl">STEP 1 — WMS</div>
+    <div id="mobarr">▼</div>
   </div>
-  <div id="mob-body">
-    <div id="mob-desc">Il <b>WMS</b> riceve gli ordini ERP.</div>
-    <div class="m-grid">
-      <div class="m-stat"><div class="m-stat-n" id="mn1">6</div><div class="m-stat-l" id="ml1">Commesse</div></div>
-      <div class="m-stat"><div class="m-stat-n" id="mn2">24</div><div class="m-stat-l" id="ml2">Pallet</div></div>
-      <div class="m-stat"><div class="m-stat-n" id="mn3">14.4</div><div class="m-stat-l" id="ml3">Ton</div></div>
-      <div class="m-stat"><div class="m-stat-n" id="mn4">10h</div><div class="m-stat-l" id="ml4">Ciclo</div></div>
+  <div id="mobc">
+    <div id="mobdesc">Il <b>WMS</b> riceve gli ordini ERP.</div>
+    <div class="ms">
+      <div class="msv"><div class="msvn" id="mn1">6</div><div class="msvl" id="ml1">Commesse</div></div>
+      <div class="msv"><div class="msvn" id="mn2">24</div><div class="msvl" id="ml2">Pallet</div></div>
+      <div class="msv"><div class="msvn" id="mn3">14.4</div><div class="msvl" id="ml3">Ton</div></div>
+      <div class="msv"><div class="msvn" id="mn4">10h</div><div class="msvl" id="ml4">Ciclo</div></div>
     </div>
-    <div id="mob-spec"></div>
+    <div id="mobspec"></div>
   </div>
 </div>
 
 </div>
 
 <script>
-// ═══════════════════════════════════════════
+// ─────────────────────────────────────────────────────────────────────
 // CANVAS SETUP
-// ═══════════════════════════════════════════
-const canvas = document.getElementById('c');
-const ctx    = canvas.getContext('2d');
-const DPR    = window.devicePixelRatio || 1;
-let CW, CH;
+// ─────────────────────────────────────────────────────────────────────
+const CV = document.getElementById('c');
+const ctx = CV.getContext('2d');
+const DPR = Math.min(window.devicePixelRatio||1, 2);
+let CW=1, CH=1;
 
-const DSGN = 860;
 function resize(){
-  const el = canvas.parentElement;
-  const aw = el.clientWidth, ah = el.clientHeight;
-  if(aw < DSGN){
-    const sc = aw / DSGN;
-    CW = DSGN; CH = Math.round(ah / sc);
-    canvas.width  = Math.round(CW*DPR); canvas.height = Math.round(CH*DPR);
-    canvas.style.width = CW+'px'; canvas.style.height = CH+'px';
-    canvas.style.transform = 'scale('+sc+')';
-    canvas.style.transformOrigin = 'top left';
-  } else {
-    CW = aw; CH = ah;
-    canvas.width  = Math.round(CW*DPR); canvas.height = Math.round(CH*DPR);
-    canvas.style.width = CW+'px'; canvas.style.height = CH+'px';
-    canvas.style.transform = '';
-  }
+  const el = document.getElementById('cv');
+  CW = el.clientWidth; CH = el.clientHeight;
+  CV.width  = Math.round(CW*DPR); CV.height = Math.round(CH*DPR);
+  CV.style.width  = CW+'px'; CV.style.height = CH+'px';
   ctx.setTransform(DPR,0,0,DPR,0,0);
 }
 resize();
-window.addEventListener('resize', resize);
+window.addEventListener('resize',()=>{ clearTimeout(window._rt); window._rt=setTimeout(resize,80); });
 
-// ═══════════════════════════════════════════
-// PALETTE
-// ═══════════════════════════════════════════
-const C = {
-  bg:'#060D18', floor:'#08111E', grid:'rgba(255,255,255,0.025)',
-  amber:'#E07B00', amberL:'#F5A623', amberD:'#7A3800',
-  blue:'#1354A0', blueL:'#2A8AF6', blueDk:'#061830',
-  green:'#0F9E50', greenL:'#14C760',
-  purple:'#7C3AED', purpleL:'#A78BFA',
-  cyan:'#0891B2', cyanL:'#22D3EE',
-  red:'#DC2626', redL:'#F87171',
-  white:'#F0F6FF', muted:'#4A7AA0', dim:'#1E3A55',
-  panel:'#091525', border:'#152840',
-  gray:'#374151', grayL:'#6B7280',
-  brown:'#78350F', brownL:'#92400E',
-  steel:'#334155',
-};
+// ─────────────────────────────────────────────────────────────────────
+// RESPONSIVE HELPERS — all coords relative to CW/CH
+// ─────────────────────────────────────────────────────────────────────
+const cx = ()=> CW/2;
+const cy = ()=> CH/2;
+const W  = f => CW*f;
+const H  = f => CH*f;
+const S  = f => Math.min(CW,CH)*f;   // size relative to smallest dimension
+const mob= ()=> CW <= 700;
 
-// ═══════════════════════════════════════════
-// STEP DATA
-// ═══════════════════════════════════════════
-const STEPS = [
-  {
-    id:0, label:'WMS IMPORTA ORDINI', ora:'20:00',
-    color: C.blue, colorL: C.blueL,
-    n1:'6', l1:'Commesse', n2:'24', l2:'Pallet', n3:'14.4', l3:'Ton', n4:'10h', l4:'Ciclo',
-    desc:'Il sistema <b>WMS</b> riceve tutti gli ordini dall\'ERP aziendale.<br><br>Pianifica la sequenza ottimale per preparare <b>ogni cantiere</b> durante la notte.',
-    spec:[
-      {col:C.blue,   lbl:'Sistema',    val:'WMS / ERP'},
-      {col:C.green,  lbl:'Integrazione',val:'OPC UA'},
-      {col:C.amber,  lbl:'Commesse',   val:'6 / notte'},
-      {col:C.purple, lbl:'Algoritmo',  val:'Wave Picking'},
-      {col:C.cyan,   lbl:'Sequenza',   val:'Ottimizzata'},
-    ],
-    dur: 5,
-  },
-  {
-    id:1, label:'VLM ESTRAE CASSETTO', ora:'20:20',
-    color: C.amber, colorL: C.amberL,
-    n1:'4', l1:'VLM', n2:'300–600', l2:'kg/cassetto', n3:'±0.5', l3:'mm prec.', n4:'GTP', l4:'Modalità',
-    desc:'Il <b>magazzino verticale</b> (VLM) riceve l\'ordine di estrarre il cassetto che contiene il materiale richiesto.<br><br>L\'elevatore interno porta il cassetto alla <b>finestra di prelievo</b>.',
-    spec:[
-      {col:C.amber,  lbl:'Tipo',       val:'Vertical Lift Module'},
-      {col:C.blue,   lbl:'Unità',      val:'4 VLM indipendenti'},
-      {col:C.green,  lbl:'Portata',    val:'300–600 kg/cassetto'},
-      {col:C.cyan,   lbl:'Precisione', val:'Encoder ±0.5 mm'},
-      {col:C.purple, lbl:'Logica',     val:'Goods-to-Person'},
-    ],
-    dur: 5,
-  },
-  {
-    id:2, label:'ROBOT PRELEVA', ora:'20:25',
-    color: C.purple, colorL: C.purpleL,
-    n1:'4', l1:'Robot', n2:'6', l2:'Assi DOF', n3:'±0.05', l3:'mm riep.', n4:'3D', l4:'Vision',
-    desc:'Il <b>robot a 6 assi</b> si avvicina alla finestra del VLM, identifica il collo tramite <b>visione 3D</b> e lo preleva con la pinza.<br><br>Ogni pezzo viene riconosciuto e tracciato.',
-    spec:[
-      {col:C.purple, lbl:'Tipo',       val:'Robot 6 assi (KUKA)'},
-      {col:C.amber,  lbl:'Portata',    val:'50–120 kg'},
-      {col:C.blue,   lbl:'Ripetibilità',val:'±0.05 mm'},
-      {col:C.green,  lbl:'Sensori',    val:'Vision 3D + F/T'},
-      {col:C.cyan,   lbl:'Tool',       val:'ATC cambio utensile'},
-    ],
-    dur: 6,
-  },
-  {
-    id:3, label:'COMPOSIZIONE PALLET', ora:'21:xx',
-    color: C.green, colorL: C.greenL,
-    n1:'1', l1:'Pallet=1 cantiere', n2:'±1', l2:'kg peso', n3:'100%', l3:'Barcode', n4:'680', l4:'kg max',
-    desc:'Il robot impila i materiali sul pallet <b>commessa per commessa</b>.<br><br>Ogni collo viene posato con precisione, <b>pesato</b> e scannerizzato. Un pallet = un cantiere.',
-    spec:[
-      {col:C.green,  lbl:'Identificazione', val:'Barcode ogni collo'},
-      {col:C.amber,  lbl:'Pesatura',    val:'Celle ±1 kg'},
-      {col:C.blue,   lbl:'Strato',      val:'Ottimizzato WMS'},
-      {col:C.purple, lbl:'Pallet',      val:'1 per cantiere'},
-      {col:C.cyan,   lbl:'Capacità max',val:'680 kg / pallet'},
-    ],
-    dur: 6,
-  },
-  {
-    id:4, label:'AGV TRASPORTA', ora:'22:xx',
-    color: C.cyan, colorL: C.cyanL,
-    n1:'2', l1:'AGV', n2:'1500', l2:'kg portata', n3:'SLAM', l3:'Nav.', n4:'±10', l4:'mm dock',
-    desc:'Il <b>robot AGV</b> (veicolo autonomo) si avvicina al pallet completato, lo carica e lo trasporta attraverso il corridoio fino all\'area di staging.<br><br>Naviga da solo, senza binari.',
-    spec:[
-      {col:C.cyan,   lbl:'Tipo',       val:'AGV/AMR autonomo'},
-      {col:C.blue,   lbl:'Navigazione',val:'SLAM Laser 360°'},
-      {col:C.amber,  lbl:'Portata',    val:'1500 kg'},
-      {col:C.green,  lbl:'Docking',    val:'±10 mm precisione'},
-      {col:C.purple, lbl:'Protocollo', val:'VDA5050 / Wi-Fi 6'},
-    ],
-    dur: 6,
-  },
-  {
-    id:5, label:'DEPOSITO STAGING', ora:'23:xx',
-    color: C.green, colorL: C.greenL,
-    n1:'10', l1:'Baie', n2:'1', l2:'Baia=1 Cantiere', n3:'LED', l3:'3 stati', n4:'RFID', l4:'Tag',
-    desc:'L\'AGV deposita il pallet nella <b>baia staging numerata</b> assegnata a quel cantiere.<br><br>La <b>colonna luminosa verde</b> si accende: pallet pronto per il carico.',
-    spec:[
-      {col:C.green,  lbl:'Baie totali',val:'10 postazioni'},
-      {col:C.amber,  lbl:'Segnaletica',val:'Colonna LED 3 stati'},
-      {col:C.blue,   lbl:'Display',    val:'e-Paper per cantiere'},
-      {col:C.cyan,   lbl:'Tracciatura',val:'RFID ogni pallet'},
-      {col:C.purple, lbl:'Dimensione', val:'2000×2000 mm/baia'},
-    ],
-    dur: 6,
-  },
-  {
-    id:6, label:'CARICO FURGONI', ora:'06:00',
-    color: C.amberL, colorL: '#FFD700',
-    n1:'6', l1:'Furgoni', n2:'06:00', l2:'Partenza', n3:'100%', l3:'Tracciato', n4:'DDT', l4:'Auto',
-    desc:'Alle <b>06:00</b> arrivano i furgoni.<br><br>Gli operatori caricano ogni mezzo dalla baia assegnata. Ogni pallet è già <b>etichettato, pesato e tracciato</b>. I cantieri ricevono i materiali in tempo.',
-    spec:[
-      {col:C.amber,  lbl:'Orario',     val:'06:00 partenza'},
-      {col:C.green,  lbl:'Efficienza', val:'Zero errori picking'},
-      {col:C.blue,   lbl:'DDT',        val:'Generato automatico'},
-      {col:C.cyan,   lbl:'Tracciabilità',val:'Completa fine-a-fine'},
-      {col:C.purple, lbl:'Operatori',  val:'Solo al carico'},
-    ],
-    dur: 5,
-  },
-];
-
-// ═══════════════════════════════════════════
-// SIM STATE
-// ═══════════════════════════════════════════
-let step = 0, t = 0, simT = 0, playing = true, speed = 1, lastTS = null;
-
-// Per-step animation state
-const anim = {
-  // Step 0 — WMS: data packets flying
-  packets: [],
-  // Step 1 — VLM: elevator position
-  elevY: 0.1,
-  // Step 2 — Robot: arm angles
-  armBase: 0, arm1: 0, arm2: 0,
-  // Step 3 — Pallet: layer count
-  layers: 0,
-  // Step 4 — AGV: position
-  agvX: 0.1,
-  // Step 5 — Staging: filled count
-  stagFilled: 0,
-  // Step 6 — Van: load
-  vanLoad: 0,
-};
-
-function resetAnim(){
-  anim.packets = [];
-  anim.elevY   = 0.1;
-  anim.armBase = 0;
-  anim.layers  = 0;
-  anim.agvX    = 0.1;
-  anim.stagFilled = 0;
-  anim.vanLoad = 0;
+// Drawing helpers
+function rr(x,y,w,h,col,r){
+  if(w<=0||h<=0)return;
+  r=Math.min(r||4,w/2,h/2);
+  ctx.fillStyle=col; ctx.beginPath(); ctx.roundRect(x,y,w,h,r); ctx.fill();
 }
-
-function goStep(s){
-  step = Math.max(0, Math.min(6, s));
-  t = 0;
-  resetAnim();
-  updateSidePanel();
-  updateStepBar();
-  const dot = document.querySelectorAll('.stp')[step];
-  if(dot) dot.scrollIntoView({behavior:'smooth',inline:'center',block:'nearest'});
-}
-
-// ═══════════════════════════════════════════
-// UI UPDATE
-// ═══════════════════════════════════════════
-function updateSidePanel(){
-  const d = STEPS[step];
-  document.getElementById('i-title').textContent = d.label;
-  document.getElementById('i-desc').innerHTML    = d.desc;
-  document.getElementById('i-ora').textContent   = d.ora;
-  document.getElementById('i-n1').textContent    = d.n1;
-  document.getElementById('i-n2').textContent    = d.n2;
-  document.getElementById('i-n3').textContent    = d.n3;
-  document.getElementById('i-n4').textContent    = d.n4;
-  document.querySelector('.sc:nth-child(1) .sc-l').textContent = d.l1;
-  document.querySelector('.sc:nth-child(2) .sc-l').textContent = d.l2;
-  document.querySelector('.sc:nth-child(3) .sc-l').textContent = d.l3;
-  document.querySelector('.sc:nth-child(4) .sc-l').textContent = d.l4;
-  document.getElementById('pbf').style.width = Math.round(step/6*100)+'%';
-
-  const spec = document.getElementById('i-spec');
-  spec.innerHTML = d.spec.map(s=>`
-    <div class="chk-row">
-      <div class="chk-dot" style="background:${s.col}"></div>
-      <div class="chk-lbl">${s.lbl}</div>
-      <div class="chk-val">${s.val}</div>
-    </div>`).join('');
-
-  // mobile panel
-  document.getElementById('mob-ttl').textContent = 'STEP '+(step+1)+' — '+d.label;
-  document.getElementById('mob-desc').innerHTML = d.desc;
-  [1,2,3,4].forEach(n=>{
-    document.getElementById('mn'+n).textContent = d['n'+n];
-    document.getElementById('ml'+n).textContent = d['l'+n];
-  });
-  document.getElementById('mob-spec').innerHTML = d.spec.map(s=>
-    '<div class="m-spec-row">'+
-    '<div class="m-dot" style="background:'+s.col+'"></div>'+
-    '<div class="m-lbl">'+s.lbl+'</div>'+
-    '<div class="m-val">'+s.val+'</div></div>'
-  ).join('');
-}
-
-function updateStepBar(){
-  document.querySelectorAll('.stp').forEach((el,i)=>{
-    el.classList.toggle('active', i===step);
-    el.classList.toggle('done',   i<step);
-  });
-}
-
-// ═══════════════════════════════════════════
-// UPDATE
-// ═══════════════════════════════════════════
-function update(dt){
-  t += dt; simT += dt;
-
-  // clock
-  const td = STEPS.reduce((a,s)=>a+s.dur,0);
-  const mins = (simT/td)*600;
-  const hh = Math.floor(20+mins/60)%24, mm = Math.floor(mins%60);
-  document.getElementById('clock').textContent =
-    String(hh).padStart(2,'0')+':'+String(mm).padStart(2,'0');
-
-  // auto advance
-  if(t >= STEPS[step].dur){
-    if(step < 6){ goStep(step+1); }
-    else { t = 0; goStep(0); simT = 0; } // loop
-  }
-
-  const p = Math.min(t / STEPS[step].dur, 1); // 0→1 within step
-
-  // Step-specific animations
-  switch(step){
-    case 0: // packets spawn
-      if(Math.random() < dt*4)
-        anim.packets.push({ x:0.12, y:0.3+Math.random()*0.4, vx:0.25, vy:(Math.random()-.5)*0.05, life:0 });
-      anim.packets.forEach(pk=>{ pk.x+=pk.vx*dt; pk.y+=pk.vy*dt; pk.life+=dt; });
-      anim.packets = anim.packets.filter(pk=>pk.x<0.92&&pk.life<4);
-      break;
-    case 1: // elevator going down then up
-      anim.elevY = 0.1 + Math.abs(Math.sin(simT*0.6)) * 0.7;
-      break;
-    case 2: // robot arm sweep
-      anim.armBase += dt*0.7;
-      anim.arm1 = Math.sin(anim.armBase*1.2)*0.9;
-      anim.arm2 = Math.cos(anim.armBase*0.8)*0.7;
-      break;
-    case 3: // layers building
-      anim.layers = Math.min(p*6, 5.99);
-      break;
-    case 4: // AGV moving
-      anim.agvX = 0.1 + Math.abs(Math.sin(simT*0.4))*0.75;
-      break;
-    case 5: // bays filling
-      anim.stagFilled = Math.min(p*10.5, 10);
-      break;
-    case 6: // van loading
-      anim.vanLoad = p;
-      break;
-  }
-}
-
-// ═══════════════════════════════════════════
-// DRAW HELPERS
-// ═══════════════════════════════════════════
-function fr(x,y,w,h,col,r=4){
-  ctx.fillStyle=col;
-  ctx.beginPath(); ctx.roundRect(x,y,w,h,r); ctx.fill();
-}
-function sr(x,y,w,h,col,lw=1,r=4,dash=[]){
+function rs(x,y,w,h,col,lw,r,dash){
+  if(w<=0||h<=0)return;
+  r=Math.min(r||4,w/2,h/2); lw=lw||1.5;
   ctx.strokeStyle=col; ctx.lineWidth=lw;
-  ctx.setLineDash(dash); ctx.beginPath();
-  ctx.roundRect(x,y,w,h,r); ctx.stroke(); ctx.setLineDash([]);
+  ctx.setLineDash(dash||[]);
+  ctx.beginPath(); ctx.roundRect(x,y,w,h,r); ctx.stroke();
+  ctx.setLineDash([]);
 }
-function ci(x,y,r,fill,stroke,lw=1){
+function cc(x,y,r,fill,stroke,lw){
   ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2);
-  if(fill){ctx.fillStyle=fill;ctx.fill();}
-  if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=lw;ctx.stroke();}
+  if(fill){ctx.fillStyle=fill; ctx.fill();}
+  if(stroke){ctx.strokeStyle=stroke; ctx.lineWidth=lw||1.5; ctx.stroke();}
 }
-function tx(x,y,s,col,sz=14,align='center',fam='Inter'){
-  ctx.font=`${sz}px '${fam}',sans-serif`;
-  ctx.fillStyle=col; ctx.textAlign=align; ctx.textBaseline='middle';
-  ctx.fillText(s,x,y);
-}
-function txB(x,y,s,col,sz=20,align='center'){
-  ctx.font=`${sz}px 'Bebas Neue',sans-serif`;
-  ctx.fillStyle=col; ctx.textAlign=align; ctx.textBaseline='middle';
-  ctx.fillText(s,x,y);
-}
-function gl(col,blur){ ctx.shadowColor=col; ctx.shadowBlur=blur; }
-function ng(){ ctx.shadowBlur=0; }
-function arrow(x1,y1,x2,y2,col,lw=2){
-  ctx.strokeStyle=col; ctx.lineWidth=lw;
+function ln(x1,y1,x2,y2,col,lw,dash){
+  ctx.strokeStyle=col; ctx.lineWidth=lw||1.5;
+  ctx.setLineDash(dash||[]);
   ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
-  const ang=Math.atan2(y2-y1,x2-x1);
-  const hs=10;
-  ctx.fillStyle=col;
-  ctx.beginPath();
+  ctx.setLineDash([]);
+}
+function tx(x,y,s,col,sz,align,weight){
+  ctx.font=(weight||'400')+' '+(sz||13)+"px 'Inter',sans-serif";
+  ctx.fillStyle=col; ctx.textAlign=align||'center'; ctx.textBaseline='middle';
+  ctx.fillText(s,x,y);
+}
+function fnt(x,y,s,col,sz,align){
+  ctx.font=(sz||16)+"px 'Bebas Neue',sans-serif";
+  ctx.fillStyle=col; ctx.textAlign=align||'center'; ctx.textBaseline='middle';
+  ctx.fillText(s,x,y);
+}
+function gl(c,b){ctx.shadowColor=c; ctx.shadowBlur=b;}
+function ng(){ctx.shadowBlur=0;}
+function lerp(a,b,t){return a+(b-a)*t;}
+function ease(t){return t<.5?2*t*t:-1+(4-2*t)*t;}
+function arrow(x1,y1,x2,y2,col,lw){
+  lw=lw||2; ln(x1,y1,x2,y2,col,lw);
+  const a=Math.atan2(y2-y1,x2-x1), hs=Math.max(7,lw*3.5);
+  ctx.fillStyle=col; ctx.beginPath();
   ctx.moveTo(x2,y2);
-  ctx.lineTo(x2-hs*Math.cos(ang-0.4),y2-hs*Math.sin(ang-0.4));
-  ctx.lineTo(x2-hs*Math.cos(ang+0.4),y2-hs*Math.sin(ang+0.4));
+  ctx.lineTo(x2-hs*Math.cos(a-.45),y2-hs*Math.sin(a-.45));
+  ctx.lineTo(x2-hs*Math.cos(a+.45),y2-hs*Math.sin(a+.45));
   ctx.closePath(); ctx.fill();
 }
 
-// ═══════════════════════════════════════════
-// BIG LABEL OVERLAY (step title on canvas)
-// ═══════════════════════════════════════════
-function drawStepTitle(){
-  const d = STEPS[step];
-  const x=CW/2, y=38;
-  fr(x-200,y-20,400,40,`rgba(6,13,24,.85)`,6);
-  sr(x-200,y-20,400,40,`${d.color}55`,1,6);
-  txB(x,y,`STEP ${step+1} — ${d.label}`,d.colorL,18,'center');
+// ─────────────────────────────────────────────────────────────────────
+// STEP DATA
+// ─────────────────────────────────────────────────────────────────────
+const STEPS = [
+  { label:'WMS IMPORTA ORDINI',   short:'WMS',     ora:'20:00', dur:6,
+    n1:'6',   l1:'Commesse',   n2:'24',    l2:'Pallet tot.', n3:'14.4',l3:'Ton tot.', n4:'10h', l4:'Ciclo',
+    desc:'Il <b>WMS</b> riceve tutti gli ordini dall\'ERP aziendale e pianifica la sequenza ottimale per <b>ogni cantiere</b>.',
+    spec:[{c:'#1354A0',l:'Sistema',v:'WMS / ERP'},{c:'#0F9E50',l:'Integrazione',v:'OPC UA'},
+          {c:'#E07B00',l:'Commesse',v:'6 / notte'},{c:'#7C3AED',l:'Algoritmo',v:'Wave Picking'},
+          {c:'#0891B2',l:'Sequenza',v:'Ottimizzata'}]},
+  { label:'VLM ESTRAE CASSETTO',  short:'VLM',     ora:'20:20', dur:6,
+    n1:'4',   l1:'VLM',       n2:'300–600',l2:'kg/cassetto',n3:'±0.5',l3:'mm prec.', n4:'GTP', l4:'Modalità',
+    desc:'Il <b>magazzino verticale</b> porta il cassetto richiesto alla <b>finestra di accesso</b> dove il robot preleva.',
+    spec:[{c:'#E07B00',l:'Tipo',v:'Vertical Lift Module'},{c:'#1354A0',l:'Unità',v:'4 VLM'},
+          {c:'#0F9E50',l:'Portata',v:'300–600 kg/cass.'},{c:'#0891B2',l:'Precisione',v:'±0.5 mm'},
+          {c:'#7C3AED',l:'Logica',v:'Goods-to-Person'}]},
+  { label:'ROBOT PRELEVA',        short:'Robot',   ora:'20:25', dur:7,
+    n1:'4',   l1:'Robot 6ax', n2:'6',     l2:'Assi DOF',  n3:'±0.05',l3:'mm ripet.',n4:'3D',  l4:'Vision',
+    desc:'Il <b>robot a 6 assi</b> scansiona con visione 3D, aggancia con la pinza e trasporta ogni collo sul pallet.',
+    spec:[{c:'#7C3AED',l:'Tipo',v:'Robot 6 assi'},{c:'#E07B00',l:'Portata',v:'50–120 kg'},
+          {c:'#1354A0',l:'Ripetibilità',v:'±0.05 mm'},{c:'#0F9E50',l:'Sensori',v:'Vision 3D + F/T'},
+          {c:'#0891B2',l:'Tool',v:'ATC cambio uten.'}]},
+  { label:'COMPOSIZIONE PALLET',  short:'Pallet',  ora:'21:xx', dur:6,
+    n1:'1',   l1:'pallet=cant.',n2:'±1',  l2:'kg peso',   n3:'100%', l3:'Barcode', n4:'680', l4:'kg max',
+    desc:'Ogni collo viene impilato strato per strato. <b>Barcode scan</b> e pesatura su ogni pezzo — 1 pallet = 1 cantiere.',
+    spec:[{c:'#0F9E50',l:'ID',v:'Barcode ogni collo'},{c:'#E07B00',l:'Pesatura',v:'±1 kg'},
+          {c:'#1354A0',l:'Strato',v:'Ottimizzato WMS'},{c:'#7C3AED',l:'Pallet',v:'1 per cantiere'},
+          {c:'#0891B2',l:'Max',v:'680 kg / pallet'}]},
+  { label:'AGV TRASPORTA',        short:'AGV',     ora:'22:xx', dur:6,
+    n1:'2',   l1:'AGV',       n2:'1500',  l2:'kg portata',n3:'SLAM', l3:'Nav.',    n4:'±10', l4:'mm dock',
+    desc:'Il <b>robot AGV</b> carica il pallet completato e percorre il corridoio fino all\'area staging. Nessun binario.',
+    spec:[{c:'#0891B2',l:'Tipo',v:'AGV/AMR autonomo'},{c:'#1354A0',l:'Navigazione',v:'SLAM 360°'},
+          {c:'#E07B00',l:'Portata',v:'1500 kg'},{c:'#0F9E50',l:'Docking',v:'±10 mm'},
+          {c:'#7C3AED',l:'Protocollo',v:'VDA5050 / WiFi6'}]},
+  { label:'DEPOSITO STAGING',     short:'Staging', ora:'23:xx', dur:6,
+    n1:'10',  l1:'Baie',      n2:'1',     l2:'baia=cant.', n3:'LED', l3:'3 stati', n4:'RFID',l4:'Tag',
+    desc:'L\'AGV deposita nella <b>baia staging numerata</b>. LED verde = pallet pronto. Display e-paper mostra il cantiere.',
+    spec:[{c:'#0F9E50',l:'Baie tot.',v:'10 postazioni'},{c:'#E07B00',l:'Segnaletica',v:'Colonna LED'},
+          {c:'#1354A0',l:'Display',v:'e-Paper'},{c:'#0891B2',l:'Tracciatura',v:'RFID pallet'},
+          {c:'#7C3AED',l:'Dimensione',v:'2000×2000 mm'}]},
+  { label:'CARICO FURGONI 06:00', short:'Carico',  ora:'06:00', dur:5,
+    n1:'6',   l1:'Furgoni',   n2:'06:00', l2:'Partenza',   n3:'0',   l3:'Errori',  n4:'DDT', l4:'Automatico',
+    desc:'I furgoni arrivano alle 06:00. Ogni pallet è già <b>etichettato, pesato e tracciato</b>. DDT generato automaticamente.',
+    spec:[{c:'#E07B00',l:'Orario',v:'06:00 partenza'},{c:'#0F9E50',l:'Efficienza',v:'Zero errori'},
+          {c:'#1354A0',l:'DDT',v:'Automatico'},{c:'#0891B2',l:'Tracciabilità',v:'Fine-a-fine'},
+          {c:'#7C3AED',l:'Operatori',v:'Solo al carico'}]},
+];
+
+const ITEMS=[
+  {e:'🧱',n:'MATTONI FORATI',   kg:'85 kg',c:'#4E342E',b:'#A0522D'},
+  {e:'🪣',n:'SACCHI CEMENTO',   kg:'50 kg',c:'#37474F',b:'#8090A8'},
+  {e:'🔵',n:'TUBI PVC Ø63',     kg:'32 kg',c:'#0A2A50',b:'#3A80D0'},
+  {e:'🟩',n:'PANNELLI XPS',     kg:'28 kg',c:'#1A3A10',b:'#50A030'},
+  {e:'🪨',n:'SACCHI GHIAIA',    kg:'60 kg',c:'#302820',b:'#907060'},
+  {e:'⚙️', n:'RACCORDERIA',     kg:'18 kg',c:'#2A1A40',b:'#8050C0'},
+];
+
+// ─────────────────────────────────────────────────────────────────────
+// STATE
+// ─────────────────────────────────────────────────────────────────────
+let step=0, t=0, simT=0, playing=true, spd=1, lastTS=null;
+const A={ pkt:[], elevY:.5, agvP:0, stagN:0, vanLoad:0, layers:[] };
+
+function resetA(){
+  A.pkt=[]; A.elevY=.5; A.agvP=0; A.stagN=0; A.vanLoad=0; A.layers=[];
 }
 
-// ═══════════════════════════════════════════
-// STEP RENDERERS
-// ═══════════════════════════════════════════
+// ─────────────────────────────────────────────────────────────────────
+// UI
+// ─────────────────────────────────────────────────────────────────────
+function refreshUI(){
+  const d=STEPS[step];
+  document.querySelectorAll('.nd').forEach((el,i)=>{
+    el.classList.toggle('active',i===step);
+    el.classList.toggle('done',i<step);
+  });
+  document.getElementById('sbt').textContent    = d.label;
+  document.getElementById('sbd').innerHTML      = d.desc;
+  document.getElementById('mobttl').textContent = 'STEP '+(step+1)+' — '+d.short;
+  document.getElementById('mobdesc').innerHTML  = d.desc;
+  [1,2,3,4].forEach(i=>{
+    document.getElementById('n'+i).textContent  = d['n'+i];
+    document.getElementById('l'+i).textContent  = d['l'+i];
+    document.getElementById('mn'+i).textContent = d['n'+i];
+    document.getElementById('ml'+i).textContent = d['l'+i];
+  });
+  const pct = Math.round(step/6*100);
+  document.getElementById('pbf').style.width = pct+'%';
+  document.getElementById('pct').textContent  = pct+'%';
+  const rows = d.spec.map(s=>
+    '<div class="row"><div class="dot" style="background:'+s.c+'"></div>'+
+    '<div class="rl">'+s.l+'</div><div class="rv">'+s.v+'</div></div>'
+  ).join('');
+  document.getElementById('spec').innerHTML = rows;
+  document.getElementById('mobspec').innerHTML = d.spec.map(s=>
+    '<div class="mrow"><div class="mdot" style="background:'+s.c+'"></div>'+
+    '<div class="mrl">'+s.l+'</div><div class="mrv">'+s.v+'</div></div>'
+  ).join('');
+}
 
-// ── STEP 0: WMS / ERP ──────────────────────
-function drawStep0(){
-  const cx=CW/2, cy=CH/2;
-  const p = Math.min(t/STEPS[0].dur,1);
+function goStep(s){
+  step=Math.max(0,Math.min(6,s)); t=0; resetA(); refreshUI();
+  const dot=document.querySelectorAll('.nd')[step];
+  if(dot) dot.scrollIntoView({behavior:'smooth',inline:'center',block:'nearest'});
+}
+
+// ─────────────────────────────────────────────────────────────────────
+// UPDATE
+// ─────────────────────────────────────────────────────────────────────
+function update(dt){
+  t+=dt; simT+=dt;
+  if(t>=STEPS[step].dur){ step<6?goStep(step+1):(goStep(0),simT=0); return; }
+
+  // clock
+  const totalDur=STEPS.reduce((a,s)=>a+s.dur,0);
+  const mins=(simT/totalDur)*600;
+  const hh=Math.floor(20+mins/60)%24, mm=Math.floor(mins%60);
+  document.getElementById('clk').textContent =
+    String(hh).padStart(2,'0')+':'+String(mm).padStart(2,'0');
+
+  switch(step){
+    case 0:
+      if(Math.random()<dt*.8)
+        A.pkt.push({x:0,y:.1+Math.random()*.8,vx:.04+Math.random()*.02,life:0});
+      A.pkt.forEach(p=>{p.x+=p.vx*dt;p.life+=dt;});
+      A.pkt=A.pkt.filter(p=>p.x<1.2&&p.life<8);
+      break;
+    case 1:
+      A.elevY=.05+Math.abs(Math.sin(simT*.5))*.88;
+      break;
+    case 4:
+      A.agvP=.05+Math.abs(Math.sin(simT*.35))*.88;
+      break;
+    case 5:
+      A.stagN=Math.min((t/STEPS[5].dur)*10.5,10);
+      break;
+    case 6:
+      A.vanLoad=Math.min(t/STEPS[6].dur,1);
+      break;
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────
+// BACKGROUND GRID
+// ─────────────────────────────────────────────────────────────────────
+function drawGrid(){
+  ctx.strokeStyle='rgba(255,255,255,.018)'; ctx.lineWidth=.5;
+  const gs=Math.max(24,Math.round(S(.04)));
+  for(let x=0;x<CW;x+=gs){ln(x,0,x,CH,'rgba(255,255,255,.018)',0.5);}
+  for(let y=0;y<CH;y+=gs){ln(0,y,CW,y,'rgba(255,255,255,.018)',0.5);}
+}
+
+// ─────────────────────────────────────────────────────────────────────
+// STEP TITLE OVERLAY
+// ─────────────────────────────────────────────────────────────────────
+const STEP_COLORS=['#2A8AF6','#E07B00','#A78BFA','#14C760','#22D3EE','#14C760','#F5A623'];
+function drawTitle(){
+  const col=STEP_COLORS[step];
+  const tw=Math.min(W(.88),520), th=Math.max(36,H(.09)), ty=H(.015);
+  gl(col,10);
+  rr(cx()-tw/2,ty,tw,th,'rgba(3,7,15,.93)',6);
+  rs(cx()-tw/2,ty,tw,th,col+'60',1.5,6);
+  ng();
+  fnt(cx(),ty+th/2,'STEP '+(step+1)+' — '+STEPS[step].label,col,
+    Math.min(S(.038),17));
+}
+
+// ─────────────────────────────────────────────────────────────────────
+// STEP 0 — WMS
+// ─────────────────────────────────────────────────────────────────────
+function drawS0(){
+  const p=Math.min(t/STEPS[0].dur,1);
+  const m=mob();
+
+  // Three boxes: ERP | WMS | CANTIERI
+  const bW=Math.min(W(m?.28:.18),160), bH=Math.min(H(.52),220);
+  const gap=Math.min(W(m?.04:.08),60);
+  const totalW=3*bW+2*gap;
+  const startX=cx()-totalW/2, midY=cy();
+
+  const positions=[
+    [startX+bW/2, midY],            // ERP
+    [startX+bW+gap+bW/2, midY],     // WMS
+    [startX+2*(bW+gap)+bW/2, midY], // CANTIERI
+  ];
+  const [ex,ey]=positions[0], [wx,wy]=positions[1], [ox,oy]=positions[2];
 
   // Background panel
-  fr(cx-380,cy-200,760,400,C.panel,12);
-  sr(cx-380,cy-200,760,400,C.blue+'40',1.5,12);
+  rr(cx()-totalW/2-14,midY-bH/2-14,totalW+28,bH+28,'#060F1E',10);
+  rs(cx()-totalW/2-14,midY-bH/2-14,totalW+28,bH+28,'#1A3A6A30',1.5,10);
 
-  // ERP server (left)
-  const ex=cx-260, ey=cy;
-  fr(ex-50,ey-70,100,140,C.blueDk,8);
-  sr(ex-50,ey-70,100,140,C.blueL,2,8);
-  // server racks
+  // ERP box
+  rr(ex-bW/2,ey-bH/2,bW,bH,'#061830',7);
+  rs(ex-bW/2,ey-bH/2,bW,bH,'#2A8AF6',2,7);
+  fnt(ex,ey-bH*.35,'ERP','#5AAAD0',Math.min(S(.045),20));
+  tx(ex,ey-bH*.22,'GESTIONALE','#3A5A80',Math.min(S(.022),9));
   for(let i=0;i<5;i++){
-    const ry=ey-52+i*22;
-    fr(ex-38,ry,76,14,'#0E2040',3);
-    // blink LEDs
-    ci(ex+28,ry+7,3,i%2===0?C.greenL:C.amber,null);
+    const ry=ey-bH*.1+i*bH*.16;
+    rr(ex-bW*.4,ry,bW*.8,bH*.11,'#0E2040',3);
+    cc(ex+bW*.35,ry+bH*.055,S(.015),i%2===0?'#14C760':'#E07B00',null);
   }
-  txB(ex,ey+82,'ERP',C.blueL,18,'center');
-  tx(ex,ey+100,'GESTIONALE',C.muted,11,'center');
 
-  // WMS server (center)
-  const wx2=cx, wy2=cy;
-  gl(C.blue,20);
-  fr(wx2-55,wy2-75,110,150,C.blueDk,8);
-  sr(wx2-55,wy2-75,110,150,C.blueL,2.5,8);
-  ng();
+  // WMS box (highlighted)
+  gl('#1354A0',20);
+  rr(wx-bW*.55,wy-bH*.52,bW*1.1,bH*1.04,'#061830',8);
+  rs(wx-bW*.55,wy-bH*.52,bW*1.1,bH*1.04,'#2A8AF6',2.5,8); ng();
+  gl('#2A8AF6',14); fnt(wx,wy-bH*.37,'WMS','#5AAAD0',Math.min(S(.055),24)); ng();
+  tx(wx,wy-bH*.24,'WAREHOUSE MGMT','#3A5A80',Math.min(S(.022),9));
   for(let i=0;i<6;i++){
-    const ry=wy2-57+i*20;
-    fr(wx2-43,ry,86,14,'#081830',3);
-    ci(wx2+33,ry+7,3,C.green,null);
-    gl(C.green,4);ci(wx2+33,ry+7,2,C.greenL,null);ng();
+    const ry=wy-bH*.12+i*bH*.17;
+    rr(wx-bW*.45,ry,bW*.9,bH*.12,'#081830',3);
+    gl('#14C760',4); cc(wx+bW*.38,ry+bH*.06,S(.013),'#14C760',null); ng();
   }
-  // WMS glow label
-  gl(C.blue,14);
-  txB(wx2,wy2+95,'WMS',C.blueL,24,'center');
-  ng();
-  tx(wx2,wy2+115,'WAREHOUSE MGMT',C.muted,10,'center');
 
-  // Orders panel (right)
-  const ox2=cx+240, oy2=cy;
-  fr(ox2-60,oy2-80,120,160,C.panel,8);
-  sr(ox2-60,oy2-80,120,160,C.amber+'50',1.5,8);
-  txB(ox2,oy2-60,'ORDINI',C.amberL,16,'center');
-  // 6 order lines
-  const orders=['CANTIERE A','CANTIERE B','CANTIERE C','CANTIERE D','CANTIERE E','CANTIERE F'];
-  orders.forEach((o,i)=>{
-    const vy=oy2-38+i*21;
-    const isActive = i < Math.floor(p*6.5);
-    fr(ox2-48,vy,96,15,isActive?'rgba(14,157,80,.2)':'rgba(21,40,64,.5)',3);
-    tx(ox2,vy+7.5,o,isActive?C.greenL:C.muted,9,'center');
-    if(isActive){
-      ci(ox2+52,vy+7.5,3,C.greenL,null);
-    }
+  // CANTIERI box
+  rr(ox-bW/2,oy-bH/2,bW,bH,'#081010',7);
+  rs(ox-bW/2,oy-bH/2,bW,bH,'#E07B00',2,7);
+  fnt(ox,oy-bH*.36,'CANTIERI','#F5A623',Math.min(S(.04),18));
+  ['CANT. A','CANT. B','CANT. C','CANT. D','CANT. E','CANT. F'].forEach((n,i)=>{
+    const ry=oy-bH*.2+i*(bH*.15);
+    const lit=i<Math.floor(p*7);
+    rr(ox-bW*.44,ry-bH*.07,bW*.88,bH*.12,lit?'rgba(15,158,80,.2)':'rgba(21,40,64,.5)',3);
+    tx(ox,ry,n,lit?'#14C760':'#2A4060',Math.min(S(.022),9),'center','600');
+    if(lit){gl('#14C760',5);cc(ox+bW*.38,ry,S(.013),'#14C760',null);ng();}
   });
 
-  // Animated data packets
-  anim.packets.forEach(pk=>{
-    const px=cx-380+pk.x*760, py=cy-200+pk.y*400;
-    const a=Math.max(0,1-pk.life/2.5);
-    ctx.globalAlpha=a;
-    fr(px-8,py-5,16,10,C.blue,3);
-    ctx.globalAlpha=0.6*a;
-    tx(px,py,'01',C.cyanL,7,'center');
-    ctx.globalAlpha=1;
+  // Arrows
+  arrow(ex+bW/2,ey, wx-bW*.55,wy,'#2A8AF6',2);
+  arrow(wx+bW*.55,wy,ox-bW/2,oy,'#E07B00',2);
+
+  // Data packets
+  A.pkt.forEach(pk=>{
+    const px2=cx()-totalW/2+pk.x*(totalW*.65), py2=midY-bH/2+pk.y*bH;
+    if(px2>ox-bW/2)return;
+    ctx.globalAlpha=Math.max(0,.9-pk.life/4);
+    rr(px2-9,py2-5,18,10,'#1354A0',3);
+    tx(px2,py2,'01','#90CAF9',7); ctx.globalAlpha=1;
   });
 
-  // Arrow ERP → WMS
-  arrow(ex+52,ey,wx2-57,wy2,C.blueL,2.5);
-  // Arrow WMS → Orders
-  arrow(wx2+57,wy2,ox2-62,oy2,C.amber,2.5);
-
-  // Flow labels
-  tx(cx-155,cy-20,'ordini ERP',C.blue,11,'center');
-  tx(cx+155,cy-20,'pianificazione',C.amber,11,'center');
-
-  // Status tag
-  gl(C.green,8);
-  fr(cx-70,cy+145,140,28,C.green+'20',6);
-  sr(cx-70,cy+145,140,28,C.green+'60',1,6);
-  tx(cx,cy+159,'● SISTEMA OPERATIVO',C.greenL,11,'center');
-  ng();
+  // Status bar
+  gl('#14C760',8);
+  rr(cx()-W(.3),cy()+H(.38),W(.6),H(.06),'rgba(15,158,80,.15)',6);
+  rs(cx()-W(.3),cy()+H(.38),W(.6),H(.06),'#14C760',1.5,6); ng();
+  tx(cx(),cy()+H(.41),'● SISTEMA OPERATIVO — PIANIFICAZIONE IN CORSO','#14C760',
+    Math.min(S(.025),11),'center','600');
 }
 
-// ── STEP 1: VLM ────────────────────────────
-function drawStep1(){
-  const cx=CW/2, cy=CH/2;
-
-  // Building the VLM illustration
-  const vw=200, vh=360;
-  const vx=cx-vw/2, vy=cy-vh/2-20;
+// ─────────────────────────────────────────────────────────────────────
+// STEP 1 — VLM
+// ─────────────────────────────────────────────────────────────────────
+function drawS1(){
+  const m=mob();
+  const vW=Math.min(W(m?.7:.32),240), vH=Math.min(H(.78),380);
+  const vx=m?cx()-vW/2:cx()-vW*.65, vy=cy()-vH/2;
+  const nS=9, sH=(vH-36)/nS;
+  const activeRow=Math.min(Math.floor(A.elevY*(nS)),nS-1);
+  const cols=['#4E342E','#37474F','#546E7A','#607D8B','#455A64','#795548'];
 
   // VLM shell
-  gl(C.amber,15);
-  fr(vx,vy,vw,vh,C.panel,6);
-  sr(vx,vy,vw,vh,C.amber,2.5,6);
-  ng();
+  gl('#E07B00',14);
+  rr(vx,vy,vW,vH,'#060F20',7); rs(vx,vy,vW,vH,'#E07B00',2.5,7); ng();
+  rr(vx,vy,vW,30,'rgba(224,123,0,.2)',7);
+  fnt(vx+vW/2,vy+15,'MAGAZZINO VERTICALE — VLM','#F5A623',Math.min(S(.032),13));
 
-  // Top header
-  fr(vx,vy,vw,30,'rgba(224,123,0,.2)',6);
-  txB(vx+vw/2,vy+15,'MAGAZZINO VERTICALE VLM',C.amberL,13,'center');
-
-  // Cassette (shelves) — 9 rows
-  const nS=9, sH=(vh-60)/nS;
-  const colAssort=['#4E342E','#37474F','#546E7A','#607D8B','#455A64','#795548'];
+  // Shelves
   for(let i=0;i<nS;i++){
-    const sy=vy+35+i*sH;
-    // shelf line
-    ctx.strokeStyle='#0E2040'; ctx.lineWidth=1;
-    ctx.beginPath(); ctx.moveTo(vx+8,sy); ctx.lineTo(vx+vw-8,sy); ctx.stroke();
-    // items on shelf (except the one being extracted)
-    if(i !== Math.floor(anim.elevY*(nS-1))){
-      fr(vx+10, sy+2, 38, sH-5, colAssort[i%6],2);
-      fr(vx+52, sy+2, 28, sH-5, colAssort[(i+2)%6],2);
-      fr(vx+84, sy+2, 44, sH-5, colAssort[(i+4)%6],2);
-      fr(vx+132,sy+2, 56, sH-5, colAssort[(i+1)%6],2);
+    const sy=vy+32+i*sH;
+    ln(vx+4,sy,vx+vW-4,sy,'#0A1E38',1);
+    if(i!==activeRow){
+      [0,.25,.5,.72].forEach((pos,pi)=>{
+        rr(vx+6+pos*(vW-12),sy+2,(vW-12)*.22,sH-5,cols[(i+pi)%6],2);
+      });
     }
   }
 
-  // Central vertical rail
-  ctx.strokeStyle=C.amber+'80'; ctx.lineWidth=3;
-  ctx.beginPath(); ctx.moveTo(cx,vy+30); ctx.lineTo(cx,vy+vh-10); ctx.stroke();
+  // Rail
+  ctx.strokeStyle='rgba(224,123,0,.6)'; ctx.lineWidth=3;
+  ctx.beginPath(); ctx.moveTo(vx+vW/2,vy+30); ctx.lineTo(vx+vW/2,vy+vH-8); ctx.stroke();
 
-  // ELEVATOR CARRIAGE (animated)
-  const elevAbsY = vy+35 + anim.elevY * (vh-65);
-  gl(C.amberL,16);
-  fr(cx-35, elevAbsY-2, 70, sH-2, C.amberD,3);
-  sr(cx-35, elevAbsY-2, 70, sH-2, C.amberL,2,3);
-  ng();
+  // Elevator carriage
+  const eY=vy+32+A.elevY*(vH-50);
+  const it=ITEMS[activeRow%ITEMS.length];
+  gl('#F5A623',16);
+  rr(vx+vW/2-22,eY-2,44,sH-2,'#7A3800',3);
+  rs(vx+vW/2-22,eY-2,44,sH-2,'#F5A623',2,3); ng();
+  ctx.font=Math.min(sH*.52,16)+'px serif';
+  ctx.fillStyle='rgba(255,255,255,.9)'; ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.fillText(it.e,vx+vW/2,eY+sH/2);
 
-  // Item on elevator (highlighted)
-  fr(cx-28,elevAbsY+1,22,sH-8,'#8D6E63',2);
-  fr(cx-4, elevAbsY+1,16,sH-8,'#546E7A',2);
-  fr(cx+14,elevAbsY+1,14,sH-8,'#607D8B',2);
+  // Active item label
+  const activeSy=vy+32+activeRow*sH;
+  gl(it.b,8);
+  rr(vx+6,activeSy+1,vW-12,sH-3,it.c+'EE',3);
+  rs(vx+6,activeSy+1,vW-12,sH-3,it.b,2,3); ng();
+  ctx.font=Math.min(sH*.48,15)+'px serif';
+  ctx.fillStyle='rgba(255,255,255,.9)'; ctx.textAlign='left'; ctx.textBaseline='middle';
+  ctx.fillText(it.e,vx+10,activeSy+sH/2);
+  tx(vx+32,activeSy+sH*.32,it.n,'rgba(255,255,255,.9)',Math.min(sH*.14,11),'left','700');
+  tx(vx+32,activeSy+sH*.68,it.kg,'rgba(255,255,255,.55)',Math.min(sH*.12,10),'left');
 
-  // Arrow showing extraction direction
-  const isGoingDown = Math.sin(simT*0.6) > 0;
-  const arrowEndY = isGoingDown ? elevAbsY+sH+30 : elevAbsY-30;
-  arrow(cx+vw/2+10,elevAbsY+sH/2, cx+vw/2+70, elevAbsY+sH/2, C.amber,3);
+  // Access window
+  const wW=Math.min(W(m?.6:.28),170), wH=Math.min(H(.14),65);
+  const wX=m?cx()-wW/2:vx+vW+16, wY=m?vy+vH+12:cy()+H(.22);
+  gl('#E07B00',10);
+  rr(wX,wY,wW,wH,'#030A14',6); rs(wX,wY,wW,wH,'#F5A623',2,6); ng();
+  fnt(wX+wW/2,wY+wH*.35,'FINESTRA','#F5A623',Math.min(S(.04),16));
+  tx(wX+wW/2,wY+wH*.68,'DI ACCESSO — robot preleva qui','#E07B00',Math.min(S(.022),10));
+  if(!m) arrow(vx+vW,cy(),wX,wY+wH*.5,'#F5A623',2);
+  else   arrow(cx(),vy+vH,cx(),wY,'#F5A623',2);
 
-  // Access window (bottom-right)
-  const awX=vx+vw+10, awY=vy+vh-70;
-  gl(C.amber,10);
-  fr(awX,awY,100,60,'#071018',6);
-  sr(awX,awY,100,60,C.amberL,2,6);
-  ng();
-  txB(awX+50,awY+20,'FINESTRA',C.amberL,14,'center');
-  tx(awX+50,awY+40,'DI ACCESSO',C.amber,11,'center');
-  arrow(vx+vw,vy+vh/2,awX,awY+30,C.amber,2);
-
-  // Labels
-  tx(vx-12, vy+vh/2,'CASSETTI',C.amber,12,'right');
-  tx(vx-12, vy+vh/2+16,'STOCCATI',C.muted,10,'right');
-  tx(cx,vy+vh+22,'Elevatore porta il cassetto alla finestra di accesso',C.muted,11,'center');
-
-  // Metrics at bottom
-  const metrics=[['300–600','kg/cassetto'],['±0.5','mm precisione'],['9','piani']];
-  metrics.forEach(([v,l],i)=>{
-    const mx=cx-200+i*200;
-    fr(mx-50,cy+200,100,48,C.panel,6);
-    sr(mx-50,cy+200,100,48,C.amber+'30',1,6);
-    txB(mx,cy+220,v,C.amberL,18,'center');
-    tx(mx,cy+237,l,C.muted,9,'center');
-  });
+  // Metrics
+  if(!m){
+    [['300–600','kg/cass.'],['±0.5','mm prec.'],['9','piani']].forEach(([v,l],i)=>{
+      const mx=cx()+W(.12)+i*W(.14);
+      rr(mx-46,cy()-32,92,48,C_panel,5); rs(mx-46,cy()-32,92,48,'#E07B00'+'40',1,5);
+      fnt(mx,cy()-10,v,'#F5A623',Math.min(S(.038),16));
+      tx(mx,cy()+11,l,'#4A7AA0',Math.min(S(.022),9));
+    });
+  }
 }
+const C_panel='#091525';
 
-// ── STEP 2: ROBOT ──────────────────────────
-function drawStep2(){
-  const cx=CW/2, cy=CH/2;
+// ─────────────────────────────────────────────────────────────────────
+// STEP 2 — ROBOT (fully responsive)
+// ─────────────────────────────────────────────────────────────────────
+function drawS2(){
+  const m=mob();
+  const CYCLE=2.2;
+  const cycleT=simT%CYCLE;
+  const phase=Math.floor(cycleT/(CYCLE/4));
+  const phP=ease((cycleT%(CYCLE/4))/(CYCLE/4));
+  const iIdx=Math.floor(simT/CYCLE)%ITEMS.length;
+  const item=ITEMS[iIdx];
+  const placed=Math.min(Math.floor(simT/CYCLE),6);
 
-  // VLM exit (left) — small representation
-  fr(cx-380,cy-120,80,240,'#07152A',6);
-  sr(cx-380,cy-120,80,240,C.amber+'50',1.5,6);
-  txB(cx-340,cy-100,'VLM',C.amber,13,'center');
-  // cassette sticking out
-  gl(C.amber,8);
-  fr(cx-300,cy-20,60,40,'#4E342E',4);
-  fr(cx-297,cy-17,15,34,'#6D4C41',3);
-  fr(cx-279,cy-17,12,34,'#546E7A',3);
-  fr(cx-264,cy-17,18,34,'#607D8B',3);
-  ng();
+  // Positions — all relative
+  const vlmX  = m ? cx()-W(.38) : cx()-W(.38);
+  const vlmY  = m ? cy()        : cy();
+  const palX  = m ? cx()+W(.34) : cx()+W(.36);
+  const palY  = m ? cy()        : cy();
+  const rbx   = cx()-W(.04);
+  const rby   = m ? cy()+H(.25) : cy()+H(.22);
+  const L1    = Math.min(S(.22),120);
+  const L2    = Math.min(S(.17),90);
 
-  // Robot BASE (center)
-  const rbx=cx, rby=cy+60;
-
-  // Robot base platform
-  gl(C.purple,20);
-  fr(rbx-30,rby-10,60,20,'#2A0060',6);
-  sr(rbx-30,rby-10,60,20,C.purpleL,2,6);
-  ng();
-
-  // Arm segment 1
-  const L1=110, a1=anim.armBase-0.5;
+  // Arm angle based on phase
+  const aVLM=-2.1, aPAL=-0.65;
+  let a1;
+  if(phase===0)      a1=lerp(lerp(aPAL,aVLM,.7),aVLM,phP);
+  else if(phase===1) a1=aVLM;
+  else if(phase===2) a1=lerp(aVLM,aPAL,phP);
+  else               a1=aPAL;
+  const a2=a1+(phase<=1?.75:-.35);
   const e1x=rbx+Math.cos(a1)*L1, e1y=rby+Math.sin(a1)*L1;
+  const e2x=e1x+Math.cos(a2)*L2, e2y=e1y+Math.sin(a2)*L2;
+  const gripOpen=phase===0||phase===3;
+  const carrying=phase===2||(phase===1&&phP>.55);
 
-  gl(C.purple,8);
+  // ── VLM PANEL ──
+  const vlmW=Math.min(W(m?.26:.2),130), vlmH=Math.min(H(m?.7:.75),320);
+  const vx2=vlmX-vlmW/2, vy2=vlmY-vlmH/2;
+  rr(vx2,vy2,vlmW,vlmH,'#060F1E',6);
+  rs(vx2,vy2,vlmW,vlmH,'#E07B00',2,6);
+  rr(vx2,vy2,vlmW,24,'rgba(224,123,0,.2)',6);
+  fnt(vlmX,vy2+12,'VLM','#F5A623',Math.min(S(.035),14));
+  const slH=(vlmH-28)/ITEMS.length;
+  ITEMS.forEach((it,i)=>{
+    const sy=vy2+26+i*slH;
+    const isActive=i===iIdx&&(phase<=1);
+    const isPicked=i<placed;
+    if(isPicked){
+      rr(vx2+4,sy+2,vlmW-8,slH-4,'#050D18',3);
+      tx(vlmX,sy+slH/2,'✓ PRELEVATO','#14C76055',Math.min(slH*.13,9),'center');
+    } else if(isActive){
+      gl(it.b,8);
+      rr(vx2+4,sy+2,vlmW-8,slH-4,it.c+'EE',3);
+      rs(vx2+4,sy+2,vlmW-8,slH-4,it.b,2,3); ng();
+    } else {
+      rr(vx2+4,sy+2,vlmW-8,slH-4,it.c+'66',3);
+    }
+    ctx.font=Math.min(slH*.5,16)+'px serif';
+    ctx.fillStyle=isActive?'rgba(255,255,255,.95)':'rgba(255,255,255,.38)';
+    ctx.textAlign='left'; ctx.textBaseline='middle';
+    ctx.fillText(it.e,vx2+6,sy+slH/2);
+    tx(vx2+vlmW*.35,sy+slH*.33,it.n,
+       isActive?'rgba(255,255,255,.88)':'rgba(255,255,255,.28)',
+       Math.min(slH*.14,9),'left','700');
+    tx(vx2+vlmW*.35,sy+slH*.68,it.kg,
+       isActive?'#F5A623':'rgba(255,255,255,.2)',
+       Math.min(slH*.12,8),'left');
+  });
+
+  // Arrow VLM→robot (phase 0)
+  if(phase===0){
+    const al=.2+.5*Math.abs(Math.sin(simT*5));
+    ctx.strokeStyle=`rgba(245,166,35,${al})`; ctx.lineWidth=1.5; ctx.setLineDash([5,4]);
+    ctx.beginPath(); ctx.moveTo(vx2+vlmW,vlmY); ctx.lineTo(e2x,e2y); ctx.stroke();
+    ctx.setLineDash([]);
+  }
+
+  // ── PALLET ──
+  const palW2=Math.min(W(m?.26:.22),130);
+  const lH2=Math.max(18,Math.min(H(.06),28));
+  const palBaseY=palY+H(.3);
+  rr(palX-palW2/2,palBaseY,palW2,16,'#4E342E',4);
+  rs(palX-palW2/2,palBaseY,palW2,16,'#8D6E63',1.5,4);
+  for(let i=0;i<4;i++) rr(palX-palW2/2+5+i*(palW2*.24),palBaseY+16,8,8,'#3E2723',2);
+  ITEMS.slice(0,placed).forEach((it,i)=>{
+    const ly=palBaseY-(i+1)*lH2;
+    rr(palX-palW2/2+3,ly,palW2-6,lH2-2,it.c,3);
+    rs(palX-palW2/2+3,ly,palW2-6,lH2-2,it.b+'88',1.5,3);
+    ctx.font=Math.min(lH2*.48,13)+'px serif';
+    ctx.fillStyle='rgba(255,255,255,.85)';
+    ctx.textAlign='left'; ctx.textBaseline='middle';
+    ctx.fillText(it.e,palX-palW2/2+6,ly+lH2/2);
+    tx(palX-palW2/2+22,ly+lH2*.32,it.n,'rgba(255,255,255,.82)',Math.min(lH2*.14,9),'left','700');
+    tx(palX-palW2/2+22,ly+lH2*.68,it.kg,'rgba(255,255,255,.45)',Math.min(lH2*.12,8),'left');
+    gl('#14C760',4); tx(palX+palW2/2-14,ly+lH2/2,'✓','#14C760',Math.min(lH2*.16,10),'center','700'); ng();
+  });
+  const stackTop=palBaseY-placed*lH2;
+  if(placed===0){
+    rs(palX-palW2/2,palBaseY-palW2*.6,palW2,palW2*.6,'#14C76030',1.5,4,[6,5]);
+    fnt(palX,palBaseY-palW2*.3,'PALLET VUOTO','#14C76055',Math.min(S(.028),11));
+  } else {
+    fnt(palX,stackTop-16,'PALLET — CANT. A','#14C760',Math.min(S(.03),12));
+    tx(palX,stackTop-4,placed+'/6 articoli','#4A7AA0',Math.min(S(.022),9));
+  }
+  // Item depositing (phase 3)
+  if(phase===3&&phP<.7){
+    ctx.globalAlpha=phP/.7;
+    const ly2=stackTop-lH2;
+    gl(item.b,8);
+    rr(palX-palW2/2+3,ly2,palW2-6,lH2-2,item.c,3);
+    rs(palX-palW2/2+3,ly2,palW2-6,lH2-2,item.b,2,3); ng();
+    ctx.font='13px serif'; ctx.fillStyle='rgba(255,255,255,.9)';
+    ctx.textAlign='left'; ctx.textBaseline='middle';
+    ctx.fillText(item.e,palX-palW2/2+6,ly2+lH2/2);
+    ctx.globalAlpha=1;
+  }
+
+  // ── ROBOT ARM ──
+  // Safety circle
+  ctx.strokeStyle='rgba(220,38,38,.1)'; ctx.lineWidth=1.5; ctx.setLineDash([8,6]);
+  ctx.beginPath(); ctx.arc(rbx,rby,L1+L2+14,0,Math.PI*2); ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Arm shadow
+  ctx.strokeStyle='rgba(100,20,180,.2)'; ctx.lineWidth=20; ctx.lineCap='round';
+  ctx.beginPath(); ctx.moveTo(rbx,rby); ctx.lineTo(e1x,e1y); ctx.lineTo(e2x,e2y); ctx.stroke();
+
+  // Arm 1
+  gl('#7C3AED',12);
   ctx.strokeStyle='#AB47BC'; ctx.lineWidth=16; ctx.lineCap='round';
   ctx.beginPath(); ctx.moveTo(rbx,rby); ctx.lineTo(e1x,e1y); ctx.stroke();
-  ctx.strokeStyle='#7B1FA2'; ctx.lineWidth=12;
-  ctx.beginPath(); ctx.moveTo(rbx,rby); ctx.lineTo(e1x,e1y); ctx.stroke();
-  ng();
+  ctx.strokeStyle='#CE93D8'; ctx.lineWidth=9;
+  ctx.beginPath(); ctx.moveTo(rbx,rby); ctx.lineTo(e1x,e1y); ctx.stroke(); ng();
+  cc(e1x,e1y,8,'#1A0040','#A78BFA',2);
 
-  // Joint 1
-  ci(e1x,e1y,8,'#1A0040',C.purpleL,2);
-
-  // Arm segment 2
-  const L2=80, a2=a1+anim.arm1;
-  const e2x=e1x+Math.cos(a2)*L2, e2y=e1y+Math.sin(a2)*L2;
-
+  // Arm 2
+  gl('#7C3AED',6);
   ctx.strokeStyle='#7B1FA2'; ctx.lineWidth=12; ctx.lineCap='round';
   ctx.beginPath(); ctx.moveTo(e1x,e1y); ctx.lineTo(e2x,e2y); ctx.stroke();
-  ctx.strokeStyle='#9B27C8'; ctx.lineWidth=8;
-  ctx.beginPath(); ctx.moveTo(e1x,e1y); ctx.lineTo(e2x,e2y); ctx.stroke();
+  ctx.strokeStyle='#AB47BC'; ctx.lineWidth=7;
+  ctx.beginPath(); ctx.moveTo(e1x,e1y); ctx.lineTo(e2x,e2y); ctx.stroke(); ng();
+  ctx.lineCap='butt';
 
-  // End effector / gripper
-  gl(C.amber,14);
-  ci(e2x,e2y,10,C.amberD,C.amberL,2.5);
-  // gripper fingers
-  const gAng=a2+Math.PI/2;
-  ctx.strokeStyle=C.amberL; ctx.lineWidth=4; ctx.lineCap='round';
-  ctx.beginPath();
-  ctx.moveTo(e2x+Math.cos(gAng)*6,e2y+Math.sin(gAng)*6);
-  ctx.lineTo(e2x+Math.cos(gAng)*6+Math.cos(a2)*14,e2y+Math.sin(gAng)*6+Math.sin(a2)*14);
-  ctx.stroke();
-  ctx.beginPath();
-  ctx.moveTo(e2x-Math.cos(gAng)*6,e2y-Math.sin(gAng)*6);
-  ctx.lineTo(e2x-Math.cos(gAng)*6+Math.cos(a2)*14,e2y-Math.sin(gAng)*6+Math.sin(a2)*14);
-  ctx.stroke();
-  ng(); ctx.lineCap='butt';
+  // Gripper
+  const gd=Math.atan2(e2y-e1y,e2x-e1x)+Math.PI/2;
+  const gw=gripOpen?13:5;
+  gl('#E07B00',10);
+  ctx.strokeStyle='#F5A623'; ctx.lineWidth=3.5; ctx.lineCap='round';
+  [1,-1].forEach(sg=>{
+    const fx=e2x+Math.cos(gd)*gw*sg, fy=e2y+Math.sin(gd)*gw*sg;
+    ctx.beginPath(); ctx.moveTo(fx,fy);
+    ctx.lineTo(fx+Math.cos(a2)*16,fy+Math.sin(a2)*16); ctx.stroke();
+  });
+  cc(e2x,e2y,6,'#2A0060','#F5A623',2); ng(); ctx.lineCap='butt';
 
-  // 3D vision cone from end-effector
-  ctx.strokeStyle='rgba(34,211,238,0.15)'; ctx.lineWidth=1;
-  for(let a=-0.4;a<=0.4;a+=0.1){
-    ctx.beginPath();
-    ctx.moveTo(e2x,e2y);
-    ctx.lineTo(e2x+Math.cos(a2+a)*60,e2y+Math.sin(a2+a)*60);
-    ctx.stroke();
+  // Vision rays (phase 0)
+  if(phase===0){
+    const va=.15+.2*Math.abs(Math.sin(simT*6));
+    ctx.strokeStyle=`rgba(34,211,238,${va})`; ctx.lineWidth=1;
+    for(let ang=-.35;ang<=.35;ang+=.08){
+      ctx.beginPath(); ctx.moveTo(e2x,e2y);
+      ctx.lineTo(e2x+Math.cos(a2+ang)*60,e2y+Math.sin(a2+ang)*60); ctx.stroke();
+    }
+    tx(e2x+Math.cos(a2)*72,e2y+Math.sin(a2)*72,'SCAN 3D','#22D3EE',
+      Math.min(S(.025),10),'center','600');
   }
-  tx(e2x+Math.cos(a2)*80,e2y+Math.sin(a2)*80,'VISIONE 3D',C.cyanL,10,'center');
 
-  // Pallet area (right)
-  const px=cx+280, py=cy-20;
-  fr(px-70,py+60,140,20,'#4E342E',3); // pallet base
-  sr(px-70,py-60,140,120,C.green+'40',1.5,4,[8,5]);
-  txB(px,py-45,'PALLET',C.greenL,14,'center');
-  tx(px,py-27,'DESTINAZIONE',C.muted,10,'center');
+  // Carried item
+  if(carrying){
+    const iSz=Math.min(L2*.7,42);
+    const ix=e2x+Math.cos(a2)*20, iy=e2y+Math.sin(a2)*20;
+    gl(item.b,16);
+    rr(ix-iSz/2,iy-iSz*.38,iSz,iSz*.76,item.c+'EE',5);
+    rs(ix-iSz/2,iy-iSz*.38,iSz,iSz*.76,item.b,2.5,5); ng();
+    ctx.font=Math.min(iSz*.5,18)+'px serif';
+    ctx.fillStyle='rgba(255,255,255,.95)'; ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText(item.e,ix,iy-iSz*.06);
+    tx(ix,iy+iSz*.32,item.n,'#FFF',Math.min(iSz*.16,9),'center','700');
+  }
 
-  // Moving item (animated)
-  const prog=Math.sin(simT*1.2)*0.5+0.5;
-  const itemX=cx-280+prog*(cx+200-cx+280);
-  ci(itemX,cy-10,12,C.brown+'CC','#92400E',2);
-  tx(itemX,cy+8,'collo',C.amber,9,'center');
+  // Robot base
+  gl('#7C3AED',16);
+  rr(rbx-32,rby-7,64,14,'#1A0040',5); rs(rbx-32,rby-7,64,14,'#A78BFA',2,5); ng();
 
-  // Safety zone
-  ctx.strokeStyle='rgba(220,38,38,0.15)'; ctx.lineWidth=1.5;
-  ctx.setLineDash([8,6]);
-  ctx.beginPath(); ctx.arc(rbx,rby,170,0,Math.PI*2); ctx.stroke();
-  ctx.setLineDash([]);
-  tx(rbx,rby-180,'ZONA DI SICUREZZA',C.red+'80',9,'center');
-
-  // Metrics
-  const metrics=[['6','Assi DOF'],['±0.05','mm ripet.'],['50–120','kg portata']];
-  metrics.forEach(([v,l],i)=>{
-    const mx=cx-200+i*200;
-    fr(mx-55,cy+175,110,50,C.panel,6);
-    sr(mx-55,cy+175,110,50,C.purple+'40',1,6);
-    txB(mx,cy+196,v,C.purpleL,20,'center');
-    tx(mx,cy+213,l,C.muted,10,'center');
+  // Phase label
+  const pNames=['① VISIONE 3D — SCANSIONE','② AGGANCIO PINZA','③ TRASPORTO AL PALLET','④ DEPOSITO'];
+  const pCols=['#22D3EE','#F5A623','#A78BFA','#14C760'];
+  const pcol=pCols[phase];
+  const lw2=Math.min(W(.8),460), lh=Math.max(38,H(.1)), lty=H(.07);
+  gl(pcol,12);
+  rr(cx()-lw2/2,lty,lw2,lh,'rgba(3,7,15,.94)',7);
+  rs(cx()-lw2/2,lty,lw2,lh,pcol+'80',2,7); ng();
+  fnt(cx(),lty+lh*.38,pNames[phase],pcol,Math.min(S(.038),15));
+  tx(cx(),lty+lh*.72,item.e+' '+item.n+' — '+item.kg,
+     'rgba(255,255,255,.5)',Math.min(S(.024),10));
+  [0,1,2,3].forEach(i=>{
+    cc(cx()-15+i*10,lty+lh+10,4,i<phase?'#14C760':i===phase?pcol:'#1E3A55',
+       i===phase?pcol:null,1.5);
   });
 }
 
-// ── STEP 3: PALLET COMPOSITION ─────────────
-function drawStep3(){
-  const cx=CW/2, cy=CH/2;
+// ─────────────────────────────────────────────────────────────────────
+// STEP 3 — PALLET BUILD
+// ─────────────────────────────────────────────────────────────────────
+function drawS3(){
+  const m=mob();
+  const p=Math.min(t/STEPS[3].dur,1);
+  const nL=Math.min(Math.floor(p*6.5),6);
+  const palW2=Math.min(W(m?.85:.5),280);
+  const lH2=Math.max(24,Math.min(H(.1),44));
+  const baseY=cy()+H(.3);
+  const palX2=cx();
 
-  const nL=Math.floor(anim.layers);
-  const frac=anim.layers-nL;
+  fnt(cx(),H(.09),'COMPOSIZIONE PALLET — CANTIERE A','#14C760',Math.min(S(.04),16));
+  tx(cx(),H(.14),nL+' strati · '+(nL*45)+' kg / 680 kg max',
+     '#3A7060',Math.min(S(.026),10));
 
   // Pallet base
-  const pw=220, ph2=22, px=cx-pw/2, py=cy+120;
-  gl(C.green,8);
-  fr(px,py,pw,ph2,'#4E342E',4);
-  sr(px,py,pw,ph2,'#8D6E63',1.5,4);
-  ng();
-  // pallet feet
-  for(let i=0;i<4;i++){
-    fr(px+10+i*58,py+ph2,14,10,'#3E2723',3);
-  }
+  rr(palX2-palW2/2,baseY,palW2,16,'#4E342E',4);
+  rs(palX2-palW2/2,baseY,palW2,16,'#8D6E63',1.5,4);
+  for(let i=0;i<4;i++) rr(palX2-palW2/2+8+i*(palW2*.24),baseY+16,12,10,'#3E2723',2);
 
-  // Layer colors and labels
-  const lyrs=[
-    {col:'#37474F',lbl:'Tubi PVC Ø63',  kg:'42 kg'},
-    {col:'#4E342E',lbl:'Sacchi cemento', kg:'50 kg'},
-    {col:'#546E7A',lbl:'Mattoni forati', kg:'85 kg'},
-    {col:'#455A64',lbl:'Pannelli XPS',   kg:'28 kg'},
-    {col:'#607D8B',lbl:'Cassette imp.',  kg:'31 kg'},
-  ];
-  const lH=34;
-
-  lyrs.forEach((l,i)=>{
-    if(i>=nL) return;
-    const isPartial=(i===nL-1)&&frac<1;
-    const h=isPartial ? lH*frac : lH;
-    const ly=py-ph2-(i+1)*lH+lH*(1-(isPartial?frac:1));
-    if(h<1) return;
-
-    gl(C.green,i===nL-1?10:0);
-    fr(px+4,ly,pw-8,h,l.col,3);
-    sr(px+4,ly,pw-8,h,'rgba(255,255,255,.12)',0.8,3);
-    ng();
-
-    if(h>20){
-      tx(cx,ly+h/2,l.lbl,'rgba(255,255,255,.8)',9.5,'center');
-      tx(cx+pw/2-30,ly+h/2,l.kg,'rgba(255,255,255,.5)',9,'right');
-    }
+  ITEMS.slice(0,nL).forEach((it,i)=>{
+    const ly=baseY-(i+1)*lH2;
+    const isTop=i===nL-1;
+    if(isTop) gl(it.b,10);
+    rr(palX2-palW2/2+4,ly,palW2-8,lH2-2,it.c,4);
+    rs(palX2-palW2/2+4,ly,palW2-8,lH2-2,it.b+(isTop?'EE':'50'),isTop?2:1,4); ng();
+    ctx.font=Math.min(lH2*.46,17)+'px serif';
+    ctx.fillStyle='rgba(255,255,255,.9)'; ctx.textAlign='left'; ctx.textBaseline='middle';
+    ctx.fillText(it.e,palX2-palW2/2+8,ly+lH2/2);
+    tx(palX2-palW2/2+34,ly+lH2*.32,it.n,'rgba(255,255,255,.92)',Math.min(lH2*.14,12),'left','700');
+    tx(palX2-palW2/2+34,ly+lH2*.68,it.kg,'rgba(255,255,255,.5)',Math.min(lH2*.12,10),'left');
+    // weight on right
+    rr(palX2+palW2/2-56,ly+3,52,lH2-8,it.c+'AA',3);
+    tx(palX2+palW2/2-30,ly+lH2/2,it.kg,isTop?'#FFF':'rgba(255,255,255,.6)',
+       Math.min(lH2*.13,10),'center','700');
   });
 
-  // Barcode scan effect (every layer)
+  // Barcode scan line
   if(nL>0){
-    const scanY=py-ph2-nL*lH+4;
-    ctx.strokeStyle=`rgba(34,211,238,${0.4+0.4*Math.abs(Math.sin(simT*4))})`;
-    ctx.lineWidth=2; ctx.setLineDash([4,3]);
-    ctx.beginPath(); ctx.moveTo(px+4,scanY); ctx.lineTo(px+pw-4,scanY); ctx.stroke();
+    const scanY=baseY-nL*lH2+4;
+    const fa=.35+.4*Math.abs(Math.sin(simT*4));
+    ctx.strokeStyle=`rgba(34,211,238,${fa})`; ctx.lineWidth=2; ctx.setLineDash([4,3]);
+    ctx.beginPath(); ctx.moveTo(palX2-palW2/2+4,scanY); ctx.lineTo(palX2+palW2/2-4,scanY); ctx.stroke();
     ctx.setLineDash([]);
-    tx(cx,scanY-12,'◄ BARCODE SCAN ►',C.cyanL,9.5,'center');
+    tx(cx(),scanY-13,'◄ BARCODE SCAN ►','#22D3EE',Math.min(S(.025),10),'center','600');
   }
 
-  // Weight indicator
-  const totalKg=nL*47;
-  const maxKg=680;
-  const wFrac=totalKg/maxKg;
-  fr(cx+160,cy-100,80,200,C.panel,6);
-  sr(cx+160,cy-100,80,200,C.green+'40',1,6);
-  txB(cx+200,cy-82,'PESO',C.greenL,13,'center');
-  // gauge bar
-  fr(cx+172,cy-60,56,140,C.dim,4);
-  if(wFrac>0){
-    const fh=140*wFrac;
-    fr(cx+172,cy-60+140-fh,56,fh,
-      wFrac>0.85?C.red:wFrac>0.6?C.amber:C.green,4);
+  // Weight gauge (right of pallet)
+  const gx=palX2+palW2/2+14, gW=Math.min(W(.055),44), gH=Math.min(H(.35),140);
+  const gY=baseY-gH;
+  rr(gx,gY,gW,gH,'#060F1C',5); rs(gx,gY,gW,gH,'#14C76040',1.5,5);
+  fnt(gx+gW/2,gY+gW*.42,'PESO','#14C760',Math.min(S(.025),10));
+  const inner=gH-gW*.8-2;
+  rr(gx+4,gY+gW*.7,gW-8,inner,'#1E3A55',3);
+  const wT=nL*45, wF=wT/680;
+  if(wF>0){
+    const fh=inner*wF;
+    const wc=wF>.85?'#DC2626':wF>.6?'#E07B00':'#14C760';
+    rr(gx+4,gY+gW*.7+inner-fh,gW-8,fh,wc,3);
   }
-  txB(cx+200,cy+95,`${totalKg}`,C.white,18,'center');
-  tx(cx+200,cy+112,'kg',C.muted,10,'center');
-  tx(cx+200,cy-4,`max ${maxKg}`,C.muted,9,'center');
+  fnt(gx+gW/2,gY+gH-8,''+wT,wT>500?'#F87171':'#E8F4FF',Math.min(S(.028),13));
+  tx(gx+gW/2,gY+gH+9,'kg','#3A6080',Math.min(S(.02),9));
 
-  // Operator scan icon (left)
-  fr(cx-360,cy-60,120,80,C.panel,8);
-  sr(cx-360,cy-60,120,80,C.cyan+'40',1,8);
-  // scanner device
-  fr(cx-330,cy-45,60,30,'#1E2D38',5);
-  sr(cx-330,cy-45,60,30,C.cyanL,1.5,5);
-  tx(cx-300,cy-30,'SCAN',C.cyanL,11,'center');
-  arrow(cx-240,cy-20,cx-160,cy-20,C.cyan,2);
-
-  // Metrics
-  const met=[['1','pallet = 1 cantiere'],['680','kg capacità max'],['100%','colli scannerizzati']];
-  met.forEach(([v,l],i)=>{
-    const mx=cx-200+i*200;
-    fr(mx-65,cy+175,130,50,C.panel,6);
-    sr(mx-65,cy+175,130,50,C.green+'40',1,6);
-    txB(mx,cy+196,v,C.greenL,20,'center');
-    tx(mx,cy+212,l,C.muted,9.5,'center');
-  });
+  // Next item (left)
+  if(nL<6){
+    const ni=ITEMS[nL], nW=Math.min(W(.18),90), nH=Math.min(H(.16),70);
+    const nx=palX2-palW2/2-nW-16, nY=baseY-nH;
+    fnt(nx+nW/2,nY-12,'PROSSIMO','#E07B00',Math.min(S(.025),10));
+    gl(ni.b,8);
+    rr(nx,nY,nW,nH,ni.c,6); rs(nx,nY,nW,nH,ni.b,2,6); ng();
+    ctx.font=Math.min(nH*.42,22)+'px serif';
+    ctx.fillStyle='rgba(255,255,255,.9)'; ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText(ni.e,nx+nW/2,nY+nH*.35);
+    tx(nx+nW/2,nY+nH*.62,ni.n,'rgba(255,255,255,.85)',Math.min(nH*.12,9),'center','700');
+    tx(nx+nW/2,nY+nH*.8,ni.kg,'rgba(255,255,255,.5)',Math.min(nH*.1,8));
+    arrow(nx+nW,nY+nH*.5,palX2-palW2/2+4,baseY-nL*lH2-lH2/2,'#E07B00',2);
+  }
 }
 
-// ── STEP 4: AGV ────────────────────────────
-function drawStep4(){
-  const cx=CW/2, cy=CH/2;
+// ─────────────────────────────────────────────────────────────────────
+// STEP 4 — AGV
+// ─────────────────────────────────────────────────────────────────────
+function drawS4(){
+  const m=mob();
+  const corridorY=cy();
+  const cH=Math.min(H(.22),90);
 
-  // Floor / corridor
-  fr(80,cy-50,CW-160,100,'rgba(0,100,120,.12)',8);
-  ctx.strokeStyle='rgba(0,145,183,0.3)'; ctx.lineWidth=2; ctx.setLineDash([14,10]);
-  ctx.beginPath(); ctx.moveTo(80,cy); ctx.lineTo(CW-80,cy); ctx.stroke();
-  ctx.setLineDash([]);
+  // Corridor
+  rr(W(.04),corridorY-cH/2,W(.92),cH,'rgba(0,80,110,.12)',6);
+  ln(W(.04),corridorY,W(.96),corridorY,'rgba(0,145,183,.25)',2,[12,8]);
 
-  // START label
-  fr(80,cy-90,100,40,C.panel,6);
-  sr(80,cy-90,100,40,C.green+'50',1.5,6);
-  txB(130,cy-70,'COMP.',C.greenL,14,'center');
-  tx(130,cy-55,'area composizione',C.muted,9,'center');
+  // Zone labels
+  const zW=Math.min(W(.12),80), zH=Math.min(H(.12),48);
+  [[W(.05),corridorY-cH*.8,'COMP.','#14C760'],
+   [W(.95),corridorY-cH*.8,'STAGING','#14C760']].forEach(([x,y,n,c])=>{
+    rr(x-zW/2,y-zH/2,zW,zH,'#060F1C',5); rs(x-zW/2,y-zH/2,zW,zH,c+'50',1.5,5);
+    fnt(x,y,n,c,Math.min(S(.032),12));
+  });
 
-  // END label
-  fr(CW-180,cy-90,100,40,C.panel,6);
-  sr(CW-180,cy-90,100,40,C.green+'50',1.5,6);
-  txB(CW-130,cy-70,'STAGING',C.greenL,14,'center');
-  tx(CW-130,cy-55,'area deposito',C.muted,9,'center');
-
-  // AGV position
-  const agvCx=80+anim.agvX*(CW-200);
-  const agvCy=cy;
-  const agvW=90, agvH=60;
+  // AGV
+  const ax=W(.05)+A.agvP*W(.87), ay=corridorY;
+  const aW=Math.min(W(.12),85), aH=Math.min(H(.12),58);
 
   // SLAM rays
-  ctx.strokeStyle='rgba(0,145,183,0.12)'; ctx.lineWidth=1;
+  ctx.strokeStyle='rgba(0,145,183,.1)'; ctx.lineWidth=1;
   for(let a=0;a<16;a++){
-    const ang=a*Math.PI/8+simT*0.6;
-    ctx.beginPath(); ctx.moveTo(agvCx,agvCy);
-    ctx.lineTo(agvCx+Math.cos(ang)*100,agvCy+Math.sin(ang)*100);
-    ctx.stroke();
+    const ang=a*Math.PI/8+simT*.8;
+    ctx.beginPath(); ctx.moveTo(ax,ay);
+    ctx.lineTo(ax+Math.cos(ang)*90,ay+Math.sin(ang)*90); ctx.stroke();
   }
-
-  // AGV glow
-  const glGrad=ctx.createRadialGradient(agvCx,agvCy,0,agvCx,agvCy,60);
-  glGrad.addColorStop(0,'rgba(0,145,183,0.25)');
-  glGrad.addColorStop(1,'rgba(0,145,183,0)');
-  ctx.fillStyle=glGrad; ctx.beginPath(); ctx.arc(agvCx,agvCy,60,0,Math.PI*2); ctx.fill();
+  // Glow
+  const gg=ctx.createRadialGradient(ax,ay,0,ax,ay,aW);
+  gg.addColorStop(0,'rgba(0,145,183,.22)'); gg.addColorStop(1,'rgba(0,145,183,0)');
+  ctx.fillStyle=gg; ctx.beginPath(); ctx.arc(ax,ay,aW,0,Math.PI*2); ctx.fill();
 
   // AGV body
-  gl(C.cyan,16);
-  fr(agvCx-agvW/2,agvCy-agvH/2,agvW,agvH,'#0A2040',8);
-  sr(agvCx-agvW/2,agvCy-agvH/2,agvW,agvH,C.cyanL,2.5,8);
-  ng();
-
-  // Wheels
-  [[-34,-24],[34,-24],[-34,24],[34,24]].forEach(([dx,dy])=>{
-    ci(agvCx+dx,agvCy+dy,8,'#050D18','#2A5A7A',1.5);
+  gl('#0891B2',16);
+  rr(ax-aW/2,ay-aH/2,aW,aH,'#0A2040',8); rs(ax-aW/2,ay-aH/2,aW,aH,'#22D3EE',2.5,8); ng();
+  [[-aW*.38,-aH*.34],[aW*.38,-aH*.34],[-aW*.38,aH*.34],[aW*.38,aH*.34]].forEach(([dx,dy])=>{
+    cc(ax+dx,ay+dy,Math.max(6,aW*.09),'#050D18','#2A5A7A',1.5);
   });
-
-  // LIDAR dome
-  gl(C.cyanL,8);
-  ci(agvCx,agvCy,7,'#EF5350',C.cyanL,1.5);
-  ng();
+  gl('#22D3EE',8); cc(ax,ay-aH*.5-5,6,'#EF5350','#22D3EE',1.5); ng();
 
   // Pallet on AGV
-  fr(agvCx-36,agvCy-20,72,40,'rgba(90,60,40,.7)',4);
-  fr(agvCx-30,agvCy-15,24,30,'#6D4C41',3);
-  fr(agvCx+8, agvCy-15,22,30,'#546E7A',3);
-  tx(agvCx,agvCy+8,'CANT. A',C.amberL,8.5,'center','JetBrains Mono');
+  rr(ax-aW*.42,ay-aH*.42,aW*.84,aH*.46,'rgba(80,50,30,.8)',4);
+  ctx.font='11px serif'; ctx.fillStyle='rgba(255,255,255,.8)';
+  ctx.textAlign='left'; ctx.textBaseline='middle';
+  ctx.fillText('🧱',ax-aW*.35,ay-aH*.2);
+  ctx.fillText('🪣',ax-aW*.08,ay-aH*.2);
+  ctx.fillText('🔵',ax+aW*.18,ay-aH*.2);
+  tx(ax,ay+aH*.18,'CANT. A','#F5A623',Math.min(S(.022),9),'center','600');
 
-  // Speed indicator
-  txB(agvCx,agvCy-agvH/2-18,'AGV-01',C.cyanL,13,'center');
-  tx(agvCx,agvCy+agvH/2+14,'● NAVIGAZIONE ATTIVA',C.greenL,10,'center');
+  fnt(ax,ay-aH/2-18,'AGV-01','#22D3EE',Math.min(S(.04),14));
+  tx(ax,ay+aH/2+14,'● NAVIGAZIONE ATTIVA','#14C760',Math.min(S(.022),9));
 
-  // Direction arrows on track
-  for(let xi=200;xi<CW-200;xi+=120){
-    arrow(xi,cy+35,xi+50,cy+35,`rgba(0,145,183,0.4)`,2);
+  // Direction arrows on floor
+  for(let xi=W(.12);xi<W(.84);xi+=W(.12)){
+    arrow(xi,corridorY+cH*.7,xi+W(.06),corridorY+cH*.7,`rgba(0,145,183,.35)`,1.5);
   }
-
-  // Path info labels
-  tx(cx,cy-80,'Navigazione SLAM — nessun binario — Path A*',C.muted,11,'center');
+  tx(cx(),corridorY-cH*.9,'Navigazione SLAM — nessun binario — Path A*',
+     '#3A6080',Math.min(S(.024),10));
 
   // Metrics
-  const met=[['1500','kg portata'],['±10','mm docking'],['SLAM','360° Laser']];
-  met.forEach(([v,l],i)=>{
-    const mx=cx-200+i*200;
-    fr(mx-55,cy+155,110,50,C.panel,6);
-    sr(mx-55,cy+155,110,50,C.cyan+'40',1,6);
-    txB(mx,cy+176,v,C.cyanL,20,'center');
-    tx(mx,cy+193,l,C.muted,10,'center');
+  [['1500 kg','portata'],['SLAM 360°','no binari'],['±10 mm','docking']].forEach(([v,l],i)=>{
+    const mx=cx()-W(.24)+i*W(.24), mW=Math.min(W(.2),105), mH=Math.min(H(.1),42);
+    rr(mx-mW/2,cy()+H(.3),mW,mH,'#060F1C',5); rs(mx-mW/2,cy()+H(.3),mW,mH,'#0891B240',1,5);
+    fnt(mx,cy()+H(.3)+mH*.38,v,'#22D3EE',Math.min(S(.034),14));
+    tx(mx,cy()+H(.3)+mH*.74,l,'#3A6080',Math.min(S(.022),9));
   });
 }
 
-// ── STEP 5: STAGING ────────────────────────
-function drawStep5(){
-  const cx=CW/2, cy=CH/2;
+// ─────────────────────────────────────────────────────────────────────
+// STEP 5 — STAGING
+// ─────────────────────────────────────────────────────────────────────
+function drawS5(){
+  const m=mob();
+  const nF=Math.floor(A.stagN);
+  const cant=['A','B','C','D','E','F','G','H','I','L'];
 
-  const nFilled=Math.floor(anim.stagFilled);
-  const cols=['CANTIERE A','CANTIERE B','CANTIERE C','CANTIERE D','CANTIERE E',
-              'CANTIERE F','CANTIERE G','CANTIERE H','CANTIERE I','CANTIERE L'];
+  fnt(cx(),H(.07),'AREA STAGING — 10 POSTAZIONI','#14C760',Math.min(S(.04),16));
+  tx(cx(),H(.12),'Ogni baia = un cantiere  ·  LED verde = pronto al carico',
+     '#3A6080',Math.min(S(.024),10));
 
-  // Title
-  txB(cx,cy-200,'AREA STAGING — 10 POSTAZIONI NUMERATE',C.greenL,16,'center');
-
-  // 10 bays in 2 rows × 5
-  const bW=130, bH=100, gapX=22, gapY=20;
-  const totalW=5*bW+4*gapX, startX=cx-totalW/2;
-  const startY=cy-bH-gapY/2-40;
+  const cols=5, rows=2;
+  const totW=Math.min(W(.9),760);
+  const totH=Math.min(H(.62),270);
+  const gapX=totW*.025, gapY=totH*.04;
+  const bW=(totW-gapX*(cols-1))/cols;
+  const bH=(totH-gapY*(rows-1))/rows;
+  const sx=cx()-totW/2, sy=m?H(.15):H(.14);
 
   for(let i=0;i<10;i++){
-    const col=i%5, row=Math.floor(i/5);
-    const bx=startX+col*(bW+gapX);
-    const by=startY+row*(bH+gapY);
-    const bcx=bx+bW/2, bcy=by+bH/2;
-
-    const isFilled=i<nFilled;
-    const isLoading=i===nFilled;
-    const bc=isFilled?C.green:isLoading?C.amber:C.dim;
-    const bf=isFilled?'rgba(15,158,80,.12)':isLoading?'rgba(224,123,0,.1)':'rgba(30,58,85,.3)';
-
-    if(isFilled||isLoading) gl(bc,8);
-    fr(bx,by,bW,bH,bf,6);
-    sr(bx,by,bW,bH,bc,isFilled||isLoading?2:1,6);
-    ng();
-
-    // Corner marks (yellow floor lines)
-    const cm=8;
-    [[bx,by,1,0],[bx+bW,by,-1,0],[bx,by+bH,1,0],[bx+bW,by+bH,-1,0]].forEach(([px2,py2,dx])=>{
-      ctx.strokeStyle='#F9A825'; ctx.lineWidth=1.5;
-      ctx.beginPath(); ctx.moveTo(px2,py2); ctx.lineTo(px2+dx*cm,py2); ctx.stroke();
+    const c2=i%5, r2=Math.floor(i/5);
+    const bx=sx+c2*(bW+gapX), by2=sy+r2*(bH+gapY);
+    const bcx=bx+bW/2;
+    const filled=i<nF, loading=i===nF&&nF<10;
+    const bc=filled?'#14C760':loading?'#E07B00':'#1E3A55';
+    if(filled||loading) gl(bc,8);
+    rr(bx,by2,bW,bH,filled?'rgba(15,158,80,.12)':loading?'rgba(224,123,0,.1)':'rgba(30,58,85,.28)',6);
+    rs(bx,by2,bW,bH,bc,filled||loading?2:1,6); ng();
+    // Corner marks
+    const cm=Math.min(bW*.07,7);
+    [[bx,by2,1,1],[bx+bW,by2,-1,1],[bx,by2+bH,1,-1],[bx+bW,by2+bH,-1,-1]].forEach(([px2,py2,sx2,sy2])=>{
+      ln(px2,py2,px2+sx2*cm,py2,'#F9A825',1.5);
+      ln(px2,py2,px2,py2+sy2*cm,'#F9A825',1.5);
     });
-
-    // Bay number
-    txB(bcx,by+14,`S-${String(i+1).padStart(2,'0')}`,'#F9A825',12,'center');
-
-    // Cantiere label
-    tx(bcx,by+30,cols[i],isFilled||isLoading?C.white:C.muted+'80',8.5,'center');
-
-    if(isFilled){
-      // Pallet shown
-      fr(bx+12,by+38,bW-24,34,'rgba(90,60,40,.6)',3);
-      fr(bx+15,by+41,28,28,'#6D4C41',2);
-      fr(bx+46,by+41,22,28,'#546E7A',2);
-      fr(bx+71,by+41,24,28,'#607D8B',2);
-      // Green light
-      gl(C.greenL,10);
-      ci(bcx,by+84,5,C.greenL,null);
-      ng();
-      tx(bcx,by+84,'',C.greenL,1,'center');
-    } else if(isLoading){
-      tx(bcx,bcy+10,'AGV IN ENTRATA',C.amber,8,'center');
-      ci(bcx,by+84,5,C.amber,null);
-      gl(C.amber,8); ci(bcx,by+84,3,C.amberL,null); ng();
+    const ns=Math.min(S(.032),13), ls=Math.min(S(.022),9);
+    fnt(bcx,by2+bH*.14,'S-'+String(i+1).padStart(2,'0'),'#F9A825',ns);
+    tx(bcx,by2+bH*.3,'Cant. '+cant[i],filled||loading?'rgba(255,255,255,.85)':'#2A4060',ls,'center','600');
+    if(filled){
+      ctx.font='11px serif'; ctx.fillStyle='rgba(255,255,255,.75)';
+      ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText('🧱⬜🔵',bcx,by2+bH*.54);
+      gl('#14C760',12); cc(bcx,by2+bH*.8,Math.min(bW*.07,6),'#14C760',null); ng();
+      tx(bcx,by2+bH*.92,'PRONTO','#14C760',ls,'center','700');
+    } else if(loading){
+      tx(bcx,by2+bH*.54,'AGV IN ARRIVO','#E07B00',ls,'center','600');
+      gl('#E07B00',7); cc(bcx,by2+bH*.8,Math.min(bW*.07,6),'#E07B00',null); ng();
     } else {
-      tx(bcx,bcy,'LIBERA',C.green+'70',9,'center');
-      ci(bcx,by+84,5,C.dim,null);
+      tx(bcx,by2+bH*.6,'LIBERA','#14C76044',ls,'center','600');
+      cc(bcx,by2+bH*.8,Math.min(bW*.07,5),'#1E3A55',null);
     }
   }
 
-  // Stats below
-  tx(cx,cy+130,`${nFilled} / 10 postazioni occupate`,C.green,12,'center');
-
-  // Metrics
-  const met=[['10','baie staging'],['LED','3 stati colore'],['RFID','tracciatura']];
-  met.forEach(([v,l],i)=>{
-    const mx=cx-200+i*200;
-    fr(mx-55,cy+155,110,46,C.panel,6);
-    sr(mx-55,cy+155,110,46,C.green+'40',1,6);
-    txB(mx,cy+174,v,C.greenL,18,'center');
-    tx(mx,cy+190,l,C.muted,10,'center');
-  });
+  gl('#14C760',6);
+  const cW2=Math.min(W(.55),200), cH2=Math.min(H(.06),30);
+  rr(cx()-cW2/2,sy+totH+8,cW2,cH2,'rgba(15,158,80,.12)',6);
+  rs(cx()-cW2/2,sy+totH+8,cW2,cH2,'#14C760',1.5,6); ng();
+  tx(cx(),sy+totH+8+cH2/2,nF+' / 10 postazioni occupate',
+     '#14C760',Math.min(S(.026),11),'center','600');
 }
 
-// ── STEP 6: LOADING ────────────────────────
-function drawStep6(){
-  const cx=CW/2, cy=CH/2;
-  const lp=anim.vanLoad;
+// ─────────────────────────────────────────────────────────────────────
+// STEP 6 — LOADING
+// ─────────────────────────────────────────────────────────────────────
+function drawS6(){
+  const m=mob();
+  const lp=A.vanLoad;
+  const vW=m?Math.min(W(.72),240):Math.min(W(.26),170);
+  const vH=m?Math.min(H(.5),200):Math.min(H(.62),240);
+  const gap=m?0:Math.min(W(.04),22);
+  const nVans=m?1:3;
+  const showIdx=m?Math.min(2,Math.floor(lp*3)):0;
+  const startX=m?cx()-vW/2:cx()-(nVans*vW+(nVans-1)*gap)/2;
+  const startY=m?H(.08):cy()-vH/2-16;
 
-  // 3 vans side by side
-  const vans=['VAN-A','VAN-B','VAN-C'];
-  const sites=['CANTIERE A+B','CANTIERE C+D','CANTIERE E+F'];
-  const vW=160, vH=200, gap=40;
-  const totalW=3*vW+2*gap, startX=cx-totalW/2;
+  const sites=['Cantieri A+B','Cantieri C+D','Cantieri E+F'];
+  const vnames=['VAN-A','VAN-B','VAN-C'];
 
-  vans.forEach((v,i)=>{
-    const vx=startX+i*(vW+gap), vy=cy-vH/2-20;
-    const load=Math.min(1,lp*(1+i*0.15));
-    const isLoaded=load>0.85;
-    const vc=isLoaded?C.greenL:load>0.01?C.amber:C.muted;
-
-    gl(vc,isLoaded?12:5);
-    fr(vx,vy,vW,vH,'#141E28',8);
-    sr(vx,vy,vW,vH,vc,isLoaded?2.5:1.5,8);
-    ng();
-
+  for(let vi=m?showIdx:0; vi<(m?showIdx+1:3); vi++){
+    const vx=m?startX:startX+vi*(vW+gap), vy=startY;
+    const vload=Math.min(1,lp*(1.2-vi*.1));
+    const done=vload>.87;
+    const vc=done?'#14C760':vload>.02?'#E07B00':'#4A7AA0';
+    gl(vc,done?12:4);
+    rr(vx,vy,vW,vH,'#141E28',8); rs(vx,vy,vW,vH,vc,done?2.5:1.5,8); ng();
     // Cab
-    const cabH=vH*0.38;
-    fr(vx+4,vy+4,vW-8,cabH,'#1E2D38',6);
-    // Windscreen
-    fr(vx+8,vy+8,vW-16,cabH*0.55,'rgba(144,202,249,.2)',4);
-
-    // Headlights
-    if(isLoaded){
-      gl('#FFFF88',10);
-      fr(vx+10,vy+cabH-10,16,8,'#FFEE58',3);
-      fr(vx+vW-26,vy+cabH-10,16,8,'#FFEE58',3);
-      ng();
+    const cabH=vH*.36;
+    rr(vx+4,vy+4,vW-8,cabH,'#1E2D38',6);
+    rr(vx+8,vy+8,vW-16,cabH*.52,'rgba(144,202,249,.18)',4);
+    if(done){gl('#FFFF88',8);rr(vx+8,vy+cabH-9,15,7,'#FFEE58',2);rr(vx+vW-23,vy+cabH-9,15,7,'#FFEE58',2);ng();}
+    // Cargo
+    const cgY=vy+cabH+5, cgH=vH-cabH-28;
+    rr(vx+4,cgY,vW-8,cgH,'#0A1510',4);
+    if(vload>0){
+      const fh=cgH*vload*.9;
+      rr(vx+6,cgY+cgH-fh,vW-12,fh,'rgba(90,60,40,.7)',3);
+      ITEMS.slice(0,Math.floor(vload*4)).forEach((it2,li)=>{
+        const lly=cgY+cgH-(li+1)*(cgH*.25);
+        if(lly>cgY+2){
+          rr(vx+7,lly,vW-14,cgH*.22,it2.c,3);
+          rs(vx+7,lly,vW-14,cgH*.22,it2.b+'70',1,3);
+          ctx.font='10px serif'; ctx.fillStyle='rgba(255,255,255,.8)';
+          ctx.textAlign='left'; ctx.textBaseline='middle';
+          ctx.fillText(it2.e,vx+10,lly+cgH*.11);
+          tx(vx+26,lly+cgH*.07,it2.n,'rgba(255,255,255,.8)',8,'left','600');
+        }
+      });
     }
-
-    // Cargo area
-    const cargoY=vy+cabH+6, cargoH=vH-cabH-30;
-    fr(vx+4,cargoY,vW-8,cargoH,'#0A1510',4);
-
-    // Fill
-    if(load>0){
-      const fh=cargoH*load*0.92;
-      fr(vx+6,cargoY+cargoH-fh-1,vW-12,fh,'rgba(100,70,50,.65)',3);
-      // layers visible
-      const nL=Math.floor(load*4);
-      const lc=['#4E342E','#546E7A','#607D8B','#455A64'];
-      for(let l=0;l<nL;l++){
-        const ly=cargoY+cargoH-(l+1)*(cargoH*0.23)-1;
-        if(ly>cargoY+2) fr(vx+8,ly,vW-16,cargoH*0.2,'rgba(255,255,255,.06)',2);
-      }
-    }
-
     // Wheels
-    ci(vx+22,vy+vH-14,12,'#0A1528','#3A6090',2);
-    ci(vx+vW-22,vy+vH-14,12,'#0A1528','#3A6090',2);
-
-    // Van label
-    txB(vx+vW/2,vy-20,v,isLoaded?C.amberL:C.muted,16,'center');
-    tx(vx+vW/2,vy-5,sites[i],C.muted,8.5,'center');
-
-    // Status label inside van
-    if(isLoaded){
-      gl(C.greenL,6);
-      fr(vx+10,cargoY+cargoH+4,vW-20,18,'rgba(15,158,80,.2)',4);
-      tx(vx+vW/2,cargoY+cargoH+13,'✓ PRONTO',C.greenL,9,'center');
-      ng();
-    } else if(load>0.01){
-      fr(vx+10,cargoY+cargoH+4,vW-20,18,'rgba(224,123,0,.15)',4);
-      tx(vx+vW/2,cargoY+cargoH+13,'CARICO...',C.amber,9,'center');
-    }
-
-    // Progress %
-    tx(vx+vW/2,vy+vH-4,`${Math.round(load*100)}%`,vc,10,'center');
-  });
-
-  // Staging arrows (from left)
-  fr(80,cy-160,90,110,C.panel,6);
-  sr(80,cy-160,90,110,C.green+'40',1.5,6);
-  txB(125,cy-135,'STAGING',C.greenL,13,'center');
-  tx(125,cy-118,'pallet pronti',C.muted,9,'center');
-  // arrows to vans
-  vans.forEach((_,i)=>{
-    const vx2=startX+i*(vW+gap)+vW/2;
-    arrow(172,cy-105,vx2,cy-vH/2+20,C.green+'60',1.5);
-  });
+    cc(vx+18,vy+vH-14,Math.min(vW*.08,12),'#080E18','#3A6090',2);
+    cc(vx+vW-18,vy+vH-14,Math.min(vW*.08,12),'#080E18','#3A6090',2);
+    // Labels
+    fnt(vx+vW/2,vy-20,vnames[vi],done?'#F5A623':'#4A7AA0',Math.min(S(.04),16));
+    tx(vx+vW/2,vy-6,sites[vi],'#3A6080',Math.min(S(.023),9),'center','600');
+    // Progress bar
+    rr(vx,vy+vH+4,vW,5,'#1E3A55',3);
+    if(vload>0) rr(vx,vy+vH+4,vW*vload,5,vc,3);
+    tx(vx+vW/2,vy+vH+16,Math.round(vload*100)+'%',vc,Math.min(S(.028),11),'center','700');
+    if(done){gl('#14C760',6);rr(vx+6,vy+vH-22,vW-12,16,'rgba(15,158,80,.2)',3);fnt(vx+vW/2,vy+vH-14,'✓ PRONTO — PARTE 06:00','#14C760',Math.min(S(.025),10));ng();}
+    else if(vload>.02){rr(vx+6,vy+vH-22,vW-12,16,'rgba(224,123,0,.15)',3);fnt(vx+vW/2,vy+vH-14,'CARICO IN CORSO...','#E07B00',Math.min(S(.024),9));}
+  }
+  // Mobile: van dots
+  if(m) [0,1,2].forEach(i=>cc(cx()-12+i*12,startY+vH+30,4,i===showIdx?'#E07B00':'#1E3A55',null));
 
   // Time badge
-  gl(C.amber,14);
-  fr(cx-80,cy+118,160,42,'rgba(224,123,0,.15)',8);
-  sr(cx-80,cy+118,160,42,C.amber,2,8);
-  txB(cx,cy+136,'ORE 06:00',C.amberL,20,'center');
-  tx(cx,cy+152,'PARTENZA FURGONI',C.amber,10,'center');
-  ng();
-
-  // KPI
-  const met=[['6','furgoni caricati'],['0','errori picking'],['100%','tracciabilità']];
-  met.forEach(([v,l],i)=>{
-    const mx=cx-200+i*200;
-    fr(mx-55,cy+175,110,46,C.panel,6);
-    sr(mx-55,cy+175,110,46,C.amberL+'40',1,6);
-    txB(mx,cy+194,v,C.amberL,20,'center');
-    tx(mx,cy+210,l,C.muted,10,'center');
-  });
+  const bW2=Math.min(W(.55),180), bH2=Math.min(H(.1),44);
+  const bY=m?startY+vH+42:cy()+vH/2+18;
+  gl('#E07B00',16);
+  rr(cx()-bW2/2,bY,bW2,bH2,'rgba(224,123,0,.15)',8);
+  rs(cx()-bW2/2,bY,bW2,bH2,'#E07B00',2,8); ng();
+  fnt(cx(),bY+bH2*.42,'ORE 06:00 — PARTENZA','#F5A623',Math.min(S(.05),20));
+  tx(cx(),bY+bH2*.76,'TUTTI I CANTIERI RICEVONO IN ORARIO','#E07B00',Math.min(S(.022),9),'center','600');
 }
 
-// ═══════════════════════════════════════════
+// ─────────────────────────────────────────────────────────────────────
 // MAIN DRAW
-// ═══════════════════════════════════════════
+// ─────────────────────────────────────────────────────────────────────
 function draw(){
   ctx.clearRect(0,0,CW,CH);
-  ctx.fillStyle=C.bg; ctx.fillRect(0,0,CW,CH);
-
-  // subtle grid
-  ctx.strokeStyle=C.grid; ctx.lineWidth=0.5;
-  const gs=30;
-  for(let x=0;x<CW;x+=gs){ ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,CH);ctx.stroke(); }
-  for(let y=0;y<CH;y+=gs){ ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(CW,y);ctx.stroke(); }
-
-  // Draw current step
+  ctx.fillStyle='#060D18'; ctx.fillRect(0,0,CW,CH);
+  drawGrid();
   switch(step){
-    case 0: drawStep0(); break;
-    case 1: drawStep1(); break;
-    case 2: drawStep2(); break;
-    case 3: drawStep3(); break;
-    case 4: drawStep4(); break;
-    case 5: drawStep5(); break;
-    case 6: drawStep6(); break;
+    case 0:drawS0();break; case 1:drawS1();break; case 2:drawS2();break;
+    case 3:drawS3();break; case 4:drawS4();break; case 5:drawS5();break;
+    case 6:drawS6();break;
   }
-
-  drawStepTitle();
-
-  // scanline
-  const sy=((simT*40)%CH);
-  const sg=ctx.createLinearGradient(0,sy,0,sy+10);
-  sg.addColorStop(0,'rgba(255,255,255,0)');
-  sg.addColorStop(.5,'rgba(255,255,255,.009)');
+  if(step!==2) drawTitle();
+  // Scanline
+  const sl=(simT*35)%CH;
+  const sg=ctx.createLinearGradient(0,sl,0,sl+8);
+  sg.addColorStop(0,'rgba(255,255,255,0)'); sg.addColorStop(.5,'rgba(255,255,255,.007)');
   sg.addColorStop(1,'rgba(255,255,255,0)');
-  ctx.fillStyle=sg; ctx.fillRect(0,sy,CW,10);
+  ctx.fillStyle=sg; ctx.fillRect(0,sl,CW,8);
 }
 
-// ═══════════════════════════════════════════
+// ─────────────────────────────────────────────────────────────────────
 // LOOP
-// ═══════════════════════════════════════════
+// ─────────────────────────────────────────────────────────────────────
 function frame(ts){
   if(!lastTS) lastTS=ts;
   const dt=Math.min((ts-lastTS)/1000,.05); lastTS=ts;
-  if(playing) update(dt*speed);
+  if(playing) update(dt*spd);
   draw();
   requestAnimationFrame(frame);
 }
 requestAnimationFrame(frame);
 
-// ═══════════════════════════════════════════
+// ─────────────────────────────────────────────────────────────────────
 // CONTROLS
-// ═══════════════════════════════════════════
-const spds=[1,2,4,.5]; let si=0;
-document.getElementById('btn-play').addEventListener('click',()=>{
-  playing=!playing;
-  document.getElementById('btn-play').textContent=playing?'⏸ PAUSA':'▶ PLAY';
+// ─────────────────────────────────────────────────────────────────────
+const SPDS=[1,.5,.25,2]; let si=0;
+document.getElementById('bplay').addEventListener('click',()=>{
+  playing=!playing; document.getElementById('bplay').textContent=playing?'⏸':'▶';
 });
-document.getElementById('btn-speed').addEventListener('click',()=>{
-  si=(si+1)%spds.length; speed=spds[si];
-  document.getElementById('btn-speed').textContent=`⚡ ${speed}×`;
+document.getElementById('bspd').addEventListener('click',()=>{
+  si=(si+1)%SPDS.length; spd=SPDS[si];
+  document.getElementById('bspd').textContent='⚡'+spd+'×';
 });
-document.getElementById('btn-prev').addEventListener('click',()=>goStep(step-1));
-document.getElementById('btn-next').addEventListener('click',()=>goStep(step+1));
-document.querySelectorAll('.stp').forEach((el,i)=>
-  el.addEventListener('click',()=>goStep(i)));
+document.getElementById('bprev').addEventListener('click',()=>goStep(step-1));
+document.getElementById('bnext').addEventListener('click',()=>goStep(step+1));
+document.querySelectorAll('.nd').forEach((el,i)=>el.addEventListener('click',()=>goStep(i)));
 
-updateSidePanel();
-updateStepBar();
-
-// mobile panel toggle
-document.getElementById('mob-top').addEventListener('click',()=>{
+// Mobile panel
+document.getElementById('mobt').addEventListener('click',()=>{
   document.getElementById('mob').classList.toggle('open');
 });
 
-// touch swipe on canvas
-let _tx=0,_ty=0;
-canvas.addEventListener('touchstart',e=>{
-  _tx=e.touches[0].clientX; _ty=e.touches[0].clientY;
-},{passive:true});
-canvas.addEventListener('touchend',e=>{
-  const dx=e.changedTouches[0].clientX-_tx;
-  const dy=e.changedTouches[0].clientY-_ty;
-  if(Math.abs(dx)>44&&Math.abs(dx)>Math.abs(dy)){
-    dx<0?goStep(step+1):goStep(step-1);
-  }
+// Swipe
+let tx0=0,ty0=0;
+CV.addEventListener('touchstart',e=>{tx0=e.touches[0].clientX;ty0=e.touches[0].clientY;},{passive:true});
+CV.addEventListener('touchend',e=>{
+  const dx=e.changedTouches[0].clientX-tx0, dy=e.changedTouches[0].clientY-ty0;
+  if(Math.abs(dx)>44&&Math.abs(dx)>Math.abs(dy)) dx<0?goStep(step+1):goStep(step-1);
 },{passive:true});
 
+refreshUI();
 </script>
 </body>
 </html>

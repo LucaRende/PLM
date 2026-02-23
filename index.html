@@ -17,14 +17,16 @@
   --red:#DC2626;
   --white:#F0F6FF; --muted:#4A7AA0; --dim:#1E3A55;
 }
-html,body{width:100%;height:100%;height:-webkit-fill-available;background:var(--bg);overflow:hidden;
+html,body{width:100%;height:100%;background:var(--bg);overflow:hidden;
   font-family:'Inter',sans-serif;color:var(--white)}
 #app{display:flex;flex-direction:column;height:100dvh}
 
 /* HEADER */
 #hdr{
-  height:52px;flex-shrink:0;display:flex;align-items:center;
+  flex-shrink:0;display:flex;align-items:center;
   justify-content:space-between;padding:0 28px;
+  padding-top:env(safe-area-inset-top,0px);
+  min-height:52px;
   background:rgba(6,13,24,.98);border-bottom:2px solid var(--amber);
 }
 .logo{width:34px;height:34px;background:var(--amber);flex-shrink:0;
@@ -115,82 +117,60 @@ canvas{display:block;width:100%;height:100%}
   transition:border-color .2s,color .2s;letter-spacing:.04em}
 .btn:hover{border-color:var(--amber);color:var(--amber)}
 
-/* ── SAFE AREA ── */
-:root {
-  --safe-top:env(safe-area-inset-top,0px);
-  --safe-bot:env(safe-area-inset-bottom,0px);
-}
-#app { height:100dvh; }
-#hdr {
-  padding-top:calc(10px + var(--safe-top));
-  height:auto;min-height:52px;
-}
-/* ── MOBILE STEP BAR: scrollable ── */
+/* ─── MOBILE ─────────────────────────────────────── */
 @media(max-width:700px){
   #stepbar{
-    justify-content:flex-start;
-    overflow-x:auto;-webkit-overflow-scrolling:touch;
-    scrollbar-width:none;padding:8px 10px;
+    justify-content:flex-start;overflow-x:auto;
+    -webkit-overflow-scrolling:touch;scrollbar-width:none;
+    padding:6px 8px;
   }
   #stepbar::-webkit-scrollbar{display:none}
-  .stp{padding:4px 8px}
+  .stp{padding:4px 8px;white-space:nowrap}
   .stp-time{display:none}
   .stp-lbl{font-size:9px}
-  /* hide desktop sidebar */
+  .stp-arrow{margin:0 1px}
   #info{display:none!important}
-  /* show mobile panel */
-  #mob-panel{display:flex!important}
-  /* canvas parent needs overflow:hidden for scale trick */
-  #panel{overflow:hidden}
-  /* controls smaller */
-  .btn{padding:5px 9px;font-size:8px}
-  /* header smaller */
-  .hdr-title{font-size:14px}
+  #mob{display:flex!important}
   .badge{display:none}
+  .hdr-title{font-size:13px}
+  .hdr-sub{font-size:9px}
+  .btn{padding:6px 10px;font-size:8px}
+  #ctrl{left:8px;bottom:8px;gap:5px}
 }
-@media(min-width:701px){
-  #mob-panel{display:none!important}
-}
+@media(min-width:701px){#mob{display:none!important}}
 
-/* ── MOBILE BOTTOM PANEL ── */
-#mob-panel{
+/* ─── MOBILE BOTTOM PANEL ──────────────────────────── */
+#mob{
   display:none;flex-direction:column;flex-shrink:0;
-  background:#040C16;border-top:1px solid #152840;
-  padding-bottom:var(--safe-bot);
-  max-height:40vh;overflow:hidden;transition:max-height .3s ease;
+  background:#040C16;border-top:1px solid var(--border);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  max-height:44vh;overflow:hidden;transition:max-height .3s;
 }
-#mob-panel.open{max-height:58vh}
-#mob-hdr{
+#mob.open{max-height:62vh}
+#mob-top{
   display:flex;align-items:center;justify-content:space-between;
-  padding:8px 14px;border-bottom:1px solid #152840;
-  cursor:pointer;-webkit-user-select:none;user-select:none;
-  flex-shrink:0;
+  padding:8px 14px;border-bottom:1px solid var(--border);
+  cursor:pointer;-webkit-user-select:none;user-select:none;flex-shrink:0;
 }
-#mob-title{font-family:'Bebas Neue',sans-serif;font-size:13px;color:#F5A623;letter-spacing:.07em}
-#mob-arr{font-size:11px;color:#4A7AA0;transition:transform .3s}
-#mob-panel.open #mob-arr{transform:rotate(180deg)}
-#mob-body{
-  overflow-y:auto;-webkit-overflow-scrolling:touch;
-  padding:8px 14px;flex:1;
-}
-#mob-desc{font-size:11px;color:#7AAAC8;line-height:1.6;margin-bottom:8px}
-#mob-desc b{color:#F0F6FF}
-.mob-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px}
-.mob-stat{background:#091525;border:1px solid #152840;border-radius:4px;padding:6px;text-align:center}
-.mob-stat-n{font-family:'Bebas Neue',sans-serif;font-size:18px;color:#F0F6FF;line-height:1}
-.mob-stat-l{font-size:8px;color:#1E3A55;text-transform:uppercase;letter-spacing:.03em}
-#mob-spec{margin-top:4px}
-.mob-row{display:flex;align-items:center;gap:7px;padding:4px 0;border-bottom:1px solid rgba(21,40,64,.4)}
-.mob-row:last-child{border-bottom:none}
-.mob-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
-.mob-lbl{flex:1;font-size:10px;color:#4A7AA0}
-.mob-val{font-family:'JetBrains Mono',monospace;font-size:9px;color:#F0F6FF}
-#swipe-hint{
-  position:absolute;bottom:8px;left:50%;transform:translateX(-50%);
-  font-size:9px;color:rgba(74,122,160,.4);pointer-events:none;
-  white-space:nowrap;display:none;z-index:5;
-}
-@media(max-width:700px){#swipe-hint{display:block}}
+#mob-ttl{font-family:'Bebas Neue',sans-serif;font-size:13px;
+  color:var(--amber);letter-spacing:.07em}
+#mob-arr{font-size:10px;color:var(--muted);transition:transform .3s}
+#mob.open #mob-arr{transform:rotate(180deg)}
+#mob-body{overflow-y:auto;-webkit-overflow-scrolling:touch;padding:8px 14px}
+#mob-desc{font-size:11px;color:#7AAAC8;line-height:1.6;margin-bottom:7px}
+#mob-desc b{color:var(--white)}
+.m-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:7px}
+.m-stat{background:var(--panel);border:1px solid var(--border);
+  border-radius:4px;padding:5px;text-align:center}
+.m-stat-n{font-family:'Bebas Neue',sans-serif;font-size:17px;
+  color:var(--white);line-height:1}
+.m-stat-l{font-size:8px;color:var(--muted);text-transform:uppercase;letter-spacing:.03em}
+.m-spec-row{display:flex;align-items:center;gap:7px;padding:4px 0;
+  border-bottom:1px solid rgba(21,40,64,.4)}
+.m-spec-row:last-child{border-bottom:none}
+.m-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.m-lbl{flex:1;font-size:10px;color:var(--muted)}
+.m-val{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--white)}
 
 </style>
 </head>
@@ -263,23 +243,22 @@ canvas{display:block;width:100%;height:100%}
   </div>
 </div>
 
-<div id="mob-panel">
-  <div id="mob-hdr">
-    <div id="mob-title">STEP 1 — WMS IMPORTA ORDINI</div>
+<div id="mob">
+  <div id="mob-top">
+    <div id="mob-ttl">STEP 1 — WMS IMPORTA ORDINI</div>
     <div id="mob-arr">▼</div>
   </div>
   <div id="mob-body">
     <div id="mob-desc">Il <b>WMS</b> riceve gli ordini ERP.</div>
-    <div class="mob-grid">
-      <div class="mob-stat"><div class="mob-stat-n" id="mn1">6</div><div class="mob-stat-l" id="ml1">Commesse</div></div>
-      <div class="mob-stat"><div class="mob-stat-n" id="mn2">24</div><div class="mob-stat-l" id="ml2">Pallet</div></div>
-      <div class="mob-stat"><div class="mob-stat-n" id="mn3">14.4</div><div class="mob-stat-l" id="ml3">Ton</div></div>
-      <div class="mob-stat"><div class="mob-stat-n" id="mn4">10h</div><div class="mob-stat-l" id="ml4">Ciclo</div></div>
+    <div class="m-grid">
+      <div class="m-stat"><div class="m-stat-n" id="mn1">6</div><div class="m-stat-l" id="ml1">Commesse</div></div>
+      <div class="m-stat"><div class="m-stat-n" id="mn2">24</div><div class="m-stat-l" id="ml2">Pallet</div></div>
+      <div class="m-stat"><div class="m-stat-n" id="mn3">14.4</div><div class="m-stat-l" id="ml3">Ton</div></div>
+      <div class="m-stat"><div class="m-stat-n" id="mn4">10h</div><div class="m-stat-l" id="ml4">Ciclo</div></div>
     </div>
     <div id="mob-spec"></div>
   </div>
 </div>
-<div id="swipe-hint">← scorri per cambiare step →</div>
 
 </div>
 
@@ -292,27 +271,21 @@ const ctx    = canvas.getContext('2d');
 const DPR    = window.devicePixelRatio || 1;
 let CW, CH;
 
-const DESIGN_W = 860; // minimum design width
+const DSGN = 860;
 function resize(){
   const el = canvas.parentElement;
-  const availW = el.clientWidth, availH = el.clientHeight;
-  if(availW < DESIGN_W){
-    // Scale the canvas so the full desktop drawing fits
-    const sc = availW / DESIGN_W;
-    CW = DESIGN_W;
-    CH = Math.round(availH / sc);
-    canvas.width  = Math.round(CW * DPR);
-    canvas.height = Math.round(CH * DPR);
-    canvas.style.width  = DESIGN_W + 'px';
-    canvas.style.height = availH + 'px'; // CSS height = actual
-    canvas.style.transform = `scale(${sc})`;
+  const aw = el.clientWidth, ah = el.clientHeight;
+  if(aw < DSGN){
+    const sc = aw / DSGN;
+    CW = DSGN; CH = Math.round(ah / sc);
+    canvas.width  = Math.round(CW*DPR); canvas.height = Math.round(CH*DPR);
+    canvas.style.width = CW+'px'; canvas.style.height = CH+'px';
+    canvas.style.transform = 'scale('+sc+')';
     canvas.style.transformOrigin = 'top left';
   } else {
-    CW = availW; CH = availH;
-    canvas.width  = Math.round(CW * DPR);
-    canvas.height = Math.round(CH * DPR);
-    canvas.style.width  = CW + 'px';
-    canvas.style.height = CH + 'px';
+    CW = aw; CH = ah;
+    canvas.width  = Math.round(CW*DPR); canvas.height = Math.round(CH*DPR);
+    canvas.style.width = CW+'px'; canvas.style.height = CH+'px';
     canvas.style.transform = '';
   }
   ctx.setTransform(DPR,0,0,DPR,0,0);
@@ -481,7 +454,6 @@ function goStep(s){
   resetAnim();
   updateSidePanel();
   updateStepBar();
-  // scroll dot into view on mobile
   const dot = document.querySelectorAll('.stp')[step];
   if(dot) dot.scrollIntoView({behavior:'smooth',inline:'center',block:'nearest'});
 }
@@ -512,19 +484,19 @@ function updateSidePanel(){
       <div class="chk-val">${s.val}</div>
     </div>`).join('');
 
-  // Mobile panel
-  document.getElementById('mob-title').textContent = 'STEP '+(step+1)+' — '+d.label;
+  // mobile panel
+  document.getElementById('mob-ttl').textContent = 'STEP '+(step+1)+' — '+d.label;
   document.getElementById('mob-desc').innerHTML = d.desc;
-  ['mn1','mn2','mn3','mn4'].forEach((id,i)=>{
-    document.getElementById(id).textContent=d['n'+(i+1)];
-    document.getElementById('m'+'l'+(i+1)).textContent=d['l'+(i+1)];
+  [1,2,3,4].forEach(n=>{
+    document.getElementById('mn'+n).textContent = d['n'+n];
+    document.getElementById('ml'+n).textContent = d['l'+n];
   });
-  document.getElementById('mob-spec').innerHTML = d.spec.map(s=>`
-    <div class="mob-row">
-      <div class="mob-dot" style="background:${s.col}"></div>
-      <div class="mob-lbl">${s.lbl}</div>
-      <div class="mob-val">${s.val}</div>
-    </div>`).join('');
+  document.getElementById('mob-spec').innerHTML = d.spec.map(s=>
+    '<div class="m-spec-row">'+
+    '<div class="m-dot" style="background:'+s.col+'"></div>'+
+    '<div class="m-lbl">'+s.lbl+'</div>'+
+    '<div class="m-val">'+s.val+'</div></div>'
+  ).join('');
 }
 
 function updateStepBar(){
@@ -888,7 +860,7 @@ function drawStep2(){
   // Pallet area (right)
   const px=cx+280, py=cy-20;
   fr(px-70,py+60,140,20,'#4E342E',3); // pallet base
-  sr(px-70,py-60,140,120,C.green+'40',1.5,[8,5],4);
+  sr(px-70,py-60,140,120,C.green+'40',1.5,4,[8,5]);
   txB(px,py-45,'PALLET',C.greenL,14,'center');
   tx(px,py-27,'DESTINAZIONE',C.muted,10,'center');
 
@@ -1350,24 +1322,23 @@ document.querySelectorAll('.stp').forEach((el,i)=>
 updateSidePanel();
 updateStepBar();
 
-// ── MOBILE PANEL TOGGLE ──────────────────────────────────────────────
-document.getElementById('mob-hdr').addEventListener('click',()=>{
-  document.getElementById('mob-panel').classList.toggle('open');
+// mobile panel toggle
+document.getElementById('mob-top').addEventListener('click',()=>{
+  document.getElementById('mob').classList.toggle('open');
 });
 
-// ── TOUCH SWIPE ─────────────────────────────────────────────────────
-let touchX=0, touchY=0;
+// touch swipe on canvas
+let _tx=0,_ty=0;
 canvas.addEventListener('touchstart',e=>{
-  touchX=e.touches[0].clientX; touchY=e.touches[0].clientY;
+  _tx=e.touches[0].clientX; _ty=e.touches[0].clientY;
 },{passive:true});
 canvas.addEventListener('touchend',e=>{
-  const dx=e.changedTouches[0].clientX-touchX;
-  const dy=e.changedTouches[0].clientY-touchY;
-  if(Math.abs(dx)>45&&Math.abs(dx)>Math.abs(dy)){
-    dx<0 ? goStep(step+1) : goStep(step-1);
+  const dx=e.changedTouches[0].clientX-_tx;
+  const dy=e.changedTouches[0].clientY-_ty;
+  if(Math.abs(dx)>44&&Math.abs(dx)>Math.abs(dy)){
+    dx<0?goStep(step+1):goStep(step-1);
   }
 },{passive:true});
-
 
 </script>
 </body>
